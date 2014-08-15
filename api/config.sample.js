@@ -25,6 +25,11 @@ var countlyConfig = {
         safe: false,
         session_duration_limit: 120,
         max_sockets: 1024,
+        cl_endsession_ongoing_timeout: 1,
+        /*
+            If the last end_session is received less than 1 seconds ago we will ignore
+            current begin_session request and mark this user as having an ongoing session
+        */
         city_data: true
     },
     apps: {
