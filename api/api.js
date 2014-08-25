@@ -180,6 +180,7 @@ if (cluster.isMaster) {
                         requests = JSON.parse(requests);
                     } catch (SyntaxError) {
                         console.log('Parse bulk JSON failed');
+                        console.log('source:'+requests);
                     }
                 } else {
                     common.returnMessage(params, 400, 'Missing parameter "requests"');
@@ -243,6 +244,7 @@ if (cluster.isMaster) {
                         params.qstring.args = JSON.parse(params.qstring.args);
                     } catch (SyntaxError) {
                         console.log('Parse ' + apiPath + ' JSON failed');
+                        console.log('source:'+params.qstring.args);
                     }
                 }
 
@@ -275,6 +277,7 @@ if (cluster.isMaster) {
                         params.qstring.args = JSON.parse(params.qstring.args);
                     } catch (SyntaxError) {
                         console.log('Parse ' + apiPath + ' JSON failed');
+                        console.log('sources:'+params.qstring.args);
                     }
                 }
 
@@ -335,6 +338,7 @@ if (cluster.isMaster) {
 
                     } catch (SyntaxError) {
                         console.log('Parse metrics JSON failed');
+                        console.log('source:'+params.qstring.metrics);
                         common.returnMessage(params, 400, 'metrics JSON is not properly formed');
                         return false
                     }
@@ -345,6 +349,7 @@ if (cluster.isMaster) {
                         params.qstring.events = JSON.parse(params.qstring.events);
                     } catch (SyntaxError) {
                         console.log('Parse events JSON failed');
+                        console.log('source:'+params.qstring.events);
                         common.returnMessage(params, 400, 'events JSON is not properly formed');
                         return false;
                     }
@@ -435,6 +440,7 @@ if (cluster.isMaster) {
                                 params.qstring.events = JSON.parse(params.qstring.events);
                             } catch (SyntaxError) {
                                 console.log('Parse events array failed');
+                                console.log('source:'+params.qstring.events);
                                 common.returnMessage(params, 400, 'events JSON is not properly formed');
                                 break;
                             }
