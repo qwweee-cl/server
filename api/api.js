@@ -37,7 +37,7 @@ function validateAppForWriteAPI(params) {
         var updateSessions = {};
         common.fillTimeObject(params, updateSessions, common.dbMap['events']);
         common.db.collection('sessions').update({'_id':params.app_id}, {'$inc':updateSessions}, {'upsert':true}, function(err, res){});
-        common.db.collection('raw').insert(params, function(err, res){});
+        common.db.collection('raw_'+params.app_id).insert(params, function(err, res){});
 
         if (params.qstring.events) {
             countlyApi.data.events.processEvents(params);
