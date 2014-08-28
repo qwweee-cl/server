@@ -2,6 +2,7 @@ var http = require('http'),
     cluster = require('cluster'),
     os = require('os'),
     url = require('url'),
+    geoip = require('geoip-lite'),
     common = require('./utils/common.js'),
     countlyApi = {
         data:{
@@ -37,6 +38,25 @@ function validateAppForWriteAPI(params) {
         var updateSessions = {};
         common.fillTimeObject(params, updateSessions, common.dbMap['events']);
         common.db.collection('sessions').update({'_id':params.app_id}, {'$inc':updateSessions}, {'upsert':true}, function(err, res){});
+        var locationData = geoip.lookup(params.ip_address);
+
+        if (locationData) {
+            if (locationData.country) {
+                params.user.country = locationData.country;
+            }
+
+            if (locationData.city) {
+                params.user.city = locationData.city;
+            } else {
+                params.user.city = 'Unknown';
+            }
+
+            // Coordinate values of the user location has no use for now
+            if (locationData.ll) {
+                params.user.lat = locationData.ll[0];
+                params.user.lng = locationData.ll[1];
+            }
+        }
         common.db.collection('raw_'+params.app_id).insert(params, function(err, res){});
 
         if (params.qstring.events) {
