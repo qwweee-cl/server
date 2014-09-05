@@ -154,10 +154,15 @@ var common = {},
         return (number < 10 ? '0' : '') + number
     }
     function tzFormat(tz) {
+        var regex = /^(?:[+-\s]{1})(?:\d{4})$/;
         if (tz) {
+            if (!tz.match(regex)) {
+                debug.writeLog("/usr/local/countly/log/timezone.log", "not match data=>"+tz+" Typeof:"+(typeof tz)+" empty:"+empty(tz));
+                return "";
+            }
             debug.writeLog("/usr/local/countly/log/tz.log", "Typeof:"+(typeof tz)+" empty:"+empty(tz)+" length:"+tz.length+"["+tz+"]");
             debug.writeLog("/usr/local/countly/log/tz.log", "substrig(0,1):",tz.substring(0,1));
-            debug.writeLog("/usr/local/countly/log/tz.log", (typeof tz)+"tz:["+tz+"] "+(tz>=0));
+            debug.writeLog("/usr/local/countly/log/tz.log", (typeof tz)+" tz:["+tz+"] "+(tz>=0));
             var absTZ = Math.abs(tz);
             var timezone = (tz>=0?"+":"-")+pad2(Math.floor(absTZ/100))+":"+pad2(absTZ%100);
             debug.writeLog("/usr/local/countly/log/timezone.log", tz+" "+timezone+"("+timezone.length+") "+empty(tz)+" "+(typeof tz));
