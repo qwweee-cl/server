@@ -3,6 +3,7 @@ var common = {},
     time = require('time')(Date),
     crypto = require('crypto'),
     mongo = require('mongoskin'),
+    debug = require('./cl/debug.js'),
     countlyConfig = require('./../config');
 
 (function (common) {
@@ -133,8 +134,41 @@ var common = {},
         }
     };
 
+    function empty(e) {
+        if (typeof e == 'undefined')
+            return true;
+        switch(e) {
+            case "":
+            case 0:
+            case "0":
+            case null:
+            case false:
+            case typeof e == "undefined":
+                return true;
+            default :
+                return false;
+        }
+        return true;
+    };
+    function pad2(number) {
+        return (number < 10 ? '0' : '') + number
+    }
+    function tzFormat(tz) {
+        if (tz) {
+            debug.writeLog("/usr/local/countly/log/tz.log", "Typeof:"+(typeof tz)+" empty:"+empty(tz)+" length:"+tz.length+"["+tz+"]");
+            debug.writeLog("/usr/local/countly/log/tz.log", "substrig(0,1):",tz.substring(0,1));
+            debug.writeLog("/usr/local/countly/log/tz.log", (typeof tz)+"tz:["+tz+"] "+(tz>=0));
+            var absTZ = Math.abs(tz);
+            var timezone = (tz>=0?"+":"-")+pad2(Math.floor(absTZ/100))+":"+pad2(absTZ%100);
+            debug.writeLog("/usr/local/countly/log/timezone.log", tz+" "+timezone+"("+timezone.length+") "+empty(tz)+" "+(typeof tz));
+            return timezone;
+        } else {
+            debug.writeLog("/usr/local/countly/log/timezone.log", "empty data=>"+tz+" Typeof:"+(typeof tz)+" empty:"+empty(tz));
+            return "";
+        }
+    }
     // Adjusts the time to current app's configured timezone appTimezone and returns a time object.
-    common.initTimeObj = function (appTimezone, reqTimestamp) {
+    common.initTimeObj = function (appTimezone, reqTimestamp, reqTZ) {
         var currTimestamp,
             currDate,
             currDateWithoutTimestamp = new Date();
@@ -153,11 +187,20 @@ var common = {},
         currDateWithoutTimestamp.setTimezone(appTimezone);
 
         var tmpMoment = moment(currDate);
+        var withoutMoment = moment(currDateWithoutTimestamp);
 
+        var TZ = tzFormat(reqTZ);
+        if (!empty(TZ)) {
+            tmpMoment = tmpMoment.zone(TZ);
+            withoutMoment = withoutMoment.zone(TZ);
+            //console.log("timezone:"+reqTZ+" "+TZ);
+        } else {
+            tmpMoment = moment(currDate);
+        }
         return {
             now: tmpMoment,
             nowUTC: moment.utc(currDate),
-            nowWithoutTimestamp: moment(currDateWithoutTimestamp),
+            nowWithoutTimestamp: withoutMoment,
             timestamp: currTimestamp,
             yearly: tmpMoment.format("YYYY"),
             monthly: tmpMoment.format("YYYY.M"),

@@ -35,7 +35,7 @@ var events = {},
 
             // If present use timestamp inside each event while recording
             if (params.qstring.events[i].timestamp) {
-                params.time = common.initTimeObj(params.appTimezone, params.qstring.events[i].timestamp);
+                params.time = common.initTimeObj(params.appTimezone, params.qstring.events[i].timestamp, params.qstring.events[i].tz);
             }
 
             common.arrayAddUniq(events, shortCollectionName);

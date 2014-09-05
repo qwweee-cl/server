@@ -204,6 +204,7 @@ var appsApi = {},
         common.db.collection('locations').remove({'_id': common.db.ObjectID(appId)});
         common.db.collection('cities').remove({'_id': common.db.ObjectID(appId)});
         common.db.collection('app_users' + appId).drop();
+        common.db.collection('raw_' + appId).drop();
         common.db.collection('devices').remove({'_id': common.db.ObjectID(appId)});
         common.db.collection('device_details').remove({'_id': common.db.ObjectID(appId)});
         common.db.collection('app_versions').remove({'_id': common.db.ObjectID(appId)});

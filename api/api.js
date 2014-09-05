@@ -33,7 +33,7 @@ function validateAppForWriteAPI(params) {
         params.app_id = app['_id'];
         params.app_cc = app['country'];
         params.appTimezone = app['timezone'];
-        params.time = common.initTimeObj(params.appTimezone, params.qstring.timestamp);
+        params.time = common.initTimeObj(params.appTimezone, params.qstring.timestamp, params.qstring.tz);
 
         var updateSessions = {};
         common.fillTimeObject(params, updateSessions, common.dbMap['events']);
@@ -115,7 +115,7 @@ function validateUserForDataReadAPI(params, callback, callbackParam) {
 
             params.app_id = app['_id'];
             params.appTimezone = app['timezone'];
-            params.time = common.initTimeObj(params.appTimezone, params.qstring.timestamp);
+            params.time = common.initTimeObj(params.appTimezone, params.qstring.timestamp, params.qstring.tz);
 
             if (callbackParam) {
                 callback(callbackParam, params);
