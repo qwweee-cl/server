@@ -23,7 +23,7 @@ var countlyConfig = {
         port: 3001,
         host: "localhost",
         safe: false,
-        session_duration_limit: 120,
+        session_duration_limit: 3601,
         max_sockets: 1024,
         cl_endsession_ongoing_timeout: 1,
         /*
