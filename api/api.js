@@ -24,7 +24,8 @@ function validateAppForWriteAPI(params) {
     common.db.collection('apps').findOne({'key':params.qstring.app_key}, function (err, app) {
         if (!app) {
             if (common.config.api.safe) {
-                common.returnMessage(params, 400, 'App does not exist');
+                //common.returnMessage(params, 400, 'App does not exist');
+                common.returnMessage(params, 200, 'Success');
             }
 
             return false;
@@ -164,12 +165,14 @@ if (cluster.isMaster) {
             };
 
         if (queryString.app_id && queryString.app_id.length != 24) {
-            common.returnMessage(params, 400, 'Invalid parameter "app_id"');
+            //common.returnMessage(params, 400, 'Invalid parameter "app_id"');
+            common.returnMessage(params, 200, 'Success');
             return false;
         }
 
         if (queryString.user_id && queryString.user_id.length != 24) {
-            common.returnMessage(params, 400, 'Invalid parameter "user_id"');
+            //common.returnMessage(params, 400, 'Invalid parameter "user_id"');
+            common.returnMessage(params, 200, 'Success');
             return false;
         }
 
@@ -196,7 +199,8 @@ if (cluster.isMaster) {
                         console.log('source:'+requests);
                     }
                 } else {
-                    common.returnMessage(params, 400, 'Missing parameter "requests"');
+                    //common.returnMessage(params, 400, 'Missing parameter "requests"');
+                    common.returnMessage(params, 200, 'Success');
                     return false;
                 }
 
@@ -262,7 +266,8 @@ if (cluster.isMaster) {
                 }
 
                 if (!params.qstring.api_key) {
-                    common.returnMessage(params, 400, 'Missing parameter "api_key"');
+                    //common.returnMessage(params, 400, 'Missing parameter "api_key"');
+                    common.returnMessage(params, 200, 'Success');
                     return false;
                 }
 
@@ -277,7 +282,8 @@ if (cluster.isMaster) {
                         validateUserForWriteAPI(countlyApi.mgmt.users.deleteUser, params);
                         break;
                     default:
-                        common.returnMessage(params, 400, 'Invalid path, must be one of /create, /update or /delete');
+                        //common.returnMessage(params, 400, 'Invalid path, must be one of /create, /update or /delete');
+                        common.returnMessage(params, 200, 'Success');
                         break;
                 }
 
@@ -295,7 +301,8 @@ if (cluster.isMaster) {
                 }
 
                 if (!params.qstring.api_key) {
-                    common.returnMessage(params, 400, 'Missing parameter "api_key"');
+                    //common.returnMessage(params, 400, 'Missing parameter "api_key"');
+                    common.returnMessage(params, 200, 'Success');
                     return false;
                 }
 
@@ -313,7 +320,8 @@ if (cluster.isMaster) {
                         validateUserForWriteAPI(countlyApi.mgmt.apps.resetApp, params);
                         break;
                     default:
-                        common.returnMessage(params, 400, 'Invalid path, must be one of /create, /update, /delete or /reset');
+                        //common.returnMessage(params, 400, 'Invalid path, must be one of /create, /update, /delete or /reset');
+                        common.returnMessage(params, 200, 'Success');
                         break;
                 }
 
@@ -330,7 +338,8 @@ if (cluster.isMaster) {
                 };
 
                 if (!params.qstring.app_key || !params.qstring.device_id) {
-                    common.returnMessage(params, 400, 'Missing parameter "app_key" or "device_id"');
+                    //common.returnMessage(params, 400, 'Missing parameter "app_key" or "device_id"');
+                    common.returnMessage(params, 200, 'Success');
                     return false;
                 } else {
                     // Set app_user_id that is unique for each user of an application.
@@ -378,6 +387,7 @@ if (cluster.isMaster) {
             {
                 if (!params.qstring.api_key) {
                     common.returnMessage(params, 400, 'Missing parameter "api_key"');
+                    //common.returnMessage(params, 200, 'Success');
                     return false;
                 }
 
@@ -390,6 +400,7 @@ if (cluster.isMaster) {
                         break;
                     default:
                         common.returnMessage(params, 400, 'Invalid path, must be one of /all or /me');
+                        //common.returnMessage(params, 200, 'Success');
                         break;
                 }
 
@@ -399,6 +410,7 @@ if (cluster.isMaster) {
             {
                 if (!params.qstring.api_key) {
                     common.returnMessage(params, 400, 'Missing parameter "api_key"');
+                    //common.returnMessage(params, 200, 'Success');
                     return false;
                 }
 
@@ -411,6 +423,7 @@ if (cluster.isMaster) {
                         break;
                     default:
                         common.returnMessage(params, 400, 'Invalid path, must be one of /all or /mine');
+                        //common.returnMessage(params, 200, 'Success');
                         break;
                 }
 
@@ -420,11 +433,13 @@ if (cluster.isMaster) {
             {
                 if (!params.qstring.api_key) {
                     common.returnMessage(params, 400, 'Missing parameter "api_key"');
+                    //common.returnMessage(params, 200, 'Success');
                     return false;
                 }
 
                 if (!params.qstring.app_id) {
                     common.returnMessage(params, 400, 'Missing parameter "app_id"');
+                    //common.returnMessage(params, 200, 'Success');
                     return false;
                 }
 
@@ -464,6 +479,7 @@ if (cluster.isMaster) {
                         break;
                     default:
                         common.returnMessage(params, 400, 'Invalid method');
+                        //common.returnMessage(params, 200, 'Success');
                         break;
                 }
 
@@ -473,11 +489,13 @@ if (cluster.isMaster) {
             {
                 if (!params.qstring.api_key) {
                     common.returnMessage(params, 400, 'Missing parameter "api_key"');
+                    //common.returnMessage(params, 200, 'Success');
                     return false;
                 }
 
                 if (!params.qstring.app_id) {
                     common.returnMessage(params, 400, 'Missing parameter "app_id"');
+                    //common.returnMessage(params, 200, 'Success');
                     return false;
                 }
 
@@ -490,6 +508,7 @@ if (cluster.isMaster) {
                         break;
                     default:
                         common.returnMessage(params, 400, 'Invalid path, must be one of /dashboard or /countries');
+                        //common.returnMessage(params, 200, 'Success');
                         break;
                 }
 
