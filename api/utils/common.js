@@ -1,5 +1,6 @@
 var common = {},
     moment = require('moment'),
+    momentz = require('moment-timezone'),
     time = require('time')(Date),
     crypto = require('crypto'),
     mongo = require('mongoskin'),
@@ -59,6 +60,7 @@ var common = {},
     common.time = time;
 
     common.moment = moment;
+    common.momentz = momentz;
 
     common.crypto = crypto;
 
@@ -191,8 +193,8 @@ var common = {},
         currDate.setTimezone(appTimezone);
         currDateWithoutTimestamp.setTimezone(appTimezone);
 
-        var tmpMoment = moment(currDate);
-        var withoutMoment = moment(currDateWithoutTimestamp);
+        var tmpMoment = momentz(currDate);
+        var withoutMoment = momentz(currDateWithoutTimestamp);
 
         var TZ = tzFormat(reqTZ);
         if (!empty(TZ)) {
@@ -200,7 +202,7 @@ var common = {},
             withoutMoment = withoutMoment.zone(TZ);
             //console.log("timezone:"+reqTZ+" "+TZ);
         } else {
-            tmpMoment = moment(currDate);
+            tmpMoment = momentz(currDate);
         }
         return {
             now: tmpMoment,

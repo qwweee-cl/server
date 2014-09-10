@@ -239,7 +239,7 @@ var usage = {},
             }
 
             if (userLastSeenDate.getFullYear() == params.time.yearly &&
-                Math.ceil(common.moment(userLastSeenDate).format("DDD") / 7) < params.time.weekly) {
+                Math.ceil(common.momentz(userLastSeenDate).format("DDD") / 7) < params.time.weekly) {
                 uniqueLevels[uniqueLevels.length] = params.time.yearly + ".w" + params.time.weekly;
             }
 
