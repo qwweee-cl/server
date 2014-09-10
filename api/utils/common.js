@@ -159,7 +159,7 @@ var common = {},
         var regex = /^(?:[+-\s]{1})(?:\d{4})$/;
         if (tz) {
             if (!tz.match(regex)) {
-                debug.writeLog("/usr/local/countly/log/timezone.log", "not match data=>"+tz+" Typeof:"+(typeof tz)+" empty:"+empty(tz));
+                debug.writeLog("/usr/local/countly/log/re.log", "not match data=>"+tz+" Typeof:"+(typeof tz)+" empty:"+empty(tz));
                 console.log("not match data=>"+tz+" Typeof:"+(typeof tz)+" empty:"+empty(tz));
                 return "";
             }
