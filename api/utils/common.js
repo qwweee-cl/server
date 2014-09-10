@@ -160,6 +160,7 @@ var common = {},
         if (tz) {
             if (!tz.match(regex)) {
                 debug.writeLog("/usr/local/countly/log/timezone.log", "not match data=>"+tz+" Typeof:"+(typeof tz)+" empty:"+empty(tz));
+                console.log("not match data=>"+tz+" Typeof:"+(typeof tz)+" empty:"+empty(tz));
                 return "";
             }
             debug.writeLog("/usr/local/countly/log/tz.log", "Typeof:"+(typeof tz)+" empty:"+empty(tz)+" length:"+tz.length+"["+tz+"]");
@@ -193,8 +194,8 @@ var common = {},
         currDate.setTimezone(appTimezone);
         currDateWithoutTimestamp.setTimezone(appTimezone);
 
-        var tmpMoment = momentz(currDate);
-        var withoutMoment = momentz(currDateWithoutTimestamp);
+        var tmpMoment = momentz(currDate).tz(appTimezone);
+        var withoutMoment = momentz(currDateWithoutTimestamp).tz(appTimezone);
 
         var TZ = tzFormat(reqTZ);
         if (!empty(TZ)) {
@@ -202,7 +203,7 @@ var common = {},
             withoutMoment = withoutMoment.zone(TZ);
             //console.log("timezone:"+reqTZ+" "+TZ);
         } else {
-            tmpMoment = momentz(currDate);
+            tmpMoment = momentz(currDate).tz(appTimezone);
         }
         return {
             now: tmpMoment,
