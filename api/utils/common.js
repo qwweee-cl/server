@@ -155,11 +155,11 @@ var common = {},
     function pad2(number) {
         return (number < 10 ? '0' : '') + number
     }
-    function tzFormat(tz) {
+    function tzFormat(tz, reqTimestamp) {
         var regex = /^(?:[+-\s]{1})(?:\d{4})$/;
         if (tz) {
             if (!tz.match(regex)) {
-                debug.writeLog("/usr/local/countly/log/re.log", "not match data=>"+tz+" Typeof:"+(typeof tz)+" empty:"+empty(tz));
+                debug.writeLog("/usr/local/countly/log/re.log", "not match data=>"+tz+" Typeof:"+(typeof tz)+" empty:"+empty(tz)+" "+reqTimestamp);
                 console.log("not match data=>"+tz+" Typeof:"+(typeof tz)+" empty:"+empty(tz));
                 return "";
             }
@@ -197,7 +197,7 @@ var common = {},
         var tmpMoment = momentz(currDate).tz(appTimezone);
         var withoutMoment = momentz(currDateWithoutTimestamp).tz(appTimezone);
 
-        var TZ = tzFormat(reqTZ);
+        var TZ = tzFormat(reqTZ, reqTimestamp);
         if (!empty(TZ)) {
             tmpMoment = tmpMoment.zone(TZ);
             withoutMoment = withoutMoment.zone(TZ);
