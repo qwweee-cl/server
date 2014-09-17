@@ -502,9 +502,9 @@
             hr = jQuery.i18n.map["common.hour"];
 
         var durationRange = [
-            "0-10 " + sec,
-            "11-30 " + sec,
-            "31-60 " + sec,
+            "0-0.2 " + min,
+            "0.2-0.5 " + min,
+            "0.5-1 " + min,
             "1-3 " + min,
             "3-10 " + min,
             "10-30 " + min,

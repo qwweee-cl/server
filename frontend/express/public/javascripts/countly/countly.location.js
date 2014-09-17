@@ -167,11 +167,12 @@
 
     countlyLocation.getCountryName = function (cc) {
         var countryName = _countryMap[cc.toUpperCase()];
+        var countryCode = cc.toUpperCase();
 
         if (countryName) {
             return countryName;
         } else {
-            return "Unknown";
+            return countryCode;
         }
     };
 
