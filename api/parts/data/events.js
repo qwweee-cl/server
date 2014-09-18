@@ -1,26 +1,57 @@
 var events = {},
-    common = require('./../../utils/common.js'),
-    async = require('./../../utils/async.min.js');
+    common = require('./../../utils/common.js');
 
 (function (events) {
+    var eventCollections = {};
+    var eventSegments = {};
+    var eventArray = [];            
 
     events.processEvents = function(params) {
-        var events = [],
-            eventCollections = {},
-            eventSegments = {},
-            tmpEventObj = {},
+        var cur_idx = 0;
+        var app_id = app[0].app_id;
+        var updateSessions = {};
+
+        for (i=0; i<app.length; i++) {
+            app[i].time = common.initTimeObj(params.appTimezone, params.timestamp, params.tz);
+            //update requests count
+            common.incrTimeObject(params, updateSessions, common.dbMap['events']); 
+
+            if (app[i].app_user_id != curr_app_user) { //save last session data, initialize a new one
+                logCurrUserEvents(app.slice(cur_idx, i));
+                cur_idx = i;
+                curr_app_user = app[i].app_user_id;
+            }
+            eventAddup(app[i]);
+        }
+        logCurrUserEvents(app.slice(cur_idx));
+        updateEvents();
+
+        common.db.collection('sessions').update({'_id':app_id}, {'$inc':updateSessions},  
+            {'upsert': true}, function(err, object) {
+                if (err){
+                    console.log('[updateSessions]:'+err);  
+                }
+            });
+        );
+    }
+
+    function eventAddup(params) {
+        var tmpEventObj = {},
             tmpEventColl = {},
             shortCollectionName = "",
             eventCollectionName = "";
 
-        for (var i=0; i < params.qstring.events.length; i++) {
+        for (i=0; i < params.events.length; i++) {
 
-            var currEvent = params.qstring.events[i];
+            var currEvent = params.events[i];
             tmpEventObj = {};
             tmpEventColl = {};
+            
+            console.log('current event:%j', currEvent);
 
             // Key and count fields are required
             if (!currEvent.key || !currEvent.count || !common.isNumber(currEvent.count)) {
+                console.log('No key or count:%j', currEvent);
                 continue;
             }
 
@@ -30,15 +61,16 @@ var events = {},
 
             // Mongodb collection names can not be longer than 128 characters
             if (eventCollectionName.length > 128) {
+                console.log('[Error]:Event name too long!');
                 continue;
             }
 
             // If present use timestamp inside each event while recording
-            if (params.qstring.events[i].timestamp) {
-                params.time = common.initTimeObj(params.appTimezone, params.qstring.events[i].timestamp, params.qstring.events[i].tz);
+            if (params.events[i].timestamp) {
+                params.time = common.initTimeObj(params.appTimezone, params.events[i].timestamp, params.events[i].tz);
             }
 
-            common.arrayAddUniq(events, shortCollectionName);
+            common.arrayAddUniq(eventArray, shortCollectionName);
 
             if (currEvent.sum && common.isNumber(currEvent.sum)) {
                 common.fillTimeObject(params, tmpEventObj, common.dbMap['sum'], currEvent.sum);
@@ -73,11 +105,7 @@ var events = {},
                         eventSegments[eventCollectionName]['meta.' + segKey] = {};
                     }
 
-                    if (eventSegments[eventCollectionName]['meta.' + segKey]["$each"] && eventSegments[eventCollectionName]['meta.' + segKey]["$each"].length) {
-                        common.arrayAddUniq(eventSegments[eventCollectionName]['meta.' + segKey]["$each"], tmpSegVal);
-                    } else {
-                        eventSegments[eventCollectionName]['meta.' + segKey]["$each"] = [tmpSegVal];
-                    }
+                    common.arrayAddUniq(eventSegments[eventCollectionName]['meta.' + segKey]["$each"], tmpSegVal);
 
                     if (!eventSegments[eventCollectionName]["meta.segments"]) {
                         eventSegments[eventCollectionName]["meta.segments"] = {};
@@ -106,11 +134,7 @@ var events = {},
                     eventSegments[eventCollectionName]['meta.' + currEvent.seg_key] = {};
                 }
 
-                if (eventSegments[eventCollectionName]['meta.' + currEvent.seg_key]["$each"] && eventSegments[eventCollectionName]['meta.' + currEvent.seg_key]["$each"].length) {
-                    common.arrayAddUniq(eventSegments[eventCollectionName]['meta.' + currEvent.seg_key]["$each"], currEvent.seg_val);
-                } else {
-                    eventSegments[eventCollectionName]['meta.' + currEvent.seg_key]["$each"] = [currEvent.seg_val];
-                }
+                common.arrayAddUniq(eventSegments[eventCollectionName]['meta.' + currEvent.seg_key]["$each"], currEvent.seg_val);
 
                 if (!eventSegments[eventCollectionName]["meta.segments"]) {
                     eventSegments[eventCollectionName]["meta.segments"] = {};
@@ -126,90 +150,52 @@ var events = {},
             }
 
             mergeEvents(eventCollections[eventCollectionName], tmpEventColl);
+            return eventCollections;
         }
 
-        if (!common.config.api.safe) {
-            for (var collection in eventCollections) {
-                for (var segment in eventCollections[collection]) {
-                    if (segment == "no-segment" && eventSegments[collection]) {
-                        common.db.collection(collection).update({'_id': segment}, {'$inc': eventCollections[collection][segment], '$addToSet': eventSegments[collection]}, {'upsert': true});
+        function mergeEvents(firstObj, secondObj) {
+            for (var firstLevel in secondObj) {
+
+                if (!secondObj.hasOwnProperty(firstLevel)) {
+                    continue;
+                }
+
+                if (!firstObj[firstLevel]) {
+                    firstObj[firstLevel] = secondObj[firstLevel];
+                    continue;
+                }
+
+                for (var secondLevel in secondObj[firstLevel]) {
+
+                    if (!secondObj[firstLevel].hasOwnProperty(secondLevel)) {
+                        continue;
+                    }
+
+                    if (firstObj[firstLevel][secondLevel]) {
+                        firstObj[firstLevel][secondLevel] += secondObj[firstLevel][secondLevel];
                     } else {
-                        common.db.collection(collection).update({'_id': segment}, {'$inc': eventCollections[collection][segment]}, {'upsert': true});
+                        firstObj[firstLevel][secondLevel] = secondObj[firstLevel][secondLevel];
                     }
                 }
             }
-        } else {
-            var eventDocs = [];
+        }
+    }
 
-            for (var collection in eventCollections) {
-                for (var segment in eventCollections[collection]) {
-                    eventDocs.push({c: collection, s: segment});
-                }
-            }
-
-            async.map(eventDocs, updateEventDb, function (err, eventUpdateResults) {
-                var needRollback = false;
-
-                for (var i = 0; i < eventUpdateResults.length; i++) {
-                    if (eventUpdateResults[i].status == "failed") {
-                        needRollback = true;
-                        break;
-                    }
-                }
-
-                if (needRollback) {
-                    async.map(eventUpdateResults, rollbackEventDb, function (err, eventRollbackResults) {
-                        common.returnMessage(params, 500, 'Failure');
-                    });
+    function updateEvents = function() {
+        // update Segmentation_key+App_id collections
+        for (var collection in eventCollections) {
+            for (var segment in eventCollections[collection]) {
+                if (segment == "no-segment" && eventSegments[collection]) {
+                    common.db.collection(collection).update({'_id': segment}, {'$inc': eventCollections[collection][segment], '$addToSet': eventSegments[collection]}, {'upsert': true});
                 } else {
-                    common.returnMessage(params, 200, 'Success');
+                    common.db.collection(collection).update({'_id': segment}, {'$inc': eventCollections[collection][segment]}, {'upsert': true});
                 }
-            });
-
-            function updateEventDb(eventDoc, callback) {
-                if (eventDoc.s == "no-segment" && eventSegments[eventDoc.c]) {
-                    common.db.collection(eventDoc.c).update({'_id': eventDoc.s}, {'$inc': eventCollections[eventDoc.c][eventDoc.s], '$addToSet': eventSegments[eventDoc.c]}, {'upsert': true, 'safe': true}, function(err, result) {
-                        if (err || result != 1) {
-                            callback(false, {status: "failed", obj: eventDoc});
-                        } else {
-                            callback(false, {status: "ok", obj: eventDoc});
-                        }
-                    });
-                } else {
-                    common.db.collection(eventDoc.c).update({'_id': eventDoc.s}, {'$inc': eventCollections[eventDoc.c][eventDoc.s]}, {'upsert': true, 'safe': true}, function(err, result) {
-                        if (err || result != 1) {
-                            callback(false, {status: "failed", obj: eventDoc});
-                        } else {
-                            callback(false, {status: "ok", obj: eventDoc});
-                        }
-                    });
-                }
-            }
-
-            function rollbackEventDb(eventUpdateResult, callback) {
-                if (eventUpdateResult.status == "failed") {
-                    callback(false, {});
-                } else {
-                    var eventDoc = eventUpdateResult.obj;
-
-                    common.db.collection(eventDoc.c).update({'_id': eventDoc.s}, {'$inc': getInvertedValues(eventCollections[eventDoc.c][eventDoc.s])}, {'upsert': false}, function(err, result) {});
-                    callback(true, {});
-                }
-            }
-
-            function getInvertedValues(obj) {
-                var invObj = {};
-
-                for (var objProp in obj) {
-                    invObj[objProp] = -obj[objProp];
-                }
-
-                return invObj;
             }
         }
 
-        if (events.length) {
-            var eventSegmentList = {'$addToSet': {'list': {'$each': events}}};
+        // update events collection
+        if (eventArray.length) {
+            var eventSegmentList = {'$addToSet': {'list': {'$each': eventArray}}};
 
             for (var event in eventSegments) {
                 if (!eventSegmentList['$addToSet']["segments." + event.replace(params.app_id, "")]) {
@@ -225,33 +211,73 @@ var events = {},
         }
     };
 
-    function mergeEvents(firstObj, secondObj) {
-        for (var firstLevel in secondObj) {
+    function logCurrUserEvents = function(apps) {
+        var user = {};
+        var action = {};
+        for (j=0; j<apps.length; j++) {
+            if (app[j].events) {
+                var eventList = app[j].events;
+                //console.log('events:%j', events);
+                for ( i=0; i<eventList.length; i++) {
+                    var e = eventList[i];
+                    var key = e.key;
+                    if (key == '_UMA_ID') {
+                        if (e.segmentation.google_play_advertising_id) 
+                            user.google_play_advertising_id = e.segmentation.google_play_advertising_id;
+                        if (e.segmentation.android_id) 
+                            user.android_id = e.segmentation.android_id;
+                        if (e.segmentation.identifier_for_vendor) 
+                            user.identifier_for_vendor = e.segmentation.identifier_for_vendor;
+                    } else {
+                        //console.log(e);            
+                        computeCnt(e, key, action);
+                        if (e.segmentation) {
+                            for (var prop in e.segmentation) {
+                                var prop_key = key+'.'+prop;
+                                //console.log(prop_key);
+                                computeCnt(e, prop_key, action);
+                                //console.log("value:"+e.segmentation[prop]);
+                                computeCnt(e, prop_key+'.'+e.segmentation[prop], action);                    
+                            }
+                        }
+                    }
 
-            if (!secondObj.hasOwnProperty(firstLevel)) {
-                continue;
-            }
-
-            if (!firstObj[firstLevel]) {
-                firstObj[firstLevel] = secondObj[firstLevel];
-                continue;
-            }
-
-            for (var secondLevel in secondObj[firstLevel]) {
-
-                if (!secondObj[firstLevel].hasOwnProperty(secondLevel)) {
-                    continue;
                 }
+            }
+            console.log('user:%j', user);
+            console.log('action:%j', action);
+        }
+        user.device_id = app[length-1].device_id;
+        user.timestamp = app[length-1].timestamp;
+        user.tz = app[length-1].tz;
+        user.country = app[length-1].user.country;
 
-                if (firstObj[firstLevel][secondLevel]) {
-                    firstObj[firstLevel][secondLevel] += secondObj[firstLevel][secondLevel];
+        db.collection('ibb_'+app.app_id).update({device_id:user.device_id}, {$set:user, $inc:action}
+            , {upsert:true}, function(err, res) {
+                if (err){
+                    console.log('userEvent log error:' + err);  
+                }
+            });
+        );
+
+        function computeCnt(e, key, action) {
+            var cnt = e.count||1;
+            //console.log('add key:'+key);
+            if (typeof action[key+'.cnt'] != 'undefined') {
+                action[key+'.cnt'] += cnt;
+            } else {
+                action[key+'.cnt'] = cnt;
+            }
+            if (e.sum) {
+                if (action.hasOwnProperty(key+'.sum')) {
+                    action[key+'.sum'] += e.sum;
                 } else {
-                    firstObj[firstLevel][secondLevel] = secondObj[firstLevel][secondLevel];
+                    action[key+'.sum'] = e.sum;
                 }
             }
         }
     }
 
-}(events));
+} (events));
 
 module.exports = events;

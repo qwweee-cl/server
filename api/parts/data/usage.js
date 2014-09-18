@@ -5,127 +5,41 @@ var usage = {},
 
 (function (usage) {
 
-    // Performs geoip lookup for the IP address of the app user
-    usage.beginUserSession = function (params) {
-        // Location of the user is retrieved using geoip-lite module from her IP address.
-        var locationData = geoip.lookup(params.ip_address);
+    var predefinedMetrics = [
+        { db: "devices", metrics: [{ name: "_device", set: "devices", short_code: common.dbUserMap['device'] }] },
+        { db: "carriers", metrics: [{ name: "_carrier", set: "carriers", short_code: common.dbUserMap['carrier'] }] },
+        { db: "device_details", metrics: [{ name: "_os", set: "os", short_code: common.dbUserMap['platform'] }, 
+            { name: "_os_version", set: "os_versions", short_code: common.dbUserMap['platform_version'] }, 
+            { name: "_resolution", set: "resolutions" }] },
+        { db: "app_versions", metrics: [{ name: "_app_version", set: "app_versions", short_code: common.dbUserMap['app_version'] }] }
+    ];
+    var OP_DECREASE=0;
+    var OP_FILL=1;
+    var OP_INCREASE=2;
 
-        if (locationData) {
-            if (locationData.country) {
-                params.user.country = locationData.country;
-            }
 
-            if (locationData.city) {
-                params.user.city = locationData.city;
-            } else {
-                params.user.city = 'Unknown';
-            }
-
-            // Coordinate values of the user location has no use for now
-            if (locationData.ll) {
-                params.user.lat = locationData.ll[0];
-                params.user.lng = locationData.ll[1];
-            }
-        }
-
-        common.db.collection('app_users' + params.app_id).findOne({'_id': params.app_user_id }, function (err, dbAppUser){
-            processUserSession(dbAppUser, params);
+    //query user data and execute processUserSession
+    //
+    usage.ProcessSession = function (logListforSingleUser) {
+        common.db.collection('app_users' + logListforSingleUser[0].app_id).findOne({'_id': logListforSingleUser[0].app_user_id }, 
+            function (err, dbAppUser){
+                processUserSession(dbAppUser, logListforSingleUser);
         });
     };
 
-    usage.endUserSession = function (params) {
-        // As soon as we receive the end_session we set the timestamp
-        // This timestamp is used inside processUserSession
-        var userProps = {};
-        userProps[common.dbUserMap['last_end_session_timestamp']] = params.time.nowWithoutTimestamp.unix();
 
-        common.db.collection('app_users' + params.app_id).update({'_id': params.app_user_id}, {'$set': userProps}, function() {});
-
-        setTimeout(function() {
-            common.db.collection('app_users' + params.app_id).findOne({'_id': params.app_user_id }, function (err, dbAppUser){
-                if (!dbAppUser || err) {
-                    return true;
-                }
-
-                var lastBeginSession = dbAppUser[common.dbUserMap['last_begin_session_timestamp']],
-                    currDateWithoutTimestamp = new Date();
-
-                // We can't use the params.time.timestamp since we are inside a setTimeout
-                // and we need the actual timestamp
-                currDateWithoutTimestamp.setTimezone(params.appTimezone);
-                var currTimestamp = Math.round(currDateWithoutTimestamp.getTime() / 1000);
-
-
-                // If ongoing session flag is set and there is a 11 second difference between the current
-                // timestamp and the timestamp when the last begin_session received then remove the flag
-                // to let the next end_session complete the session
-                if (dbAppUser[common.dbUserMap['has_ongoing_session']] && (currTimestamp - lastBeginSession) > 11) {
-                    var userProps = {};
-                    userProps[common.dbUserMap['has_ongoing_session']] = 1;
-
-                    common.db.collection('app_users' + params.app_id).update({'_id': params.app_user_id}, {'$unset': userProps}, function() {
-                        endSession(true);
-                    });
-                } else {
-                    endSession();
-                }
-
-                function endSession(overrideFlag) {
-                    // If user does not have an ongoing session end it
-                    // Ongoing session flag is set inside processUserSession
-                    if (overrideFlag || !dbAppUser[common.dbUserMap['has_ongoing_session']]) {
-
-                        // If the user does not exist in the app_users collection or she does not have any
-                        // previous session duration stored than we dont need to calculate the session
-                        // duration range for this user.
-                        if (dbAppUser[common.dbUserMap['session_duration']]) {
-                            processSessionDurationRange(dbAppUser[common.dbUserMap['session_duration']], params);
-                        }
-                    }
-                }
-            });
-        }, 10000);
-
-    };
-
-    usage.processSessionDuration = function (params, callback) {
-
-        var updateSessions = {},
-            session_duration = parseInt(params.qstring.session_duration);
-
-        if (!isNaN(session_duration) && session_duration > 0) {
-            if (common.config.api.session_duration_limit && session_duration > common.config.api.session_duration_limit) {
-                session_duration = common.config.api.session_duration_limit;
-            }
-
-            common.fillTimeObject(params, updateSessions, common.dbMap['duration'], session_duration);
-
-            common.db.collection('sessions').update({'_id': params.app_id}, {'$inc': updateSessions}, {'upsert': false});
-
-            // sd: session duration, tsd: total session duration. common.dbUserMap is not used here for readability purposes.
-            common.db.collection('app_users' + params.app_id).update({'_id': params.app_user_id}, {'$inc': {'sd': session_duration, 'tsd': session_duration}}, {'upsert': true}, function() {
-                if (callback) {
-                    callback();
-                }
-            });
-        } else if (callback) { // session_duration was a bad value, but callback still needs to be called
-            callback();
-        }
-    };
-
-    function processSessionDurationRange(totalSessionDuration, params) {
+    function durationRange(totalSessionDuration) {
         var durationRanges = [
-                [0,10],
-                [11,30],
-                [31,60],
-                [61,180],
-                [181,600],
-                [601,1800],
-                [1801,3600]
-            ],
-            durationMax = 3601,
-            calculatedDurationRange,
-            updateSessions = {};
+            [0,10],
+            [11,30],
+            [31,60],
+            [61,180],
+            [181,600],
+            [601,1800],
+            [1801,3600]
+        ],
+        durationMax = 3601,
+        calculatedDurationRange;
 
         if (totalSessionDuration >= durationMax) {
             calculatedDurationRange = (durationRanges.length) + '';
@@ -138,279 +52,374 @@ var usage = {},
             }
         }
 
-        // check that calculatedDurationRange is not undefined; shouldn't happen now that the server
-        // rejects session durations less than 1 second, but check anyways to make sure we don't put
-        // 'ds.undefined' into the database, or add 'null' to 'meta.d-ranges'.
-        if (calculatedDurationRange != undefined) {
-            common.fillTimeObject(params, updateSessions, common.dbMap['durations'] + '.' + calculatedDurationRange);
-            common.db.collection('sessions').update({'_id': params.app_id}, {'$inc': updateSessions, '$addToSet': {'meta.d-ranges': calculatedDurationRange}}, {'upsert': false});
-        }
-
-        // sd: session duration. common.dbUserMap is not used here for readability purposes.
-        // regardless of whether or not the 'sessions' collection was updated above, still need to
-        // clear user's current session duration
-        common.db.collection('app_users' + params.app_id).update({'_id': params.app_user_id}, {'$set': {'sd': 0}}, {'upsert': true});
+        return calculatedDurationRange;
     }
 
-    function processUserSession(dbAppUser, params) {
-        var updateSessions = {},
-            updateUsers = {},
-            updateLocations = {},
-            updateCities = {},
-            userRanges = {},
-            loyaltyRanges = [
-                [0,1],
-                [2,2],
-                [3,5],
-                [6,9],
-                [10,19],
-                [20,49],
-                [50,99],
-                [100,499]
-            ],
-            sessionFrequency = [
-                [0,1],
-                [1,24],
-                [24,48],
-                [48,72],
-                [72,96],
-                [96,120],
-                [120,144],
-                [144,168],
-                [168,192],
-                [192,360],
-                [360,744]
-            ],
-            sessionFrequencyMax = 744,
-            calculatedFrequency,
-            loyaltyMax = 500,
-            calculatedLoyaltyRange,
-            uniqueLevels = [],
-            isNewUser = false;
-
-        common.fillTimeObject(params, updateSessions, common.dbMap['total']);
-        common.fillTimeObject(params, updateLocations, params.user.country + '.' + common.dbMap['total']);
-
-        if (common.config.api.city_data !== false) {
-            common.fillTimeObject(params, updateCities, params.user.city + '.' + common.dbMap['total']);
+    function updateSessionDuration(sessionObj, toFill) {
+        var session_duration = sessionObj.acc_duration;
+        var updateTimeObject = getTimeFunction(toFill);
+        updateTimeObject(sessionObj, updateSessions, common.dbMap['durations'] + '.' + durationRange(session_duration));
+        if (common.config.api.session_duration_limit && session_duration > common.config.api.session_duration_limit) {
+                session_duration = common.config.api.session_duration_limit;
         }
-
-        if (dbAppUser && dbAppUser[common.dbUserMap['first_seen']]) {
-            var userLastSeenTimestamp = dbAppUser[common.dbUserMap['last_seen']],
-                currDate = common.getDate(params.time.timestamp, params.appTimezone),
-                userLastSeenDate = common.getDate(userLastSeenTimestamp, params.appTimezone),
-                secInMin = (60 * (currDate.getMinutes())) + currDate.getSeconds(),
-                secInHour = (60 * 60 * (currDate.getHours())) + secInMin,
-                secInMonth = (60 * 60 * 24 * (currDate.getDate() - 1)) + secInHour,
-                secInYear = (60 * 60 * 24 * (common.getDOY(params.time.timestamp, params.appTimezone) - 1)) + secInHour;
-
-            // If the last end_session is received less than 15 seconds ago we will ignore
-            // current begin_session request and mark this user as having an ongoing session
-            var lastEndSession = dbAppUser[common.dbUserMap['last_end_session_timestamp']];
-
-/*            if (lastEndSession && (params.time.nowWithoutTimestamp.unix() - lastEndSession) < (common.config.api.cl_endsession_ongoing_timeout || 15)) {
-                var userProps = {};
-                userProps[common.dbUserMap['has_ongoing_session']] = true;
-                userProps[common.dbUserMap['last_begin_session_timestamp']] = params.time.nowWithoutTimestamp.unix();
-
-                common.db.collection('app_users' + params.app_id).update({'_id': params.app_user_id}, {'$set': userProps}, function() {});
-
-                return true;
-            }
-*/
-            // Calculate the frequency range of the user
-
-            if ((params.time.timestamp - userLastSeenTimestamp) >= (sessionFrequencyMax * 60 * 60)) {
-                calculatedFrequency = sessionFrequency.length + '';
-            } else {
-                for (var i=0; i < sessionFrequency.length; i++) {
-                    if ((params.time.timestamp - userLastSeenTimestamp) < (sessionFrequency[i][1] * 60 * 60) &&
-                        (params.time.timestamp - userLastSeenTimestamp) >= (sessionFrequency[i][0] * 60 * 60)) {
-                        calculatedFrequency = i + '';
-                        break;
-                    }
-                }
-            }
-
-            // Calculate the loyalty range of the user
-
-            var userSessionCount = dbAppUser[common.dbUserMap['session_count']] + 1;
-
-            if (userSessionCount >= loyaltyMax) {
-                calculatedLoyaltyRange = loyaltyRanges.length + '';
-            } else {
-                for (var i = 0; i < loyaltyRanges.length; i++) {
-                    if (userSessionCount <= loyaltyRanges[i][1] && userSessionCount >= loyaltyRanges[i][0]) {
-                        calculatedLoyaltyRange = i + '';
-                        break;
-                    }
-                }
-            }
-
-            if (userLastSeenDate.getFullYear() == params.time.yearly &&
-                Math.ceil(common.momentz(userLastSeenDate).tz(params.appTimezone).format("DDD") / 7) < params.time.weekly) {
-                uniqueLevels[uniqueLevels.length] = params.time.yearly + ".w" + params.time.weekly;
-            }
-
-            if (userLastSeenTimestamp < (params.time.timestamp - secInMin)) {
-                // We don't need to put hourly fragment to the unique levels array since
-                // we will store hourly data only in sessions collection
-                updateSessions[params.time.hourly + '.' + common.dbMap['unique']] = 1;
-            }
-
-            if (userLastSeenTimestamp < (params.time.timestamp - secInHour)) {
-                uniqueLevels[uniqueLevels.length] = params.time.daily;
-            }
-
-            if (userLastSeenTimestamp < (params.time.timestamp - secInMonth)) {
-                uniqueLevels[uniqueLevels.length] = params.time.monthly;
-            }
-
-            if (userLastSeenTimestamp < (params.time.timestamp - secInYear)) {
-                uniqueLevels[uniqueLevels.length] = params.time.yearly;
-            }
-
-            for (var i = 0; i < uniqueLevels.length; i++) {
-                updateSessions[uniqueLevels[i] + '.' + common.dbMap['unique']] = 1;
-                updateLocations[uniqueLevels[i] + '.' + params.user.country + '.' + common.dbMap['unique']] = 1;
-                updateUsers[uniqueLevels[i] + '.' + common.dbMap['frequency'] + '.' + calculatedFrequency] = 1;
-                updateUsers[uniqueLevels[i] + '.' + common.dbMap['loyalty'] + '.' + calculatedLoyaltyRange] = 1;
-
-                if (common.config.api.city_data !== false) {
-                    updateCities[uniqueLevels[i] + '.' + params.user.city + '.' + common.dbMap['unique']] = 1;
-                }
-            }
-
-            if (uniqueLevels.length != 0) {
-                userRanges['meta.' + 'f-ranges'] = calculatedFrequency;
-                userRanges['meta.' + 'l-ranges'] = calculatedLoyaltyRange;
-                common.db.collection('users').update({'_id': params.app_id}, {'$inc': updateUsers, '$addToSet': userRanges}, {'upsert': true});
-            }
-        } else {
-            isNewUser = true;
-
-            // User is not found in app_users collection so this means she is both a new and unique user.
-            common.fillTimeObject(params, updateSessions, common.dbMap['new']);
-            common.fillTimeObject(params, updateSessions, common.dbMap['unique']);
-            common.fillTimeObject(params, updateLocations, params.user.country + '.' + common.dbMap['new']);
-            common.fillTimeObject(params, updateLocations, params.user.country + '.' + common.dbMap['unique']);
-
-            if (common.config.api.city_data !== false) {
-                common.fillTimeObject(params, updateCities, params.user.city + '.' + common.dbMap['new']);
-                common.fillTimeObject(params, updateCities, params.user.city + '.' + common.dbMap['unique']);
-            }
-
-            // First time user.
-            calculatedLoyaltyRange = '0';
-            calculatedFrequency = '0';
-
-            common.fillTimeObject(params, updateUsers, common.dbMap['frequency'] + '.' + calculatedFrequency);
-            userRanges['meta.' + 'f-ranges'] = calculatedFrequency;
-
-            common.fillTimeObject(params, updateUsers, common.dbMap['loyalty'] + '.' + calculatedLoyaltyRange);
-            userRanges['meta.' + 'l-ranges'] = calculatedLoyaltyRange;
-
-            common.db.collection('users').update({'_id': params.app_id}, {'$inc': updateUsers, '$addToSet': userRanges}, {'upsert': true});
-        }
-
-        common.db.collection('sessions').update({'_id': params.app_id}, {'$inc': updateSessions}, {'upsert': true});
-        common.db.collection('locations').update({'_id': params.app_id}, {'$inc': updateLocations, '$addToSet': {'meta.countries': params.user.country}}, {'upsert': true});
-
-        if (common.config.api.city_data !== false && params.app_cc == params.user.country) {
-            common.db.collection('cities').update({'_id': params.app_id}, {'$inc': updateCities, '$set': {'country': params.user.country}, '$addToSet': {'meta.cities': params.user.city}}, {'upsert': true});
-        }
-
-        processMetrics(dbAppUser, uniqueLevels, params);
+        updateTimeObject(sessionObj, updateSessions, common.dbMap['duration'], session_duration);
     }
 
-    function processMetrics(user, uniqueLevels, params) {
 
-        var userProps = {},
-            isNewUser = (user && user[common.dbUserMap['first_seen']])? false : true;
+    function computeFreqRange(userTime, userLastSeenTimestamp) {
+        var sessionFrequency = [
+            [0,1],
+            [1,24],
+            [24,48],
+            [48,72],
+            [72,96],
+            [96,120],
+            [120,144],
+            [144,168],
+            [168,192],
+            [192,360],
+            [360,744]
+        ]
+        sessionFrequencyMax = 744;
 
-        if (isNewUser) {
-            userProps[common.dbUserMap['first_seen']] = params.time.timestamp;
-            userProps[common.dbUserMap['last_seen']] = params.time.timestamp;
-            userProps[common.dbUserMap['device_id']] = params.qstring.device_id;
-            userProps[common.dbUserMap['country_code']] = params.user.country;
-            userProps[common.dbUserMap['city']] = params.user.city;
+        if ((userTime - userLastSeenTimestamp) >= (sessionFrequencyMax * 60 * 60)) {
+            return sessionFrequency.length + '';
         } else {
-            if (parseInt(user[common.dbUserMap['last_seen']], 10) < params.time.timestamp) {
-                userProps[common.dbUserMap['last_seen']] = params.time.timestamp;
-            }
-
-            if (user[common.dbUserMap['city']] != params.user.city) {
-                userProps[common.dbUserMap['city']] = params.user.city;
-            }
-
-            if (user[common.dbUserMap['country_code']] != params.user.country) {
-                userProps[common.dbUserMap['country_code']] = params.user.country;
-            }
-
-            if (user[common.dbUserMap['device_id']] != params.qstring.device_id) {
-                userProps[common.dbUserMap['device_id']] = params.qstring.device_id;
+            for (var i=0; i < sessionFrequency.length; i++) {
+                if ((params.time.timestamp - userLastSeenTimestamp) < (sessionFrequency[i][1] * 60 * 60) &&
+                    (params.time.timestamp - userLastSeenTimestamp) >= (sessionFrequency[i][0] * 60 * 60)) {
+                    return i + '';
+                }
             }
         }
+        return '';
+    }
 
-        if (!params.qstring.metrics) {
-            // sc: session count. common.dbUserMap is not used here for readability purposes.
-            common.db.collection('app_users' + params.app_id).update({'_id':params.app_user_id}, {'$inc':{'sc':1}, '$set':userProps}, {'upsert':true}, function () {
+    funtcion computeLoyaltyRange(userSessionCount) {
+        var loyaltyRanges = [
+            [0,1],
+            [2,2],
+            [3,5],
+            [6,9],
+            [10,19],
+            [20,49],
+            [50,99],
+            [100,499]
+        ],
+        loyaltyMax = 500;
+
+        if (userSessionCount >= loyaltyMax) {
+            return loyaltyRanges.length + '';
+        } else {
+            for (var i = 0; i < loyaltyRanges.length; i++) {
+                if (userSessionCount <= loyaltyRanges[i][1] && userSessionCount >= loyaltyRanges[i][0]) {
+                    return i + '';
+                }
+            }
+        }
+        return '';
+    }
+
+    function computeGeoInfo(params) {
+        // Location of the user is retrieved using geoip-lite module from her IP address.
+        var locationData = geoip.lookup(params.ip_address);
+
+        if (locationData) {
+            if (locationData.country) {
+                params.country = locationData.country;
+            }
+
+            if (locationData.city) {
+                params.city = locationData.city;
+            } else {
+                params.city = 'Unknown';
+            }
+
+            // Coordinate values of the user location has no use for now
+            if (locationData.ll) {
+                params.lat = locationData.ll[0];
+                params.lng = locationData.ll[1];
+            }
+        }
+    }
+
+    var updateSessions = {};
+    var updateLocations = {};
+    var updateUsers = {};
+    var updateCities = {};
+    var userRanges = {};
+    var sessionRanges = {};
+    userRanges['meta.f-ranges'] = {};
+    userRanges['meta.l-ranges'] = {};
+    sessionRanges['meta.d-ranges'] = {};
+    userRanges['meta.f-ranges']["$each"] = [];
+    userRanges['meta.l-ranges']["$each"] = [];
+    sessionRanges['meta.d-ranges']["$each"] = [];
+    var countryArray = {};
+    var cityArray = {};
+    var countryArray["$each"] = [];
+    var cityArray["$each"] = [];
+    var userProps = {};
+    var updateMetrics = {};
+    var MetricMetaSet = {};
+
+    function setRangeMeta(ranges, coll, key, id) {
+        if (ranges.length == 0) return;
+
+        common.db.collection(coll).update({'_id': app_id}, {'$addToSet': range}, 
+            {'upsert': true}, function(err, object) {
+                if (err){
+                    console.log(err);  // returns error if no matching object found
+                }
             });
-            return false;
-        }
+        ); 
+    }
 
-        var predefinedMetrics = [
-            { db: "devices", metrics: [{ name: "_device", set: "devices", short_code: common.dbUserMap['device'] }] },
-            { db: "carriers", metrics: [{ name: "_carrier", set: "carriers", short_code: common.dbUserMap['carrier'] }] },
-            { db: "device_details", metrics: [{ name: "_os", set: "os", short_code: common.dbUserMap['platform'] }, { name: "_os_version", set: "os_versions", short_code: common.dbUserMap['platform_version'] }, { name: "_resolution", set: "resolutions" }] },
-            { db: "app_versions", metrics: [{ name: "_app_version", set: "app_versions", short_code: common.dbUserMap['app_version'] }] }
-        ];
+    function updateCollection(collName, id, data, op, errHeader) {
+        common.db.collection(collName).update({'_id': id}, {op: data}, 
+            {'upsert': true}, function(err, object) {
+                if (err){
+                    console.log(errHeader+':'+err);  
+                }
+            });
+        );
+    }
+
+    function reallyUpdateAll(params) {
+        setRangeMeta(sessionRanges['meta.d-ranges'], 'sessions', 'meta.d-ranges', params.app_id);
+        updateCollection('sessions', params.app_id, updateSessions, '$inc', '[updateSessions]');
+
+        setRangeMeta(userRanges['meta.f-ranges'], 'users', 'meta.f-ranges', params.app_id);
+        setRangeMeta(userRanges['meta.l-ranges'], 'users', 'meta.l-ranges', params.app_id);
+        updateCollection('users', params.app_id, updateUsers, '$inc', '[updateUsers]');
+
+        setRangeMeta(countryArray, 'locations', 'meta.countries', params.app_id);
+        updateCollection('locations', params.app_id, updateLocations, '$inc', '[updateLocations]');
+ 
+        if (common.config.api.city_data !== false) {
+            setRangeMeta(countryArray, 'cities', 'meta.cities', params.app_id);
+            updateCollection('cities', params.app_id, updateCities, '$inc', '[updateCities]');
+        }
+        updateCollection('app_users'+params.app_id, params.app_user_id, userProps, '$set', '[userProps]'); 
 
         for (var i=0; i < predefinedMetrics.length; i++) {
-            var tmpTimeObj = {},
-                tmpSet = {},
-                needsUpdate = false;
+            setRangeMeta(MetricMetaSet[predefinedMetrics[i].db], predefinedMetrics[i].db, 'meta.'+predefinedMetrics[i].db, params.app_id);
+            updateCollection(predefinedMetrics[i].db, app_id, updateMetrics, '$inc', '[updateMetrics:'+predefinedMetrics[i].db+']');
+        }
+    }
 
-            for (var j=0; j < predefinedMetrics[i].metrics.length; j++) {
+    function updateFreqRange(sessionObj, dbAppUser) {
+        // Calculate the frequency range of the user
+        var calculatedFrequency = computeFreqRange(sessionObj.timestamp, dbAppUser.timestamp);
+        fillTimeObject(sessionObj, updateUsers, common.dbMap['frequency'] + '.' + calculatedFrequency);
+        common.arrayAddUniq(userRanges['meta.' + 'f-ranges']["$each"],calculatedFrequency);
+    } 
+
+    function updateLoyaltyRange(sessionObj, session_count, toFill) {
+        // Calculate the loyalty range of the user
+        var calculatedLoyaltyRange = computeLoyaltyRange(session_count);
+        var updateTimeObject = getTimeFunction(toFill);
+        updateTimeObject(sessionObj, updateUsers, common.dbMap['loyalty'] + '.' + calculatedLoyaltyRange);
+        common.arrayAddUniq(userRanges['meta.' + 'l-ranges']["$each"],calculatedFrequency);
+    } 
+   
+    function updateLocationMeta(sessionObject) { 
+        // add meta data for locations    
+        common.arrayAddUniq(countryArray["$each"], sessionObject.country);
+        common.arrayAddUniq(cityArray["$each"], sessionObject.city);
+    }
+
+
+    function getTimeFunction(toFill) {
+        var updateTimeObject;
+        switch (toFill) {
+            case OP_INCREASE:
+                updateTimeObject = common.incrTimeObject;
+                break;
+            case OP_DECREASE:
+                updateTimeObject = common.decrTimeObject;
+                break;
+            default:
+                updateTimeObject = common.fillTimeObject;
+        }
+        return updateTimeObject;
+    }
+
+    function updateMetricTimeObj(sessionObject, prop, toFill) {
+        var updateTimeObject = getTimeFunction(toFill);
+        for (var i=0; i<predefinedMetrics.length; i++) {
+            for (var j=0; j<predefinedMetrics[i].metrics.length; j++) {
                 var tmpMetric = predefinedMetrics[i].metrics[j],
-                    recvMetricValue = params.qstring.metrics[tmpMetric.name];
+                    recvMetricValue = sessionObject.metrics[tmpMetric.name];
 
                 if (recvMetricValue) {
                     var escapedMetricVal = recvMetricValue.replace(/^\$/, "").replace(/\./g, ":");
-                    needsUpdate = true;
-                    tmpSet["meta." + tmpMetric.set] = escapedMetricVal;
-                    common.fillTimeObject(params, tmpTimeObj, escapedMetricVal + '.' + common.dbMap['total']);
+                    MetricMetaSet["meta." + tmpMetric.set] = escapedMetricVal;
+                    updateTimeObject(sessionObject, updateMetrics[predefinedMetrics[i].db], escapedMetricVal + '.' + prop);
+                }
+            }
+        }
+    }
 
-                    if (isNewUser) {
-                        common.fillTimeObject(params, tmpTimeObj, escapedMetricVal + '.' + common.dbMap['new']);
-                        common.fillTimeObject(params, tmpTimeObj, escapedMetricVal + '.' + common.dbMap['unique']);
-                    } else if (tmpMetric.short_code && user[tmpMetric.short_code] != escapedMetricVal) {
-                        common.fillTimeObject(params, tmpTimeObj, escapedMetricVal + '.' + common.dbMap['unique']);
-                    } else {
-                        for (var k=0; k < uniqueLevels.length; k++) {
-                            tmpTimeObj[uniqueLevels[k] + '.' + escapedMetricVal + '.' + common.dbMap['unique']] = 1;
-                        }
-                    }
+    function updateStatistics(sessionObject, prop, toFill, increase) {
+        var incr = increase? increase : 1;
+        var updateTimeObject = getTimeFunction(toFill);
+        updateTimeObject(sessionObject, updateSessions, prop, incr);
+        updateTimeObject(sessionObject, updateLocations, sessionObject.country + '.' + prop, incr);
+        updateTimeObject(sessionObject, updateCities, sessionObject.city + '.' + prop, incr);
+        if (common.config.api.city_data !== false) {
+            updateTimeObject(sessionObject, updateCities, params.user.city + '.' + prop, incr);
+        }
+        updateMetricTimeObj(sessionObject, prop, toFill);
+    }
 
-                    // Assign properties to app_users document of the current user
+    function updateUserMetric(sessionObject) {
+        for (var i=0; i<predefinedMetrics.length; i++) {
+            for (var j=0; j<predefinedMetrics[i].metrics.length; j++) {
+                var tmpMetric = predefinedMetrics[i].metrics[j],
+                    recvMetricValue = sessionObject.metrics[tmpMetric.name];
+
+                if (recvMetricValue) {
+                    var escapedMetricVal = recvMetricValue.replace(/^\$/, "").replace(/\./g, ":");
                     if (tmpMetric.short_code) {
-                        if (isNewUser || (!isNewUser && user[tmpMetric.short_code] != escapedMetricVal)) {
-                            userProps[tmpMetric.short_code] = escapedMetricVal;
-                        }
+                        userProps[tmpMetric.short_code] = escapedMetricVal;
                     }
                 }
             }
+        }
+    }
 
-            if (needsUpdate) {
-                common.db.collection(predefinedMetrics[i].db).update({'_id': params.app_id}, {'$inc': tmpTimeObj, '$addToSet': tmpSet}, {'upsert': true});
+    function updateUserProfile(sessionObject, finalUserObject) {
+        updateUserMetric(sessionObject);
+        userProps[common.dbUserMap['device_id']] = sessionObject.device_id;
+        userProps[common.dbUserMap['country_code']] = sessionObject.country;
+        if (common.config.api.city_data !== false) {
+            userProps[common.dbUserMap['city']] = sessionObject.city;
+        }
+        userProps[common.dbUserMap['session_duration']] = sessionObject.acc_duration;
+        userProps[common.dbUserMap['total_session_duration']] = finalUserObject[common.dbUserMap['total_session_duration']];
+        userProps[common.dbUserMap['session_count']] = finalUserObject[common.dbUserMap['session_count']];
+        userProps[common.dbUserMap['last_end_session_timestamp']] = finalUserObject[common.dbUserMap['last_end_session_timestamp']];
+        userProps.appTimezone = sessionObject.appTimezone;
+        userProps.timestamp = sessionObject.timestamp;
+        userProps.time = sessionObject.time;
+    }
+
+    //Param: dbAppUser-user data in app_user_XXX, apps:all logs for a Single User
+    function processUserSession(dbAppUser, apps) {
+        var sessionObj = [];
+        var last_end_session_timestamp = 0;
+
+        var total_duration = 0;
+        if (dbAppUser) { //set sessionObj[0] = dbAppUser to compute on-going session
+            dbAppUser.acc_duration = dbAppUser[common.dbUserMap['session_duration']];
+            sessionObj[0] = common.clone(dbAppUser);
+            last_end_session_timestamp = dbAppUser[common.dbUserMap['last_end_session_timestamp']];
+        } else { //new user
+            sessionObj[0] = {};
+        }
+        var currObjIdx = 0;
+        for (i=0; i<apps.length; i++) {
+            apps[i].time = common.initTimeObj(params.appTimezone, params.timestamp, params.tz);
+            //set event(request) count for every request
+            common.incrTimeObject(params, updateSessions, common.dbMap['events']); 
+            if (apps[i].begin_session) {
+                if ((apps[i].timestamp - last_end_session_timestamp) <= 10) { //ongoing session
+                    last_end_session_timestamp = 0;
+                    continue;
+                }
+                //init a new sessionObj to keep the session with this begin_session
+                sessionObj[++currObjIdx] = apps[i];
+                sessionObj[currObjIdx].acc_duration = 0;
+                last_end_session_timestamp = 0;
+            }
+            if (apps[i].end_session) { 
+                //used to judge if there will be ongoing session
+                last_end_session_timestamp = apps[i].timestamp;
+                //keep last_end_session_timestamp for next batch process
+                sessionObj[currObjIdx][common.dbUserMap['last_end_session_timestamp']] = last_end_session_timestamp;
+            }
+            if (apps[i].session_duration) {
+                sessionObj[currObjIdx].acc_duration += apps[i].session_duration;
+                total_duration += apps[i].session_duration;
+            }
+            /* for boundary condition:
+                1. dbAppUser contains begin_session(last_end_session_timestamp=0): 
+                    end_session will update last_end_session_timestamp, 
+                    session duration will increase total durations; ongoing begin_session will just continue; 
+                    new begin_session will init new sessionObj
+                2. dbAppUser contains end_session: ongoing begin_session will just continue; 
+                    new begin_session will init new sessionObj
+                3. the last one is begin_session: last_end_session_timestamp = 0; acc_duration = current session_duration
+                4. the last one is end_session: last_end_session_timestamp = current timestamp;
+                    acc_duration = current session_duration
+            */
+        }
+
+        //Prepare final Session info to update
+        var finalUserObject = {};
+        finalUserObject[common.dbUserMap['last_end_session_timestamp']] = last_end_session_timestamp;
+        finalUserObject[common.dbUserMap['session_count']] = dbAppUser[common.dbUserMap['session_count']] + currObjIdx;
+        finalUserObject[common.dbUserMap['total_session_duration']] 
+            = total_duration + dbAppUser[common.dbUserMap['total_session_duration']];
+
+        var sessionObjByDay = {};
+        var sessionDay = null;
+        var sessionDayIdx = -1;
+        var startIdx = dbAppUser? 0 : 1;
+        var calculatedDurationRange = 0;
+
+        for (var i=startIdx; i<=currObjIdx; i++) { 
+            if (sessionDay != sessionObj[i].time.daily) {
+                sessionDay = sessionObj[i].time.daily;
+                sessionObjByDay[++sessionDayIdx].sessions = [];                
+            }
+            computeGeoInfo(sessionObj[i]);
+            updateLocationMeta(sessionObj[i]);
+            sessionObjByDay[sessionDayIdx].sessions.push(sessionObj[i]);
+            updateSessionDuration(sessionObj[i], OP_INCREASE);
+            //set total user count in necessary collections   
+            updateStatistics(sessionObj[i], common.dbMap['total'], OP_INCREASE); //will increase for every session
+            updateStatistics(sessionObjects[j], common.dbMap['unique'], OP_FILL); // only set once
+        }
+
+        var session_count = dbAppUser[common.dbUserMap['session_count']];
+        for (var i=1; i<sessionObjByDay.length; i++) {
+            session_count += sessionObjByDay[i].sessions.length;
+            sessionObjByDay[i-1].sessions.length;
+            updateFreqRange(sessionObjByDay[i].sessions[sessionObjByDay[i].sessions.length-1], 
+                sessionObjByDay[i-1].sessions[sessionObjByDay[i-1].sessions.length-1]);
+            updateLoyaltyRange(sessionObjByDay[i].sessions[sessionObjByDay[i].sessions.length-1],
+                session_count, toFill);
+        }
+
+        //If there is on-going session coming in at first...
+        if (dbAppUser) {
+            //Update last session in DB to include new session duration sent after last processing, also update duration ranges
+            updateSessionDuration(dbAppUser, OP_DECREASE);
+            updateStatistics(dbAppUser, common.dbMap['unique'], OP_DECREASE); // only set once
+
+            //update loyalty if there are more sessions in the same day as dbAppUser
+            var ori_session_count = dbAppUser[common.dbUserMap['session_count']];
+            var new_session_count = ori_session_count + sessionObjByDay[0].sessions.length
+            if (computeLoyaltyRange(ori_session_count) != computeLoyaltyRange(new_session_count)) {
+                updateLoyaltyRange(dbAppUser, ori_session_count, OP_DECREASE);
+                updateLoyaltyRange(sessionObjByDay[0].sessions[sessionObjByDay[0].sessions.length-1], 
+                    new_session_count, OP_INCREASE);
             }
         }
 
-        // sc: session count. common.dbUserMap is not used here for readability purposes.
-        common.db.collection('app_users' + params.app_id).update({'_id':params.app_user_id}, {'$inc':{'sc':1}, '$set':userProps}, {'upsert':true}, function () {
-        });
-    }
+        //set new user count in necessary collections   
+        if (!dbAppUser) {
+            updateStatistics(sessionObjByDay[0].sessions[0], common.dbMap['new']);
+        }
 
+        //use last session object to update user profiles (metrics)
+        updateUserProfile(sessionObj[currObjIdx], finalUserObject);
+
+        //do the real update job in MongoDB
+        reallyUpdateAll();
+    }
 }(usage));
 
 module.exports = usage;

@@ -18,70 +18,53 @@ var http = require('http'),
 
 http.globalAgent.maxSockets = common.config.api.max_sockets || 1024;
 
+
+function logDbError(err, res) {
+    if (err) {
+        console.log(err);
+    } else {
+        console.log("Everything is OK");
+    }
+}
+
+function insertRawColl(coll, eventp, params) {
+    eventp.app_user_id = params.app_user_id;
+    eventp.device_id = params.device_id;
+    eventp.timestamp = params.timestamp;
+    eventp.tz = params.tz;
+    common.db.collection(coll).insert(eventp, logDbError(err, res));
+}
+
+function insertRawEvent(coll,params) {
+    var eventp = {};
+    eventp.events = params.events;
+    insertRawColl(coll, eventp, params);
+}
+
+function insertRawSession(coll,params) {
+    var eventp = {};
+    if (params.begin_session) {
+        eventp.ip_address = params.ip_address;
+        eventp.metrics = params.metrics;
+    }
+    eventp.begin_session = params.begin_session;
+    eventp.end_session = params.end_session;        
+    eventp.session_duration = params.session_duration;
+    insertRawColl(coll, eventp, params);
+}
+
 // Checks app_key from the http request against "apps" collection.
 // This is the first step of every write request to API.
 function validateAppForWriteAPI(params) {
-    common.db.collection('apps').findOne({'key':params.qstring.app_key}, function (err, app) {
-        if (!app) {
-            if (common.config.api.safe) {
-                //common.returnMessage(params, 400, 'App does not exist');
-                common.returnMessage(params, 200, 'Success');
-            }
+    if (params.events) {
+        insertRawEvent(common.rawCollection['event']+params.app_id,params);
+    } 
 
-            return false;
-        }
+    if (params.begin_session || params.end_session || params.session_duration) {
+        insertRawSession(common.rawCollection['session']+params.app_id, params);
+    } 
 
-        params.app_id = app['_id'];
-        params.app_cc = app['country'];
-        params.appTimezone = app['timezone'];
-        params.time = common.initTimeObj(params.appTimezone, params.qstring.timestamp, params.qstring.tz);
-
-        var updateSessions = {};
-        common.fillTimeObject(params, updateSessions, common.dbMap['events']);
-        common.db.collection('sessions').update({'_id':params.app_id}, {'$inc':updateSessions}, {'upsert':true}, function(err, res){});
-        var locationData = geoip.lookup(params.ip_address);
-
-        if (locationData) {
-            if (locationData.country) {
-                params.user.country = locationData.country;
-            }
-
-            if (locationData.city) {
-                params.user.city = locationData.city;
-            } else {
-                params.user.city = 'Unknown';
-            }
-
-            // Coordinate values of the user location has no use for now
-            if (locationData.ll) {
-                params.user.lat = locationData.ll[0];
-                params.user.lng = locationData.ll[1];
-            }
-        }
-        common.db.collection('raw_'+params.app_id).insert(params, function(err, res){});
-
-        if (params.qstring.events) {
-            countlyApi.data.events.processEvents(params);
-        } else if (common.config.api.safe) {
-            common.returnMessage(params, 200, 'Success');
-        }
-
-        if (params.qstring.begin_session) {
-            countlyApi.data.usage.beginUserSession(params);
-        } else if (params.qstring.end_session) {
-            if (params.qstring.session_duration) {
-                countlyApi.data.usage.processSessionDuration(params, function () {
-                    countlyApi.data.usage.endUserSession(params);
-                });
-            } else {
-                countlyApi.data.usage.endUserSession(params);
-            }
-        } else if (params.qstring.session_duration) {
-            countlyApi.data.usage.processSessionDuration(params);
-        } else {
-            return false;
-        }
-    });
+    common.returnMessage(params, 200, 'Success');
 }
 
 function validateUserForWriteAPI(callback, params) {
@@ -221,37 +204,33 @@ if (cluster.isMaster) {
                         'app_id':'',
                         'app_cc':'',
                         'ip_address':requests[i].ip_address,
-                        'user':{
-                            'country':requests[i].country_code || 'Unknown',
-                            'city':requests[i].city || 'Unknown'
-                        },
-                        'qstring':{
-                            'app_key':requests[i].app_key || appKey,
-                            'device_id':requests[i].device_id,
-                            'metrics':requests[i].metrics,
-                            'events':requests[i].events,
-                            'session_duration':requests[i].session_duration,
-                            'begin_session':requests[i].begin_session,
-                            'end_session':requests[i].end_session,
-                            'timestamp':requests[i].timestamp
-                        }
+                        'country':requests[i].country_code || 'Unknown',
+                        'city':requests[i].city || 'Unknown',
+                        'app_key':requests[i].app_key || appKey,
+                        'device_id':requests[i].device_id,
+                        'metrics':requests[i].metrics,
+                        'events':requests[i].events,
+                        'session_duration':requests[i].session_duration,
+                        'begin_session':requests[i].begin_session,
+                        'end_session':requests[i].end_session,
+                        'timestamp':requests[i].timestamp
                     };
 
-                    if (!tmpParams.qstring.device_id) {
+                    if (!tmpParams.device_id) {
                         continue;
                     } else {
-                        tmpParams.app_user_id = common.crypto.createHash('sha1').update(tmpParams.qstring.app_key + tmpParams.qstring.device_id + "").digest('hex');
+                        tmpParams.app_user_id = common.crypto.createHash('sha1').update(tmpParams.app_key + tmpParams.device_id + "").digest('hex');
                     }
 
-                    if (tmpParams.qstring.metrics) {
-                        if (tmpParams.qstring.metrics["_carrier"]) {
-                            tmpParams.qstring.metrics["_carrier"] = tmpParams.qstring.metrics["_carrier"].replace(/\w\S*/g, function (txt) {
+                    if (tmpParams.metrics) {
+                        if (tmpParams.metrics["_carrier"]) {
+                            tmpParams.metrics["_carrier"] = tmpParams.metrics["_carrier"].replace(/\w\S*/g, function (txt) {
                                 return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
                             });
                         }
 
-                        if (tmpParams.qstring.metrics["_os"] && tmpParams.qstring.metrics["_os_version"]) {
-                            tmpParams.qstring.metrics["_os_version"] = tmpParams.qstring.metrics["_os"][0].toLowerCase() + tmpParams.qstring.metrics["_os_version"];
+                        if (tmpParams.metrics["_os"] && tmpParams.metrics["_os_version"]) {
+                            tmpParams.metrics["_os_version"] = tmpParams.metrics["_os"][0].toLowerCase() + tmpParams.metrics["_os_version"];
                         }
                     }
 
@@ -348,21 +327,21 @@ if (cluster.isMaster) {
                     return false;
                 } else {
                     // Set app_user_id that is unique for each user of an application.
-                    params.app_user_id = common.crypto.createHash('sha1').update(params.qstring.app_key + params.qstring.device_id + "").digest('hex');
+                    params.app_user_id = common.crypto.createHash('sha1').update(params.app_key + params.device_id + "").digest('hex');
                 }
 
-                if (params.qstring.metrics) {
+                if (params.metrics) {
                     try {
-                        params.qstring.metrics = JSON.parse(params.qstring.metrics);
+                        params.metrics = JSON.parse(params.metrics);
 
-                        if (params.qstring.metrics["_carrier"]) {
-                            params.qstring.metrics["_carrier"] = params.qstring.metrics["_carrier"].replace(/\w\S*/g, function (txt) {
+                        if (params.metrics["_carrier"]) {
+                            params.metrics["_carrier"] = params.metrics["_carrier"].replace(/\w\S*/g, function (txt) {
                                 return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
                             });
                         }
 
-                        if (params.qstring.metrics["_os"] && params.qstring.metrics["_os_version"]) {
-                            params.qstring.metrics["_os_version"] = params.qstring.metrics["_os"][0].toLowerCase() + params.qstring.metrics["_os_version"];
+                        if (params.metrics["_os"] && params.metrics["_os_version"]) {
+                            params.metrics["_os_version"] = params.metrics["_os"][0].toLowerCase() + params.metrics["_os_version"];
                         }
 
                     } catch (SyntaxError) {
@@ -373,9 +352,9 @@ if (cluster.isMaster) {
                     }
                 }
 
-                if (params.qstring.events) {
+                if (params.events) {
                     try {
-                        params.qstring.events = JSON.parse(params.qstring.events);
+                        params.events = JSON.parse(params.events);
                     } catch (SyntaxError) {
                         console.log('Parse events JSON failed');
                         console.log('source:'+params.qstring.events);
@@ -385,11 +364,6 @@ if (cluster.isMaster) {
                 }
 
                 validateAppForWriteAPI(params);
-
-                if (!common.config.api.safe) {
-                    common.returnMessage(params, 200, 'Success');
-                }
-
                 break;
             }
             case '/o/users':

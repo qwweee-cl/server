@@ -41,6 +41,11 @@ var common = {},
         'has_ongoing_session': 'hos'
     };
 
+    common.rawCollection = {
+        'session': 'raw_session_',
+        'event': 'raw_event_'
+    };
+
     var dbName;
     var dbOptions = { safe:false, maxPoolSize: countlyConfig.mongodb.max_pool_size || 1000 };
 
@@ -92,8 +97,12 @@ var common = {},
     };
 
     common.arrayAddUniq = function (arr, item) {
-        if (arr.indexOf(item) === -1) {
-            arr[arr.length] = item;
+        if (arr && arr.length) {
+            if (arr.indexOf(item) === -1) {
+                arr[arr.length] = item;
+            }
+        } else {
+            arr = [item];
         }
     };
 
@@ -175,6 +184,100 @@ var common = {},
             return "";
         }
     }
+
+   // increase/add a time object in the format object["2012.7.20.property"] = increment.
+    common.incrTimeObject = function (params, object, property, increment) {
+        var increment = (increment) ? increment : 1,
+            timeObj = params.time;
+
+        if (!timeObj || !timeObj.yearly || !timeObj.monthly || !timeObj.weekly || !timeObj.daily || !timeObj.hourly) {
+            return false;
+        }
+
+        if (object[timeObj.yearly + '.' + property]) object[timeObj.yearly + '.' + property] += increment;
+        else object[timeObj.yearly + '.' + property] = increment;
+
+        if (object[timeObj.monthly + '.' + property]) object[timeObj.monthly + '.' + property] += increment;
+        else object[timeObj.monthly + '.' + property] = increment;
+        
+        if (object[timeObj.daily + '.' + property]) object[timeObj.daily + '.' + property] += increment;
+        else object[timeObj.daily + '.' + property] = increment;
+
+        // If the property parameter contains a dot, hourly data is not saved in
+        // order to prevent two level data (such as 2012.7.20.TR.u) to get out of control.
+        if (property.indexOf('.') === -1) {
+            if (object[timeObj.hourly + '.' + property]) object[timeObj.hourly + '.' + property] += increment;
+            else object[timeObj.hourly + '.' + property] = increment;
+        }
+
+        // For properties that hold the unique visitor count we store weekly data as well.
+        if (property.substr(-2) == ("." + common.dbMap["unique"]) ||
+            property == common.dbMap["unique"] ||
+            property.substr(0,2) == (common.dbMap["frequency"] + ".") ||
+            property.substr(0,2) == (common.dbMap["loyalty"] + ".") ||
+            property.substr(0,3) == (common.dbMap["durations"] + "."))
+        {
+            if (object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property]) 
+                object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property] += increment;
+            else 
+                object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property] = increment;
+        }
+    };
+
+   // decrease/add a time object in the format object["2012.7.20.property"] = -increment, and removed if zero.
+    common.decrTimeObject = function (params, object, property, increment) {
+        var increment = (increment) ? increment : 1,
+            timeObj = params.time;
+
+        if (!timeObj || !timeObj.yearly || !timeObj.monthly || !timeObj.weekly || !timeObj.daily || !timeObj.hourly) {
+            return false;
+        }
+
+        if (object[timeObj.yearly + '.' + property]) {
+            object[timeObj.yearly + '.' + property] -= increment;
+            if (object[timeObj.yearly + '.' + property] == 0) 
+                delete(object[timeObj.yearly + '.' + property]);
+        } else object[timeObj.yearly + '.' + property] = 0 - increment;
+
+        if (object[timeObj.monthly + '.' + property]) {
+            object[timeObj.monthly + '.' + property] -= increment;
+            if (object[timeObj.monthly + '.' + property] == 0) 
+                delete(object[timeObj.monthly + '.' + property]);
+        } else object[timeObj.monthly + '.' + property] = 0 - increment;
+        
+        if (object[timeObj.daily + '.' + property]) {
+            object[timeObj.daily + '.' + property] -= increment;
+            if (object[timeObj.daily + '.' + property] == 0) 
+                delete(object[timeObj.daily + '.' + property]);
+        } else object[timeObj.daily + '.' + property] = 0 - increment;
+
+        // If the property parameter contains a dot, hourly data is not saved in
+        // order to prevent two level data (such as 2012.7.20.TR.u) to get out of control.
+        if (property.indexOf('.') === -1) {
+            if (object[timeObj.hourly + '.' + property]) {
+                object[timeObj.hourly + '.' + property] -= increment;
+                if (object[timeObj.hourly + '.' + property] == 0) 
+                    delete(object[timeObj.hourly + '.' + property]);
+            } else object[timeObj.hourly + '.' + property] = increment;
+        }
+
+
+        // For properties that hold the unique visitor count we store weekly data as well.
+        if (property.substr(-2) == ("." + common.dbMap["unique"]) ||
+            property == common.dbMap["unique"] ||
+            property.substr(0,2) == (common.dbMap["frequency"] + ".") ||
+            property.substr(0,2) == (common.dbMap["loyalty"] + ".") ||
+            property.substr(0,3) == (common.dbMap["durations"] + "."))
+        {
+            if (object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property]) {
+                object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property] -= increment;
+                if (object[timeObj..yearly + ".w" + timeObj.weekly + '.' + property] == 0) 
+                    delete(object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property]);
+            } else 
+                object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property] = 0 - increment;
+        }
+    };
+
     // Adjusts the time to current app's configured timezone appTimezone and returns a time object.
     common.initTimeObj = function (appTimezone, reqTimestamp, reqTZ) {
         var currTimestamp,
@@ -343,6 +446,15 @@ var common = {},
         }
 
         params.res.end();
+    };
+
+    common.clone(obj) {
+        if (null == obj || "object" != typeof obj) return obj;
+        var copy = obj.constructor();
+        for (var attr in obj) {
+            if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+        }
+        return copy;
     };
 
 }(common));
