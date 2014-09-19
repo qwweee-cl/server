@@ -5,6 +5,7 @@ var common = {},
     crypto = require('crypto'),
     mongo = require('mongoskin'),
     debug = require('./cl/debug.js'),
+    geoip = require('geoip-lite'),
     countlyConfig = require('./../config');
 
 (function (common) {
@@ -68,6 +69,31 @@ var common = {},
     common.momentz = momentz;
 
     common.crypto = crypto;
+
+    common.computeGeoInfo = function (params) {
+        // Location of the user is retrieved using geoip-lite module from her IP address.
+        params.country = 'Unknown';
+        params.city = 'Unknown';
+        var locationData = geoip.lookup(params.ip_address);
+
+        if (locationData) {
+            if (locationData.country) {
+                params.country = locationData.country;
+            }
+
+            if (locationData.city) {
+                params.city = locationData.city;
+            } else {
+                params.city = 'Unknown';
+            }
+
+            // Coordinate values of the user location has no use for now
+            if (locationData.ll) {
+                params.lat = locationData.ll[0];
+                params.lng = locationData.ll[1];
+           }
+        }
+    }
 
     common.getDescendantProp = function (obj, desc) {
         desc = String(desc);
@@ -166,21 +192,22 @@ var common = {},
     }
     function tzFormat(tz, reqTimestamp) {
         var regex = /^(?:[+-\s]{1})(?:\d{4})$/;
+	var path = '/home/hadoop/countly_snow/log/'
         if (tz) {
             if (!tz.match(regex)) {
-                debug.writeLog("/usr/local/countly/log/re.log", "not match data=>"+tz+" Typeof:"+(typeof tz)+" empty:"+empty(tz)+" "+reqTimestamp);
+                debug.writeLog(path+'re.log', "not match data=>"+tz+" Typeof:"+(typeof tz)+" empty:"+empty(tz)+" "+reqTimestamp);
                 console.log("not match data=>"+tz+" Typeof:"+(typeof tz)+" empty:"+empty(tz));
                 return "";
             }
-            debug.writeLog("/usr/local/countly/log/tz.log", "Typeof:"+(typeof tz)+" empty:"+empty(tz)+" length:"+tz.length+"["+tz+"]");
-            debug.writeLog("/usr/local/countly/log/tz.log", "substrig(0,1):",tz.substring(0,1));
-            debug.writeLog("/usr/local/countly/log/tz.log", (typeof tz)+" tz:["+tz+"] "+(tz>=0));
+            debug.writeLog(path+'tz.log', "Typeof:"+(typeof tz)+" empty:"+empty(tz)+" length:"+tz.length+"["+tz+"]");
+            debug.writeLog(path+'tz.log', "substrig(0,1):",tz.substring(0,1));
+            debug.writeLog(path+'g', (typeof tz)+" tz:["+tz+"] "+(tz>=0));
             var absTZ = Math.abs(tz);
             var timezone = (tz>=0?"+":"-")+pad2(Math.floor(absTZ/100))+":"+pad2(absTZ%100);
-            debug.writeLog("/usr/local/countly/log/timezone.log", tz+" "+timezone+"("+timezone.length+") "+empty(tz)+" "+(typeof tz));
+            debug.writeLog(path+'ne.log', tz+" "+timezone+"("+timezone.length+") "+empty(tz)+" "+(typeof tz));
             return timezone;
         } else {
-            debug.writeLog("/usr/local/countly/log/timezone.log", "empty data=>"+tz+" Typeof:"+(typeof tz)+" empty:"+empty(tz));
+            debug.writeLog(path+'ne.log', "empty data=>"+tz+" Typeof:"+(typeof tz)+" empty:"+empty(tz));
             return "";
         }
     }
@@ -271,7 +298,7 @@ var common = {},
         {
             if (object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property]) {
                 object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property] -= increment;
-                if (object[timeObj..yearly + ".w" + timeObj.weekly + '.' + property] == 0) 
+                if (object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property] == 0) 
                     delete(object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property]);
             } else 
                 object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property] = 0 - increment;
@@ -448,7 +475,7 @@ var common = {},
         params.res.end();
     };
 
-    common.clone(obj) {
+    common.clone = function(obj) {
         if (null == obj || "object" != typeof obj) return obj;
         var copy = obj.constructor();
         for (var attr in obj) {

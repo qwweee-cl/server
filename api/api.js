@@ -2,7 +2,6 @@ var http = require('http'),
     cluster = require('cluster'),
     os = require('os'),
     url = require('url'),
-    geoip = require('geoip-lite'),
     common = require('./utils/common.js'),
     countlyApi = {
         data:{
@@ -21,6 +20,7 @@ http.globalAgent.maxSockets = common.config.api.max_sockets || 1024;
 
 function logDbError(err, res) {
     if (err) {
+	console.log('DB operation error');
         console.log(err);
     } else {
         console.log("Everything is OK");
@@ -28,11 +28,22 @@ function logDbError(err, res) {
 }
 
 function insertRawColl(coll, eventp, params) {
+    console.log('insert collection name:'+coll);
+    eventp.app_id = params.app_id;
+    eventp.appTimezone = params.appTimezone;
+    eventp.app_cc = params.app_cc;
     eventp.app_user_id = params.app_user_id;
     eventp.device_id = params.device_id;
-    eventp.timestamp = params.timestamp;
-    eventp.tz = params.tz;
-    common.db.collection(coll).insert(eventp, logDbError(err, res));
+    eventp.timestamp = params.qstring.timestamp;
+    eventp.tz = params.qstring.tz;
+    eventp.ip_address = params.ip_address;
+    console.log('[db insert]:%j', eventp);
+    common.db.collection(coll).insert(eventp, function(err, res) {
+        if (err) {
+       	    console.log('DB operation error');
+            console.log(err);
+        } 
+    });
 }
 
 function insertRawEvent(coll,params) {
@@ -44,27 +55,37 @@ function insertRawEvent(coll,params) {
 function insertRawSession(coll,params) {
     var eventp = {};
     if (params.begin_session) {
-        eventp.ip_address = params.ip_address;
         eventp.metrics = params.metrics;
     }
-    eventp.begin_session = params.begin_session;
-    eventp.end_session = params.end_session;        
-    eventp.session_duration = params.session_duration;
+    eventp.begin_session = params.qstring.begin_session;
+    eventp.end_session = params.qstring.end_session;        
+    eventp.session_duration = params.qstring.session_duration;
     insertRawColl(coll, eventp, params);
 }
 
 // Checks app_key from the http request against "apps" collection.
 // This is the first step of every write request to API.
 function validateAppForWriteAPI(params) {
-    if (params.events) {
-        insertRawEvent(common.rawCollection['event']+params.app_id,params);
-    } 
+    common.db.collection('apps').findOne({'key':params.qstring.app_key}, function(err,app) {
+	if (err) {
+            common.returnMessage(params, 200, 'Success');
+	    console.log(err);
+	    return;
+	}
+        console.log(params);
+        params.app_id = app['_id'];
+	params.appTimezone = app['timezone'];
+	params.app_cc = app['country'];
+        if (params.events) {
+            insertRawEvent(common.rawCollection['event']+app['_id'], params);
+        } 
 
-    if (params.begin_session || params.end_session || params.session_duration) {
-        insertRawSession(common.rawCollection['session']+params.app_id, params);
-    } 
+        if (params.qstring.begin_session || params.qstring.end_session || params.qstring.session_duration) {
+            insertRawSession(common.rawCollection['session']+app['_id'], params);
+        } 
 
-    common.returnMessage(params, 200, 'Success');
+        common.returnMessage(params, 200, 'Success');
+    });
 }
 
 function validateUserForWriteAPI(callback, params) {
@@ -155,13 +176,15 @@ if (cluster.isMaster) {
             };
 
         if (queryString.app_id && queryString.app_id.length != 24) {
-            //common.returnMessage(params, 400, 'Invalid parameter "app_id"');
+            console.log('Invalid parameter "app_id"');
+            console.log(params);
             common.returnMessage(params, 200, 'Success');
             return false;
         }
 
         if (queryString.user_id && queryString.user_id.length != 24) {
-            //common.returnMessage(params, 400, 'Invalid parameter "user_id"');
+            console.log('Invalid parameter "user_id"');
+            console.log(params);
             common.returnMessage(params, 200, 'Success');
             return false;
         }
@@ -316,13 +339,10 @@ if (cluster.isMaster) {
             case '/i':
             {
                 params.ip_address =  getIpAddress(req);
-                params.user = {
-                    'country':'Unknown',
-                    'city':'Unknown'
-                };
 
                 if (!params.qstring.app_key || !params.qstring.device_id) {
-                    //common.returnMessage(params, 400, 'Missing parameter "app_key" or "device_id"');
+                    console.log('Missing parameter "app_key" or "device_id"');
+                    console.log(params);
                     common.returnMessage(params, 200, 'Success');
                     return false;
                 } else {
@@ -330,9 +350,9 @@ if (cluster.isMaster) {
                     params.app_user_id = common.crypto.createHash('sha1').update(params.app_key + params.device_id + "").digest('hex');
                 }
 
-                if (params.metrics) {
+                if (params.qstring.metrics) {
                     try {
-                        params.metrics = JSON.parse(params.metrics);
+                        params.metrics = JSON.parse(params.qstring.metrics);
 
                         if (params.metrics["_carrier"]) {
                             params.metrics["_carrier"] = params.metrics["_carrier"].replace(/\w\S*/g, function (txt) {
@@ -346,15 +366,15 @@ if (cluster.isMaster) {
 
                     } catch (SyntaxError) {
                         console.log('Parse metrics JSON failed');
-                        console.log('source:'+params.qstring.metrics);
+                        console.log(params);
                         common.returnMessage(params, 200, 'Success');
                         return false
                     }
                 }
 
-                if (params.events) {
+                if (params.qstring.events) {
                     try {
-                        params.events = JSON.parse(params.events);
+                        params.events = JSON.parse(params.qstring.events);
                     } catch (SyntaxError) {
                         console.log('Parse events JSON failed');
                         console.log('source:'+params.qstring.events);

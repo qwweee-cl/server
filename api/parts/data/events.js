@@ -32,7 +32,6 @@ var events = {},
                     console.log('[updateSessions]:'+err);  
                 }
             });
-        );
     }
 
     function eventAddup(params) {
@@ -181,7 +180,7 @@ var events = {},
         }
     }
 
-    function updateEvents = function() {
+    function updateEvents() {
         // update Segmentation_key+App_id collections
         for (var collection in eventCollections) {
             for (var segment in eventCollections[collection]) {
@@ -211,7 +210,7 @@ var events = {},
         }
     };
 
-    function logCurrUserEvents = function(apps) {
+    function logCurrUserEvents(apps) {
         var user = {};
         var action = {};
         for (j=0; j<apps.length; j++) {
@@ -250,7 +249,8 @@ var events = {},
         user.device_id = app[length-1].device_id;
         user.timestamp = app[length-1].timestamp;
         user.tz = app[length-1].tz;
-        user.country = app[length-1].user.country;
+	common.computeGeoInfo(app[length-1]);
+        user.country = app[length-1].country;
 
         db.collection('ibb_'+app.app_id).update({device_id:user.device_id}, {$set:user, $inc:action}
             , {upsert:true}, function(err, res) {
@@ -258,7 +258,6 @@ var events = {},
                     console.log('userEvent log error:' + err);  
                 }
             });
-        );
 
         function computeCnt(e, key, action) {
             var cnt = e.count||1;

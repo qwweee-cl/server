@@ -20,7 +20,8 @@ var usage = {},
 
     //query user data and execute processUserSession
     //
-    usage.ProcessSession = function (logListforSingleUser) {
+    usage.processSession = function (logListforSingleUser) {
+	console.log('[processSession]:%j',logListforSingleUser[0]);
         common.db.collection('app_users' + logListforSingleUser[0].app_id).findOne({'_id': logListforSingleUser[0].app_user_id }, 
             function (err, dbAppUser){
                 processUserSession(dbAppUser, logListforSingleUser);
@@ -79,7 +80,7 @@ var usage = {},
             [168,192],
             [192,360],
             [360,744]
-        ]
+        ],
         sessionFrequencyMax = 744;
 
         if ((userTime - userLastSeenTimestamp) >= (sessionFrequencyMax * 60 * 60)) {
@@ -93,9 +94,9 @@ var usage = {},
             }
         }
         return '';
-    }
+    };
 
-    funtcion computeLoyaltyRange(userSessionCount) {
+    function computeLoyaltyRange(userSessionCount) {
         var loyaltyRanges = [
             [0,1],
             [2,2],
@@ -120,29 +121,6 @@ var usage = {},
         return '';
     }
 
-    function computeGeoInfo(params) {
-        // Location of the user is retrieved using geoip-lite module from her IP address.
-        var locationData = geoip.lookup(params.ip_address);
-
-        if (locationData) {
-            if (locationData.country) {
-                params.country = locationData.country;
-            }
-
-            if (locationData.city) {
-                params.city = locationData.city;
-            } else {
-                params.city = 'Unknown';
-            }
-
-            // Coordinate values of the user location has no use for now
-            if (locationData.ll) {
-                params.lat = locationData.ll[0];
-                params.lng = locationData.ll[1];
-            }
-        }
-    }
-
     var updateSessions = {};
     var updateLocations = {};
     var updateUsers = {};
@@ -152,28 +130,27 @@ var usage = {},
     userRanges['meta.f-ranges'] = {};
     userRanges['meta.l-ranges'] = {};
     sessionRanges['meta.d-ranges'] = {};
-    userRanges['meta.f-ranges']["$each"] = [];
-    userRanges['meta.l-ranges']["$each"] = [];
-    sessionRanges['meta.d-ranges']["$each"] = [];
+    userRanges['meta.f-ranges']['$each'] = [];
+    userRanges['meta.l-ranges']['$each'] = [];
+    sessionRanges['meta.d-ranges']['$each'] = [];
     var countryArray = {};
     var cityArray = {};
-    var countryArray["$each"] = [];
-    var cityArray["$each"] = [];
+    countryArray['$each'] = [];
+    cityArray['$each'] = [];
     var userProps = {};
     var updateMetrics = {};
     var MetricMetaSet = {};
 
-    function setRangeMeta(ranges, coll, key, id) {
-        if (ranges.length == 0) return;
+    function setRangeMeta(ranges, coll, id) {
+        if (!ranges|| !ranges.length) return;
 
-        common.db.collection(coll).update({'_id': app_id}, {'$addToSet': range}, 
+        common.db.collection(coll).update({'_id': id}, {'$addToSet': range}, 
             {'upsert': true}, function(err, object) {
                 if (err){
                     console.log(err);  // returns error if no matching object found
                 }
             });
-        ); 
-    }
+    };
 
     function updateCollection(collName, id, data, op, errHeader) {
         common.db.collection(collName).update({'_id': id}, {op: data}, 
@@ -182,29 +159,28 @@ var usage = {},
                     console.log(errHeader+':'+err);  
                 }
             });
-        );
     }
 
     function reallyUpdateAll(params) {
-        setRangeMeta(sessionRanges['meta.d-ranges'], 'sessions', 'meta.d-ranges', params.app_id);
+        setRangeMeta(sessionRanges['meta.d-ranges'], 'sessions', params.app_id);
         updateCollection('sessions', params.app_id, updateSessions, '$inc', '[updateSessions]');
 
-        setRangeMeta(userRanges['meta.f-ranges'], 'users', 'meta.f-ranges', params.app_id);
-        setRangeMeta(userRanges['meta.l-ranges'], 'users', 'meta.l-ranges', params.app_id);
+        setRangeMeta(userRanges['meta.f-ranges'], 'users', params.app_id);
+        setRangeMeta(userRanges['meta.l-ranges'], 'users', params.app_id);
         updateCollection('users', params.app_id, updateUsers, '$inc', '[updateUsers]');
 
-        setRangeMeta(countryArray, 'locations', 'meta.countries', params.app_id);
+        setRangeMeta(countryArray, 'locations', params.app_id);
         updateCollection('locations', params.app_id, updateLocations, '$inc', '[updateLocations]');
  
         if (common.config.api.city_data !== false) {
-            setRangeMeta(countryArray, 'cities', 'meta.cities', params.app_id);
+            setRangeMeta(countryArray, 'cities', params.app_id);
             updateCollection('cities', params.app_id, updateCities, '$inc', '[updateCities]');
         }
         updateCollection('app_users'+params.app_id, params.app_user_id, userProps, '$set', '[userProps]'); 
 
         for (var i=0; i < predefinedMetrics.length; i++) {
-            setRangeMeta(MetricMetaSet[predefinedMetrics[i].db], predefinedMetrics[i].db, 'meta.'+predefinedMetrics[i].db, params.app_id);
-            updateCollection(predefinedMetrics[i].db, app_id, updateMetrics, '$inc', '[updateMetrics:'+predefinedMetrics[i].db+']');
+            setRangeMeta(MetricMetaSet[predefinedMetrics[i].db], predefinedMetrics[i].db, params.app_id);
+            updateCollection(predefinedMetrics[i].db, params.app_id, updateMetrics, '$inc', '[updateMetrics:'+predefinedMetrics[i].db+']');
         }
     }
 
@@ -212,7 +188,7 @@ var usage = {},
         // Calculate the frequency range of the user
         var calculatedFrequency = computeFreqRange(sessionObj.timestamp, dbAppUser.timestamp);
         fillTimeObject(sessionObj, updateUsers, common.dbMap['frequency'] + '.' + calculatedFrequency);
-        common.arrayAddUniq(userRanges['meta.' + 'f-ranges']["$each"],calculatedFrequency);
+        common.arrayAddUniq(userRanges['meta.' + 'f-ranges']['$each'],calculatedFrequency);
     } 
 
     function updateLoyaltyRange(sessionObj, session_count, toFill) {
@@ -220,13 +196,13 @@ var usage = {},
         var calculatedLoyaltyRange = computeLoyaltyRange(session_count);
         var updateTimeObject = getTimeFunction(toFill);
         updateTimeObject(sessionObj, updateUsers, common.dbMap['loyalty'] + '.' + calculatedLoyaltyRange);
-        common.arrayAddUniq(userRanges['meta.' + 'l-ranges']["$each"],calculatedFrequency);
+        common.arrayAddUniq(userRanges['meta.' + 'l-ranges']['$each'],calculatedFrequency);
     } 
    
     function updateLocationMeta(sessionObject) { 
         // add meta data for locations    
-        common.arrayAddUniq(countryArray["$each"], sessionObject.country);
-        common.arrayAddUniq(cityArray["$each"], sessionObject.city);
+        common.arrayAddUniq(countryArray['$each'], sessionObject.country);
+        common.arrayAddUniq(cityArray['$each'], sessionObject.city);
     }
 
 
@@ -246,6 +222,8 @@ var usage = {},
     }
 
     function updateMetricTimeObj(sessionObject, prop, toFill) {
+	if (!sessionObject.metrics) return;
+
         var updateTimeObject = getTimeFunction(toFill);
         for (var i=0; i<predefinedMetrics.length; i++) {
             for (var j=0; j<predefinedMetrics[i].metrics.length; j++) {
@@ -266,14 +244,15 @@ var usage = {},
         var updateTimeObject = getTimeFunction(toFill);
         updateTimeObject(sessionObject, updateSessions, prop, incr);
         updateTimeObject(sessionObject, updateLocations, sessionObject.country + '.' + prop, incr);
-        updateTimeObject(sessionObject, updateCities, sessionObject.city + '.' + prop, incr);
         if (common.config.api.city_data !== false) {
-            updateTimeObject(sessionObject, updateCities, params.user.city + '.' + prop, incr);
+            updateTimeObject(sessionObject, updateCities, sessionObject.city + '.' + prop, incr);
         }
-        updateMetricTimeObj(sessionObject, prop, toFill);
+	updateMetricTimeObj(sessionObject, prop, toFill);
     }
 
     function updateUserMetric(sessionObject) {
+	if (!sessionObject.metrics) return;
+
         for (var i=0; i<predefinedMetrics.length; i++) {
             for (var j=0; j<predefinedMetrics[i].metrics.length; j++) {
                 var tmpMetric = predefinedMetrics[i].metrics[j],
@@ -320,9 +299,9 @@ var usage = {},
         }
         var currObjIdx = 0;
         for (i=0; i<apps.length; i++) {
-            apps[i].time = common.initTimeObj(params.appTimezone, params.timestamp, params.tz);
+            apps[i].time = common.initTimeObj(apps[i].appTimezone, apps[i].timestamp, apps[i].tz);
             //set event(request) count for every request
-            common.incrTimeObject(params, updateSessions, common.dbMap['events']); 
+            common.incrTimeObject(apps[i], updateSessions, common.dbMap['events']); 
             if (apps[i].begin_session) {
                 if ((apps[i].timestamp - last_end_session_timestamp) <= 10) { //ongoing session
                     last_end_session_timestamp = 0;
@@ -359,9 +338,9 @@ var usage = {},
         //Prepare final Session info to update
         var finalUserObject = {};
         finalUserObject[common.dbUserMap['last_end_session_timestamp']] = last_end_session_timestamp;
-        finalUserObject[common.dbUserMap['session_count']] = dbAppUser[common.dbUserMap['session_count']] + currObjIdx;
+        finalUserObject[common.dbUserMap['session_count']] = (dbAppUser?dbAppUser[common.dbUserMap['session_count']]:0) + currObjIdx;
         finalUserObject[common.dbUserMap['total_session_duration']] 
-            = total_duration + dbAppUser[common.dbUserMap['total_session_duration']];
+            = total_duration + (dbAppUser?dbAppUser[common.dbUserMap['total_session_duration']]:0);
 
         var sessionObjByDay = {};
         var sessionDay = null;
@@ -372,18 +351,19 @@ var usage = {},
         for (var i=startIdx; i<=currObjIdx; i++) { 
             if (sessionDay != sessionObj[i].time.daily) {
                 sessionDay = sessionObj[i].time.daily;
-                sessionObjByDay[++sessionDayIdx].sessions = [];                
+                sessionObjByDay[++sessionDayIdx]= {};                
+                sessionObjByDay[sessionDayIdx].sessions = [];                
             }
-            computeGeoInfo(sessionObj[i]);
+            common.computeGeoInfo(sessionObj[i]);
             updateLocationMeta(sessionObj[i]);
             sessionObjByDay[sessionDayIdx].sessions.push(sessionObj[i]);
             updateSessionDuration(sessionObj[i], OP_INCREASE);
             //set total user count in necessary collections   
             updateStatistics(sessionObj[i], common.dbMap['total'], OP_INCREASE); //will increase for every session
-            updateStatistics(sessionObjects[j], common.dbMap['unique'], OP_FILL); // only set once
+            updateStatistics(sessionObj[i], common.dbMap['unique'], OP_FILL); // only set once
         }
 
-        var session_count = dbAppUser[common.dbUserMap['session_count']];
+        var session_count = dbAppUser?dbAppUser[common.dbUserMap['session_count']]:0;
         for (var i=1; i<sessionObjByDay.length; i++) {
             session_count += sessionObjByDay[i].sessions.length;
             sessionObjByDay[i-1].sessions.length;
@@ -418,7 +398,7 @@ var usage = {},
         updateUserProfile(sessionObj[currObjIdx], finalUserObject);
 
         //do the real update job in MongoDB
-        reallyUpdateAll();
+        reallyUpdateAll(sessionObj[1]);
     }
 }(usage));
 
