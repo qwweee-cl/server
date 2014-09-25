@@ -316,6 +316,7 @@ var common = {},
         var currTimestamp,
             currDate,
             currDateWithoutTimestamp = new Date();
+        appTimezone = "America/Phoenix";
 
         // Check if the timestamp parameter exists in the request and is a 10 digit integer
         if (reqTimestamp && (reqTimestamp + "").length === 10 && common.isNumber(reqTimestamp)) {
@@ -340,7 +341,7 @@ var common = {},
 
 /*
         var TZ = tzFormat(reqTZ, reqTimestamp);
-        if (!empty(TZ)) {
+        if (0 && !empty(TZ)) {
             tmpMoment = tmpMoment.zone(TZ);
             //withoutMoment = withoutMoment.zone(TZ);
             //console.log("timezone:"+reqTZ+" "+TZ);
