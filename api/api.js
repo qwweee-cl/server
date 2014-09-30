@@ -28,16 +28,16 @@ function logDbError(err, res) {
 }
 
 function insertRawColl(coll, eventp, params) {
-    console.log('insert collection name:'+coll);
+    //console.log('insert collection name:'+coll);
     eventp.app_id = params.app_id;
     eventp.appTimezone = params.appTimezone;
     eventp.app_cc = params.app_cc;
     eventp.app_user_id = params.app_user_id;
-    eventp.device_id = params.device_id;
+    eventp.device_id = params.qstring.device_id;
     eventp.timestamp = params.qstring.timestamp;
     eventp.tz = params.qstring.tz;
     eventp.ip_address = params.ip_address;
-    console.log('[db insert]:%j', eventp);
+    //console.log('[db insert]:%j', eventp);
     common.db.collection(coll).insert(eventp, function(err, res) {
         if (err) {
        	    console.log('DB operation error');
@@ -54,8 +54,8 @@ function insertRawEvent(coll,params) {
 
 function insertRawSession(coll,params) {
     var eventp = {};
-    if (params.begin_session) {
-        eventp.metrics = params.metrics;
+    if (params.qstring.begin_session) {
+        eventp.metrics = params.qstring.metrics;
     }
     eventp.begin_session = params.qstring.begin_session;
     eventp.end_session = params.qstring.end_session;        
@@ -72,7 +72,7 @@ function validateAppForWriteAPI(params) {
 	    console.log(err);
 	    return;
 	}
-        console.log(params);
+        //console.log(params);
         params.app_id = app['_id'];
 	params.appTimezone = app['timezone'];
 	params.app_cc = app['country'];
@@ -347,21 +347,21 @@ if (cluster.isMaster) {
                     return false;
                 } else {
                     // Set app_user_id that is unique for each user of an application.
-                    params.app_user_id = common.crypto.createHash('sha1').update(params.app_key + params.device_id + "").digest('hex');
+                    params.app_user_id = common.crypto.createHash('sha1').update(params.app_key + params.qstring.device_id + "").digest('hex');
                 }
 
                 if (params.qstring.metrics) {
                     try {
-                        params.metrics = JSON.parse(params.qstring.metrics);
+                        params.qstring.metrics = JSON.parse(params.qstring.metrics);
 
-                        if (params.metrics["_carrier"]) {
-                            params.metrics["_carrier"] = params.metrics["_carrier"].replace(/\w\S*/g, function (txt) {
+                        if (params.qstring.metrics["_carrier"]) {
+                            params.qstring.metrics["_carrier"] = params.qstring.metrics["_carrier"].replace(/\w\S*/g, function (txt) {
                                 return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
                             });
                         }
 
-                        if (params.metrics["_os"] && params.metrics["_os_version"]) {
-                            params.metrics["_os_version"] = params.metrics["_os"][0].toLowerCase() + params.metrics["_os_version"];
+                        if (params.qstring.metrics["_os"] && params.qstring.metrics["_os_version"]) {
+                            params.qstring.metrics["_os_version"] = params.qstring.metrics["_os"][0].toLowerCase() + params.qstring.metrics["_os_version"];
                         }
 
                     } catch (SyntaxError) {

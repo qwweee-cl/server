@@ -6,25 +6,26 @@ var events = {},
     var eventSegments = {};
     var eventArray = [];            
 
-    events.processEvents = function(params) {
+    events.processEvents = function(app) {
         var cur_idx = 0;
         var app_id = app[0].app_id;
+        var curr_app_user = app[0].app_user_id;
         var updateSessions = {};
 
-        for (i=0; i<app.length; i++) {
-            app[i].time = common.initTimeObj(params.appTimezone, params.timestamp, params.tz);
+        for (var i=0; i<app.length; i++) {
+            app[i].time = common.initTimeObj(app[i].appTimezone, app[i].timestamp, app[i].tz);
             //update requests count
-            common.incrTimeObject(params, updateSessions, common.dbMap['events']); 
+            common.incrTimeObject(app[i], updateSessions, common.dbMap['events']); 
 
             if (app[i].app_user_id != curr_app_user) { //save last session data, initialize a new one
-                logCurrUserEvents(app.slice(cur_idx, i));
+                logCurrUserEvents(app.slice(cur_idx, i), app_id);
                 cur_idx = i;
                 curr_app_user = app[i].app_user_id;
             }
             eventAddup(app[i]);
         }
-        logCurrUserEvents(app.slice(cur_idx));
-        updateEvents();
+        logCurrUserEvents(app.slice(cur_idx), app_id);
+        updateEvents(app_id);
 
         common.db.collection('sessions').update({'_id':app_id}, {'$inc':updateSessions},  
             {'upsert': true}, function(err, object) {
@@ -40,13 +41,13 @@ var events = {},
             shortCollectionName = "",
             eventCollectionName = "";
 
-        for (i=0; i < params.events.length; i++) {
+        for (var i=0; i < params.events.length; i++) {
 
             var currEvent = params.events[i];
             tmpEventObj = {};
             tmpEventColl = {};
             
-            console.log('current event:%j', currEvent);
+            //console.log('current event:%j', currEvent);
 
             // Key and count fields are required
             if (!currEvent.key || !currEvent.count || !common.isNumber(currEvent.count)) {
@@ -102,6 +103,7 @@ var events = {},
 
                     if (!eventSegments[eventCollectionName]['meta.' + segKey]) {
                         eventSegments[eventCollectionName]['meta.' + segKey] = {};
+                        eventSegments[eventCollectionName]['meta.' + segKey]['$each'] = [];
                     }
 
                     common.arrayAddUniq(eventSegments[eventCollectionName]['meta.' + segKey]["$each"], tmpSegVal);
@@ -180,7 +182,7 @@ var events = {},
         }
     }
 
-    function updateEvents() {
+    function updateEvents(app_id) {
         // update Segmentation_key+App_id collections
         for (var collection in eventCollections) {
             for (var segment in eventCollections[collection]) {
@@ -197,25 +199,25 @@ var events = {},
             var eventSegmentList = {'$addToSet': {'list': {'$each': eventArray}}};
 
             for (var event in eventSegments) {
-                if (!eventSegmentList['$addToSet']["segments." + event.replace(params.app_id, "")]) {
-                    eventSegmentList['$addToSet']["segments." + event.replace(params.app_id, "")] = {};
+                if (!eventSegmentList['$addToSet']["segments." + event.replace(app_id, "")]) {
+                    eventSegmentList['$addToSet']["segments." + event.replace(app_id, "")] = {};
                 }
 
                 if (eventSegments[event]['meta.segments']) {
-                    eventSegmentList['$addToSet']["segments." + event.replace(params.app_id, "")] = eventSegments[event]['meta.segments'];
+                    eventSegmentList['$addToSet']["segments." + event.replace(app_id, "")] = eventSegments[event]['meta.segments'];
                 }
             }
 
-            common.db.collection('events').update({'_id': params.app_id}, eventSegmentList, {'upsert': true}, function(err, res){});
+            common.db.collection('events').update({'_id': app_id}, eventSegmentList, {'upsert': true}, function(err, res){});
         }
     };
 
-    function logCurrUserEvents(apps) {
+    function logCurrUserEvents(apps, app_id) {
         var user = {};
         var action = {};
         for (j=0; j<apps.length; j++) {
-            if (app[j].events) {
-                var eventList = app[j].events;
+            if (apps[j].events) {
+                var eventList = apps[j].events;
                 //console.log('events:%j', events);
                 for ( i=0; i<eventList.length; i++) {
                     var e = eventList[i];
@@ -243,16 +245,16 @@ var events = {},
 
                 }
             }
-            console.log('user:%j', user);
-            console.log('action:%j', action);
+            //console.log('user:%j', user);
+            //console.log('action:%j', action);
         }
-        user.device_id = app[length-1].device_id;
-        user.timestamp = app[length-1].timestamp;
-        user.tz = app[length-1].tz;
-	common.computeGeoInfo(app[length-1]);
-        user.country = app[length-1].country;
+        user.device_id = apps[apps.length-1].device_id;
+        user.timestamp = apps[apps.length-1].timestamp;
+        user.tz = apps[apps.length-1].tz;
+	common.computeGeoInfo(apps[apps.length-1]);
+        user.country = apps[apps.length-1].country;
 
-        db.collection('ibb_'+app.app_id).update({device_id:user.device_id}, {$set:user, $inc:action}
+        common.db.collection('ibb_'+app_id).update({device_id:user.device_id}, {$set:user, $inc:action}
             , {upsert:true}, function(err, res) {
                 if (err){
                     console.log('userEvent log error:' + err);  

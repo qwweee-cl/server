@@ -26,7 +26,6 @@ var common = {},
     common.dbUserMap = {
         'device_id': 'did',
         'first_seen': 'fs',
-        'last_seen': 'ls',
         'session_duration': 'sd',
         'total_session_duration': 'tsd',
         'session_count': 'sc',
@@ -128,8 +127,9 @@ var common = {},
                 arr[arr.length] = item;
             }
         } else {
-            arr = [item];
+            arr[0] = item;
         }
+	return arr;
     };
 
     common.sha1Hash = function (str, addSalt) {
@@ -143,7 +143,7 @@ var common = {},
 
     // Creates a time object in the format object["2012.7.20.property"] = increment.
     common.fillTimeObject = function (params, object, property, increment) {
-        var increment = (increment) ? increment : 1,
+        var increment = (increment) ? +increment : 1,
             timeObj = params.time;
 
         if (!timeObj || !timeObj.yearly || !timeObj.monthly || !timeObj.weekly || !timeObj.daily || !timeObj.hourly) {
@@ -214,7 +214,7 @@ var common = {},
 
    // increase/add a time object in the format object["2012.7.20.property"] = increment.
     common.incrTimeObject = function (params, object, property, increment) {
-        var increment = (increment) ? increment : 1,
+        var increment = (increment) ? +increment : 1,
             timeObj = params.time;
 
         if (!timeObj || !timeObj.yearly || !timeObj.monthly || !timeObj.weekly || !timeObj.daily || !timeObj.hourly) {
@@ -321,25 +321,28 @@ var common = {},
             currDate = new Date();
         }
 
-        currDate.setTimezone(appTimezone);
-        currDateWithoutTimestamp.setTimezone(appTimezone);
+	try {
+            currDate.setTimezone(appTimezone);
+	} catch (err) {
+	    console.log('[appTimezone]:'+appTimezone+']');
+	    console.log(err);
+	}
+        //currDateWithoutTimestamp.setTimezone(appTimezone);
 
         var tmpMoment = momentz(currDate).tz(appTimezone);
-        var withoutMoment = momentz(currDateWithoutTimestamp).tz(appTimezone);
+        //var withoutMoment = momentz(currDateWithoutTimestamp).tz(appTimezone);
 
+/*
         var TZ = tzFormat(reqTZ, reqTimestamp);
         if (!empty(TZ)) {
             tmpMoment = tmpMoment.zone(TZ);
-            withoutMoment = withoutMoment.zone(TZ);
+            //withoutMoment = withoutMoment.zone(TZ);
             //console.log("timezone:"+reqTZ+" "+TZ);
         } else {
             tmpMoment = momentz(currDate).tz(appTimezone);
         }
+*/
         return {
-            now: tmpMoment,
-            nowUTC: moment.utc(currDate),
-            nowWithoutTimestamp: withoutMoment,
-            timestamp: currTimestamp,
             yearly: tmpMoment.format("YYYY"),
             monthly: tmpMoment.format("YYYY.M"),
             daily: tmpMoment.format("YYYY.M.D"),
