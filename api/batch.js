@@ -15,6 +15,7 @@ var http = require('http'),
             users:require('./parts/mgmt/users.js'),
         }
     };
+var fs = require('fs');
 
 http.globalAgent.maxSockets = common.config.api.max_sockets || 1024;
 
@@ -75,24 +76,30 @@ function processRaw(collectionName, processData, sortOrder) {
     }
 }
 
-common.db_raw.collections(function(err,collection) {
-    if (!collection.length) {
-	common.db.close();
-	common.db_raw.close();
-	console.log('no data');
-	return;
+fs.readFile('./_next_oid', 'utf8', function (err,data) {
+    if (!err) {
+	console.log('data:'+data+':'+data.length);
+	bid = new ObjectID(data.substr(0,24));
     }
-
-    for (var i=0; i<collection.length; i++) {
-        var collectionName = collection[i].collectionName;
-        if (collectionName.indexOf(common.rawCollection['event'])>=0) {
-            console.log("Entering event :"+collectionName);
-            processRaw(collectionName, processEvents,{app_user_id:1});
-        } else if (collectionName.indexOf(common.rawCollection['session'])>=0) {
-            console.log("Entering sessions :"+collectionName);
-            processRaw(collectionName, processSessions, {app_user_id:1, timestamp:1});
+    common.db_raw.collections(function(err,collection) {
+        if (!collection.length) {
+	    common.db.close();
+    	    common.db_raw.close();
+    	    console.log('no data');
+    	return;
         }
-    }
+
+        for (var i=0; i<collection.length; i++) {
+            var collectionName = collection[i].collectionName;
+            if (collectionName.indexOf(common.rawCollection['event'])>=0) {
+                console.log("Entering event :"+collectionName);
+                processRaw(collectionName, processEvents,{app_user_id:1});
+            } else if (collectionName.indexOf(common.rawCollection['session'])>=0) {
+                console.log("Entering sessions :"+collectionName);
+                processRaw(collectionName, processSessions, {app_user_id:1, timestamp:1});
+            }
+        }
+    });
 });
 
 
