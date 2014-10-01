@@ -1,4 +1,5 @@
 var events = {},
+    dbonoff = require('./../../utils/dbonoff.js'),
     common = require('./../../utils/common.js');
 
 (function (events) {
@@ -12,27 +13,25 @@ var events = {},
         var curr_app_user = app[0].app_user_id;
         var updateSessions = {};
 
+	dbonoff.on('events',2); //one for updateSessions, the other for updateEvents
         for (var i=0; i<app.length; i++) {
             app[i].time = common.initTimeObj(app[i].appTimezone, app[i].timestamp, app[i].tz);
             //update requests count
             common.incrTimeObject(app[i], updateSessions, common.dbMap['events']); 
 
             if (app[i].app_user_id != curr_app_user) { //save last session data, initialize a new one
+		dbonoff.on('events',1);
                 logCurrUserEvents(app.slice(cur_idx, i), app_id);
                 cur_idx = i;
                 curr_app_user = app[i].app_user_id;
             }
             eventAddup(app[i]);
         }
+	dbonoff.on('events',1);
         logCurrUserEvents(app.slice(cur_idx), app_id);
         updateEvents(app_id);
 
-        common.db.collection('sessions').update({'_id':app_id}, {'$inc':updateSessions},  
-            {'upsert': true}, function(err, object) {
-                if (err){
-                    console.log('[updateSessions]:'+err);  
-                }
-            });
+        common.db.collection('sessions').update({'_id':app_id}, {'$inc':updateSessions},  {'upsert': true}, dbCallback);
     }
 
     function eventAddup(params) {
@@ -182,20 +181,28 @@ var events = {},
         }
     }
 
+    function dbCallback(err, res) {
+	dbonoff.off('events');
+        if (err){
+            console.log('userEvent log error:' + err);  
+        }
+    }
     function updateEvents(app_id) {
         // update Segmentation_key+App_id collections
         for (var collection in eventCollections) {
             for (var segment in eventCollections[collection]) {
+		dbonoff.on('events',1); //for update
                 if (segment == "no-segment" && eventSegments[collection]) {
-                    common.db.collection(collection).update({'_id': segment}, {'$inc': eventCollections[collection][segment], '$addToSet': eventSegments[collection]}, {'upsert': true});
+                    common.db.collection(collection).update({'_id': segment}, {'$inc': eventCollections[collection][segment], '$addToSet': eventSegments[collection]}, {'upsert': true}, dbCallback);
                 } else {
-                    common.db.collection(collection).update({'_id': segment}, {'$inc': eventCollections[collection][segment]}, {'upsert': true});
+                    common.db.collection(collection).update({'_id': segment}, {'$inc': eventCollections[collection][segment]}, {'upsert': true}, dbCallback);
                 }
             }
         }
 
         // update events collection
         if (eventArray.length) {
+	    dbonoff.on('events',1); //for event
             var eventSegmentList = {'$addToSet': {'list': {'$each': eventArray}}};
 
             for (var event in eventSegments) {
@@ -208,8 +215,9 @@ var events = {},
                 }
             }
 
-            common.db.collection('events').update({'_id': app_id}, eventSegmentList, {'upsert': true}, function(err, res){});
+            common.db.collection('events').update({'_id': app_id}, eventSegmentList, {'upsert': true}, dbCallback);
         }
+	dbonoff.off('events'); //offset the one in processEvent
     };
 
     function logCurrUserEvents(apps, app_id) {
@@ -255,11 +263,7 @@ var events = {},
         user.country = apps[apps.length-1].country;
 
         common.db.collection('ibb_'+app_id).update({device_id:user.device_id}, {$set:user, $inc:action}
-            , {upsert:true}, function(err, res) {
-                if (err){
-                    console.log('userEvent log error:' + err);  
-                }
-            });
+            , {upsert:true}, dbCallback);
 
         function computeCnt(e, key, action) {
             var cnt = e.count||1;

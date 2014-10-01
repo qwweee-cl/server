@@ -58,7 +58,10 @@ var common = {},
         dbName = (countlyConfig.mongodb.host + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db + '?auto_reconnect=true');
     }
 
+    dbRawName = (countlyConfig.mongodb.host + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_raw + '?auto_reconnect=true');
+
     common.db = mongo.db(dbName, dbOptions);
+    common.db_raw = mongo.db(dbRawName, dbOptions);
 
     common.config = countlyConfig;
 

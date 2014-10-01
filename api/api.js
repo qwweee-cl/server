@@ -38,7 +38,7 @@ function insertRawColl(coll, eventp, params) {
     eventp.tz = params.qstring.tz;
     eventp.ip_address = params.ip_address;
     //console.log('[db insert]:%j', eventp);
-    common.db.collection(coll).insert(eventp, function(err, res) {
+    common.db_raw.collection(coll).insert(eventp, function(err, res) {
         if (err) {
        	    console.log('DB operation error');
             console.log(err);
@@ -67,11 +67,13 @@ function insertRawSession(coll,params) {
 // This is the first step of every write request to API.
 function validateAppForWriteAPI(params) {
     common.db.collection('apps').findOne({'key':params.qstring.app_key}, function(err,app) {
-	if (err) {
+	if (err || !app) {
             common.returnMessage(params, 200, 'Success');
-	    console.log(err);
+	    if (err) console.log(err);
+	    else console.log('app not found');
 	    return;
 	}
+
         //console.log(params);
         params.app_id = app['_id'];
 	params.appTimezone = app['timezone'];

@@ -1,5 +1,6 @@
 var usage = {},
     common = require('./../../utils/common.js'),
+    dbonoff = require('./../../utils/dbonoff.js'),
     geoip = require('geoip-lite'),
     time = require('time')(Date);
 
@@ -32,7 +33,7 @@ var usage = {},
 
     //query user data and execute processUserSession
     usage.processSession = function (logListforSingleUser) {
-	if (!logListforSingleUser) return;
+
         common.db.collection('app_users' + logListforSingleUser[0].app_id).findOne({'_id': logListforSingleUser[0].app_user_id }, 
             function (err, dbAppUser){
     		updateSessions = {};
@@ -60,6 +61,13 @@ var usage = {},
         });
     };
 
+
+    function dbCallback(err, object) {
+	dbonoff.off('sessions');
+        if (err){
+            console.log(errHeader+':'+err);  
+       }
+    }
 
     function durationRange(totalSessionDuration) {
         var durationRanges = [
@@ -160,28 +168,20 @@ var usage = {},
     }
 
 
-    function updateRangeMeta(ranges, coll, id) {
-        common.db.collection(coll).update({'_id': id}, {'$addToSet': ranges}, 
-            {'upsert': true}, function(err, object) {
-                if (err){
-                    console.log(err);  // returns error if no matching object found
-                }
-            });
+    function updateRangeMeta(ranges, coll, id, app_cnt) {
+        common.db.collection(coll).update({'_id': id}, {'$addToSet': ranges}, {'upsert': true}, dbCallback); 
     }
 
     function updateCollection(collName, id, data, op, errHeader) {
 	var opSet = {};
 	opSet[op] = data;
-        common.db.collection(collName).update({'_id': id}, opSet,
-            {'upsert': true}, function(err, object) {
-                if (err){
-                    console.log(errHeader+':'+err);  
-                }
-            });
+        common.db.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback); 
     }
 
-    function reallyUpdateAll(params) {
+    function reallyUpdateAll(params, app_cnt) {
 
+	dbonoff.on('sessions',7+predefinedMetrics.length*2);
+	dbonoff.off('all_sessions', app_cnt);
         updateRangeMeta(userRanges, 'users', params.app_id);
         updateCollection('users', params.app_id, updateUsers, '$inc', '[updateUsers]');
 
@@ -192,6 +192,7 @@ var usage = {},
         updateCollection('sessions', params.app_id, updateSessions, '$inc', '[updateSessions]');
 
         if (common.config.api.city_data !== false) {
+	    dbonoff.on('sessions',2);
             updateRangeMeta(cityArray, 'cities', params.app_id);
             updateCollection('cities', params.app_id, updateCities, '$inc', '[updateCities]');
         }
@@ -437,7 +438,7 @@ var usage = {},
         updateUserProfile(sessionObj[currObjIdx], finalUserObject);
 
         //do the real update job in MongoDB
-        reallyUpdateAll(sessionObj[startIdx]);
+        reallyUpdateAll(sessionObj[startIdx], apps.length);
     }
 }(usage));
 

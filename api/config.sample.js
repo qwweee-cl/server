@@ -2,6 +2,7 @@ var countlyConfig = {
     mongodb: {
         host: "localhost",
         db: "countly",
+        db_raw: "countly",
         port: 27017,
         max_pool_size: 1000
     },
