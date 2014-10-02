@@ -370,7 +370,7 @@ var usage = {},
             }
             if (apps[i].session_duration) {
                 sessionObj[currObjIdx].acc_duration += parseInt(apps[i].session_duration);
-                total_duration += apps[i].session_duration;
+                total_duration += parseInt(apps[i].session_duration);
             }
         }
 
@@ -379,7 +379,7 @@ var usage = {},
         finalUserObject[common.dbUserMap['last_end_session_timestamp']] = last_end_session_timestamp;
         finalUserObject[common.dbUserMap['session_count']] = (dbAppUser?dbAppUser[common.dbUserMap['session_count']]:0) + currObjIdx;
         finalUserObject[common.dbUserMap['total_session_duration']] 
-            = total_duration + (dbAppUser?dbAppUser[common.dbUserMap['total_session_duration']]:0);
+            = total_duration + (dbAppUser?parseInt(dbAppUser[common.dbUserMap['total_session_duration']]):0);
 
         var sessionObjByDay = [];
         var sessionDay = null;
