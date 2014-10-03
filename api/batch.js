@@ -4,6 +4,7 @@ var http = require('http'),
     url = require('url'),
     common = require('./utils/common.js'),
     dbonoff = require('./utils/dbonoff.js'),
+    debug = require('./utils/cl/debug.js'),
     ObjectID = require('mongodb').ObjectID,
     countlyApi = {
         data:{
@@ -35,7 +36,6 @@ var hasOidFile = false;
 console.log("raw:"+common.db_raw._dbconn.databaseName);
 console.log("batch:"+common.db_batch._dbconn.databaseName);
 
-return 0;
 function processEvents(err, app) {
     //console.log(app);
     if (!app || !app.length) {
@@ -80,6 +80,7 @@ function processRaw(collectionName, processData, sortOrder) {
     //console.log('in processRaw:'+collectionName+":"+bid+":"+eid);
     //console.log('sortOrder=%j',sortOrder);
     //console.log('processData type:'+typeof processData);
+    debug.writeLog('/usr/local/countly/log/batch.log', "bid = "+bid+" eid = "+eid);
     console.log("bid = "+bid+" eid = "+eid);
     try {
         common.db_batch.collection(collectionName).find({_id:{$lt:eid, $gte:bid}}).sort(sortOrder).toArray(processData);
