@@ -29,7 +29,8 @@ var bid = new ObjectID(bdd.toString(16)+'0000000000000000');
 //var bid = new ObjectID('542a50d9981a3d812e000006');
 var eid = new ObjectID(edd.toString(16)+'0000000000000000');
 //var eid = new ObjectID('542a50e0981a3d812e000007');
-console.log("bid = "+bid+" eid = "+eid);
+var log_id = '000000000000000000000000';
+var hasOidFile = false;
 
 function processEvents(err, app) {
     //console.log(app);
@@ -48,9 +49,15 @@ function processSessions(err, app) {
         console.log('[processSessions no app]');
         console.log(err);
 	dbonoff.off('sessions');
+	dbonoff.off('all_sessions');
         return;
     }
 
+    var len = app.length-1;
+    if (hasOidFile && app[len]._id > log_id) {
+	log_id = app[len]._id;
+	fs.writeFile("./_next_oid", log_id, function(err){});
+    }
     var cur_idx = 0;
     var curr_app_user = app[0].app_user_id;
     dbonoff.on('all_sessions', app.length);
@@ -69,17 +76,22 @@ function processRaw(collectionName, processData, sortOrder) {
     //console.log('in processRaw:'+collectionName+":"+bid+":"+eid);
     //console.log('sortOrder=%j',sortOrder);
     //console.log('processData type:'+typeof processData);
+    console.log("bid = "+bid+" eid = "+eid);
     try {
-        common.db_raw.collection(collectionName).find({_id:{$lt:eid, $gte:bid}}).sort(sortOrder).toArray(processData);
+        common.db_raw.collection(collectionName).find({_id:{$lte:eid, $gt:bid}}).sort(sortOrder).toArray(processData);
     } catch (e) {
         console.log('[processRaw]'+e);
     }
 }
 
 fs.readFile('./_next_oid', 'utf8', function (err,data) {
-    if (!err) {
+    if (!err && data.length>=24) {
+	hasOidFile = true;
 	console.log('data:'+data+':'+data.length);
 	bid = new ObjectID(data.substr(0,24));
+	if (data.length >= 48) {
+	    eid = new ObjectID(data.substr(25,24));
+	}
     }
     common.db_raw.collections(function(err,collection) {
         if (!collection.length) {
