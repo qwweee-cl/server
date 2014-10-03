@@ -316,7 +316,6 @@ var common = {},
         var currTimestamp,
             currDate,
             currDateWithoutTimestamp = new Date();
-        appTimezone = "America/Phoenix";
         appTimezone = "America/Denver";
 
         // Check if the timestamp parameter exists in the request and is a 10 digit integer
