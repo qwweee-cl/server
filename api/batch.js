@@ -80,7 +80,7 @@ function processRaw(collectionName, processData, sortOrder) {
     //console.log('in processRaw:'+collectionName+":"+bid+":"+eid);
     //console.log('sortOrder=%j',sortOrder);
     //console.log('processData type:'+typeof processData);
-    debug.writeLog('/usr/local/countly/log/batch.log', "bid = "+bid+" eid = "+eid);
+    debug.writeLog('/usr/local/countly/log/batch.log', "bid = "+bid+" eid = "+eid+" date:"+date.toString());
     console.log("bid = "+bid+" eid = "+eid);
     try {
         common.db_batch.collection(collectionName).find({_id:{$lt:eid, $gte:bid}}).sort(sortOrder).toArray(processData);
