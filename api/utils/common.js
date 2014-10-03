@@ -6,7 +6,8 @@ var common = {},
     mongo = require('mongoskin'),
     debug = require('./cl/debug.js'),
     geoip = require('geoip-lite'),
-    countlyConfig = require('./../config');
+    countlyConfig = require('./../config'),
+    print = console.log;
 
 (function (common) {
 
@@ -58,10 +59,12 @@ var common = {},
         dbName = (countlyConfig.mongodb.host + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db + '?auto_reconnect=true');
     }
 
-    dbRawName = (countlyConfig.mongodb.host + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_raw + '?auto_reconnect=true');
+    dbRawName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_raw + '?auto_reconnect=true');
+    dbBatchName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_batch + '?auto_reconnect=true');
 
     common.db = mongo.db(dbName, dbOptions);
     common.db_raw = mongo.db(dbRawName, dbOptions);
+    common.db_batch = mongo.db(dbBatchName, dbOptions);
 
     common.config = countlyConfig;
 

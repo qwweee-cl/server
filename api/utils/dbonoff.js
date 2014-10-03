@@ -29,7 +29,7 @@ var _dblist = [];
 		    }, 0
 		);
     	if (!sum && _total_db_cnt >= 3 ) { //sessions, events, all_sessions
-	    common.db_raw.close();
+	    common.db_batch.close();
 	    return common.db.close();
     	}
     	return null;

@@ -30,6 +30,10 @@ var eid = new ObjectID(edd.toString(16)+'0000000000000000');
 //var eid = new ObjectID('542a50e0981a3d812e000007');
 console.log("bid = "+bid+" eid = "+eid);
 
+console.log("raw:"+common.db_raw._dbconn.databaseName);
+console.log("batch:"+common.db_batch._dbconn.databaseName);
+
+return 0;
 function processEvents(err, app) {
     //console.log(app);
     if (!app || !app.length) {
@@ -69,16 +73,16 @@ function processRaw(collectionName, processData, sortOrder) {
     //console.log('sortOrder=%j',sortOrder);
     //console.log('processData type:'+typeof processData);
     try {
-        common.db_raw.collection(collectionName).find({_id:{$lt:eid, $gte:bid}}).sort(sortOrder).toArray(processData);
+        common.db_batch.collection(collectionName).find({_id:{$lt:eid, $gte:bid}}).sort(sortOrder).toArray(processData);
     } catch (e) {
         console.log('[processRaw]'+e);
     }
 }
 
-common.db_raw.collections(function(err,collection) {
+common.db_batch.collections(function(err,collection) {
     if (!collection.length) {
 	common.db.close();
-	common.db_raw.close();
+	common.db_batch.close();
 	console.log('no data');
 	return;
     }

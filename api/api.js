@@ -3,6 +3,7 @@ var http = require('http'),
     os = require('os'),
     url = require('url'),
     common = require('./utils/common.js'),
+    exec = require('child_process').exec,
     countlyApi = {
         data:{
             usage:require('./parts/data/usage.js'),
@@ -200,6 +201,26 @@ if (cluster.isMaster) {
         }
 
         switch (apiPath) {
+            case '/batch':
+            {
+                //console.log('batch command!');
+                try {
+                    process.chdir('../../api');
+                    //console.log('New directory: ' + process.cwd());
+                } catch (err) {
+                    //console.log('chdir: ' + err);
+                }
+                var cmd="node batch.js";
+                exec(cmd,  function (error, stdout, stderr) {
+                    //console.log('stdout: ' + stdout);
+                    //console.log('stderr: ' + stderr);
+                    if (error !== null) {
+                        //console.log('exec error: ' + error);
+                    }
+                    common.returnMessage(params, 200, 'Success '+process.cwd()+' '+stdout);
+                });
+                return true;
+            }
             case '/i/bulk':
             {
 

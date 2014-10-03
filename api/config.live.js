@@ -6,8 +6,14 @@ var countlyConfig = {
         db_raw: "countly_raw0",
         db_batch: "countly_raw1",
         port: 27017,
-        max_pool_size: 1000
+        max_pool_size: 10000
     },
+    /*mongodb: {
+        host: "catdb",
+        db: "countly",
+        port: 27017,
+        max_pool_size: 10000
+    },*/
     /*  or for a replica set
     mongodb: {
         replSetServers : [
@@ -27,8 +33,8 @@ var countlyConfig = {
         host: "localhost",
         safe: false,
         session_duration_limit: 3601,
-        max_sockets: 1024,
-        cl_endsession_ongoing_timeout: 1,
+        max_sockets: 10240,
+        cl_endsession_ongoing_timeout: 10,
         /*
             If the last end_session is received less than 1 seconds ago we will ignore
             current begin_session request and mark this user as having an ongoing session
