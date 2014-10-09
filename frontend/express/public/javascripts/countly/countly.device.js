@@ -86,6 +86,7 @@
             { "name":"u" },
             { "name":"n" }
         ]);
+        alert(JSON.stringify(chartData, null, 2));
 
         var deviceNames = _.pluck(chartData.chartData, 'device'),
             deviceTotal = _.pluck(chartData.chartData, 'u'),

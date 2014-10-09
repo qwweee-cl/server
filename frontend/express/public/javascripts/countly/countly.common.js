@@ -1062,7 +1062,7 @@
         var onejan = new Date((new Date()).getFullYear(),0,1);
         return Math.ceil(((new Date()) - onejan) / 86400000);
     }
-
+    
     // Returns a period object used by all time related data calculation functions.
     function getPeriodObj() {
 
