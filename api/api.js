@@ -203,22 +203,36 @@ if (cluster.isMaster) {
         switch (apiPath) {
             case '/batch':
             {
-                //console.log('batch command!');
-                try {
-                    process.chdir('../../api');
-                    //console.log('New directory: ' + process.cwd());
-                } catch (err) {
-                    //console.log('chdir: ' + err);
+                var appkey = queryString.app_key;
+                if (!appkey) {
+                    common.returnMessage(params, 401, 'App does not exist :'+appkey);
+                    return false;
                 }
-                var cmd="node batch.js";
-                exec(cmd,  function (error, stdout, stderr) {
-                    //console.log('stdout: ' + stdout);
-                    //console.log('stderr: ' + stderr);
-                    if (error !== null) {
-                        //console.log('exec error: ' + error);
+                common.db.collection('apps').findOne({'key':params.qstring.app_key}, function(err,app) {
+                    if (err || !app) {
+                        common.returnMessage(params, 401, 'App does not exist :'+appkey);
+                        if (err) console.log(err);
+                        else console.log('app not found');
+                        return false;
                     }
-                    common.returnMessage(params, 200, 'Success '+process.cwd()+' '+stdout);
+                    try {
+                        process.chdir('../../api');
+                        //console.log('New directory: ' + process.cwd());
+                    } catch (err) {
+                        //console.log('chdir: ' + err);
+                    }
+                    var cmd="node batch.js "+appKey;
+                    exec(cmd,  function (error, stdout, stderr) {
+                        //console.log('stdout: ' + stdout);
+                        //console.log('stderr: ' + stderr);
+                        if (error !== null) {
+                            //console.log('exec error: ' + error);
+                        }
+                        common.returnMessage(params, 200, 'Success cmd:'+process.cwd()+' out:'+stdout);
+                        return true;
+                    });
                 });
+                //console.log('batch command!');
                 return true;
             }
             case '/i/bulk':
