@@ -11,28 +11,28 @@ var _dblist = [];
 	var inc = increment? increment: 1;
 	if (!_mydb_cnt[db]) _mydb_cnt[db] = inc;
 	else _mydb_cnt[db] += inc;
-	console.log('on:'+db+'='+inc+','+_mydb_cnt[db]);
+	//console.log('on:'+db+'='+inc+','+_mydb_cnt[db]);
     }; 
+
+    dbonoff.isZero = function(db) {
+	if (_mydb_cnt[db]>0) return false;
+	else return true;
+    }
+
+    dbonoff.getCnt = function(db) {
+	if (!_mydb_cnt[db]) return null;
+	else return _mydb_cnt[db];
+    }
+
+    dbonoff.setZero = function(db) {
+	_mydb_cnt[db] = 0;
+    }
 
     dbonoff.off = function(db, decrement) {
 	var dec = decrement? decrement: 1;
 	if (!_mydb_cnt[db]) _mydb_cnt[db] = 0;
     	else _mydb_cnt[db] -= dec;
-	if (_mydb_cnt[db] <= 0 && _dblist.indexOf(db)<0){
-	    _total_db_cnt++;
-	    _dblist.push(db);
-	}
-	console.log('off:'+db+','+_mydb_cnt[db]+','+_total_db_cnt);
-	var sum = _dblist.reduce(
-		    function(prev, curr) {
-			return prev + (_mydb_cnt[curr]>0?1:0);
-		    }, 0
-		);
-    	if (!sum && _total_db_cnt >= 3 ) { //sessions, events, all_sessions
-	    common.db_batch.close();
-	    return common.db.close();
-    	}
-    	return null;
+	if (_mydb_cnt[db] < 0) _mydb_cnt[db] = 0;
     };
 }(dbonoff));
 

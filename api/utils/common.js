@@ -43,12 +43,14 @@ var common = {},
     };
 
     common.rawCollection = {
+        'raw': 'raw_',
         'session': 'raw_session_',
         'event': 'raw_event_'
     };
 
     var dbName;
     var dbOptions = { safe:false, maxPoolSize: countlyConfig.mongodb.max_pool_size || 1000 };
+    var dbBatchOptions = { safe:false, maxPoolSize: 1};
 
     if (typeof countlyConfig.mongodb === "string") {
         dbName = countlyConfig.mongodb;
@@ -64,7 +66,7 @@ var common = {},
 
     common.db = mongo.db(dbName, dbOptions);
     common.db_raw = mongo.db(dbRawName, dbOptions);
-    common.db_batch = mongo.db(dbBatchName, dbOptions);
+    common.db_batch = mongo.db(dbBatchName, dbBatchOptions);
 
     common.config = countlyConfig;
 

@@ -69,9 +69,9 @@ function insertRawSession(coll,params) {
 function validateAppForWriteAPI(params) {
     common.db.collection('apps').findOne({'key':params.qstring.app_key}, function(err,app) {
 	if (err || !app) {
-            common.returnMessage(params, 200, 'Success');
+            common.returnMessage(params, 401, 'App does not exist');
 	    if (err) console.log(err);
-	    else console.log('app not found');
+	    else console.log('app not found : '+params.qstring.app_key);
 	    return;
 	}
 

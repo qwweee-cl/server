@@ -29,6 +29,7 @@ var countlyConfig = {
         session_duration_limit: 3601,
         max_sockets: 1024,
         cl_endsession_ongoing_timeout: 1,
+	cl_wait_time: 25,
         /*
             If the last end_session is received less than 1 seconds ago we will ignore
             current begin_session request and mark this user as having an ongoing session
