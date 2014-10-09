@@ -137,6 +137,7 @@ fs.readFile('./_next_oid', 'utf8', function (err,data) {
 */
 	if (process.argv.length < 3) {
 	    console.log('no app id parameter');
+        debug.writeLog('/usr/local/countly/log/batch.log', "no app id parameter");
 	    process.kill();
 	}
 	var app_id = process.argv[2];
