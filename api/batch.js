@@ -21,7 +21,7 @@ var fs = require('fs');
 http.globalAgent.maxSockets = common.config.api.max_sockets || 1024;
 
 var date = new Date();
-var begin_date = new Date(date.getFullYear(),date.getMonth(), date.getDate()-7);
+var begin_date = new Date(date.getFullYear(),date.getMonth(), date.getDate()-30);
 var end_date = new Date(date.getFullYear(),date.getMonth(), date.getDate()+1);
 //console.log('proc_date = '+begin_date+':'+end_date);
 var bdd = Math.floor(begin_date.getTime()/1000);
@@ -142,7 +142,7 @@ fs.readFile('./_next_oid', 'utf8', function (err,data) {
 	}
 	var app_id = process.argv[2];
         processRaw('raw_session_'+app_id, processSessions, {app_user_id:1, timestamp:1});
-//        processRaw('raw_event_'+app_id, processEvents,{app_user_id:1});
+        processRaw('raw_event_'+app_id, processEvents,{app_user_id:1});
 	var cnt=0;
 	var repeat_times = 0;
 	var wait_cnt = common.config.api.cl_wait_time;
