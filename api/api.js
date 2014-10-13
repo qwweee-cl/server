@@ -203,23 +203,41 @@ if (cluster.isMaster) {
         switch (apiPath) {
             case '/batch':
             {
-                //console.log('batch command!');
-                try {
-                    process.chdir('../../api');
-                    //console.log('New directory: ' + process.cwd());
-                } catch (err) {
-                    //console.log('chdir: ' + err);
+                var appkey = queryString.app_key;
+                if (!appkey) {
+                    common.returnMessage(params, 401, 'App does not exist :'+appkey);
+                    console.log("app does not exist:"+appkey);
+                    return false;
                 }
-                var cmd="node batch.js";
-                exec(cmd,  function (error, stdout, stderr) {
-                    //console.log('stdout: ' + stdout);
-                    //console.log('stderr: ' + stderr);
-                    if (error !== null) {
-                        //console.log('exec error: ' + error);
+                common.db.collection('apps').findOne({'key':params.qstring.app_key}, function(err,app) {
+                    if (err || !app) {
+                        common.returnMessage(params, 401, 'App does not exist :'+appkey);
+                        if (err) console.log(err);
+                        else console.log('app not found');
+                        return false;
                     }
-                    common.returnMessage(params, 200, 'Success '+process.cwd()+' '+stdout);
+                    var appid = app['_id'];
+                    try {
+                        process.chdir('../../api');
+                        //console.log('New directory: ' + process.cwd());
+                    } catch (err) {
+                        //console.log('chdir: ' + err);
+                    }
+                    var cmd="node batch.js "+appid;
+                    console.log("cmd:"+cmd);
+                    common.returnMessage(params, 200, 'Success cmd:'+cmd);
+                    exec(cmd,  function (error, stdout, stderr) {
+                        //console.log('stdout: ' + stdout);
+                        //console.log('stderr: ' + stderr);
+                        if (error !== null) {
+                            console.log('exec error: ' + error);
+                        }
+                        return true;
+                    });
+                    return true;
                 });
-                return true;
+                //console.log('batch command!');
+                break;
             }
             case '/i/bulk':
             {
