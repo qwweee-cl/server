@@ -13,6 +13,7 @@ var events = {},
         var _e_idx = 0;
         var _e_user = app[0].app_user_id;
 	var bag = {};
+	var ebag = {};
         var app_id = app[0].app_id;
         bag.app_id = app[0].app_id;
     	bag.eventCollections = {};
@@ -25,39 +26,40 @@ var events = {},
             common.incrTimeObject(app[i], updateSessions, common.dbMap['events']); 
 
             if (app[i].app_user_id != _e_user) { //save last session data, initialize a new one
-		bag.apps = app.slice(_e_idx, i);
-                logCurrUserEvents(bag);
-                updateEvents(bag);
-    		updateEventMeta(bag);
-		bag = clearBag(app_id);
+		ebag.apps = app.slice(_e_idx, i);
+//                logCurrUserEvents(ebag);
+                //updateEvents(bag);
+    		//updateEventMeta(bag);
+		//ebag = clearBag(app_id);
                 _e_idx = i;
                 _e_user = app[i].app_user_id;
             }
             eventAddup(bag,app[i]); //will be computed in old user, that's ok
         }
 	if (!_e_idx) {
-	    bag.apps = app;
+	    ebag.apps = app;
 	} else {
-            bag.apps = app.slice(_e_idx);
+            ebag.apps = app.slice(_e_idx);
 	}
-        logCurrUserEvents(bag);
+ //       logCurrUserEvents(ebag);
         updateEvents(bag);
     	updateEventMeta(bag);
-	updateReqSessions(updateSessions,bag);
+	updateReqSessions(updateSessions,app_id);
     }
 
-    function clearBag(app_id) {
+/*    function clearBag(app_id) {
 	var bag = {};
         bag.app_id = app_id;
-    	bag.eventCollections = {};
-    	bag.eventSegments = {};
-    	bag.eventArray = [];            
+    	//bag.eventCollections = {};
+    	//bag.eventSegments = {};
+    	//bag.eventArray = [];            
 	bag.apps = [];
 	return bag;
     }
+*/
 
-    function updateReqSessions(updateSessions,bag) {
-        common.db.collection('sessions').update({'_id':bag.app_id}, {'$inc':updateSessions},  
+    function updateReqSessions(updateSessions, app_id) {
+        common.db.collection('sessions').update({'_id':app_id}, {'$inc':updateSessions},  
 	    {'upsert': true}, function (err, data) {
         	if (err){
             	    console.log('[processEvent]user req log error:' + err);  
