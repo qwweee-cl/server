@@ -27,7 +27,7 @@ var events = {},
 
             if (app[i].app_user_id != _e_user) { //save last session data, initialize a new one
 		ebag.apps = app.slice(_e_idx, i);
-                logCurrUserEvents(ebag);
+//                logCurrUserEvents(ebag);
                 //updateEvents(bag);
     		//updateEventMeta(bag);
 		//ebag = clearBag(app_id);
@@ -41,7 +41,7 @@ var events = {},
 	} else {
             ebag.apps = app.slice(_e_idx);
 	}
-        logCurrUserEvents(ebag);
+ //       logCurrUserEvents(ebag);
         updateEvents(bag);
     	updateEventMeta(bag);
 	updateReqSessions(updateSessions,app_id);
