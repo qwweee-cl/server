@@ -17,6 +17,8 @@ var http = require('http'),
         }
     };
 var fs = require('fs');
+var eFin = false;
+var sFin = false;
 
 http.globalAgent.maxSockets = common.config.api.max_sockets || 1024;
 
@@ -41,6 +43,7 @@ function processEvents(err, app) {
     if (!app || !app.length) {
         console.log('[processEvents no app]');
         console.log(err);
+        eFin = true;
         return;
     }
     console.log('entering event');
@@ -52,6 +55,7 @@ function processSessions(err, app) {
     if (!app || !app.length) {
         console.log('[processSessions no app]');
         console.log(err);
+        sFin = true;
         return;
     }
 
@@ -138,7 +142,7 @@ fs.readFile('./_next_oid', 'utf8', function (err,data) {
 	if (process.argv.length < 3) {
 	    console.log('no app id parameter');
         debug.writeLog('/usr/local/countly/log/batch.log', "no app id parameter");
-	    process.kill();
+	    process.exit(0);
 	}
 	var app_id = process.argv[2];
         processRaw('raw_session_'+app_id, processSessions, {app_user_id:1, timestamp:1});
@@ -147,6 +151,10 @@ fs.readFile('./_next_oid', 'utf8', function (err,data) {
 	var repeat_times = 0;
 	var wait_cnt = common.config.api.cl_wait_time;
 	setInterval(function() {
+            if (eFin&&sFin) {
+                console.log("no app raw data");
+                process.exit(0);
+            }
 	    var new_cnt = dbonoff.getCnt('raw');
 	    if (new_cnt == cnt) {
 		repeat_times++;
@@ -154,7 +162,7 @@ fs.readFile('./_next_oid', 'utf8', function (err,data) {
 	    } else cnt = new_cnt;
 	    if (repeat_times > wait_cnt) {
 		dbClose();
-		process.kill();
+		process.exit(0);
 	    }
 	}, 60000);
 //    });
