@@ -81,7 +81,10 @@ $cmd
 ## zip backup file
 cd $exportPath
 echo $PWD
-cmd="/bin/tar czf $gzipPath$rawdate.tgz ./ --remove-files"
+cmd="/bin/tar czf $gzipPath$rawdate.tgz ./"
+echo $cmd
+$cmd
+cmd="/bin/rm ./$rawdate -rf"
 echo $cmd
 $cmd
 ## add index in database
@@ -94,11 +97,11 @@ $cmd
 cmd="/usr/bin/node $path/batch.js"
 echo $cmd
 $cmd
-## remove raw data
+## remove raw data ( move to end )
 ## mongo test --eval "printjson(db.getCollectionNames())"
-cmd="/usr/bin/mongo $mongo/$batchdb --eval printjson(db.dropDatabase());"
-echo $cmd
-$cmd
+#cmd="/usr/bin/mongo $mongo/$batchdb --eval printjson(db.dropDatabase());"
+#echo $cmd
+#$cmd
 ## mongo -h $mongo --eval "db.dropDatabase();"
 ## move zip file to s3
 if [ ! -d "$s3Path" ]; then
@@ -122,7 +125,10 @@ $cmd
 ## zip backup file
 cd $exportPath
 echo $PWD
-cmd="/bin/tar czf $gzipPath$dashboarddate.tgz ./ --remove-files"
+cmd="/bin/tar czf $gzipPath$dashboarddate.tgz ./"
+echo $cmd
+$cmd
+cmd="/bin/rm ./$dashboarddate -rf"
 echo $cmd
 $cmd
 ## move dashboard zip file to s3
@@ -134,6 +140,12 @@ cmd="/bin/cp $gzipPath$dashboarddate.tgz $s3DashboardPath"
 echo $cmd
 $cmd
 cmd="/bin/rm $gzipPath$dashboarddate.tgz"
+echo $cmd
+$cmd
+
+## remove raw data
+## mongo test --eval "printjson(db.getCollectionNames())"
+cmd="/usr/bin/mongo $mongo/$batchdb --eval printjson(db.dropDatabase());"
 echo $cmd
 $cmd
 
