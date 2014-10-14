@@ -25,6 +25,7 @@ dashboarddb="countly"
 curdate=$(date +%Y%m%d)
 rawdate=$curdate"_raw"
 dashboarddate=$curdate"_countly"
+echo "==============================================================="
 start=$(date +%Y-%m-%d_%H-%M)
 cd $path
 echo $PWD
@@ -152,3 +153,4 @@ $cmd
 end=$(date +%Y-%M-%d_%H-%m)
 echo $start
 echo $end
+echo "==============================================================="

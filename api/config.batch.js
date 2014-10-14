@@ -1,6 +1,7 @@
 var countlyConfig = {
     mongodb: {
-        host: "localhost",
+        //host: "localhost",
+        host: "172.31.3.233",
         hostbatch: "localhost",
         db: "countly",
         db_raw: "countly_raw1",
