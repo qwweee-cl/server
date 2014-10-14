@@ -222,13 +222,14 @@ if (cluster.isMaster) {
                         //console.log('chdir: ' + err);
                     }
                     var cmd="node batch.js "+appKey;
+                    common.returnMessage(params, 200, 'Success cmd:'+cmd);
                     exec(cmd,  function (error, stdout, stderr) {
                         //console.log('stdout: ' + stdout);
                         //console.log('stderr: ' + stderr);
                         if (error !== null) {
                             //console.log('exec error: ' + error);
                         }
-                        common.returnMessage(params, 200, 'Success cmd:'+process.cwd()+' out:'+stdout);
+                        //common.returnMessage(params, 200, 'Success cmd:'+process.cwd()+' out:'+stdout);
                         return true;
                     });
                 });
