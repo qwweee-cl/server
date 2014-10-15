@@ -150,7 +150,9 @@ cmd="/usr/bin/mongo $mongo/$batchdb --eval printjson(db.dropDatabase());"
 echo $cmd
 $cmd
 
-end=$(date +%Y-%M-%d_%H-%m)
+end=$(date +%Y-%m-%d_%H-%M)
 echo $start
 echo $end
 echo "==============================================================="
+echo -e "Countly Batch run from $start to $end\n" $(tail -20 /usr/local/countly/log/cron_batch.log)\
+| mail -s "Countly Batch Finished" gary_huang@cyberlink.com,snow_chen@cyberlink.com
