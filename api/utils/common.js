@@ -63,10 +63,12 @@ var common = {},
 
     dbRawName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_raw + '?auto_reconnect=true');
     dbBatchName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_batch + '?auto_reconnect=true');
+    dbIbbName = (countlyConfig.mongodb.host + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_ibb + '?auto_reconnect=true');
 
     common.db = mongo.db(dbName, dbOptions);
     common.db_raw = mongo.db(dbRawName, dbOptions);
     common.db_batch = mongo.db(dbBatchName, dbBatchOptions);
+    common.db_ibb = mongo.db(dbIbbName, dbOptions);
 
     common.config = countlyConfig;
 

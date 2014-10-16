@@ -5,6 +5,7 @@ var countlyConfig = {
         db: "countly",
         db_raw: "countly_raw0",
         db_batch: "countly_raw1",
+        db_ibb: "countly_snow_ibb",
         port: 27017,
         max_pool_size: 1000
     },
@@ -29,7 +30,7 @@ var countlyConfig = {
         session_duration_limit: 3601,
         max_sockets: 1024,
         cl_endsession_ongoing_timeout: 1,
-	cl_wait_time: 25,
+	cl_wait_time: 6,
         /*
             If the last end_session is received less than 1 seconds ago we will ignore
             current begin_session request and mark this user as having an ongoing session

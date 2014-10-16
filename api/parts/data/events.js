@@ -6,58 +6,32 @@ var events = {},
 
 (function (events) {
 
-    events.processEvents = function(app) {
-	dbonoff.on('raw');
-
-        var updateSessions = {};
-        var _e_idx = 0;
-        var _e_user = app[0].app_user_id;
+    var updateSessions = {};
 	var bag = {};
-        var app_id = app[0].app_id;
-        bag.app_id = app[0].app_id;
     	bag.eventCollections = {};
     	bag.eventSegments = {};
     	bag.eventArray = [];            
+
+    events.processEvents = function(app, isFinal) {
+        bag.app_id = app[0].app_id;
 
         for (var i=0; i<app.length; i++) {
             app[i].time = common.initTimeObj(app[i].appTimezone, app[i].timestamp, app[i].tz);
             //update requests count
             common.incrTimeObject(app[i], updateSessions, common.dbMap['events']); 
-
-            if (app[i].app_user_id != _e_user) { //save last session data, initialize a new one
-		bag.apps = app.slice(_e_idx, i);
-                logCurrUserEvents(bag);
-                updateEvents(bag);
-    		updateEventMeta(bag);
-		bag = clearBag(app_id);
-                _e_idx = i;
-                _e_user = app[i].app_user_id;
-            }
             eventAddup(bag,app[i]); //will be computed in old user, that's ok
-        }
-	if (!_e_idx) {
-	    bag.apps = app;
-	} else {
-            bag.apps = app.slice(_e_idx);
 	}
-        logCurrUserEvents(bag);
-        updateEvents(bag);
-    	updateEventMeta(bag);
-	updateReqSessions(updateSessions,bag);
+        logCurrUserEvents(app);
+
+	if (isFinal) {
+            updateEvents(bag);
+    	    updateEventMeta(bag);
+	    updateReqSessions(updateSessions,bag.app_id);
+	}
     }
 
-    function clearBag(app_id) {
-	var bag = {};
-        bag.app_id = app_id;
-    	bag.eventCollections = {};
-    	bag.eventSegments = {};
-    	bag.eventArray = [];            
-	bag.apps = [];
-	return bag;
-    }
-
-    function updateReqSessions(updateSessions,bag) {
-        common.db.collection('sessions').update({'_id':bag.app_id}, {'$inc':updateSessions},  
+    function updateReqSessions(updateSessions, app_id) {
+        common.db.collection('sessions').update({'_id':app_id}, {'$inc':updateSessions},  
 	    {'upsert': true}, function (err, data) {
         	if (err){
             	    console.log('[processEvent]user req log error:' + err);  
@@ -265,9 +239,8 @@ var events = {},
         } 
     };
 
-    function logCurrUserEvents(bag) {
-	console.log('user evnet # = '+bag.apps.length);
-	var apps = bag.apps;
+    function logCurrUserEvents(apps) {
+	console.log('user evnet # = '+apps.length);
         var user = {};
         var action = {};
         for (j=0; j<apps.length; j++) {
@@ -309,7 +282,7 @@ var events = {},
 	common.computeGeoInfo(apps[apps.length-1]);
         user.country = apps[apps.length-1].country;
 
-        common.db.collection('ibb_'+bag.app_id).update({device_id:user.device_id}, {$set:user, $inc:action}
+        common.db_ibb.collection('ibb_'+bag.app_id).update({device_id:user.device_id}, {$set:user, $inc:action}
             , {upsert:true}, function (err, res) {
 	    if (err) {
 		console.log('[ibb error]:'+err);

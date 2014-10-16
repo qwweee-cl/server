@@ -206,6 +206,7 @@ if (cluster.isMaster) {
                 var appkey = queryString.app_key;
                 if (!appkey) {
                     common.returnMessage(params, 401, 'App does not exist :'+appkey);
+                    console.log("app does not exist:"+appkey);
                     return false;
                 }
                 common.db.collection('apps').findOne({'key':params.qstring.app_key}, function(err,app) {
@@ -215,26 +216,28 @@ if (cluster.isMaster) {
                         else console.log('app not found');
                         return false;
                     }
+                    var appid = app['_id'];
                     try {
                         process.chdir('../../api');
                         //console.log('New directory: ' + process.cwd());
                     } catch (err) {
                         //console.log('chdir: ' + err);
                     }
-                    var cmd="node batch.js "+appKey;
+                    var cmd="node batch.js "+appid;
+                    console.log("cmd:"+cmd);
                     common.returnMessage(params, 200, 'Success cmd:'+cmd);
                     exec(cmd,  function (error, stdout, stderr) {
                         //console.log('stdout: ' + stdout);
                         //console.log('stderr: ' + stderr);
                         if (error !== null) {
-                            //console.log('exec error: ' + error);
+                            console.log('exec error: ' + error);
                         }
-                        //common.returnMessage(params, 200, 'Success cmd:'+process.cwd()+' out:'+stdout);
                         return true;
                     });
+                    return true;
                 });
                 //console.log('batch command!');
-                return true;
+                break;
             }
             case '/i/bulk':
             {

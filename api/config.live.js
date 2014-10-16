@@ -1,10 +1,12 @@
 var countlyConfig = {
     mongodb: {
-        host: "localhost",
+        //host: "localhost",
+        host: "172.31.3.233",
         hostbatch: "localhost",
         db: "countly",
         db_raw: "countly_raw0",
         db_batch: "countly_raw1",
+        db_ibb: "countly_snow_ibb",
         port: 27017,
         max_pool_size: 10000
     },
@@ -35,6 +37,7 @@ var countlyConfig = {
         session_duration_limit: 3601,
         max_sockets: 10240,
         cl_endsession_ongoing_timeout: 10,
+        cl_wait_time: 6,
         /*
             If the last end_session is received less than 1 seconds ago we will ignore
             current begin_session request and mark this user as having an ongoing session

@@ -17,11 +17,13 @@ var http = require('http'),
         }
     };
 var fs = require('fs');
+var eFin = false;
+var sFin = false;
 
 http.globalAgent.maxSockets = common.config.api.max_sockets || 1024;
 
 var date = new Date();
-var begin_date = new Date(date.getFullYear(),date.getMonth(), date.getDate()-7);
+var begin_date = new Date(date.getFullYear(),date.getMonth(), date.getDate()-30);
 var end_date = new Date(date.getFullYear(),date.getMonth(), date.getDate()+1);
 //console.log('proc_date = '+begin_date+':'+end_date);
 var bdd = Math.floor(begin_date.getTime()/1000);
@@ -36,42 +38,69 @@ var hasOidFile = false;
 console.log("raw:"+common.db_raw._dbconn.databaseName);
 console.log("batch:"+common.db_batch._dbconn.databaseName);
 
-function processEvents(err, app) {
-    //console.log(app);
-    if (!app || !app.length) {
-        console.log('[processEvents no app]');
-        console.log(err);
-        return;
-    }
-    console.log('entering event');
-    countlyApi.data.events.processEvents(app);
+function processEvents(app, isFinal) {
+    console.log('entering events');
+    var apps = app;
+    var final = isFinal;
+    process.nextTick(function() {
+	console.log('isFinale='+final);
+	countlyApi.data.events.processEvents(apps, final);
+    });
 }
 
-function processSessions(err, app) {
-    //console.log(app);
-    if (!app || !app.length) {
-        console.log('[processSessions no app]');
-        console.log(err);
-        return;
-    }
-
-    var len = app.length-1;
-    if (hasOidFile && app[len]._id > log_id) {
-	log_id = app[len]._id;
-	fs.writeFile("./_next_oid", log_id, function(err){});
-    }
+function processSessions(app, isFinal) {
     console.log('entering sessions');
-    countlyApi.data.usage.processSession(app);
+    var apps = app;
+    var final = isFinal;
+    process.nextTick(function() {
+	console.log('isFinale='+final);
+   	countlyApi.data.usage.processSession(apps, final);
+    });
 }
 
 function processRaw(collectionName, processData, sortOrder) {
-    //console.log('in processRaw:'+collectionName+":"+bid+":"+eid);
-    //console.log('sortOrder=%j',sortOrder);
-    //console.log('processData type:'+typeof processData);
-    debug.writeLog('/home/hadoop/countly_snow/log/batch.log', "bid = "+bid+" eid = "+eid+" date:"+date.toString());
-    console.log("bid = "+bid+" eid = "+eid);
+    debug.writeLog('../log/batch.log', collectionName+":bid = "+bid+" eid = "+eid+" date:"+date.toString());
+    console.log(collectionName+":bid = "+bid+" eid = "+eid);
     try {
-        common.db_batch.collection(collectionName).find({_id:{$lt:eid, $gte:bid}}).sort(sortOrder).toArray(processData);
+	var curr_app_user = null;
+        var isFirst = true;
+	var apps = [];
+	var b_coll = common.db_batch.collection(collectionName);
+	b_coll.find({_id:{$lt:eid, $gte:bid}},{batchSize:1000}).sort(sortOrder).each(function(err, res) {
+    	    if (err) {
+        	console.log(collectionName+'[process error:]'+err);
+        	return false;
+    	    }
+	    if (!res) { //end of collection
+		if (isFirst) { //no data
+		    console.log('No data');
+		    return false;
+		}
+		var cnt = apps.length - 1;
+                console.log('loglist='+cnt);
+            	processData(apps, true);
+
+		//_next_oid logging
+	        if (hasOidFile && apps[cnt]._id > log_id) {
+		    log_id = apps[cnt]._id;
+		    fs.writeFile("./_next_oid", log_id, function(err){});
+    		}
+		return true;
+       	    }
+
+	    if (isFirst) {
+		curr_app_user = res.app_user_id;
+		isFirst = false;
+	    } else {
+        	if (res.app_user_id != curr_app_user) {
+                    console.log('loglist='+apps.length);
+                    processData(apps, false);
+                    curr_app_user = res.app_user_id;
+		    apps = [];
+		}
+            }
+	    apps[apps.length] = res;
+	});
     } catch (e) {
         console.log('[processRaw]'+e);
     }
@@ -82,24 +111,7 @@ function dbClose() {
     common.db_batch.close();
 }
 
-    function makeSleep(collectionName, processFun, sortOrder, sleepCnt) {
-	var cnt=0;
-	var repeat_times = 0;
-	var int_id = setInterval(function() {
-	    var new_cnt = dbonoff.getCnt('raw');
-	    if (new_cnt == cnt) {
-		repeat_times++;
-		console.log('repeat wait = ' + repeat_times);
-	    } else cnt = new_cnt;
-	    if (repeat_times >= 3*sleepCnt) {
-                processRaw(collectionName, processFun, sortOrder);
-		dbonoff.setZero('raw');
-		clearInterval(int_id);
-		return;
-	    }
-	}, 60000);
-    }
-
+process.setMaxListeners(0);
 fs.readFile('./_next_oid', 'utf8', function (err,data) {
     if (!err && data.length>=24) {
     	hasOidFile = true;
@@ -110,53 +122,53 @@ fs.readFile('./_next_oid', 'utf8', function (err,data) {
     	}
     }
 
-/*    common.db_batch.collections(function(err,collection) {
-        if (!collection.length) {
-    	    console.log('no data');
-	    dbClose();
-    	    return;
-        }
+    if (process.argv.length < 3) {
+	console.log('no app id parameter');
+        debug.writeLog('/usr/local/countly/log/batch.log', "no app id parameter");
+	process.exit(1);
+    }
 
-	//processRaw('raw_event_542ccb93f46a86dc3503ad02', processEvents,{app_user_id:1});
-
-
-        for (var i=0; i<collection.length; i++) {
-            var collectionName = collection[i].collectionName;
-	    //exclude IPSentry
-	    if (collectionName == 'raw_session_53f554ef847577512100130a') continue;
-            if (collectionName.indexOf(common.rawCollection['event'])>=0) {
-                console.log("Entering event :"+collectionName);
-                //processRaw(collectionName, processEvents,{app_user_id:1});
-                makeSleep(collectionName, processEvents,{app_user_id:1}, i);
-            } else if (collectionName.indexOf(common.rawCollection['session'])>=0) {
-                console.log("Entering sessions :"+collectionName);
-                makeSleep(collectionName, processSessions, {app_user_id:1, timestamp:1}, i);
-                //processRaw(collectionName, processSessions, {app_user_id:1, timestamp:1});
+    var wait_cnt = common.config.api.cl_wait_time;
+    if (process.argv[2] == 'all') {
+     	wait_cnt = wait_cnt * 5; // wait 5 times for all logs
+	common.db_batch.collections(function(err,collection) {
+            if (!collection.length) {
+            	console.log('no data');
+            	dbClose();
+            	process.exit(1);
             }
-        }
-*/
-	if (process.argv.length < 3) {
-	    console.log('no app id parameter');
-	    process.kill();
+
+            for (var i=0; i<collection.length; i++) {
+                var collectionName = collection[i].collectionName;
+                //exclude IPSentry
+                if (collectionName == 'raw_session_53f554ef847577512100130a') continue;
+                if (collectionName.indexOf(common.rawCollection['event'])>=0) {
+                    console.log("Entering event :"+collectionName);
+                    processRaw(collectionName, processEvents,{app_user_id:1});
+                } else if (collectionName.indexOf(common.rawCollection['session'])>=0) {
+                    console.log("Entering sessions :"+collectionName);
+                    processRaw(collectionName, processSessions, {app_user_id:1, timestamp:1});
+                }
+            }
+	});
+    } else {
+        var app_id = process.argv[2];
+    	processRaw('raw_session_'+app_id, processSessions, {app_user_id:1, timestamp:1});
+    	processRaw('raw_event_'+app_id, processEvents,{app_user_id:1});
+    }
+    var cnt=0;
+    var repeat_times = 0;
+    setInterval(function() {
+	var new_cnt = dbonoff.getCnt('raw');
+	if (new_cnt == cnt) {
+	    repeat_times++;
+	    console.log('repeat wait = ' + repeat_times);
+	} else cnt = new_cnt;
+	if (repeat_times > wait_cnt) {
+	    dbClose();
+	    process.exit(0);
 	}
-	var app_id = process.argv[2];
-        processRaw('raw_session_'+app_id, processSessions, {app_user_id:1, timestamp:1});
-        processRaw('raw_event_'+app_id, processEvents,{app_user_id:1});
-	var cnt=0;
-	var repeat_times = 0;
-	var wait_cnt = common.config.api.cl_wait_time;
-	setInterval(function() {
-	    var new_cnt = dbonoff.getCnt('raw');
-	    if (new_cnt == cnt) {
-		repeat_times++;
-		console.log('repeat wait = ' + repeat_times);
-	    } else cnt = new_cnt;
-	    if (repeat_times > wait_cnt) {
-		dbClose();
-		process.kill();
-	    }
-	}, 60000);
-//    });
+    }, 60000);
 });
 
 

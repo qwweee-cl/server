@@ -486,11 +486,11 @@ var countlyCommon = {},
                 formattedDateEnd = moment(countlyCommon.periodObj.activePeriod + " " + countlyCommon.periodObj.periodMax + ":00", "YYYY.M.D HH:mm");
 
                 var nowMin = _currMoment.format("mm");
-                formattedDateEnd.add("minutes", nowMin);
+                formattedDateEnd.add(nowMin, "minutes");
 
             } else if (countlyCommon.periodObj.dateString == "D MMM, HH:mm") {
                 formattedDateStart = moment(countlyCommon.periodObj.activePeriod, "YYYY.M.D");
-                formattedDateEnd = moment(countlyCommon.periodObj.activePeriod, "YYYY.M.D").add("hours", 23).add("minutes", 59);
+                formattedDateEnd = moment(countlyCommon.periodObj.activePeriod, "YYYY.M.D").add(23, "hours").add(59, "minutes");
             } else {
                 formattedDateStart = moment(countlyCommon.periodObj.activePeriod + "." + countlyCommon.periodObj.periodMin, "YYYY.M.D");
                 formattedDateEnd = moment(countlyCommon.periodObj.activePeriod + "." + countlyCommon.periodObj.periodMax, "YYYY.M.D");
@@ -539,12 +539,12 @@ var countlyCommon = {},
             case "day":
                 activePeriod = year + "." + month;
 
-                var previousDate = _currMoment.subtract('days', day),
+                var previousDate = _currMoment.subtract(day, 'days'),
                     previousYear = previousDate.year(),
                     previousMonth = (previousDate.month() + 1),
                     previousDay = previousDate.date();
 
-                _currMoment.add('days', day);
+                _currMoment.add(day, 'days');
 
                 previousPeriod = previousYear + "." + previousMonth;
                 periodMax = day;
@@ -553,12 +553,12 @@ var countlyCommon = {},
                 break;
             case "hour":
                 activePeriod = year + "." + month + "." + day;
-                var previousDate = _currMoment.subtract('days', 1),
+                var previousDate = _currMoment.subtract(1, 'days'),
                     previousYear = previousDate.year(),
                     previousMonth = (previousDate.month() + 1),
                     previousDay = previousDate.date();
 
-                _currMoment.add('days', 1);
+                _currMoment.add(1, 'days');
 
                 previousPeriod = previousYear + "." + previousMonth + "." + previousDay;
                 periodMax = hour;
@@ -594,7 +594,7 @@ var countlyCommon = {},
 
                 activePeriod = selectedYear + "." + selectedMonth + "." + selectedDay;
 
-                var previousDate = selectedDate.subtract('days', 1),
+                var previousDate = selectedDate.subtract(1, 'days'),
                     previousYear = previousDate.year(),
                     previousMonth = (previousDate.month() + 1),
                     previousDay = previousDate.date();
@@ -637,9 +637,9 @@ var countlyCommon = {},
                 var momentOne = moment(currTime),
                     momentTwo = moment(currTime2);
 
-                var currIndex = (!rangeEndDay) ? momentOne.subtract('days', i) : moment(rangeEndDay).subtract('days', i),
+                var currIndex = (!rangeEndDay) ? momentOne.subtract(i, 'days') : moment(rangeEndDay).subtract(i, 'days'),
                     currIndexYear = currIndex.year(),
-                    prevIndex = (!rangeEndDay) ? momentTwo.subtract('days', (daysInPeriod + i)) : moment(rangeEndDay).subtract('days', (daysInPeriod + i)),
+                    prevIndex = (!rangeEndDay) ? momentTwo.subtract((daysInPeriod + i), 'days') : moment(rangeEndDay).subtract((daysInPeriod + i), 'days'),
                     prevYear = prevIndex.year();
 
                 if (i != (daysInPeriod - 1) && currentYear != currIndexYear) {
