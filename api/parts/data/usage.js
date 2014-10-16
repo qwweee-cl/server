@@ -18,83 +18,39 @@ var process = require('process');
     var OP_DECREASE=0;
     var OP_FILL=1;
     var OP_INCREASE=2;
-    var dataBag;
 
-    //query user data and execute processUserSession
-    usage.processSession = function (apps) {
-	//console.log('in session');
-	dbonoff.on('raw');
-
-	var _curr_app_user = apps[0].app_user_id;
-    	var _curr_idx = 0;
-
-	dataBag = clearBag();
-	dataBag.app_id = apps[0].app_id;
-    	for (var i=0; i<apps.length; i++) {
-            if (apps[i].app_user_id != _curr_app_user) {
-		console.log('loglist='+_curr_idx+':'+i);
-		startSession(apps.slice(_curr_idx, i), false);
-/*		startSession(dataBag,apps.slice(_curr_idx, i));
-		dataBag.apps = apps.slice(_curr_idx, i);
-		startSession(dataBag);
-		dataBag = clearBag();
-*/
-    		dataBag.userProps = {};
-		_curr_idx = i;
-		_curr_app_user = apps[_curr_idx].app_user_id;
-	    }
-	}
-
-	if (!_curr_idx) {
-	   // dataBag.apps = apps;
-	    startSession(apps, true);
-	    //startSession(dataBag,apps);
-		console.log('loglist='+_curr_idx+':'+i);
-	} else {
-	    //startSession(dataBag,apps.slice(_curr_idx));
-	    startSession(apps.slice(_curr_idx), true);
-		console.log('loglist='+_curr_idx);
-	}
-//	startSession(dataBag);
-    }
-
-    function clearBag() {
-	var dataBag = {};
-	dataBag.apps = [];
-    	dataBag.updateSessions = {};
-    	dataBag.updateLocations = {};
-    	dataBag.updateUsers = {};
-    	dataBag.updateCities = {};
-    	dataBag.userRanges = {};
-    	dataBag.sessionRanges = {};
-    	dataBag.countryArray = {};
-    	dataBag.cityArray = {};
-    	dataBag.userProps = {};
-    	dataBag.updateMetrics = {};
-    	dataBag.MetricMetaSet = {};
-	dataBag.userRanges['meta.f-ranges'] = {};
-	dataBag.userRanges['meta.l-ranges'] = {};
-	dataBag.sessionRanges['meta.d-ranges'] = {};
-	dataBag.userRanges['meta.f-ranges']['$each'] = [];
-	dataBag.userRanges['meta.l-ranges']['$each'] = [];
-	dataBag.sessionRanges['meta.d-ranges']['$each'] = [];
-	dataBag.countryArray['meta.countries'] = {};
-	dataBag.cityArray['meta.cities'] = {};
-	dataBag.countryArray['meta.countries']['$each'] = [];
-	dataBag.cityArray['meta.cities']['$each'] = [];
-	return dataBag;
-    }
+    var dataBag = {};
+    dataBag.apps = [];
+    dataBag.updateSessions = {};
+    dataBag.updateLocations = {};
+    dataBag.updateUsers = {};
+    dataBag.updateCities = {};
+    dataBag.userRanges = {};
+    dataBag.sessionRanges = {};
+    dataBag.countryArray = {};
+    dataBag.cityArray = {};
+    dataBag.updateMetrics = {};
+    dataBag.MetricMetaSet = {};
+    dataBag.userRanges['meta.f-ranges'] = {};
+    dataBag.userRanges['meta.l-ranges'] = {};
+    dataBag.sessionRanges['meta.d-ranges'] = {};
+    dataBag.userRanges['meta.f-ranges']['$each'] = [];
+    dataBag.userRanges['meta.l-ranges']['$each'] = [];
+    dataBag.sessionRanges['meta.d-ranges']['$each'] = [];
+    dataBag.countryArray['meta.countries'] = {};
+    dataBag.cityArray['meta.cities'] = {};
+    dataBag.countryArray['meta.countries']['$each'] = [];
+    dataBag.cityArray['meta.cities']['$each'] = [];
  
-    function startSession(apin, isFinal) {
-	var apps = apin;
-	var final = isFinal;
+    //query user data and execute processUserSession
+    usage.processSession = function (app, isFinal) {
+        var apps = app;
+        var final = isFinal;
+
        	common.db.collection('app_users' + dataBag.app_id).findOne({'_id': apps[0].app_user_id}, 
        	    function (err, dbAppUser){
-//		console.log('before');
-//		console.log(dataBag);
-               	processUserSession(dbAppUser, apps, final);
-//		console.log('before');
-//		console.log(dataBag);
+		dataBag.app_id = apps[0].app_id;
+               	processUserSession(dbAppUser, apps, isFinal);
        	});
     }
 
@@ -329,44 +285,24 @@ var process = require('process');
 //	console.log(dataBag.updateMetrics['devices']);
     }
 
-/*
-    function updateUserMetric(dataBag, sessionObject) {
-	if (!sessionObject.metrics) return;
-
-        for (var i=0; i<predefinedMetrics.length; i++) {
-            for (var j=0; j<predefinedMetrics[i].metrics.length; j++) {
-                var tmpMetric = predefinedMetrics[i].metrics[j],
-                    recvMetricValue = sessionObject.metrics[tmpMetric.name];
-
-                if (recvMetricValue) {
-                    var escapedMetricVal = recvMetricValue.replace(/^\$/, "").replace(/\./g, ":");
-                    if (tmpMetric.short_code) {
-                        dataBag.userProps[tmpMetric.name] = escapedMetricVal;
-                    }
-                }
-            }
-        }
-	return dataBag;
-    }
-*/
-
     function updateUserProfile(sessionObject, finalUserObject) {
+	var userProps = {};
         //updateUserMetric(sessionObject);
-        dataBag.userProps[common.dbUserMap['device_id']] = sessionObject.device_id;
-        dataBag.userProps[common.dbUserMap['session_duration']] = parseInt(sessionObject.acc_duration);
-        dataBag.userProps[common.dbUserMap['total_session_duration']] = parseInt(finalUserObject[common.dbUserMap['total_session_duration']]);
-        dataBag.userProps[common.dbUserMap['session_count']] = finalUserObject[common.dbUserMap['session_count']];
-        dataBag.userProps[common.dbUserMap['last_end_session_timestamp']] = finalUserObject[common.dbUserMap['last_end_session_timestamp']];
-        dataBag.userProps.metrics = sessionObject.metrics;
-        dataBag.userProps.appTimezone = sessionObject.appTimezone;
-        dataBag.userProps.timestamp = sessionObject.timestamp;
-        dataBag.userProps.tz = sessionObject.tz;
-        dataBag.userProps.time = sessionObject.time;
-        dataBag.userProps.country = sessionObject.country;
-        dataBag.userProps.city = sessionObject.city;
-        dataBag.userProps.app_id = sessionObject.app_id;
-        dataBag.userProps.app_user_id = sessionObject.app_user_id;
-        updateCollection('app_users'+sessionObject.app_id, sessionObject.app_user_id, dataBag.userProps, '$set', '[userProps]'); 
+        userProps[common.dbUserMap['device_id']] = sessionObject.device_id;
+        userProps[common.dbUserMap['session_duration']] = parseInt(sessionObject.acc_duration);
+        userProps[common.dbUserMap['total_session_duration']] = parseInt(finalUserObject[common.dbUserMap['total_session_duration']]);
+        userProps[common.dbUserMap['session_count']] = finalUserObject[common.dbUserMap['session_count']];
+        userProps[common.dbUserMap['last_end_session_timestamp']] = finalUserObject[common.dbUserMap['last_end_session_timestamp']];
+        userProps.metrics = sessionObject.metrics;
+        userProps.appTimezone = sessionObject.appTimezone;
+        userProps.timestamp = sessionObject.timestamp;
+        userProps.tz = sessionObject.tz;
+        userProps.time = sessionObject.time;
+        userProps.country = sessionObject.country;
+        userProps.city = sessionObject.city;
+        userProps.app_id = sessionObject.app_id;
+        userProps.app_user_id = sessionObject.app_user_id;
+        updateCollection('app_users'+sessionObject.app_id, sessionObject.app_user_id, userProps, '$set', '[userProps]'); 
     }
 
     function cpUniqueSession(uniqueSession) {
