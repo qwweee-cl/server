@@ -30,9 +30,10 @@ function logDbError(err, res) {
 
 function insertRawColl(coll, eventp, params) {
     //console.log('insert collection name:'+coll);
-    eventp.app_id = params.app_id;
-    eventp.appTimezone = params.appTimezone;
-    eventp.app_cc = params.app_cc;
+    eventp.app_key = params.qstring.app_key;
+    //eventp.app_id = params.app_id;
+    //eventp.appTimezone = params.appTimezone;
+    //eventp.app_cc = params.app_cc;
     eventp.app_user_id = params.app_user_id;
     eventp.device_id = params.qstring.device_id;
     eventp.timestamp = params.qstring.timestamp;
@@ -67,6 +68,21 @@ function insertRawSession(coll,params) {
 // Checks app_key from the http request against "apps" collection.
 // This is the first step of every write request to API.
 function validateAppForWriteAPI(params) {
+    if (params.qstring.app_key == '17a82958af48fdd76801a15991b2cafa1f0bcf92') {
+        common.returnMessage(params, 200, 'Success');
+        return;
+    }
+
+    if (params.events) {
+        insertRawEvent(common.rawCollection['event']+params.qstring.app_key, params);
+    }
+
+    if (params.qstring.begin_session || params.qstring.end_session || params.qstring.session_duration) {
+        insertRawSession(common.rawCollection['session']+params.qstring.app_key, params);
+    }
+
+    common.returnMessage(params, 200, 'Success');
+/*
     common.db.collection('apps').findOne({'key':params.qstring.app_key}, function(err,app) {
 	if (err || !app) {
             common.returnMessage(params, 401, 'App does not exist');
@@ -89,6 +105,7 @@ function validateAppForWriteAPI(params) {
 
         common.returnMessage(params, 200, 'Success');
     });
+*/
 }
 
 function validateUserForWriteAPI(callback, params) {
