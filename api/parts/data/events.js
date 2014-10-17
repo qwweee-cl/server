@@ -12,35 +12,44 @@ var events = {},
     	bag.eventSegments = {};
     	bag.eventArray = [];            
 
-    events.processEvents = function(app, isFinal) {
-        bag.app_id = app[0].app_id;
+    events.processEvents = function(app, isFinal, appinfo) {
+        var appinfos = {};
+        console.log('process Event');
+        console.log(appinfo);
+        if (appinfo) {
+            appinfos.app_id = appinfo._id;
+            appinfos.appTimezone = appinfo.timezone;
+        } else {
+            appinfos.app_id = app[0].app_id;
+            appinfos.appTimezone = app[0].appTimezone;
+        }
 
         for (var i=0; i<app.length; i++) {
-            app[i].time = common.initTimeObj(app[i].appTimezone, app[i].timestamp, app[i].tz);
+            app[i].time = common.initTimeObj(appinfos.appTimezone, app[i].timestamp, app[i].tz);
             //update requests count
             common.incrTimeObject(app[i], updateSessions, common.dbMap['events']); 
-            eventAddup(bag,app[i]); //will be computed in old user, that's ok
-	}
-        logCurrUserEvents(app);
+            eventAddup(bag,app[i], appinfos); //will be computed in old user, that's ok
+    	}
+        logCurrUserEvents(app, appinfos);
 
-	if (isFinal) {
+    	if (isFinal) {
             updateEvents(bag);
-    	    updateEventMeta(bag);
-	    updateReqSessions(updateSessions,bag.app_id);
-	}
+    	    updateEventMeta(bag, appinfos);
+    	    updateReqSessions(updateSessions,appinfos.app_id);
+    	}
     }
 
     function updateReqSessions(updateSessions, app_id) {
         common.db.collection('sessions').update({'_id':app_id}, {'$inc':updateSessions},  
 	    {'upsert': true}, function (err, data) {
         	if (err){
-            	    console.log('[processEvent]user req log error:' + err);  
+                console.log('[processEvent]user req log error:' + err);  
         	}
 		dbonoff.on('raw');
 	});
     }
 
-    function eventAddup(bag, params) {
+    function eventAddup(bag, params, appinfos) {
         var tmpEventObj = {},
             tmpEventColl = {},
             shortCollectionName = "",
@@ -62,7 +71,7 @@ var events = {},
 
             // Mongodb collection names can not contain system. or $
             shortCollectionName = currEvent.key.replace(/system\.|\.\.|\$/g, "");
-            eventCollectionName = shortCollectionName + params.app_id;
+            eventCollectionName = shortCollectionName + appinfos.app_id;
 
             // Mongodb collection names can not be longer than 128 characters
             if (eventCollectionName.length > 128) {
@@ -72,7 +81,7 @@ var events = {},
 
             // If present use timestamp inside each event while recording
             if (params.events[i].timestamp) {
-                params.time = common.initTimeObj(params.appTimezone, params.events[i].timestamp, params.events[i].tz);
+                params.time = common.initTimeObj(appinfos.appTimezone, params.events[i].timestamp, params.events[i].tz);
             }
 
             common.arrayAddUniq(bag.eventArray, shortCollectionName);
@@ -213,34 +222,33 @@ var events = {},
 	dbonoff.on('raw');
     }
 
-    function updateEventMeta(bag) {
+    function updateEventMeta(bag, appinfos) {
         // update events collection
         if (bag.eventArray.length) {
             var eventSegmentList = {'$addToSet': {'list': {'$each': bag.eventArray}}};
 
             for (var event in bag.eventSegments) {
-                if (!eventSegmentList['$addToSet']["segments." + event.replace(bag.app_id, "")]) {
-                    eventSegmentList['$addToSet']["segments." + event.replace(bag.app_id, "")] = {};
+                if (!eventSegmentList['$addToSet']["segments." + event.replace(appinfos.app_id, "")]) {
+                    eventSegmentList['$addToSet']["segments." + event.replace(appinfos.app_id, "")] = {};
                 }
 
                 if (bag.eventSegments[event]['meta.segments']) {
-                    eventSegmentList['$addToSet']["segments." + event.replace(bag.app_id, "")] = bag.eventSegments[event]['meta.segments'];
+                    eventSegmentList['$addToSet']["segments." + event.replace(appinfos.app_id, "")] = bag.eventSegments[event]['meta.segments'];
                 }
             }
 
-            common.db.collection('events').update({'_id': bag.app_id}, eventSegmentList, {'upsert': true}, 
-		function(err, data) {
-        	    if (err){
-            	    	console.log('Event Meta log error:' + err);  
-		    }
-	            dbonoff.on('raw');
-		});
-
+            common.db.collection('events').update({'_id': appinfos.app_id}, eventSegmentList, {'upsert': true}, 
+        		function(err, data) {
+                	if (err){
+                    	console.log('Event Meta log error:' + err);  
+        		    }
+        	        dbonoff.on('raw');
+            });
         } 
     };
 
-    function logCurrUserEvents(apps) {
-	console.log('user evnet # = '+apps.length);
+    function logCurrUserEvents(apps, appinfos) {
+        console.log('user evnet # = '+apps.length);
         var user = {};
         var action = {};
         for (j=0; j<apps.length; j++) {
@@ -279,10 +287,10 @@ var events = {},
         user.device_id = apps[apps.length-1].device_id;
         user.timestamp = apps[apps.length-1].timestamp;
         user.tz = apps[apps.length-1].tz;
-	common.computeGeoInfo(apps[apps.length-1]);
+        common.computeGeoInfo(apps[apps.length-1]);
         user.country = apps[apps.length-1].country;
 
-        common.db_ibb.collection('ibb_'+bag.app_id).update({device_id:user.device_id}, {$set:user, $inc:action}
+        common.db_ibb.collection('ibb_'+appinfos.app_id).update({device_id:user.device_id}, {$set:user, $inc:action}
             , {upsert:true}, function (err, res) {
 	    if (err) {
 		console.log('[ibb error]:'+err);
