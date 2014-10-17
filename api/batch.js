@@ -37,7 +37,7 @@ var log_id = '000000000000000000000000';
 console.log("raw:"+common.db_raw._dbconn.databaseName);
 console.log("batch:"+common.db_batch._dbconn.databaseName);
 
-var isDebug = common.config.api.cl_is_debug;
+var isDebug = common.config.api.cl_is_debug || false;
 var oidFileName = '_next_oid';
 var hasOidFile = false;
 

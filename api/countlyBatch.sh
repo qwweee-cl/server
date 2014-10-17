@@ -95,7 +95,7 @@ cmd="/usr/bin/node $path/createIndex.js"
 echo $cmd
 $cmd
 ## run batch
-cmd="/usr/bin/node $path/batch.js all"
+cmd="/usr/bin/node $path/batch.js"
 echo $cmd
 $cmd
 ## remove raw data ( move to end )
