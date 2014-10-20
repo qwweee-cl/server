@@ -47,8 +47,9 @@ function processEvents(app, isFinal, appinfo) {
     var final = isFinal;
     var appinfos = appinfo;
     process.nextTick(function() {
-    	console.log('isFinale='+final);
-    	countlyApi.data.events.processEvents(apps, final, appinfos);
+    	setTimeout(
+    	   countlyApi.data.events.processEvents(apps, final, appinfos)
+        , Math.floor(Math.random()*3000+1));
     });
 }
 
@@ -58,8 +59,9 @@ function processSessions(app, isFinal, appinfo) {
     var final = isFinal;
     var appinfos = appinfo;
     process.nextTick(function() {
-    	console.log(appinfos);
-       	countlyApi.data.usage.processSession(apps, final, appinfos);
+        setTimeout(
+       	    countlyApi.data.usage.processSession(apps, final, appinfos)
+        , Math.floor(Math.random()*3000+1));
     });
 }
 

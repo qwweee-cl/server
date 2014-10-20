@@ -48,7 +48,7 @@ var process = require('process');
         var final = isFinal;
         var appinfos = {};
         console.log('process Session');
-        console.log(appinfo);
+//        console.log(appinfo);
         if (appinfo) {
             appinfos.app_id = appinfo._id;
             appinfos.appTimezone = appinfo.timezone;
@@ -304,11 +304,11 @@ var process = require('process');
         userProps[common.dbUserMap['session_count']] = finalUserObject[common.dbUserMap['session_count']];
         userProps[common.dbUserMap['last_end_session_timestamp']] = finalUserObject[common.dbUserMap['last_end_session_timestamp']];
         userProps.metrics = sessionObject.metrics;
-        userProps.appTimezone = appinfos.appTimezone;
+        //userProps.appTimezone = appinfos.appTimezone;
         userProps.app_cc = appinfos.app_cc;
         userProps.timestamp = sessionObject.timestamp;
         userProps.tz = sessionObject.tz;
-        userProps.time = sessionObject.time;
+        //userProps.time = sessionObject.time;
         userProps.country = sessionObject.country;
         userProps.city = sessionObject.city;
         userProps.app_id = appinfos.app_id;
@@ -343,6 +343,7 @@ var process = require('process');
         if (dbAppUser) { //set sessionObj[0] = dbAppUser to compute on-going session
 	    //console.log('dbAppUser=%j', dbAppUser);
             dbAppUser.acc_duration = parseInt(dbAppUser[common.dbUserMap['session_duration']]);
+            dbAppUser.time = common.initTimeObj(appinfos.appTimezone, dbAppUser.timestamp, dbAppUser.tz);
             sessionObj[0] = common.clone(dbAppUser);
             last_end_session_timestamp = dbAppUser[common.dbUserMap['last_end_session_timestamp']];
         } else { //new user

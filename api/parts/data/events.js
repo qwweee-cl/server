@@ -10,12 +10,13 @@ var events = {},
 	var bag = {};
     	bag.eventCollections = {};
     	bag.eventSegments = {};
-    	bag.eventArray = [];            
+    	bag.eventArray = []; 
+        bag.uma = {};           
 
     events.processEvents = function(app, isFinal, appinfo) {
         var appinfos = {};
         console.log('process Event');
-        console.log(appinfo);
+//        console.log(appinfo);
         if (appinfo) {
             appinfos.app_id = appinfo._id;
             appinfos.appTimezone = appinfo.timezone;
@@ -28,9 +29,9 @@ var events = {},
             app[i].time = common.initTimeObj(appinfos.appTimezone, app[i].timestamp, app[i].tz);
             //update requests count
             common.incrTimeObject(app[i], updateSessions, common.dbMap['events']); 
-            eventAddup(bag,app[i], appinfos); //will be computed in old user, that's ok
+            eventAddup(bag, app[i], appinfos); //will be computed in old user, that's ok
     	}
-        logCurrUserEvents(app, appinfos);
+        //logCurrUserEvents(app, appinfos);
 
     	if (isFinal) {
             updateEvents(bag);
@@ -61,6 +62,17 @@ var events = {},
             tmpEventObj = {};
             tmpEventColl = {};
             
+            if (currEvent.key == '_UMA_ID') {
+                if (!bag.uma[params.device_id]) 
+                    bag.uma[params.device_id] = {};
+                if (currEvent.segmentation.google_play_advertising_id) 
+                    bag.uma[params.device_id].google_play_advertising_id = currEvent.segmentation.google_play_advertising_id;
+                if (currEvent.segmentation.android_id) 
+                    bag.uma[params.device_id].android_id = currEvent.segmentation.android_id;
+                if (currEvent.segmentation.identifier_for_vendor) 
+                    bag.uma[params.device_id].identifier_for_vendor = currEvent.segmentation.identifier_for_vendor;
+                continue;
+            }
             //console.log('current event:%j', currEvent);
 
             // Key and count fields are required
@@ -213,6 +225,8 @@ var events = {},
                 }
             }
         }
+        common.db.collection('UMA'+bag.app_id).update({}, {'$set':bag.uma} ,
+            {'upsert': true}, eventCallback);
     }
 
     function eventCallback(err, res) {
