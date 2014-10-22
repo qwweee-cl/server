@@ -1,9 +1,12 @@
 var events = {},
     dbonoff = require('./../../utils/dbonoff.js'),
     common = require('./../../utils/common.js');
-//var emitter = require('events').prototype._maxListeners = 100;
-//var emitter = require('events');
-
+var sync = require('synchronize');
+/*var fiber = sync.fiber;
+var await = sync.await;
+var defer = sync.defers;
+var raw_mongo = require('mongodb');
+*/
 (function (events) {
 
     var updateSessions = {};
@@ -11,11 +14,23 @@ var events = {},
     	bag.eventCollections = {};
     	bag.eventSegments = {};
     	bag.eventArray = []; 
-        bag.uma = {};           
-
+/*    var ibb_idx = 0;
+    var bulk;
+*/
+/*    function sleep(ms) {
+        setTimeout(function() {
+            console.log('sleep and wake up');
+        }, ms);
+    }*/
+    var Future = require('fibers/future'), wait = Future.wait;
+    var eventCnt = 0;
     events.processEvents = function(app, isFinal, appinfo) {
+//        console.log('process Event');
+/*        if (ibb_idx == 0)
+            bulk = common.db_ibb.initializeUnorderedBulkOp();
+*/
+
         var appinfos = {};
-        console.log('process Event');
 //        console.log(appinfo);
         if (appinfo) {
             appinfos.app_id = appinfo._id;
@@ -25,13 +40,15 @@ var events = {},
             appinfos.appTimezone = app[0].appTimezone;
         }
 
+        // for individual BB
+        logCurrUserEvents(app, appinfos, isFinal);
+
         for (var i=0; i<app.length; i++) {
             app[i].time = common.initTimeObj(appinfos.appTimezone, app[i].timestamp, app[i].tz);
             //update requests count
             common.incrTimeObject(app[i], updateSessions, common.dbMap['events']); 
             eventAddup(bag, app[i], appinfos); //will be computed in old user, that's ok
     	}
-        //logCurrUserEvents(app, appinfos);
 
     	if (isFinal) {
             updateEvents(bag);
@@ -62,7 +79,7 @@ var events = {},
             tmpEventObj = {};
             tmpEventColl = {};
             
-            if (currEvent.key == '_UMA_ID') {
+/*            if (currEvent.key == '_UMA_ID') {
                 if (!bag.uma[params.device_id]) 
                     bag.uma[params.device_id] = {};
                 if (currEvent.segmentation.google_play_advertising_id) 
@@ -72,7 +89,7 @@ var events = {},
                 if (currEvent.segmentation.identifier_for_vendor) 
                     bag.uma[params.device_id].identifier_for_vendor = currEvent.segmentation.identifier_for_vendor;
                 continue;
-            }
+            }*/
             //console.log('current event:%j', currEvent);
 
             // Key and count fields are required
@@ -209,31 +226,58 @@ var events = {},
     }
 
 
-    function updateEvents(bag) {
+    var updateEvents = function (bag) {
         // update Segmentation_key+App_id collections
-	console.log('event collections add:'+Object.keys(bag.eventCollections).length); 
+        console.log('event collections add:'+Object.keys(bag.eventCollections).length); 
         for (var collection in bag.eventCollections) {
             for (var segment in bag.eventCollections[collection]) {
                 if (segment == "no-segment" && bag.eventSegments[collection]) {
-                    common.db.collection(collection).update({'_id': segment}, 
-			{'$inc': bag.eventCollections[collection][segment], 
-			'$addToSet': bag.eventSegments[collection]}, {'upsert': true}, eventCallback);
+                    writeNoSegment(collection, segment).wait();
+ /* common.db.collection(collection).update({'_id': segment}, 
+            {'$inc': bag.eventCollections[collection][segment], 
+            '$addToSet': bag.eventSegments[collection]}, {'upsert': true}, eventCallback);*/                  
                 } else {
-                    common.db.collection(collection).update({'_id': segment}, 
-			{'$inc': bag.eventCollections[collection][segment]}, 
-			{'upsert': true}, eventCallback);
+                    writeSegment(collection, segment).wait();
                 }
             }
         }
-        common.db.collection('UMA'+bag.app_id).update({}, {'$set':bag.uma} ,
+/*                    common.db.collection(collection).update({'_id': segment}, 
+			{'$inc': bag.eventCollections[collection][segment]}, 
+			{'upsert': true}, eventCallback);
+                }
+            }*/
+/*        common.db.collection('UMA'+bag.app_id).update({}, {'$set':bag.uma} ,
             {'upsert': true}, eventCallback);
+*/
+
+    }.future();
+
+    function writeNoSegment(collection, segment) {
+        var future = new Future;
+        common.db.collection(collection).update({'_id': segment}, 
+            {'$inc': bag.eventCollections[collection][segment], 
+            '$addToSet': bag.eventSegments[collection]}, {'upsert': true}, function (err, res) {
+            if (err) {
+                console.log('[userEvent log error]:'+err);
+            }
+            dbonoff.on('raw');
+            future.return();
+        });
+        return future;
     }
 
-    function eventCallback(err, res) {
-	if (err){
-	    console.log('userEvent log error:' + err);  
-	}
-	dbonoff.on('raw');
+    function writeSegment(collection, segment) {
+        var future = new Future;
+        common.db.collection(collection).update({'_id': segment}, 
+            {'$inc': bag.eventCollections[collection][segment]}, 
+            {'upsert': true}, function (err, res) {
+            if (err) {
+                console.log('[userEvent log error]:'+err);
+            }
+            dbonoff.on('raw');
+            future.return();
+        });
+        return future;
     }
 
     function updateEventMeta(bag, appinfos) {
@@ -261,8 +305,8 @@ var events = {},
         } 
     };
 
-    function logCurrUserEvents(apps, appinfos) {
-        console.log('user evnet # = '+apps.length);
+    var logCurrUserEvents = function (apps, appinfos, isFinal) {
+        //console.log('user evnet # = '+apps.length);
         var user = {};
         var action = {};
         for (j=0; j<apps.length; j++) {
@@ -294,7 +338,7 @@ var events = {},
                     }
 
                 }
-            }
+            }        
             //console.log('user:%j', user);
             //console.log('action:%j', action);
         }
@@ -304,29 +348,84 @@ var events = {},
         common.computeGeoInfo(apps[apps.length-1]);
         user.country = apps[apps.length-1].country;
 
+/*        bulk.find({device_id:user.device_id}).upsert().updateOne({$set:user, $inc:action});
+        ibb_idx++;
+        if (ibb_idx >= 999 || isFinal) { //bulk op limit = 1000
+            bulk.execute();
+            ibb_idx = 0;
+        }
+
+*/
+        eventCnt++;
+
+/*        if (eventCnt == common.config.api.cl_process_user_cnt) {
+            console.log('begin sleep:'+eventCnt+':'+apps.length);
+            var x_cnt = eventCnt;
+            writeIbb_wait(appinfos).wait();
+            console.log('end sleep:'+x_cnt+':'+apps.length);
+        } else {
+*/
+            while (eventCnt > common.config.api.cl_process_user_cnt) {
+                sleep(common.config.api.cl_wait_for_process).wait();
+            }
+            console.log('outside sleep:'+eventCnt+':'+apps.length);
+            writeIbb(appinfos);
+       // }
+    }.future();
+
+    function sleep(ms) {
+        var future = new Future;
+        setTimeout(function() {
+            console.log('in sleep timeout');
+            eventCnt = 0;
+            future.return();
+        }, ms);
+        //console.log('leaving sleep');
+        return future;
+    }
+
+    function writeIbb_wait(appinfos) {
+        var future = new Future;
+        console.log('entering Ibb wait');
+
         common.db_ibb.collection('ibb_'+appinfos.app_id).update({device_id:user.device_id}, {$set:user, $inc:action}
             , {upsert:true}, function (err, res) {
-	    if (err) {
-		console.log('[ibb error]:'+err);
-	    }
-	    dbonoff.on('raw');
-            //process.emit('updateEvent');
-	});
+                        console.log('Ibb wait callback');
 
-        function computeCnt(e, key, action) {
-            var cnt = e.count||1;
-            //console.log('add key:'+key);
-            if (typeof action[key+'.cnt'] != 'undefined') {
-                action[key+'.cnt'] += cnt;
-            } else {
-                action[key+'.cnt'] = cnt;
+    	    if (err) {
+                console.log('[ibb error]:'+err);
+    	    }
+            dbonoff.on('raw');
+            eventCnt = 0;
+            future.return();
+        });
+        console.log('leaving Ibb wait');
+        return future;
+    }
+
+    function writeIbb(appinfos) {
+        common.db_ibb.collection('ibb_'+appinfos.app_id).update({device_id:user.device_id}, {$set:user, $inc:action}
+            , {upsert:true}, function (err, res) {
+            if (err) {
+                console.log('[ibb error]:'+err);
             }
-            if (e.sum) {
-                if (action.hasOwnProperty(key+'.sum')) {
-                    action[key+'.sum'] += e.sum;
-                } else {
-                    action[key+'.sum'] = e.sum;
-                }
+            dbonoff.on('raw');
+        });
+     }
+
+    function computeCnt(e, key, action) {
+        var cnt = e.count||1;
+        //console.log('add key:'+key);
+        if (typeof action[key+'.cnt'] != 'undefined') {
+            action[key+'.cnt'] += cnt;
+        } else {
+            action[key+'.cnt'] = cnt;
+        }
+        if (e.sum) {
+            if (action.hasOwnProperty(key+'.sum')) {
+                action[key+'.sum'] += e.sum;
+            } else {
+                action[key+'.sum'] = e.sum;
             }
         }
     }

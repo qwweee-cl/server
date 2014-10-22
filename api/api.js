@@ -1,3 +1,4 @@
+require('newrelic');
 var http = require('http'),
     cluster = require('cluster'),
     os = require('os'),

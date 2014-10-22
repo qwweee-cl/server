@@ -17,6 +17,10 @@ var http = require('http'),
         }
     };
 var fs = require('fs');
+/*var sync = require('synchronize');
+var fiber = sync.fiber;
+var await = sync.await;
+var defer = sync.defers;*/
 var eFin = false;
 var sFin = false;
 
@@ -40,95 +44,141 @@ console.log("batch:"+common.db_batch._dbconn.databaseName);
 var isDebug = common.config.api.cl_is_debug;
 var oidFileName = '_next_oid';
 var hasOidFile = false;
+var user_cnt = 0;
 
-function processEvents(app, isFinal, appinfo) {
-    console.log('entering events');
-    var apps = app;
-    var final = isFinal;
-    var appinfos = appinfo;
-    process.nextTick(function() {
-    	setTimeout(
-    	   countlyApi.data.events.processEvents(apps, final, appinfos)
-        , Math.floor(Math.random()*3000+1));
-    });
+/*function processEvents(app, isFinal, appinfo) {
+    process.nextTick(countlyApi.data.events.processEvents(app, isFinal, appinfo));
 }
 
 function processSessions(app, isFinal, appinfo) {
     console.log('entering sessions');
-    var apps = app;
-    var final = isFinal;
-    var appinfos = appinfo;
-    process.nextTick(function() {
-        setTimeout(
-       	    countlyApi.data.usage.processSession(apps, final, appinfos)
-        , Math.floor(Math.random()*3000+1));
-    });
+    var processFun = countlyApi.data.usage.processSession;
+    process.nextTick(countlyApi.data.usage.processSession(app, isFinal, appinfo));
 }
+*/
 
-function processRaw(collectionName, processData, sortOrder, appinfo) {
-    debug.writeLog('/usr/local/countly/log/batch.log', collectionName+":bid = "+bid+" eid = "+eid+" date:"+date.toString());
-    console.log(collectionName+":bid = "+bid+" eid = "+eid);
+// This function returns a future which resolves after a timeout. This
+// demonstrates manually resolving futures.
+
+
+var processSingleRaw = function(apps, res, curr_app_user, processData, appinfo) {
+    if (res.app_user_id != curr_app_user) {
+        //console.log('loglist='+apps.length);
+        processData(apps, false, appinfo);
+        curr_app_user = res.app_user_id;
+        apps = [];
+        user_cnt++;
+    }
+    
+    apps[apps.length] = res;
+    return curr_app_user;
+};
+
+var processRaw = function(collectionName, processData, sortOrder, appinfo) {
+    //debug.writeLog('/usr/local/countly/log/batch.log', collectionName+":bid = "+bid+" eid = "+eid+" date:"+date.toString());
+    console.log('[Entering processRaw] '+collectionName+":bid = "+bid+" eid = "+eid);
     var curr_app_user = null;
     var isFirst = true;
     var apps = [];
-    var appinfos = appinfo;
-    try {
-    	var b_coll = common.db_batch.collection(collectionName);
-    	b_coll.find({_id:{$lt:eid, $gte:bid}},{batchSize:1000}).sort(sortOrder).each(
-            function(err, res) {
-        	    if (err) {
-                	console.log(collectionName+'[process error:]'+err);
-                	return false;
-        	    }
-        	    if (!res) { //end of collection
-            		if (isFirst) { //no data
-            		    console.log('No data');
-            		    return false;
-            		}
-            		var cnt = apps.length - 1;
+    //var appinfos = appinfo;
+    var b_coll = common.db_batch.collection(collectionName);
+    b_coll.find({_id:{$lt:eid, $gte:bid}},{batchSize:1000}).sort(sortOrder).each(function(err, res) {
+        if (res) {
+            if (isFirst) {
+                curr_app_user = res.app_user_id;
+                isFirst = false;
+            } else {
+                if (res.app_user_id != curr_app_user) {
+                    //console.log('loglist='+apps.length);
+                    processData(apps, false, appinfo);
+                    curr_app_user = res.app_user_id;
+                    apps = [];
+        //user_cnt++;
+                }
+            }
+            apps[apps.length] = res;
+    
+/*            curr_app_user = processSingleRaw(apps, res, curr_app_user, processData, appinfo);  
+            if (user_cnt >= common.config.api.cl_process_user_cnt) {
+                sleep(common.config.api.cl_wait_for_process).wait();
+                console.log('user_cnt='+user_cnt);
+                user_cnt = 0;
+            }          
+*/
+        } else {
+            if (isFirst) { //no data
+                console.log('No data');
+                return false;
+            }
+            var cnt = apps.length - 1;
+            console.log('loglist='+cnt);
+            processData(apps, true, appinfo);
+            //user_cnt++;
+
+            //_next_oid logging
+            if (isDebug || (hasOidFile && apps[cnt]._id > log_id)) {
+                log_id = apps[cnt]._id;
+                fs.writeFile(oidFileName, log_id, function(err){});
+            }
+            return true;
+        }
+    });
+}
+
+/*
+        Fiber( function () {
+            try {
+                 //console.log(res);
+                if (!res) { //end of collection
+                    if (isFirst) { //no data
+                        console.log('No data');
+                        return false;
+                    }
+                    var cnt = apps.length - 1;
                     console.log('loglist='+cnt);
-                	processData(apps, true, appinfos);
+                    processData(apps, true, appinfos);
 
                     //_next_oid logging
-        	        if (isDebug || (hasOidFile && apps[cnt]._id > log_id)) {
-            		    log_id = apps[cnt]._id;
-            		    fs.writeFile(oidFileName, log_id, function(err){});
-            		}
+                    if (isDebug || (hasOidFile && apps[cnt]._id > log_id)) {
+                        log_id = apps[cnt]._id;
+                        fs.writeFile(oidFileName, log_id, function(err){});
+                    }
                     return true;
-           	    }
+                }
 
-        	    if (isFirst) {
-            		curr_app_user = res.app_user_id;
-            		isFirst = false;
-        	    } else {
-                	if (res.app_user_id != curr_app_user) {
+                if (isFirst) {
+                    curr_app_user = res.app_user_id;
+                    isFirst = false;
+                } else {
+                    if (res.app_user_id != curr_app_user) {
                         console.log('loglist='+apps.length);
+                        sleep(user_cnt);
                         processData(apps, false, appinfos);
                         curr_app_user = res.app_user_id;
                         apps = [];
+                        user_cnt++;
+                    }
+                    if (user_cnt >= common.config.api.cl_process_user_cnt) {
+                        sleep(common.config.api.cl_wait_for_process).wait();
+                        user_cnt = 0;
                     }
                 }
-        	    apps[apps.length] = res;
-    	});
-    } catch (e) {
-        console.log('[processRaw]'+e);
-    }
-}
+                apps[apps.length] = res;
+                console.log('user_cnt='+user_cnt);
+
+            } catch (e) {
+                console.log('[ProcessRaw]'+e);
+            }
+        }).run();
+    });
+    */
 
 function dbClose() {
     common.db.close();
     common.db_batch.close();
+    common.db_ibb.close();
 }
 
-function callRaw(keys, collName, processData, sortOrder) {
-    common.db.collection('apps').findOne({key:keys},
-        function(err, res) {
-            console.log('collName:'+collName);
-            processRaw(collName, processData, sortOrder, res);
-        }
-    );
-
-}
 var app_key;
 if (process.argv.length < 3) {
     if (isDebug) {
@@ -147,8 +197,11 @@ if (isDebug) {
     oidFileName = oidFileName + process.argv[2];
 }
 
-fs.readFile(oidFileName, 'utf8', function (err,data) {
-    if (!err && data.length>=24) {
+var Future = require('fibers/future');
+var fs = Future.wrap(require('fs'));
+
+fs.readFile(oidFileName, 'utf8', function(err, data) {
+    if (data && data.length>=24) {
     	hasOidFile = true;
     	console.log('data:'+data+':'+data.length);
     	bid = new ObjectID(data.substr(0,24));
@@ -157,53 +210,53 @@ fs.readFile(oidFileName, 'utf8', function (err,data) {
     	}
     }
 
-
     var wait_cnt = common.config.api.cl_wait_time;
     if (app_key == 'all') {
      	wait_cnt = wait_cnt * 5; // wait 5 times for all logs
-        common.db_batch.collections(function(err,collection) {
+        common.db_batch.collections(function(err, collection) {
             if (!collection.length) {
-            	console.log('no data');
-            	dbClose();
-            	process.exit(1);
+                console.log('no data');
+                dbClose();
+                process.exit(1);
             }
-
+            for (var i=0; i<collection.length; i++) {
+                console.log(collection[i].collectionName);
+            }
             for (var i=0; i<collection.length; i++) {
                 var collectionName = collection[i].collectionName;
+                var sortOrder;
+                var processData;
+                var keys;
+                console.log(collectionName);
                 //exclude IPSentry
                 if (collectionName == 'raw_session_53f554ef847577512100130a') continue;
                 if (collectionName.indexOf(common.rawCollection['event'])>=0) {
-                    var keys = collectionName.substr(common.rawCollection['event'].length).trim();
-                    callRaw(keys, collectionName, processEvents, {app_user_id:1});
+                    keys = collectionName.substr(common.rawCollection['event'].length).trim();
+                    sortOrder = {app_user_id:1};
+                    processData = countlyApi.data.events.processEvents;
                 } else if (collectionName.indexOf(common.rawCollection['session'])>=0) {
-                    var keys = collectionName.substr(common.rawCollection['event'].length).trim();
-                    callRaw(keys, collectionName, processSessions, {app_user_id:1, timestamp:1});
-                }
+                    keys = collectionName.substr(common.rawCollection['session'].length).trim();
+                    sortOrder = {app_user_id:1, timestamp:1};
+                    processData = countlyApi.data.usage.processSession;
+                } else continue;
+                    console.log('begin of findone key:'+keys);
+                    common.db.collection('apps').findOne({key:keys}, function(err, res) {
+                        if (err) {
+                            console.log(err);
+                        } 
+                        processRaw(collectionName, processData, sortOrder, res);
+                    });
             }
-        });
+        });  
     } else {
-        common.db.collection('apps').findOne({key:app_key},
-            function(err, res) {
-                console.log(res);
-                console.log('here'+common.rawCollection['session']+app_key);
-                processRaw(common.rawCollection['session']+app_key, processSessions, {app_user_id:1, timestamp:1}, res);
-                processRaw(common.rawCollection['event']+app_key, processEvents,{app_user_id:1}, res);
-            }
-        );
+        common.db.collection('apps').findOne({key:app_key}, function(err, res) {
+            if (err) {
+                console.log(err);
+            } 
+            processRaw(common.rawCollection['session']+app_key, countlyApi.data.usage.processSession, {app_user_id:1, timestamp:1}, res);
+            processRaw(common.rawCollection['event']+app_key, countlyApi.data.events.processEvents,{app_user_id:1}, res);
+        });
     }
-    var cnt=0;
-    var repeat_times = 0;
-    setInterval(function() {
-    	var new_cnt = dbonoff.getCnt('raw');
-    	if (new_cnt == cnt) {
-    	    repeat_times++;
-    	    console.log('repeat wait = ' + repeat_times);
-    	} else cnt = new_cnt;
-    	if (repeat_times > wait_cnt) {
-    	    dbClose();
-    	    process.exit(0);
-    	}
-    }, 60000);
 });
 
 

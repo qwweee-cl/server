@@ -8,7 +8,9 @@ var common = {},
     geoip = require('geoip-lite'),
     countlyConfig = require('./../config'),
     print = console.log;
-
+/*var Mongo = require('mongodb').Db;
+var Server = require('mongodb').Server;
+*/
 (function (common) {
 
     common.dbMap = {
@@ -69,7 +71,8 @@ var common = {},
     common.db_raw = mongo.db(dbRawName, dbOptions);
     common.db_batch = mongo.db(dbBatchName, dbBatchOptions);
     common.db_ibb = mongo.db(dbIbbName, dbOptions);
-
+    //common.db_ibb = new Mongo(countlyConfig.mongodb.db_ibb, new Server(countlyConfig.mongodb.host, countlyConfig.mongodb.port));
+    
     common.config = countlyConfig;
 
     common.time = time;

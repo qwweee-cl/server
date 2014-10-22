@@ -1,3 +1,4 @@
+
 var countlyConfig = {
     mongodb: {
         host: "localhost",
@@ -30,8 +31,10 @@ var countlyConfig = {
         session_duration_limit: 3601,
         max_sockets: 1024,
         cl_endsession_ongoing_timeout: 1,
-	cl_wait_time: 6,
-        /*
+        cl_wait_time: 5,
+        cl_is_debug: false,
+        cl_process_user_cnt: 3000,
+        cl_wait_for_process: 2000,        /*
             If the last end_session is received less than 1 seconds ago we will ignore
             current begin_session request and mark this user as having an ongoing session
         */

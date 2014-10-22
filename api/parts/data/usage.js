@@ -47,7 +47,7 @@ var process = require('process');
         var apps = app;
         var final = isFinal;
         var appinfos = {};
-        console.log('process Session');
+        //console.log('process Session');
 //        console.log(appinfo);
         if (appinfo) {
             appinfos.app_id = appinfo._id;
@@ -368,7 +368,7 @@ var process = require('process');
                 acc_duration = current session_duration
         */
         var currObjIdx = 0;
-        console.log('normal start='+normalSessionStart+'; length='+apps.length);
+        //console.log('normal start='+normalSessionStart+'; length='+apps.length);
         for (i=normalSessionStart; i<apps.length; i++) {
     	    if (!apps[i].timestamp) {
         		console.log('no timestamp');
