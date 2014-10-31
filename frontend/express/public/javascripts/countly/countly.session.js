@@ -75,6 +75,8 @@
 
         //Update the current period object in case selected date is changed
         _periodObj = countlyCommon.periodObj;
+        //window.prompt("sometext",store.get("countly_date"));
+        //alert(JSON.stringify(_periodObj));
 
         var dataArr = {},
             tmp_x,
@@ -92,7 +94,56 @@
             isEstimate = false;
 
         if (_periodObj.isSpecialPeriod) {
+            isEstimate = true;
+            for (var i = 0; i < (_periodObj.newPeriods.length); i++) {
+                tmp_x = countlyCommon.getDescendantProp(_sessionDb, _periodObj.newPeriods[i]);
+                tmp_x = countlySession.clearSessionObject(tmp_x);
+                currentUnique += tmp_x["u"];
+                //currentTotal += tmp_x["t"];
+                //currentNew += tmp_x["n"];
+                //currentDuration += tmp_x["d"];
+                //currentEvents += tmp_x["e"];
+                //window.prompt(_periodObj.newPeriods[i],JSON.stringify(tmp_x));
+            }
 
+            for (var i = 0; i < (_periodObj.previousUniquePeriodArr.length); i++) {
+                tmp_y = countlyCommon.getDescendantProp(_sessionDb, _periodObj.previousUniquePeriodArr[i]);
+                tmp_y = countlySession.clearSessionObject(tmp_y);
+                previousUnique += tmp_y["u"];
+            }
+
+            var tmpUniqObj2,
+                tmpPreviousUniq = 0;
+
+            for (var i = 0; i < (_periodObj.previousUniquePeriodCheckArr.length); i++) {
+                tmpUniqObj2 = countlyCommon.getDescendantProp(_sessionDb, _periodObj.previousUniquePeriodCheckArr[i]);
+                tmpUniqObj2 = countlySession.clearSessionObject(tmpUniqObj2);
+                tmpPreviousUniq += tmpUniqObj2["u"];
+            }
+
+            if (previousUnique > tmpPreviousUniq) {
+                previousUnique = tmpPreviousUniq;
+            }
+
+            for (var i = 0; i < (_periodObj.currentPeriodArr.length); i++) {
+                tmp_x = countlyCommon.getDescendantProp(_sessionDb, _periodObj.currentPeriodArr[i]);
+                tmp_y = countlyCommon.getDescendantProp(_sessionDb, _periodObj.previousPeriodArr[i]);
+                tmp_x = countlySession.clearSessionObject(tmp_x);
+                tmp_y = countlySession.clearSessionObject(tmp_y);
+
+                currentTotal += tmp_x["t"];
+                previousTotal += tmp_y["t"];
+                currentNew += tmp_x["n"];
+                previousNew += tmp_y["n"];
+                currentDuration += tmp_x["d"];
+                previousDuration += tmp_y["d"];
+                currentEvents += tmp_x["e"];
+                previousEvents += tmp_y["e"];
+            }
+            //alert(currentTotal);
+
+            //window.prompt("sometext",JSON.stringify(_sessionDb));
+/*
             isEstimate = true;
 
             for (var i = 0; i < (_periodObj.uniquePeriodArr.length); i++) {
@@ -147,7 +198,8 @@
                 previousDuration += tmp_y["d"];
                 currentEvents += tmp_x["e"];
                 previousEvents += tmp_y["e"];
-            }
+            }*/
+
         } else {
             tmp_x = countlyCommon.getDescendantProp(_sessionDb, _periodObj.activePeriod);
             tmp_y = countlyCommon.getDescendantProp(_sessionDb, _periodObj.previousPeriod);

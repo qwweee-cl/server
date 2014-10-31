@@ -309,6 +309,8 @@ window.DashboardView = countlyView.extend({
                     countlyCommon.drawTimeGraph(sessionDP.chartDP, "#dashboard-graph");
                 });
                 break;
+            case "#nothing":
+                    break;
         }
     },
     pageScript:function () {
@@ -389,6 +391,8 @@ window.DashboardView = countlyView.extend({
                         sessionDP = countlySession.getEventsDPAvg();
                         countlyCommon.drawTimeGraph(sessionDP.chartDP, "#dashboard-graph");
                     });
+                    break;
+                case "#nothing":
                     break;
             }
         });
@@ -475,6 +479,7 @@ window.DashboardView = countlyView.extend({
                 fillKeyEvents(keyEvents);
             }
         }
+
     },
     restart:function () {
         this.refresh(true);
@@ -517,6 +522,8 @@ window.DashboardView = countlyView.extend({
                 case "#draw-avg-events-served":
                     sessionDP = countlySession.getEventsDPAvg();
                     countlyCommon.drawTimeGraph(sessionDP.chartDP, "#dashboard-graph");
+                    break;
+                case "#nothing":
                     break;
             }
 
@@ -1422,6 +1429,100 @@ window.DurationView = countlyView.extend({
     }
 });
 
+window.OEMView = countlyView.extend({
+    beforeRender: function() {
+        return $.when(countlySession.initialize()).then(function () {});
+    },
+    renderCommon:function (isRefresh) {
+        var loyaltyData = countlyUser.getLoyaltyData(),
+            sessionData = countlySession.getSessionData(),
+            durationData = countlySession.getDurationData(),
+            userDP = countlySession.getUserDP();
+
+        sessionData["chart-data"] = userDP.chartData;
+        sessionData["loyalty-data"] = loyaltyData;
+        sessionData["duration-data"] = durationData;
+
+        this.templateData = {
+            "page-title":jQuery.i18n.map["users.title"],
+            "logo-class":"users",
+            "big-numbers":{
+                "count":3,
+                "items":[
+                    {
+                        "title":jQuery.i18n.map["common.total-users"],
+                        "total":sessionData.usage["total-users"].total,
+                        "trend":sessionData.usage["total-users"].trend,
+                        "help":"users.total-users"
+                    },
+                    {
+                        "title":jQuery.i18n.map["common.new-users"],
+                        "total":sessionData.usage["new-users"].total,
+                        "trend":sessionData.usage["new-users"].trend,
+                        "help":"users.new-users"
+                    },
+                    {
+                        "title":jQuery.i18n.map["common.returning-users"],
+                        "total":sessionData.usage["returning-users"].total,
+                        "trend":sessionData.usage["returning-users"].trend,
+                        "help":"users.returning-users"
+                    }
+                ]
+            },
+            "chart-data":{
+                "columnCount":4,
+                "columns":[jQuery.i18n.map["common.date"], jQuery.i18n.map["common.table.total-users"], jQuery.i18n.map["common.table.new-users"], jQuery.i18n.map["common.table.returning-users"]],
+                "rows":[]
+            }
+        };
+
+        this.templateData["chart-data"]["rows"] = userDP.chartData;
+
+        if (!isRefresh) {
+            $(this.el).html(this.template(this.templateData));
+
+            $(".sortable").stickyTableHeaders();
+
+            var self = this;
+            $(".sortable").tablesorter({
+                sortList:this.sortList,
+                headers:{
+                    0:{ sorter:'customDate' }
+                }
+            }).bind("sortEnd", function (sorter) {
+                    self.sortList = sorter.target.config.sortList;
+                });
+
+            countlyCommon.drawTimeGraph(userDP.chartDP, "#dashboard-graph");
+        }
+    },
+    refresh:function () {
+        var self = this;
+        $.when(countlySession.refresh()).then(function () {
+            if (app.activeView != self) {
+                return false;
+            }
+            self.renderCommon(true);
+            newPage = $("<div>" + self.template(self.templateData) + "</div>");
+            newPage.find(".sortable").tablesorter({
+                sortList:self.sortList,
+                headers:{
+                    0:{ sorter:'customDate' }
+                }
+            });
+
+            $(self.el).find("#big-numbers-container").replaceWith(newPage.find("#big-numbers-container"));
+            $(self.el).find(".d-table tbody").replaceWith(newPage.find(".d-table tbody"));
+
+            var userDP = countlySession.getUserDP();
+            countlyCommon.drawTimeGraph(userDP.chartDP, "#dashboard-graph");
+
+            $(".sortable").trigger("update");
+            app.localize();
+        });
+    }
+});
+
 window.ManageAppsView = countlyView.extend({
     initialize:function () {
         this.template = Handlebars.compile($("#template-management-applications").html());
@@ -2109,6 +2210,7 @@ window.EventsView = countlyView.extend({
         }
     },
     drawGraph:function(eventData) {
+        //window.prompt("sometext",(eventData["eventName"]=="_UMA_ID"));
         if (this.showOnGraph != 2) {
             $(".big-numbers").removeClass("selected");
             $(".big-numbers").eq(this.showOnGraph).addClass("selected");
@@ -2123,8 +2225,56 @@ window.EventsView = countlyView.extend({
         }
 
         if (eventData.dataLevel == 2) {
-            countlyCommon.drawGraph(eventData.chartDP, "#dashboard-graph", "bar", {series:{stack:null}});
+            if (eventData["eventName"]=="_UMA_ID") {
+                countlyCommon.drawGraph(eventData.chartDP, "#dashboard-graph", "bar", {series:{stack:null}});
+            } else {
+                var dataDP = {};
+                var tmpDP = [];
+                var ticks = eventData.chartDP.ticks;
+                var dp = eventData.chartDP.dp[0];
+                ticks.sort();
+                //window.prompt("no bar",JSON.stringify(ticks));
+                dp.data[0].sort();
+                var maxrank = 7;
+                var rankprecent = 0;
+                var sum = 0;
+                //window.prompt("no bar",JSON.stringify(dp.data));
+                for(var i=0,j=0;i<ticks.length;i++) {
+                    if (ticks[i][1]) {
+                        tmpDP[j]={label: ticks[i][1],
+                            data: [[0, dp.data[i][1]]]};
+                        sum += dp.data[i][1];
+                        j++;
+                        if (j==maxrank) {
+                            rankprecent = dp.data[i][1];
+                        }
+                    }
+                }
+                rankprecent = rankprecent / sum;
+                rankprecent = (Math.ceil(rankprecent*100))/100;
+                dataDP.dp = tmpDP;
+                if (maxrank>=ticks.length) {
+                    rankprecent = 0;
+                }
+                var tmpJson = {};
+                tmpJson.legend = {};
+                tmpJson.legend.show = true;
+                tmpJson.legend.position = 'nw';
+                tmpJson.series = {};
+                tmpJson.series.pie = {};
+                tmpJson.series.pie.label = {};
+                tmpJson.series.pie.combine = {};
+                tmpJson.series.pie.label.show = false;
+                tmpJson.series.pie.combine.threshold = rankprecent;
+                //window.prompt("test", JSON.stringify(tmpJson));
+                //window.prompt("no bar",JSON.stringify({legend:{show:true,position:'nw'},
+                //    series:{pie:{radius:150,label:{show:false},combine:{color:'#999', threshold:0.08 }}}}));
+                //countlyCommon.drawGraph(dataDP, "#dashboard-graph", "pie", {legend:{show:true,position:'nw'},
+                //    series:{pie:{radius:150,label:{show:false},combine:{color:'#999', threshold:rankprecent }}}});
+                countlyCommon.drawGraph(dataDP, "#dashboard-graph", "pie", tmpJson);
+            }
         } else {
+            //window.prompt("no bar","no bar");
             countlyCommon.drawTimeGraph(eventData.chartDP, "#dashboard-graph");
         }
     },
@@ -2366,6 +2516,7 @@ var AppRouter = Backbone.Router.extend({
         "/analytics/durations":"durations",
         "/manage/apps":"manageApps",
         "/manage/users":"manageUsers",
+        "/analytics/oem":"oem",
         "*path":"main"
     },
     activeView:null, //current view
@@ -2421,6 +2572,9 @@ var AppRouter = Backbone.Router.extend({
     durations:function () {
         this.renderWhenReady(this.durationsView);
     },
+    oem:function() {
+        this.renderWhenReady(this.OEMView);
+    },
     refreshActiveView:function () {
     }, //refresh interval function
     renderWhenReady:function (viewName) { //all view renders end up here
@@ -2466,6 +2620,7 @@ var AppRouter = Backbone.Router.extend({
         this.eventsView = new EventsView();
         this.resolutionsView = new ResolutionView();
         this.durationsView = new DurationView();
+        this.OEMView = new OEMView();
 
         Handlebars.registerPartial("date-selector", $("#template-date-selector").html());
         Handlebars.registerPartial("timezones", $("#template-timezones").html());
@@ -2984,6 +3139,7 @@ var AppRouter = Backbone.Router.extend({
     pageScript:function () { //scripts to be executed on each view change
         $("#month").text(moment().year());
         $("#day").text(moment().format("MMM"));
+        $("#week").text("W"+moment().format("w"));
         $("#yesterday").text(moment().subtract("days",1).format("Do"));
 
         var self = this;

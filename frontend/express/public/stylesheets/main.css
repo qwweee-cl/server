@@ -53,6 +53,8 @@ a:active { color:inherit; }
 			#sidebar-menu .item.active .logo.events { background-position:-440px; }
             #sidebar-menu .item .logo.engagement { background-position:-480px; }
             #sidebar-menu .item.active .logo.engagement { background-position:-520px; }
+            #sidebar-menu .item .logo.oem { background-position:-240px; }
+            #sidebar-menu .item.active .logo.oem { background-position:-280px; }
 		#sidebar-menu .item .text { margin-left:15px; float:left; padding-top:11px; font:15px Ubuntu,Helvetica,sans-serif; color:#888; text-shadow:0 1px #222; }
 			#sidebar-menu .item.active .text { color:#FFF; text-shadow:0 1px #666; }
 			

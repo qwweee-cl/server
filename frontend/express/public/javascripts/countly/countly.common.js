@@ -1063,6 +1063,261 @@
         return Math.ceil(((new Date()) - onejan) / 86400000);
     }
 
+    //printLog = console.log;
+    function checkAll(from, to) {
+        if (from>to) {
+            var tmp = to;
+            to = from;
+            from = tmp;
+        }
+        var fromMoment = moment(from);
+        var toMoment = moment(to);
+        var fromDate = moment(from).format();
+        var toDate = moment(to).format();
+        var fromY = parseInt(moment(from).format("YYYY"));
+        var toY = parseInt(moment(to).format("YYYY"));
+        var fromM = parseInt(moment(from).format("MM"));
+        var toM = parseInt(moment(to).format("MM"));
+        var fromD = parseInt(moment(from).format("DD"));
+        var toD = parseInt(moment(to).format("DD"));
+        var fromH = parseInt(moment(from).format("HH"));
+        var toH = parseInt(moment(to).format("HH"));
+        var arr = [];
+        //printLog("Year "+fromDate);
+        //printLog("Year "+toDate);
+        ////printLog(fromY+" "+fromM+" "+fromD+" "+fromH);
+        ////printLog(toY+" "+toM+" "+toD+" "+toH);
+        ////printLog(fromMoment.isBefore("2012-11-01"));
+        for (var i=fromY;i<=toY;i++) {
+            if ((fromMoment.valueOf() <= moment(i+"-01-01").valueOf()) && 
+                (toMoment.valueOf() >= moment(i+"-12-31").valueOf())) {
+                //printLog(i+" is full year");
+                arr.push(i.toString());
+            } else if ((toMoment.valueOf() >= moment(i+"-12-31").valueOf())) {
+                //printLog(i+" after 1/1, check month, week, day");
+                ////printLog("from:"+fromMoment.valueOf()+" to:"+moment(i+"-12-31").valueOf());
+                var tmpArr = checkMonth(fromMoment.valueOf(), moment(i+"-12-31").valueOf());
+                arr.push.apply(arr, tmpArr);
+            } else if ((fromMoment.valueOf() <= moment(i+"-01-01").valueOf())){
+                //printLog(i+" before 12/31, check month, week, day");
+                var tmpArr = checkMonth(moment(i+"-01-01").valueOf(), toMoment.valueOf());
+                arr.push.apply(arr, tmpArr);
+            } else {
+                //printLog(i+" this year , check month, week, day");
+                var tmpArr = checkMonth(fromMoment.valueOf(), toMoment.valueOf());
+                arr.push.apply(arr, tmpArr);
+            }
+        }
+        arr.sort();
+        //printLog(arr);
+        return arr;
+    }
+
+    function pad2(number) {
+        return (number < 10 ? '0' : '') + number
+    }
+
+    function checkMonth(from, to) {
+        if (from>to) {
+            var tmp = to;
+            to = from;
+            from = tmp;
+        }
+        var fromMoment = moment(from);
+        var toMoment = moment(to);
+        var fromDate = moment(from).format();
+        var toDate = moment(to).format();
+        var fromY = parseInt(moment(from).format("YYYY"));
+        var toY = parseInt(moment(to).format("YYYY"));
+        var fromM = parseInt(moment(from).format("MM"));
+        var toM = parseInt(moment(to).format("MM"));
+        var fromD = parseInt(moment(from).format("DD"));
+        var toD = parseInt(moment(to).format("DD"));
+        var fromH = parseInt(moment(from).format("HH"));
+        var toH = parseInt(moment(to).format("HH"));
+        var endofM = [0,31,28,31,30,31,30,31,31,30,31,30,31];
+        var arr = [];
+        var arrM = [];
+        var regex = /\d{4}.\d{1,2}.\d{1,2}/;
+        if (fromMoment.isLeapYear()) {
+            endofM[2]=29;
+        }
+        //printLog("Month "+fromDate);
+        //printLog("Month "+toDate);
+        //printLog(fromY+" "+fromM+" "+fromD+" "+fromH);
+        //printLog(toY+" "+toM+" "+toD+" "+toH);
+        for (var i=fromM;i<=toM;i++) {
+            if ((fromMoment.valueOf() <= moment(fromY+"-"+pad2(i)+"-01").valueOf()) && 
+                (toMoment.valueOf() >= moment(toY+"-"+pad2(i)+"-"+endofM[i]).valueOf())) {
+                //printLog(fromY+"-"+i+" is full month");
+                arr.push(fromY+"."+i);
+            } else if ((toMoment.valueOf() >= moment(toY+"-"+pad2(i)+"-"+endofM[i]).valueOf())) {
+                //printLog("after "+fromY+"-"+pad2(i)+"-1 check week, day");
+                ////printLog("from:"+fromMoment.valueOf()+" to:"+moment(fromY+"-"+pad2(i)+"-"+endofM[i]).valueOf());
+                var tmpArr = checkWeek(fromMoment.valueOf(), moment(fromY+"-"+pad2(i)+"-"+endofM[i]).valueOf());
+                for (var j=0;j<tmpArr.length;j++) {
+                    if (!regex.test(tmpArr[j])) {
+                        arr.push(tmpArr[j]);
+                        //printLog(tmpArr[j]);
+                    } else {
+                        arrM.push(tmpArr[j]);
+                    }
+                }
+                //arrM.push.apply(arrM, tmpArr);
+            } else if ((fromMoment.valueOf() <= moment(fromY+"-"+pad2(i)+"-01").valueOf())){
+                //printLog("before "+toY+"-"+pad2(i)+"-"+endofM[i]+" check week, day");
+                ////printLog("from:"+moment(fromY+"-"+pad2(i)+"-01").valueOf()+" to:"+toMoment.valueOf());
+                var tmpArr = checkWeek(moment(fromY+"-"+pad2(i)+"-01").valueOf(), toMoment.valueOf());
+                for (var j=0;j<tmpArr.length;j++) {
+                    if (!regex.test(tmpArr[j])) {
+                        arr.push(tmpArr[j]);
+                        //printLog(tmpArr[j]);
+                    } else {
+                        arrM.push(tmpArr[j]);
+                    }
+                }
+                //arrM.push.apply(arrM, tmpArr);
+            } else {
+                //printLog(fromY+"-"+i+" this month , check week, day");
+                var tmpArr = checkWeek(fromMoment.valueOf(), toMoment.valueOf());
+                for (var j=0;j<tmpArr.length;j++) {
+                    if (!regex.test(tmpArr[j])) {
+                        arr.push(tmpArr[j]);
+                        //printLog(tmpArr[j]);
+                    } else {
+                        arrM.push(tmpArr[j]);
+                    }
+                }
+                //arrM.push.apply(arrM, tmpArr);
+            }
+        }
+        var wofy = new Array(54);
+        for (var i=0;i<wofy.length;i++) {
+            wofy[i] = new Array(2);
+            wofy[i][0] = 0;
+            wofy[i][1] = [];
+        }
+        for (var i=0;i<arrM.length;i++) {
+            //printLog(arrM[i]);
+            var tmpMoment = moment(arrM[i], "YYYY.M.D");
+            var tmpW = Math.ceil(tmpMoment.format("DDD") / 7);
+            //printLog(tmpW);
+            var tmpArr = wofy[tmpW];
+            tmpArr[0]++;
+            tmpArr[1].push(arrM[i]);
+        }
+        ////printLog(wofy);
+        for (var i=0;i<wofy.length;i++) {
+            if (wofy[i][0] != 7) {
+                for(var j=0;j<wofy[i][1].length;j++) {
+                    arr.push(wofy[i][1][j]);
+                }
+            } else {
+                arr.push(fromY+".w"+i);
+            }
+        }
+        return arr;
+    }
+
+    function checkWeek(from, to) {
+        if (from>to) {
+            var tmp = to;
+            to = from;
+            from = tmp;
+        }
+        var fromMoment = moment(from);
+        var toMoment = moment(to);
+        var fromDate = moment(from).format();
+        var toDate = moment(to).format();
+        var fromY = parseInt(moment(from).format("YYYY"));
+        var toY = parseInt(moment(to).format("YYYY"));
+        var fromM = parseInt(moment(from).format("MM"));
+        var toM = parseInt(moment(to).format("MM"));
+        var fromD = parseInt(moment(from).format("DD"));
+        var toD = parseInt(moment(to).format("DD"));
+        var fromH = parseInt(moment(from).format("HH"));
+        var toH = parseInt(moment(to).format("HH"));
+        var fromW = parseInt(moment(from).format("w"));
+        var toW = parseInt(moment(to).format("w"));
+        fromW = Math.ceil(fromMoment.format("DDD") / 7);
+        toW = Math.ceil(toMoment.format("DDD") / 7);
+        var arr = [];
+        //printLog("Month "+fromDate);
+        //printLog("Month "+toDate);
+        //printLog(fromY+" "+fromM+" "+fromD+" "+fromH+" w"+fromW);
+        //printLog(toY+" "+toM+" "+toD+" "+toH+" w"+toW);
+        
+        //printLog("from w"+fromW);
+        //printLog(fromMoment.format("DDD"));
+        //printLog("to w"+toW);
+        //printLog(toMoment.format("DDD"));
+        //printLog("===================");
+        if (fromW == toW) {
+            if ((toMoment.format("DDD")-fromMoment.format("DDD") == 6)) {
+                //printLog("w"+fromW+" is full week");
+                arr.push(fromY+".w"+fromW);
+            } else {
+                for (var i=0;i<=(toMoment.format("DDD")-fromMoment.format("DDD"));i++) {
+                    var tmpMoment = moment(fromMoment);
+                    tmpMoment.add('days',i);
+                    ////printLog(tmpMoment.format("YYYY.M.D"));
+                    arr.push(tmpMoment.format("YYYY.M.D"));
+                }
+            }
+            return arr;
+        }
+        // check fromW
+        var fromMod = fromMoment.format("DDD") % 7;
+        if (fromMod == 1) {
+            //printLog("w"+fromW+" is full week");
+            arr.push(fromY+".w"+fromW);
+        } else {
+            //printLog("from w"+fromW);
+            //printLog(fromMod);
+            for (var i=0;i<=((7-fromMod)%7);i++) {
+                var tmpMoment = moment(fromMoment);
+                tmpMoment.add('days',i);
+                arr.push(tmpMoment.format("YYYY.M.D"));
+                /*//printLog(fromY+"-"+fromM+"-"+(fromD+i));
+                arr.push(fromY+"."+fromM+"."+(fromD+i));*/
+            }
+        }
+        // check fromW+1 to toW-1
+        for (var i=fromW+1;i<=toW-1;i++) {
+            //printLog("w"+i+" is full week");
+            arr.push(fromY+".w"+i);
+        }
+        // check toW
+        var toMod = toMoment.format("DDD") % 7;
+        if (toMod == 0) {
+            //printLog("w"+toW+" is full week");
+            arr.push(toY+".w"+toW);
+        } else {
+            //printLog("to w"+toW);
+            //printLog(toMod);
+            if (toMoment.isLeapYear()) {
+                if (toMod==2 && toW==53) {
+                    //printLog("w"+toW+" is the end week");
+                    arr.push(toY+".w"+toW);
+                    return arr;
+                }
+            } else {
+                if (toMod==1 && toW==53) {
+                    //printLog("w"+toW+" is the end week");
+                    arr.push(toY+".w"+toW);
+                    return arr;
+                }
+            }
+            for (var i=0;i<toMod;i++) {
+                var tmpMoment = moment(toMoment);
+                tmpMoment.add('days',-i);
+                arr.push(tmpMoment.format("YYYY.M.D"));
+                /*//printLog(toY+"-"+toM+"-"+(toD-i));
+                arr.push(toY+"."+toM+"."+(toD-i));*/
+            }
+        }
+        return arr;
+    }
     // Returns a period object used by all time related data calculation functions.
     function getPeriodObj() {
 
@@ -1082,7 +1337,8 @@
             rangeEndDay = null,
             dateString,
             uniquePeriodsCheck = [],
-            previousUniquePeriodsCheck = [];
+            previousUniquePeriodsCheck = [],
+            newPeriods = [];
 
         switch (_period) {
             case "month":
@@ -1153,7 +1409,7 @@
             default:
                 break;
         }
-
+        var beSet = false;
         // Check whether period object is array
         if (Object.prototype.toString.call(_period) === '[object Array]' && _period.length == 2) {
             var tmpDate = new Date (_period[1]);
@@ -1185,6 +1441,9 @@
 
                 numberOfDays = daysInPeriod = b.diff(a, 'days') + 1;
                 rangeEndDay = _period[1];
+                var tmpArr = checkAll(a.valueOf(), b.valueOf());
+                newPeriods.push.apply(newPeriods, tmpArr);
+                beSet = true;
             }
         }
 
@@ -1240,9 +1499,16 @@
 
             dateString = (yearChanged) ? "D MMM, YYYY" : "D MMM";
             isSpecialPeriod = true;
+            if (!beSet) {
+                var toMoment = moment(moment().format('YYYY.M.D'),'YYYY.M.D'),
+                    fromMoment = moment(toMoment).add('days',-(daysInPeriod-1));
+                var tmpArr = checkAll(fromMoment.valueOf(), toMoment.valueOf());
+                newPeriods.push.apply(newPeriods, tmpArr);
+            }
         }
 
         periodObj = {
+            "newPeriods":newPeriods,
             "activePeriod":activePeriod,
             "periodMax":periodMax,
             "periodMin":periodMin,

@@ -18,7 +18,6 @@ var http = require('http'),
 
 http.globalAgent.maxSockets = common.config.api.max_sockets || 1024;
 
-
 function logDbError(err, res) {
     if (err) {
 	console.log('DB operation error');
@@ -171,7 +170,7 @@ function getIpAddress(req) {
 }
 
 if (cluster.isMaster) {
-
+    console.log('start api ====================================================');
     var workerCount = (common.config.api.workers)? common.config.api.workers : os.cpus().length;
 
     for (var i = 0; i < workerCount; i++) {
