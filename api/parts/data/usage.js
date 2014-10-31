@@ -18,37 +18,36 @@ var process = require('process');
     var OP_DECREASE=0;
     var OP_FILL=1;
     var OP_INCREASE=2;
-
-    var dataBag = {};
-    dataBag.apps = [];
-    dataBag.updateSessions = {};
-    dataBag.updateLocations = {};
-    dataBag.updateUsers = {};
-    dataBag.updateCities = {};
-    dataBag.userRanges = {};
-    dataBag.sessionRanges = {};
-    dataBag.countryArray = {};
-    dataBag.cityArray = {};
-    dataBag.updateMetrics = {};
-    dataBag.MetricMetaSet = {};
-    dataBag.userRanges['meta.f-ranges'] = {};
-    dataBag.userRanges['meta.l-ranges'] = {};
-    dataBag.sessionRanges['meta.d-ranges'] = {};
-    dataBag.userRanges['meta.f-ranges']['$each'] = [];
-    dataBag.userRanges['meta.l-ranges']['$each'] = [];
-    dataBag.sessionRanges['meta.d-ranges']['$each'] = [];
-    dataBag.countryArray['meta.countries'] = {};
-    dataBag.cityArray['meta.cities'] = {};
-    dataBag.countryArray['meta.countries']['$each'] = [];
-    dataBag.cityArray['meta.cities']['$each'] = [];
  
     //query user data and execute processUserSession
     usage.processSession = function (app, isFinal, appinfo) {
+        var dataBag = {};
+        dataBag.apps = [];
+        dataBag.updateSessions = {};
+        dataBag.updateLocations = {};
+        dataBag.updateUsers = {};
+        dataBag.updateCities = {};
+        dataBag.userRanges = {};
+        dataBag.sessionRanges = {};
+        dataBag.countryArray = {};
+        dataBag.cityArray = {};
+        dataBag.updateMetrics = {};
+        dataBag.MetricMetaSet = {};
+        dataBag.userRanges['meta.f-ranges'] = {};
+        dataBag.userRanges['meta.l-ranges'] = {};
+        dataBag.sessionRanges['meta.d-ranges'] = {};
+        dataBag.userRanges['meta.f-ranges']['$each'] = [];
+        dataBag.userRanges['meta.l-ranges']['$each'] = [];
+        dataBag.sessionRanges['meta.d-ranges']['$each'] = [];
+        dataBag.countryArray['meta.countries'] = {};
+        dataBag.cityArray['meta.cities'] = {};
+        dataBag.countryArray['meta.countries']['$each'] = [];
+        dataBag.cityArray['meta.cities']['$each'] = [];
         var apps = app;
         var final = isFinal;
         var appinfos = {};
-        console.log('process Session');
-        console.log(appinfo);
+        //console.log('process Session');
+        if (appinfo) console.log(appinfo);
         if (appinfo) {
             appinfos.app_id = appinfo._id;
             appinfos.appTimezone = appinfo.timezone;
@@ -59,9 +58,19 @@ var process = require('process');
             appinfos.app_cc = apps[0].app_cc;
 
         }
+        var uma = {};
+        uma[appinfos.app_id] = app[0].app_user_id;
+        common.db.collection('uma').update({'_id':app[0].device_id}, {'$set':uma}, {'upsert': true}
+            , function (err, data) {
+                if (err){
+                    console.log('[processSession]uma log error:' + err);  
+                }
+                dbonoff.on('raw');
+        });
+
        	common.db.collection('app_users' + appinfos.app_id).findOne({'_id': apps[0].app_user_id}, 
        	    function (err, dbAppUser){
-               	processUserSession(dbAppUser, apps, isFinal, appinfos);
+               	processUserSession(dataBag, dbAppUser, apps, isFinal, appinfos);
        	});
     }
 
@@ -70,7 +79,7 @@ var process = require('process');
        	if (err){
             console.log(errHeader+':'+err);  
        	}
-	dbonoff.on('raw');
+        dbonoff.on('raw');
     }
 
     function durationRange(totalSessionDuration) {
@@ -84,16 +93,16 @@ var process = require('process');
             [1801,3600]
         ];
         var durationMax = 3601;
-        var calculatedDurationRange;
+        var calculatedDurationRange='';
 
         if (totalSessionDuration >= durationMax) {
-            //calculatedDurationRange = (durationRanges.length) + '';
-            calculatedDurationRange = durationRanges.length;
+            calculatedDurationRange = (durationRanges.length) + '';
+            //calculatedDurationRange = durationRanges.length;
         } else {
             for (var i=0; i < durationRanges.length; i++) {
                 if (totalSessionDuration <= durationRanges[i][1] && totalSessionDuration >= durationRanges[i][0]) {
-                    //calculatedDurationRange = i + '';
-                    calculatedDurationRange = i;
+                    calculatedDurationRange = i + '';
+                    //calculatedDurationRange = i;
                     break;
                 }
             }
@@ -102,18 +111,19 @@ var process = require('process');
         return calculatedDurationRange;
     }
 
-    function updateSessionDuration(sessionObj, toFill) {
+    function updateSessionDuration(dataBag, sessionObj, toFill) {
         var session_duration = sessionObj.acc_duration;
         var updateTimeObject = getTimeFunction(toFill);
-	var thisDurationRange = durationRange(session_duration);
+        var thisDurationRange = durationRange(session_duration);
         updateTimeObject(sessionObj, dataBag.updateSessions, common.dbMap['durations'] + '.' + thisDurationRange);
         if (common.config.api.session_duration_limit && session_duration > common.config.api.session_duration_limit) {
                 session_duration = common.config.api.session_duration_limit;
         }
         updateTimeObject(sessionObj, dataBag.updateSessions, common.dbMap['duration'], session_duration);
-	if (toFill != OP_DECREASE) {
-	    common.arrayAddUniq(dataBag.sessionRanges['meta.d-ranges']['$each'],parseInt(thisDurationRange));
-	}
+    	if (toFill != OP_DECREASE) {
+            //common.arrayAddUniq(dataBag.sessionRanges['meta.d-ranges']['$each'],parseInt(thisDurationRange));
+            common.arrayAddUniq(dataBag.sessionRanges['meta.d-ranges']['$each'], thisDurationRange);
+    	}
     }
 
 
@@ -182,7 +192,7 @@ var process = require('process');
         common.db.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback); 
     }
 
-    function reallyUpdateAll(appinfos) {
+    function reallyUpdateAll(dataBag, appinfos) {
 
 //	console.log(dataBag);
         updateRangeMeta(dataBag.userRanges, 'users', appinfos.app_id);
@@ -206,25 +216,27 @@ var process = require('process');
 	}
     }
 
-    function updateFreqRange(sessionObj, dbAppUser) {
+    function updateFreqRange(dataBag, sessionObj, dbAppUser) {
         // Calculate the frequency range of the user
 	//console.log('updateFreqRange:%j', sessionObj);
 	//console.log(dbAppUser);
         var calculatedFrequency;
-	if (!dbAppUser || !dbAppUser.timestamp) { //new user
-            return;
-	} else {
-            calculatedFrequency = computeFreqRange(sessionObj.timestamp, dbAppUser.timestamp);
-	}
-        common.fillTimeObject(sessionObj, dataBag.updateUsers, common.dbMap['frequency'] + '.' + calculatedFrequency);
-        common.arrayAddUniq(dataBag.userRanges['meta.f-ranges']['$each'],parseInt(calculatedFrequency));
+    	if (!dbAppUser || !dbAppUser.timestamp) { //new user
+                return;
+    	} else {
+                calculatedFrequency = computeFreqRange(sessionObj.timestamp, dbAppUser.timestamp);
+    	}
+        if (calculatedFrequency != '') {
+            common.fillTimeObject(sessionObj, dataBag.updateUsers, common.dbMap['frequency'] + '.' + calculatedFrequency);
+            common.arrayAddUniq(dataBag.userRanges['meta.f-ranges']['$each'],calculatedFrequency);
+        }
     } 
 
-    function updateLoyaltyRange(sessionObj, session_count) {
+    function updateLoyaltyRange(dataBag, sessionObj, session_count) {
         // Calculate the loyalty range of the user
         var calculatedLoyaltyRange = computeLoyaltyRange(session_count);
         common.fillTimeObject(sessionObj, dataBag.updateUsers, common.dbMap['loyalty'] + '.' + calculatedLoyaltyRange);
-	common.arrayAddUniq(dataBag.userRanges['meta.l-ranges']['$each'], parseInt(calculatedLoyaltyRange));
+	common.arrayAddUniq(dataBag.userRanges['meta.l-ranges']['$each'], calculatedLoyaltyRange);
     } 
    
     function getTimeFunction(toFill) {
@@ -242,7 +254,7 @@ var process = require('process');
         return updateTimeObject;
     }
 
-    function updateMetricTimeObj(sessionObject, prop, toFill) {
+    function updateMetricTimeObj(dataBag, sessionObject, prop, toFill) {
 	if (!sessionObject.metrics) return; 
 
         var updateTimeObject = getTimeFunction(toFill);
@@ -278,7 +290,7 @@ var process = require('process');
 //	console.log(dataBag.updateMetrics['devices']);
     }
 
-    function updateStatistics(sessionObject, prop, toFill, increase, sessions) {
+    function updateStatistics(dataBag, sessionObject, prop, toFill, increase, sessions) {
         var incr = increase? increase : 1;
         var updateTimeObject = getTimeFunction(toFill);
 	if (!sessions) { 
@@ -296,7 +308,7 @@ var process = require('process');
 //	console.log(dataBag.updateMetrics['devices']);
     }
 
-    function updateUserProfile(sessionObject, finalUserObject, appinfos) {
+    function updateUserProfile(dataBag, sessionObject, finalUserObject, appinfos) {
         var userProps = {};
         userProps[common.dbUserMap['device_id']] = sessionObject.device_id;
         userProps[common.dbUserMap['session_duration']] = parseInt(sessionObject.acc_duration);
@@ -308,7 +320,7 @@ var process = require('process');
         userProps.app_cc = appinfos.app_cc;
         userProps.timestamp = sessionObject.timestamp;
         userProps.tz = sessionObject.tz;
-        userProps.time = sessionObject.time;
+        //userProps.time = sessionObject.time;
         userProps.country = sessionObject.country;
         userProps.city = sessionObject.city;
         userProps.app_id = appinfos.app_id;
@@ -316,7 +328,7 @@ var process = require('process');
         updateCollection('app_users'+appinfos.app_id, sessionObject.app_user_id, userProps, '$set', '[userProps]'); 
     }
 
-    function cpUniqueSession(uniqueSession) {
+    function cpUniqueSession(dataBag, uniqueSession) {
 //	console.log('copy sessions');
 //	console.log(uniqueSession);
 	for (var times in uniqueSession) {
@@ -330,7 +342,7 @@ var process = require('process');
 	}	
     }
     //Param: dbAppUser-user data in app_user_XXX, apps:all logs for a Single User
-    function processUserSession(dbAppUser, apps, isFinal, appinfos) {
+    function processUserSession(dataBag, dbAppUser, apps, isFinal, appinfos) {
         var sessionObj = [];
         var last_end_session_timestamp = 0;
         var total_duration = 0;
@@ -344,6 +356,7 @@ var process = require('process');
 	    //console.log('dbAppUser=%j', dbAppUser);
             dbAppUser.acc_duration = parseInt(dbAppUser[common.dbUserMap['session_duration']]);
             sessionObj[0] = common.clone(dbAppUser);
+            sessionObj[0].time = common.initTimeObj(dbAppUser.appTimezone, dbAppUser.timestamp, dbAppUser.tz);
             last_end_session_timestamp = dbAppUser[common.dbUserMap['last_end_session_timestamp']];
         } else { //new user
             sessionObj[0] = {};
@@ -367,7 +380,7 @@ var process = require('process');
                 acc_duration = current session_duration
         */
         var currObjIdx = 0;
-        console.log('normal start='+normalSessionStart+'; length='+apps.length);
+        //console.log('normal start='+normalSessionStart+'; length='+apps.length);
         for (i=normalSessionStart; i<apps.length; i++) {
     	    if (!apps[i].timestamp) {
         		console.log('no timestamp');
@@ -377,7 +390,7 @@ var process = require('process');
             //set event(request) count for every request
             common.incrTimeObject(apps[i], dataBag.updateSessions, common.dbMap['events']); 
             if (apps[i].begin_session) {
-//		console.log('dataBag app:'+i+':begin_session');
+                //console.log('dataBag app:'+i+':begin_session');
                 if ((apps[i].timestamp - last_end_session_timestamp) < common.config.api.cl_endsession_ongoing_timeout) { //ongoing session
                     last_end_session_timestamp = 0;
                     continue;
@@ -388,18 +401,16 @@ var process = require('process');
                 sessionObj[currObjIdx].acc_duration = 0;
             }
             if (apps[i].end_session) { 
-//		console.log('dataBag app:'+i+':end_session');
                 //used to judge if there will be ongoing session
                 last_end_session_timestamp = apps[i].timestamp;
             }
             if (apps[i].session_duration) {
-//		console.log('dataBag app:'+i+':session_duration');
                 sessionObj[currObjIdx].acc_duration += parseInt(apps[i].session_duration);
                 total_duration += parseInt(apps[i].session_duration);
             }
         }
 
-        console.log('sessionObj:'+currObjIdx);
+        //console.log('sessionObj:'+currObjIdx);
         //Prepare final Session info to update
         var finalUserObject = {};
         finalUserObject[common.dbUserMap['last_end_session_timestamp']] = last_end_session_timestamp;
@@ -421,53 +432,53 @@ var process = require('process');
             sessionObjByDay[sessionDayIdx].push(sessionObj[i]);
 
             if (sessionObj[i].acc_duration > 0) { //ignore partial session which has no end_session or session_duration info
-                updateSessionDuration(sessionObj[i], OP_INCREASE);
+                updateSessionDuration(dataBag, sessionObj[i], OP_INCREASE);
             }
 
             //set total user/unique user count in necessary collections   
             common.computeGeoInfo(sessionObj[i]);
-            updateStatistics(sessionObj[i], common.dbMap['total'], OP_INCREASE); //will increase for every session
-            updateStatistics(sessionObj[i], common.dbMap['unique'], OP_FILL, 1, uniqueSession); // only set once
+            updateStatistics(dataBag, sessionObj[i], common.dbMap['total'], OP_INCREASE); //will increase for every session
+            updateStatistics(dataBag, sessionObj[i], common.dbMap['unique'], OP_FILL, 1, uniqueSession); // only set once
         }
 //	    console.log('sessionObjByDay='+startIdx+':'+(i-1));
 //	    console.log(sessionObjByDay);
 
-        cpUniqueSession(uniqueSession);
+        cpUniqueSession(dataBag, uniqueSession);
         //For frequency computation, no need to do with sessions in the same day as old sessions(dbAppUser)
         //The 1st session will be dealt with in new user block
         for (i=1; i<sessionObjByDay.length; i++) { 
-            updateFreqRange(sessionObjByDay[i][0], sessionObjByDay[i-1][sessionObjByDay[i-1].length-1]);
+            updateFreqRange(dataBag, sessionObjByDay[i][0], sessionObjByDay[i-1][sessionObjByDay[i-1].length-1]);
         }
 
         //update loyalty from the 2nd day
         var session_count = dbAppUser?dbAppUser[common.dbUserMap['session_count']]:0;
         for (i=1; i<sessionObjByDay.length; i++) {
             session_count += sessionObjByDay[i-1].length;
-            updateLoyaltyRange(sessionObjByDay[i][0], session_count);
+            updateLoyaltyRange(dataBag, sessionObjByDay[i][0], session_count);
         }
 
         //If there is on-going session coming in at first...
         if (dbAppUser) {
             //Update last session in DB to include new session duration sent after last processing, also update duration ranges
             if (dbAppUser.acc_duration>0) {
-                updateSessionDuration(dbAppUser, OP_DECREASE);
+                updateSessionDuration(dataBag, dbAppUser, OP_DECREASE);
             }
-            updateStatistics(dbAppUser, common.dbMap['total'], OP_DECREASE); 
-            updateStatistics(dbAppUser, common.dbMap['unique'], OP_DECREASE); // reset previous add in sessionObj
+            updateStatistics(dataBag, dbAppUser, common.dbMap['total'], OP_DECREASE); 
+            updateStatistics(dataBag, dbAppUser, common.dbMap['unique'], OP_DECREASE); // reset previous add in sessionObj
 
         } else { //set new user count in necessary collections   
-            updateStatistics(sessionObjByDay[0][0], common.dbMap['new'], OP_INCREASE);
-            updateLoyaltyRange(sessionObjByDay[0][0], 1); //session count = 1
-            updateFreqRange(sessionObjByDay[0][0], sessionObjByDay[0][0]); //set 1st session
+            updateStatistics(dataBag, sessionObjByDay[0][0], common.dbMap['new'], OP_INCREASE);
+            updateLoyaltyRange(dataBag, sessionObjByDay[0][0], 1); //session count = 1
+            updateFreqRange(dataBag, sessionObjByDay[0][0], sessionObjByDay[0][0]); //set 1st session
         }
 
         //use last session object to update user profiles (metrics)
-        updateUserProfile(sessionObj[currObjIdx], finalUserObject, appinfos);
+        updateUserProfile(dataBag, sessionObj[currObjIdx], finalUserObject, appinfos);
 
         //do the real update job in MongoDB
-    	if (isFinal) {
-    	    reallyUpdateAll(appinfos);
-    	}
+    	//if (isFinal) {
+	    reallyUpdateAll(dataBag, appinfos);
+    	//}
     }
 }(usage));
 

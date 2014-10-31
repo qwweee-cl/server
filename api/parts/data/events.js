@@ -5,17 +5,16 @@ var events = {},
 //var emitter = require('events');
 
 (function (events) {
-
-    var updateSessions = {};
-	var bag = {};
-    	bag.eventCollections = {};
-    	bag.eventSegments = {};
-    	bag.eventArray = [];            
-
     events.processEvents = function(app, isFinal, appinfo) {
+        var updateSessions = {};
+        var bag = {};
+            bag.eventCollections = {};
+            bag.eventSegments = {};
+            bag.eventArray = [];           
+        var uma = {}; 
         var appinfos = {};
         console.log('process Event');
-        console.log(appinfo);
+        //if (appinfo) console.log(appinfo);
         if (appinfo) {
             appinfos.app_id = appinfo._id;
             appinfos.appTimezone = appinfo.timezone;
@@ -23,20 +22,34 @@ var events = {},
             appinfos.app_id = app[0].app_id;
             appinfos.appTimezone = app[0].appTimezone;
         }
+        appinfos.device_id = app[0].device_id;
+        //uma[appinfos.app_id] = app[0].app_user_id;
 
         for (var i=0; i<app.length; i++) {
             app[i].time = common.initTimeObj(appinfos.appTimezone, app[i].timestamp, app[i].tz);
             //update requests count
             common.incrTimeObject(app[i], updateSessions, common.dbMap['events']); 
-            eventAddup(bag,app[i], appinfos); //will be computed in old user, that's ok
+            eventAddup(bag, app[i], appinfos, uma); //will be computed in old user, that's ok
     	}
-        logCurrUserEvents(app, appinfos);
+        updateUma(uma, appinfos);
+        //logCurrUserEvents(app, appinfos);
 
-    	if (isFinal) {
-            updateEvents(bag);
-    	    updateEventMeta(bag, appinfos);
-    	    updateReqSessions(updateSessions,appinfos.app_id);
-    	}
+    	//if (isFinal) {
+        updateEvents(bag);
+	    updateEventMeta(bag, appinfos);
+	    updateReqSessions(updateSessions,appinfos.app_id);
+    	//}
+    }
+
+    function updateUma(uma, appinfo) {
+        //console.log(uma);
+        common.db.collection('uma').update({'_id':appinfo.device_id}, {'$set':uma}, {'upsert': true}
+            , function (err, data) {
+                if (err){
+                    console.log('[processEvent]uma log error:' + err);  
+                }
+                dbonoff.on('raw');
+        });
     }
 
     function updateReqSessions(updateSessions, app_id) {
@@ -49,7 +62,7 @@ var events = {},
 	});
     }
 
-    function eventAddup(bag, params, appinfos) {
+    function eventAddup(bag, params, appinfos,uma) {
         var tmpEventObj = {},
             tmpEventColl = {},
             shortCollectionName = "",
@@ -66,6 +79,16 @@ var events = {},
             // Key and count fields are required
             if (!currEvent.key || !currEvent.count || !common.isNumber(currEvent.count)) {
                 console.log('No key or count:%j', currEvent);
+                continue;
+            }
+
+            if (currEvent.key == '_UMA_ID') {
+                if (currEvent.segmentation.google_play_advertising_id) 
+                    uma.google_play_advertising_id = currEvent.segmentation.google_play_advertising_id;
+                if (currEvent.segmentation.android_id) 
+                    uma.android_id = currEvent.segmentation.android_id;
+                if (currEvent.segmentation.identifier_for_vendor) 
+                    uma.identifier_for_vendor = currEvent.segmentation.identifier_for_vendor;
                 continue;
             }
 
@@ -199,7 +222,6 @@ var events = {},
 
     function updateEvents(bag) {
         // update Segmentation_key+App_id collections
-	console.log('event collections add:'+Object.keys(bag.eventCollections).length); 
         for (var collection in bag.eventCollections) {
             for (var segment in bag.eventCollections[collection]) {
                 if (segment == "no-segment" && bag.eventSegments[collection]) {
@@ -216,10 +238,10 @@ var events = {},
     }
 
     function eventCallback(err, res) {
-	if (err){
-	    console.log('userEvent log error:' + err);  
-	}
-	dbonoff.on('raw');
+    	if (err){
+    	    console.log('userEvent log error:' + err);  
+    	}
+    	dbonoff.on('raw');
     }
 
     function updateEventMeta(bag, appinfos) {
