@@ -4,7 +4,7 @@ var http = require('http'),
     url = require('url'),
     common = require('./utils/common.js'),
     dbonoff = require('./utils/dbonoff.js'),
-    debug = require('./utils/cl/debug.js'),
+    //debug = require('./utils/cl/debug.js'),
     ObjectID = require('mongodb').ObjectID,
     countlyApi = {
         data:{
@@ -42,38 +42,39 @@ var oidFileName = '_next_oid';
 var hasOidFile = false;
 
 function processEvents(app, isFinal, appinfo) {
-    console.log('entering events');
-    var apps = app;
-    var final = isFinal;
-    var appinfos = appinfo;
+    //console.log('entering events');
     process.nextTick(function() {
-    	console.log('isFinale='+final);
+        var apps = app;
+        var final = isFinal;
+        var appinfos = appinfo;
+    	//console.log('isFinale='+final);
     	countlyApi.data.events.processEvents(apps, final, appinfos);
     });
 }
 
 function processSessions(app, isFinal, appinfo) {
-    console.log('entering sessions');
-    var apps = app;
-    var final = isFinal;
-    var appinfos = appinfo;
+    //console.log('entering sessions');
     process.nextTick(function() {
-    	console.log(appinfos);
+        var apps = app;
+        var final = isFinal;
+        var appinfos = appinfo;
+    	//console.log(appinfos);
        	countlyApi.data.usage.processSession(apps, final, appinfos);
     });
 }
 
 function processRaw(collectionName, processData, sortOrder, appinfo) {
-    debug.writeLog('/usr/local/countly/log/batch.log', collectionName+":bid = "+bid+" eid = "+eid+" date:"+date.toString());
+    //debug.writeLog('/usr/local/countly/log/batch.log', collectionName+":bid = "+bid+" eid = "+eid+" date:"+date.toString());
     console.log(collectionName+":bid = "+bid+" eid = "+eid);
-    var curr_app_user = null;
-    var isFirst = true;
-    var apps = [];
-    var appinfos = appinfo;
     try {
+        var curr_app_user = null;
+        var isFirst = true;
+        var apps = [];
+
     	var b_coll = common.db_batch.collection(collectionName);
     	b_coll.find({_id:{$lt:eid, $gte:bid}},{batchSize:1000}).sort(sortOrder).each(
             function(err, res) {
+                var appinfos = appinfo;
         	    if (err) {
                 	console.log(collectionName+'[process error:]'+err);
                 	return false;
@@ -84,7 +85,7 @@ function processRaw(collectionName, processData, sortOrder, appinfo) {
             		    return false;
             		}
             		var cnt = apps.length - 1;
-                    console.log('loglist='+cnt);
+                    //console.log('loglist='+cnt);
                 	processData(apps, true, appinfos);
 
                     //_next_oid logging
@@ -100,7 +101,7 @@ function processRaw(collectionName, processData, sortOrder, appinfo) {
             		isFirst = false;
         	    } else {
                 	if (res.app_user_id != curr_app_user) {
-                        console.log('loglist='+apps.length);
+                        //console.log('loglist='+apps.length);
                         processData(apps, false, appinfos);
                         curr_app_user = res.app_user_id;
                         apps = [];
@@ -121,7 +122,7 @@ function dbClose() {
 function callRaw(keys, collName, processData, sortOrder) {
     common.db.collection('apps').findOne({key:keys},
         function(err, res) {
-            console.log('collName:'+collName);
+            //console.log('collName:'+collName);
             processRaw(collName, processData, sortOrder, res);
         }
     );
@@ -131,7 +132,7 @@ var app_key;
 if (process.argv.length < 3) {
     if (isDebug) {
         console.log('no app key parameter');
-        debug.writeLog('/usr/local/countly/log/batch.log', "no app id parameter");
+        //debug.writeLog('/usr/local/countly/log/batch.log', "no app id parameter");
         process.exit(1);
     } else { //batch processing all
         app_key = 'all';
@@ -174,7 +175,7 @@ fs.readFile(oidFileName, 'utf8', function (err,data) {
                     var keys = collectionName.substr(common.rawCollection['event'].length).trim();
                     callRaw(keys, collectionName, processEvents, {app_user_id:1});
                 } else if (collectionName.indexOf(common.rawCollection['session'])>=0) {
-                    var keys = collectionName.substr(common.rawCollection['event'].length).trim();
+                    var keys = collectionName.substr(common.rawCollection['session'].length).trim();
                     callRaw(keys, collectionName, processSessions, {app_user_id:1, timestamp:1});
                 }
             }
