@@ -58,7 +58,7 @@ var process = require('process');
         
         var uma = appinfos.app_id;
 
-        common.db.collection('uma').update({'_id':app[0].device_id}, {'$addToSet': uma}, {'upsert': true}
+        common.db.collection('uma').update({'_id':app[0].device_id}, {'$addToSet': {'my_apps': uma}}, {'upsert': true}
             , function (err, data) {
                 if (err){
                     console.log('[processSession]uma log error:' + err);  
