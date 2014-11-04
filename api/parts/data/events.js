@@ -3,17 +3,17 @@ var events = {},
     common = require('./../../utils/common.js');
 //var emitter = require('events').prototype._maxListeners = 100;
 //var emitter = require('events');
+var bag = {};
+    bag.eventCollections = {};
+    bag.eventSegments = {};
+    bag.eventArray = [];           
 
 (function (events) {
     events.processEvents = function(app, isFinal, appinfo) {
         var updateSessions = {};
-        var bag = {};
-            bag.eventCollections = {};
-            bag.eventSegments = {};
-            bag.eventArray = [];           
         var uma = {}; 
         var appinfos = {};
-        console.log('process Event');
+        //console.log('process Event'+app.length);
         //if (appinfo) console.log(appinfo);
         if (appinfo) {
             appinfos.app_id = appinfo._id;
@@ -34,11 +34,11 @@ var events = {},
         updateUma(uma, appinfos);
         //logCurrUserEvents(app, appinfos);
 
-    	//if (isFinal) {
-        updateEvents(bag);
-	    updateEventMeta(bag, appinfos);
-	    updateReqSessions(updateSessions,appinfos.app_id);
-    	//}
+    	if (isFinal) {
+            updateEvents(bag);
+    	    updateEventMeta(bag, appinfos);
+    	    updateReqSessions(updateSessions,appinfos.app_id);
+    	}
     }
 
     function updateUma(uma, appinfo) {
@@ -54,12 +54,13 @@ var events = {},
 
     function updateReqSessions(updateSessions, app_id) {
         common.db.collection('sessions').update({'_id':app_id}, {'$inc':updateSessions},  
-	    {'upsert': true}, function (err, data) {
-        	if (err){
-                console.log('[processEvent]user req log error:' + err);  
-        	}
-		dbonoff.on('raw');
-	});
+    	    {'upsert': true}, function (err, data) {
+            	if (err){
+                    console.log('[processEvent]user req log error:' + err);  
+            	}
+    		dbonoff.on('raw');
+    	});
+        process.emit('hi_mongo');
     }
 
     function eventAddup(bag, params, appinfos,uma) {
