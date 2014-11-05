@@ -92,9 +92,7 @@ var common = {},
 
             if (locationData.city) {
                 params.city = locationData.city;
-            } else {
-                params.city = 'Unknown';
-            }
+            } 
 
             // Coordinate values of the user location has no use for now
             if (locationData.ll) {

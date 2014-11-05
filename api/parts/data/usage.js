@@ -18,49 +18,47 @@ var process = require('process');
     var OP_DECREASE=0;
     var OP_FILL=1;
     var OP_INCREASE=2;
- 
+    var dataBag = {};
+    dataBag.apps = [];
+    dataBag.updateSessions = {};
+    dataBag.updateLocations = {};
+    dataBag.updateUsers = {};
+    dataBag.updateCities = {};
+    dataBag.userRanges = {};
+    dataBag.sessionRanges = {};
+    dataBag.countryArray = {};
+    dataBag.cityArray = {};
+    dataBag.updateMetrics = {};
+    dataBag.MetricMetaSet = {};
+    dataBag.userRanges['meta.f-ranges'] = {};
+    dataBag.userRanges['meta.l-ranges'] = {};
+    dataBag.sessionRanges['meta.d-ranges'] = {};
+    dataBag.userRanges['meta.f-ranges']['$each'] = [];
+    dataBag.userRanges['meta.l-ranges']['$each'] = [];
+    dataBag.sessionRanges['meta.d-ranges']['$each'] = [];
+    dataBag.countryArray['meta.countries'] = {};
+    dataBag.cityArray['meta.cities'] = {};
+    dataBag.countryArray['meta.countries']['$each'] = [];
+    dataBag.cityArray['meta.cities']['$each'] = [];
+
     //query user data and execute processUserSession
     usage.processSession = function (app, isFinal, appinfo) {
-        var dataBag = {};
-        dataBag.apps = [];
-        dataBag.updateSessions = {};
-        dataBag.updateLocations = {};
-        dataBag.updateUsers = {};
-        dataBag.updateCities = {};
-        dataBag.userRanges = {};
-        dataBag.sessionRanges = {};
-        dataBag.countryArray = {};
-        dataBag.cityArray = {};
-        dataBag.updateMetrics = {};
-        dataBag.MetricMetaSet = {};
-        dataBag.userRanges['meta.f-ranges'] = {};
-        dataBag.userRanges['meta.l-ranges'] = {};
-        dataBag.sessionRanges['meta.d-ranges'] = {};
-        dataBag.userRanges['meta.f-ranges']['$each'] = [];
-        dataBag.userRanges['meta.l-ranges']['$each'] = [];
-        dataBag.sessionRanges['meta.d-ranges']['$each'] = [];
-        dataBag.countryArray['meta.countries'] = {};
-        dataBag.cityArray['meta.cities'] = {};
-        dataBag.countryArray['meta.countries']['$each'] = [];
-        dataBag.cityArray['meta.cities']['$each'] = [];
-        var apps = app;
-        var final = isFinal;
         var appinfos = {};
-        //console.log('process Session');
-        if (appinfo) console.log(appinfo);
+        //if (appinfo) console.log(appinfo);
         if (appinfo) {
             appinfos.app_id = appinfo._id;
             appinfos.appTimezone = appinfo.timezone;
             appinfos.app_cc = appinfo.country;
         } else {
-            appinfos.app_id = apps[0].app_id;
-            appinfos.appTimezone = apps[0].appTimezone;
-            appinfos.app_cc = apps[0].app_cc;
+            appinfos.app_id = app[0].app_id;
+            appinfos.appTimezone = app[0].appTimezone;
+            appinfos.app_cc = app[0].app_cc;
 
         }
-        var uma = {};
-        uma[appinfos.app_id] = app[0].app_user_id;
-        common.db.collection('uma').update({'_id':app[0].device_id}, {'$set':uma}, {'upsert': true}
+        
+        var uma = appinfos.app_id;
+
+        common.db.collection('uma').update({'_id':app[0].device_id}, {'$addToSet': {'my_apps': uma}}, {'upsert': true}
             , function (err, data) {
                 if (err){
                     console.log('[processSession]uma log error:' + err);  
@@ -68,9 +66,14 @@ var process = require('process');
                 dbonoff.on('raw');
         });
 
-       	common.db.collection('app_users' + appinfos.app_id).findOne({'_id': apps[0].app_user_id}, 
+       	common.db.collection('app_users' + appinfos.app_id).findOne({'_id': app[0].app_user_id}, 
        	    function (err, dbAppUser){
-               	processUserSession(dataBag, dbAppUser, apps, isFinal, appinfos);
+                dataBag.apps = app;
+                var final = isFinal;
+                var info = appinfos;
+                //console.log('process Session');
+
+               	processUserSession(dataBag, dbAppUser, isFinal, info);
        	});
     }
 
@@ -187,14 +190,13 @@ var process = require('process');
     }
 
     function updateCollection(collName, id, data, op, errHeader) {
-	var opSet = {};
-	opSet[op] = data;
+    	var opSet = {};
+    	opSet[op] = data;
         common.db.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback); 
     }
 
     function reallyUpdateAll(dataBag, appinfos) {
-
-//	console.log(dataBag);
+        console.log("isFinal:"+appinfos.app_id);
         updateRangeMeta(dataBag.userRanges, 'users', appinfos.app_id);
         updateCollection('users', appinfos.app_id, dataBag.updateUsers, '$inc', '[updateUsers]');
 
@@ -211,9 +213,33 @@ var process = require('process');
 
 
         for (var i=0; i < predefinedMetrics.length; i++) {
+            //console.log(dataBag.MetricMetaSet[predefinedMetrics[i].db]);
             updateRangeMeta(dataBag.MetricMetaSet[predefinedMetrics[i].db], predefinedMetrics[i].db, appinfos.app_id);
             updateCollection(predefinedMetrics[i].db, appinfos.app_id, dataBag.updateMetrics[predefinedMetrics[i].db], '$inc', '[updateMetrics:'+predefinedMetrics[i].db+']');
-	}
+        }
+        process.emit('hi_mongo');
+        console.log('send out hi mongo');
+        dataBag.apps = [];
+        dataBag.updateSessions = {};
+        dataBag.updateLocations = {};
+        dataBag.updateUsers = {};
+        dataBag.updateCities = {};
+        dataBag.userRanges = {};
+        dataBag.sessionRanges = {};
+        dataBag.countryArray = {};
+        dataBag.cityArray = {};
+        dataBag.updateMetrics = {};
+        dataBag.MetricMetaSet = {};
+        dataBag.userRanges['meta.f-ranges'] = {};
+        dataBag.userRanges['meta.l-ranges'] = {};
+        dataBag.sessionRanges['meta.d-ranges'] = {};
+        dataBag.userRanges['meta.f-ranges']['$each'] = [];
+        dataBag.userRanges['meta.l-ranges']['$each'] = [];
+        dataBag.sessionRanges['meta.d-ranges']['$each'] = [];
+        dataBag.countryArray['meta.countries'] = {};
+        dataBag.cityArray['meta.cities'] = {};
+        dataBag.countryArray['meta.countries']['$each'] = [];
+        dataBag.cityArray['meta.cities']['$each'] = [];
     }
 
     function updateFreqRange(dataBag, sessionObj, dbAppUser) {
@@ -254,12 +280,12 @@ var process = require('process');
         return updateTimeObject;
     }
 
-    function updateMetricTimeObj(dataBag, sessionObject, prop, toFill) {
-	if (!sessionObject.metrics) return; 
+    function updateMetricTimeObj(dataBag, sessionObject, prop, toFill, sessions) {
+        if (!sessionObject.metrics) return; 
 
         var updateTimeObject = getTimeFunction(toFill);
         for (var i=0; i<predefinedMetrics.length; i++) {
-	    var metricDb = predefinedMetrics[i].db;
+            var metricDb = predefinedMetrics[i].db;
             for (var j=0; j<predefinedMetrics[i].metrics.length; j++) {
                 var tmpMetric = predefinedMetrics[i].metrics[j];
                 var recvMetricValue = sessionObject.metrics[tmpMetric.name];
@@ -267,45 +293,44 @@ var process = require('process');
                 if (recvMetricValue) {
                     var escapedMetricVal = recvMetricValue.replace(/^\$/, "").replace(/\./g, ":");
                     var metricMeta = 'meta.' + tmpMetric.set;
-		    if (!dataBag.MetricMetaSet[metricDb]) {
-			dataBag.MetricMetaSet[metricDb] = {};
-		    }
-		    if (!dataBag.MetricMetaSet[metricDb][metricMeta]) {
-			dataBag.MetricMetaSet[metricDb][metricMeta] = {};
-		    }
-		    if (!dataBag.MetricMetaSet[metricDb][metricMeta]['$each'] || 
-			!dataBag.MetricMetaSet[metricDb][metricMeta]['$each'].length) {
-			dataBag.MetricMetaSet[metricDb][metricMeta]['$each'] = [];
-		    }
+        		    if (!dataBag.MetricMetaSet[metricDb]) {
+                        dataBag.MetricMetaSet[metricDb] = {};
+        		    }
+        		    if (!dataBag.MetricMetaSet[metricDb][metricMeta]) {
+                        dataBag.MetricMetaSet[metricDb][metricMeta] = {};
+        		    }
+        		    if (!dataBag.MetricMetaSet[metricDb][metricMeta]['$each'] || 
+            			!dataBag.MetricMetaSet[metricDb][metricMeta]['$each'].length) {
+            			dataBag.MetricMetaSet[metricDb][metricMeta]['$each'] = [];
+        		    }
                     common.arrayAddUniq(dataBag.MetricMetaSet[metricDb][metricMeta]['$each'], escapedMetricVal);
 
-		    if (!dataBag.updateMetrics[metricDb]) {
-			dataBag.updateMetrics[metricDb] = {};
-	            }	
-                    updateTimeObject(sessionObject, dataBag.updateMetrics[metricDb], escapedMetricVal + '.' + prop);
+        		    if (!sessions.updateMetrics[metricDb]) {
+        			     sessions.updateMetrics[metricDb] = {};
+                    }	
+                    updateTimeObject(sessionObject, sessions.updateMetrics[metricDb], escapedMetricVal + '.' + prop);
                 }
             }
         }
-//	console.log('in update Metric');
-//	console.log(dataBag.updateMetrics['devices']);
     }
 
-    function updateStatistics(dataBag, sessionObject, prop, toFill, increase, sessions) {
+    function updateStatistics(dataBag, sessionObject, prop, toFill, increase, tmp_session) {
         var incr = increase? increase : 1;
         var updateTimeObject = getTimeFunction(toFill);
-	if (!sessions) { 
-	    sessions = dataBag.updateSessions;
-	}
-        updateTimeObject(sessionObject, sessions, prop, incr);
-        updateTimeObject(sessionObject, dataBag.updateLocations, sessionObject.country + '.' + prop, incr);
+        var sessions;
+    	if (!tmp_session) {
+            sessions = dataBag;
+    	} else {
+    	    sessions = tmp_session;
+    	}
+        updateTimeObject(sessionObject, sessions.updateSessions, prop, incr);
+        updateTimeObject(sessionObject, sessions.updateLocations, sessionObject.country + '.' + prop, incr);
         common.arrayAddUniq(dataBag.countryArray['meta.countries']['$each'], sessionObject.country);
         if (common.config.api.city_data !== false) {
-            updateTimeObject(sessionObject, dataBag.updateCities, sessionObject.city + '.' + prop, incr);
+            updateTimeObject(sessionObject, sessions.updateCities, sessionObject.city + '.' + prop, incr);
             common.arrayAddUniq(dataBag.cityArray['meta.cities']['$each'], sessionObject.city);
         }
-	updateMetricTimeObj(sessionObject, prop, toFill);
-//	console.log('after update Metric');
-//	console.log(dataBag.updateMetrics['devices']);
+        updateMetricTimeObj(dataBag, sessionObject, prop, toFill, sessions);
     }
 
     function updateUserProfile(dataBag, sessionObject, finalUserObject, appinfos) {
@@ -325,29 +350,43 @@ var process = require('process');
         userProps.city = sessionObject.city;
         userProps.app_id = appinfos.app_id;
         userProps.app_user_id = sessionObject.app_user_id;
+        userProps.ip_address = sessionObject.ip_address;
         updateCollection('app_users'+appinfos.app_id, sessionObject.app_user_id, userProps, '$set', '[userProps]'); 
     }
 
-    function cpUniqueSession(dataBag, uniqueSession) {
-//	console.log('copy sessions');
-//	console.log(uniqueSession);
-	for (var times in uniqueSession) {
-	    if (dataBag.updateSessions[times]) {
-		dataBag.updateSessions[times] += uniqueSession[times];
-//	console.log('time='+times+':'+dataBag.updateSessions[times]);
-	    } else {
-		dataBag.updateSessions[times] = uniqueSession[times];
-//	console.log('no time='+time+':'+dataBag.updateSessions[times]);
-	    }
-	}	
+    function cpUniqueOneByOne(x, y) {
+        for (var times in x) {
+            //console.log(times+":"+y[times]);
+            if (y[times]) {
+                y[times] += x[times];
+            } else {
+                y[times] = x[times];
+            }
+        }   
     }
-    //Param: dbAppUser-user data in app_user_XXX, apps:all logs for a Single User
-    function processUserSession(dataBag, dbAppUser, apps, isFinal, appinfos) {
+
+    function cpUniqueSession(dataBag, uniqueSession) {
+        cpUniqueOneByOne(uniqueSession.updateSessions, dataBag.updateSessions);
+        cpUniqueOneByOne(uniqueSession.updateLocations, dataBag.updateLocations);
+        cpUniqueOneByOne(uniqueSession.updateCities, dataBag.updateCities);
+        for (var i=0; i < predefinedMetrics.length; i++) {
+            var metricDb = predefinedMetrics[i].db;
+            for (var j=0; j<predefinedMetrics[i].metrics.length; j++) {
+                cpUniqueOneByOne(uniqueSession.updateMetrics[metricDb], dataBag.updateMetrics[predefinedMetrics[i].db]);
+            }
+        }
+        //console.log(uniqueSession.updateSessions);
+        //console.log(dataBag.updateSessions);
+    }
+
+    function processUserSession(dataBag, dbAppUser, isFinal, appinfos) {
+        var apps = dataBag.apps;
         var sessionObj = [];
         var last_end_session_timestamp = 0;
         var total_duration = 0;
 	var i = 0;
 	var normalSessionStart = 0;
+    //console.log(dataBag.apps);
 
 	//console.log('process user session length='+dataBag.apps.length);
 	//if (dbAppUser) console.log(dbAppUser);
@@ -365,7 +404,7 @@ var process = require('process');
     	    }
         }
     	if (normalSessionStart >= apps.length) { //no begin_session for new user -->for the remaining logs from previous data
-    	    console.log('Incomplete session data from past users');
+    	    //console.log('Incomplete session data from past users');
     	    return;
     	}
         /* for boundary condition:
@@ -387,9 +426,11 @@ var process = require('process');
         		continue;
             }
             apps[i].time = common.initTimeObj(appinfos.appTimezone, apps[i].timestamp, apps[i].tz);
+
             //set event(request) count for every request
             common.incrTimeObject(apps[i], dataBag.updateSessions, common.dbMap['events']); 
             if (apps[i].begin_session) {
+                common.computeGeoInfo(apps[i]);
                 //console.log('dataBag app:'+i+':begin_session');
                 if ((apps[i].timestamp - last_end_session_timestamp) < common.config.api.cl_endsession_ongoing_timeout) { //ongoing session
                     last_end_session_timestamp = 0;
@@ -424,6 +465,11 @@ var process = require('process');
         var startIdx = dbAppUser? 0 : 1;
         var calculatedDurationRange = 0;
         var uniqueSession={};
+        uniqueSession.updateSessions = {};
+        uniqueSession.updateLocations = {};
+        uniqueSession.updateCities = {};
+        uniqueSession.updateMetrics = {};
+
         for (i=startIdx; i<=currObjIdx; i++) { 
             if (sessionDay != sessionObj[i].time.daily) { //sort sessions by day
                 sessionDay = sessionObj[i].time.daily;
@@ -436,13 +482,12 @@ var process = require('process');
             }
 
             //set total user/unique user count in necessary collections   
-            common.computeGeoInfo(sessionObj[i]);
             updateStatistics(dataBag, sessionObj[i], common.dbMap['total'], OP_INCREASE); //will increase for every session
             updateStatistics(dataBag, sessionObj[i], common.dbMap['unique'], OP_FILL, 1, uniqueSession); // only set once
+            //console.log(uniqueSession.updateSessions);
         }
-//	    console.log('sessionObjByDay='+startIdx+':'+(i-1));
+	    //console.log('sessionObjByDay='+(i-startIdx+1));
 //	    console.log(sessionObjByDay);
-
         cpUniqueSession(dataBag, uniqueSession);
         //For frequency computation, no need to do with sessions in the same day as old sessions(dbAppUser)
         //The 1st session will be dealt with in new user block
@@ -476,9 +521,9 @@ var process = require('process');
         updateUserProfile(dataBag, sessionObj[currObjIdx], finalUserObject, appinfos);
 
         //do the real update job in MongoDB
-    	//if (isFinal) {
-	    reallyUpdateAll(dataBag, appinfos);
-    	//}
+    	if (isFinal) {
+	       reallyUpdateAll(dataBag, appinfos);
+    	}
     }
 }(usage));
 

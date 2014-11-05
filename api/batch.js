@@ -17,12 +17,11 @@ var http = require('http'),
         }
     };
 var fs = require('fs');
-var eFin = false;
-var sFin = false;
 
 http.globalAgent.maxSockets = common.config.api.max_sockets || 1024;
 
 var date = new Date();
+console.log(date.toString());
 var begin_date = new Date(date.getFullYear(),date.getMonth(), date.getDate()-30);
 var end_date = new Date(date.getFullYear(),date.getMonth(), date.getDate()+1);
 //console.log('proc_date = '+begin_date+':'+end_date);
@@ -67,11 +66,10 @@ function processRaw(collectionName, processData, sortOrder, appinfo) {
     //debug.writeLog('/usr/local/countly/log/batch.log', collectionName+":bid = "+bid+" eid = "+eid+" date:"+date.toString());
     console.log(collectionName+":bid = "+bid+" eid = "+eid);
     try {
+    	var b_coll = common.db_batch.collection(collectionName);
         var curr_app_user = null;
         var isFirst = true;
         var apps = [];
-
-    	var b_coll = common.db_batch.collection(collectionName);
     	b_coll.find({_id:{$lt:eid, $gte:bid}},{batchSize:1000}).sort(sortOrder).each(
             function(err, res) {
                 var appinfos = appinfo;
@@ -85,7 +83,11 @@ function processRaw(collectionName, processData, sortOrder, appinfo) {
             		    return false;
             		}
             		var cnt = apps.length - 1;
-                    //console.log('loglist='+cnt);
+                    /*if (collectionName == 'raw_session_54002336f036d1673f003768') {
+                        console.log(apps);
+                    }*/
+
+                    //console.log(apps);
                 	processData(apps, true, appinfos);
 
                     //_next_oid logging
@@ -102,6 +104,10 @@ function processRaw(collectionName, processData, sortOrder, appinfo) {
         	    } else {
                 	if (res.app_user_id != curr_app_user) {
                         //console.log('loglist='+apps.length);
+                        //console.log(apps);
+                        /*if (collectionName == 'raw_session_54002336f036d1673f003768') {
+                            console.log(apps);
+                        }*/
                         processData(apps, false, appinfos);
                         curr_app_user = res.app_user_id;
                         apps = [];
@@ -119,15 +125,29 @@ function dbClose() {
     common.db_batch.close();
 }
 
-function callRaw(keys, collName, processData, sortOrder) {
-    common.db.collection('apps').findOne({key:keys},
-        function(err, res) {
-            //console.log('collName:'+collName);
-            processRaw(collName, processData, sortOrder, res);
-        }
-    );
-
+function callRaw() {
+    collectionCount--;
+    console.log("hi mongo:" + collectionCount);
+    if (collectionCount < 0) //last one is finished
+        return;
+    var collectionName = collectionNameList[collectionCount];
+    if (collectionName.indexOf(common.rawCollection['event'])>=0) {
+        var keys = collectionName.substr(common.rawCollection['event'].length).trim();
+            common.db.collection('apps').findOne({key:keys}, function(err, res) {
+                    //console.log('collName:'+collName);
+                    processRaw(collectionName, processEvents, {app_user_id:1}, res);
+                }
+            );
+    } else if (collectionName.indexOf(common.rawCollection['session'])>=0) {
+        var keys = collectionName.substr(common.rawCollection['session'].length).trim();
+        common.db.collection('apps').findOne({key:keys}, function(err, res) {
+                processRaw(collectionName, processSessions, {app_user_id:1, timestamp:1}, res);
+            }
+        );
+    }
 }
+
+
 var app_key;
 if (process.argv.length < 3) {
     if (isDebug) {
@@ -146,6 +166,9 @@ if (isDebug) {
     oidFileName = oidFileName + process.argv[2];
 }
 
+var collectionCount = 0;
+var collectionNameList = [];
+
 fs.readFile(oidFileName, 'utf8', function (err,data) {
     if (!err && data.length>=24) {
     	hasOidFile = true;
@@ -156,52 +179,53 @@ fs.readFile(oidFileName, 'utf8', function (err,data) {
     	}
     }
 
-
     var wait_cnt = common.config.api.cl_wait_time;
     if (app_key == 'all') {
-     	wait_cnt = wait_cnt * 5; // wait 5 times for all logs
+        process.on("hi_mongo", callRaw);
+     	//wait_cnt = wait_cnt * 5; // wait 5 times for all logs
         common.db_batch.collections(function(err,collection) {
             if (!collection.length) {
             	console.log('no data');
             	dbClose();
             	process.exit(1);
             }
-
             for (var i=0; i<collection.length; i++) {
-                var collectionName = collection[i].collectionName;
-                //exclude IPSentry
-                if (collectionName == 'raw_session_53f554ef847577512100130a') continue;
-                if (collectionName.indexOf(common.rawCollection['event'])>=0) {
-                    var keys = collectionName.substr(common.rawCollection['event'].length).trim();
-                    callRaw(keys, collectionName, processEvents, {app_user_id:1});
-                } else if (collectionName.indexOf(common.rawCollection['session'])>=0) {
-                    var keys = collectionName.substr(common.rawCollection['session'].length).trim();
-                    callRaw(keys, collectionName, processSessions, {app_user_id:1, timestamp:1});
+                if (collection[i].collectionName == 'raw_session_53f554ef847577512100130a') continue;
+                if (collection[i].collectionName.indexOf(common.rawCollection['raw'])>=0) {
+                    collectionNameList[collectionCount++] = collection[i].collectionName;
                 }
             }
+            callRaw();
         });
     } else {
         common.db.collection('apps').findOne({key:app_key},
             function(err, res) {
                 console.log(res);
                 console.log('here'+common.rawCollection['session']+app_key);
-                processRaw(common.rawCollection['session']+app_key, processSessions, {app_user_id:1, timestamp:1}, res);
                 processRaw(common.rawCollection['event']+app_key, processEvents,{app_user_id:1}, res);
-            }
+                processRaw(common.rawCollection['session']+app_key, processSessions, {app_user_id:1, timestamp:1}, res);
+             }
         );
     }
+
     var cnt=0;
     var repeat_times = 0;
     setInterval(function() {
-    	var new_cnt = dbonoff.getCnt('raw');
-    	if (new_cnt == cnt) {
-    	    repeat_times++;
-    	    console.log('repeat wait = ' + repeat_times);
-    	} else cnt = new_cnt;
-    	if (repeat_times > wait_cnt) {
-    	    dbClose();
-    	    process.exit(0);
-    	}
+        if (collectionCount <= 0) {
+        	var new_cnt = dbonoff.getCnt('raw');
+        	if (new_cnt == cnt) {
+        	    repeat_times++;
+        	    console.log('repeat wait = ' + repeat_times);
+        	} else cnt = new_cnt;
+		if (repeat_times == 2) {
+		    var date1 = new Date();
+		    console.log(date1.toString());
+		}
+        	if (repeat_times > wait_cnt) {
+        	    dbClose();
+        	    process.exit(0);
+        	}
+        }
     }, 60000);
 });
 
