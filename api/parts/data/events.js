@@ -38,6 +38,10 @@ var bag = {};
             updateEvents(bag);
     	    updateEventMeta(bag, appinfos);
     	    updateReqSessions(updateSessions,appinfos.app_id);
+            bag.eventCollections = {};
+            bag.eventSegments = {};
+            bag.eventArray = [];
+
     	}
     }
 

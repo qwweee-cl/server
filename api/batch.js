@@ -23,6 +23,7 @@ var sFin = false;
 http.globalAgent.maxSockets = common.config.api.max_sockets || 1024;
 
 var date = new Date();
+console.log(date.toString());
 var begin_date = new Date(date.getFullYear(),date.getMonth(), date.getDate()-30);
 var end_date = new Date(date.getFullYear(),date.getMonth(), date.getDate()+1);
 //console.log('proc_date = '+begin_date+':'+end_date);
@@ -128,6 +129,7 @@ function dbClose() {
 
 function callRaw() {
     collectionCount--;
+    console.log("hi mongo:" + collectionCount);
     if (collectionCount < 0) //last one is finished
         return;
     var collectionName = collectionNameList[collectionCount];
@@ -217,6 +219,10 @@ fs.readFile(oidFileName, 'utf8', function (err,data) {
         	    repeat_times++;
         	    console.log('repeat wait = ' + repeat_times);
         	} else cnt = new_cnt;
+		if (repeat_times == 2) {
+		    var date1 = new Date();
+		    console.log(date1.toString());
+		}
         	if (repeat_times > wait_cnt) {
         	    dbClose();
         	    process.exit(0);
