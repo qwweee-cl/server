@@ -17,8 +17,6 @@ var http = require('http'),
         }
     };
 var fs = require('fs');
-var eFin = false;
-var sFin = false;
 
 http.globalAgent.maxSockets = common.config.api.max_sockets || 1024;
 
@@ -170,7 +168,6 @@ if (isDebug) {
 
 var collectionCount = 0;
 var collectionNameList = [];
-process.on("hi_mongo", callRaw);
 
 fs.readFile(oidFileName, 'utf8', function (err,data) {
     if (!err && data.length>=24) {
@@ -184,6 +181,7 @@ fs.readFile(oidFileName, 'utf8', function (err,data) {
 
     var wait_cnt = common.config.api.cl_wait_time;
     if (app_key == 'all') {
+        process.on("hi_mongo", callRaw);
      	//wait_cnt = wait_cnt * 5; // wait 5 times for all logs
         common.db_batch.collections(function(err,collection) {
             if (!collection.length) {

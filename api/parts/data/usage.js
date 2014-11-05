@@ -196,8 +196,7 @@ var process = require('process');
     }
 
     function reallyUpdateAll(dataBag, appinfos) {
-
-	console.log("isFinal:"+appinfos.app_id);
+        console.log("isFinal:"+appinfos.app_id);
         updateRangeMeta(dataBag.userRanges, 'users', appinfos.app_id);
         updateCollection('users', appinfos.app_id, dataBag.updateUsers, '$inc', '[updateUsers]');
 
@@ -219,7 +218,7 @@ var process = require('process');
             updateCollection(predefinedMetrics[i].db, appinfos.app_id, dataBag.updateMetrics[predefinedMetrics[i].db], '$inc', '[updateMetrics:'+predefinedMetrics[i].db+']');
         }
         process.emit('hi_mongo');
-	console.log('send out hi mongo');
+        console.log('send out hi mongo');
         dataBag.apps = [];
         dataBag.updateSessions = {};
         dataBag.updateLocations = {};
@@ -318,16 +317,12 @@ var process = require('process');
     function updateStatistics(dataBag, sessionObject, prop, toFill, increase, tmp_session) {
         var incr = increase? increase : 1;
         var updateTimeObject = getTimeFunction(toFill);
-	var sessions;
-    	if (!tmp_session) { 
-	    sessions = dataBag;
+        var sessions;
+    	if (!tmp_session) {
+            sessions = dataBag;
     	} else {
-	    sessions = tmp_session;
-	    sessions.updateSessions = {};
-	    sessions.updateLocations = {};
-	    sessions.updateCities = {};
-	    sessions.updateMetrics = {};
-	}
+    	    sessions = tmp_session;
+    	}
         updateTimeObject(sessionObject, sessions.updateSessions, prop, incr);
         updateTimeObject(sessionObject, sessions.updateLocations, sessionObject.country + '.' + prop, incr);
         common.arrayAddUniq(dataBag.countryArray['meta.countries']['$each'], sessionObject.country);
@@ -361,6 +356,7 @@ var process = require('process');
 
     function cpUniqueOneByOne(x, y) {
         for (var times in x) {
+            //console.log(times+":"+y[times]);
             if (y[times]) {
                 y[times] += x[times];
             } else {
@@ -379,6 +375,8 @@ var process = require('process');
                 cpUniqueOneByOne(uniqueSession.updateMetrics[metricDb], dataBag.updateMetrics[predefinedMetrics[i].db]);
             }
         }
+        //console.log(uniqueSession.updateSessions);
+        //console.log(dataBag.updateSessions);
     }
 
     function processUserSession(dataBag, dbAppUser, isFinal, appinfos) {
@@ -467,6 +465,11 @@ var process = require('process');
         var startIdx = dbAppUser? 0 : 1;
         var calculatedDurationRange = 0;
         var uniqueSession={};
+        uniqueSession.updateSessions = {};
+        uniqueSession.updateLocations = {};
+        uniqueSession.updateCities = {};
+        uniqueSession.updateMetrics = {};
+
         for (i=startIdx; i<=currObjIdx; i++) { 
             if (sessionDay != sessionObj[i].time.daily) { //sort sessions by day
                 sessionDay = sessionObj[i].time.daily;
@@ -481,10 +484,10 @@ var process = require('process');
             //set total user/unique user count in necessary collections   
             updateStatistics(dataBag, sessionObj[i], common.dbMap['total'], OP_INCREASE); //will increase for every session
             updateStatistics(dataBag, sessionObj[i], common.dbMap['unique'], OP_FILL, 1, uniqueSession); // only set once
+            //console.log(uniqueSession.updateSessions);
         }
-//	    console.log('sessionObjByDay='+startIdx+':'+(i-1));
+	    //console.log('sessionObjByDay='+(i-startIdx+1));
 //	    console.log(sessionObjByDay);
-
         cpUniqueSession(dataBag, uniqueSession);
         //For frequency computation, no need to do with sessions in the same day as old sessions(dbAppUser)
         //The 1st session will be dealt with in new user block
