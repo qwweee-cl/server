@@ -1565,6 +1565,7 @@ window.ManageAppsView = countlyView.extend({
                 $("#sidebar-app-select").find(".logo").css("background-image", "url('/appimages/" + appId + ".png')");
                 $("#sidebar-app-select").find(".text").text(countlyGlobal['apps'][appId].name);
                 $("#sidebar-app-select").attr('title', countlyGlobal['apps'][appId].name);
+                $("#sidebar-app-select").tipsy({gravity:$.fn.tipsy.autoNS,fade:true,offset:3,cssClass:'yellow narrow',opacity:1,html:true});
             }
 
             $("#app-edit-id").val(appId);
@@ -1832,6 +1833,7 @@ window.ManageAppsView = countlyView.extend({
                             $("#sidebar-app-select .logo").css("background-image", "");
                             $("#sidebar-app-select .text").text("");
                             $("#sidebar-app-select").attr('title', "");
+                            $("#sidebar-app-select").tipsy();
                         }
                     },
                     error:function () {
@@ -2814,6 +2816,7 @@ var AppRouter = Backbone.Router.extend({
                     countlyCommon.setActiveApp(appId);
                     sidebarApp.find(".text").text(appName);
                     sidebarApp.attr('title', appName);
+                    sidebarApp.tipsy({gravity:$.fn.tipsy.autoNS,fade:true,offset:3,cssClass:'yellow narrow',opacity:1,html:true});
                     sidebarApp.find(".logo").css("background-image", appImage);
                     sidebarApp.removeClass("active");
                     self.activeView.appChanged();
@@ -3077,6 +3080,7 @@ var AppRouter = Backbone.Router.extend({
                 $("#sidebar-app-select").find(".logo").css("background-image", "url('/appimages/" + countlyCommon.ACTIVE_APP_ID + ".png')");
                 $("#sidebar-app-select .text").text(countlyGlobal['apps'][countlyCommon.ACTIVE_APP_ID].name);
                 $("#sidebar-app-select").attr('title', countlyGlobal['apps'][countlyCommon.ACTIVE_APP_ID].name);
+                $("#sidebar-app-select").tipsy({gravity:$.fn.tipsy.autoNS,fade:true,offset:3,cssClass:'yellow narrow',opacity:1,html:true});
                 self.activeAppName = countlyGlobal['apps'][countlyCommon.ACTIVE_APP_ID].name;
             }
         } else {
