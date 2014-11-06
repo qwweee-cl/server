@@ -11,8 +11,8 @@ function error_exp
 }
 
 path="/usr/local/countly/api"
-gzipPath="/tmp/mongo_gzip/"
-exportPath="/tmp/mongo_backup/"
+gzipPath="/mem/mongo_gzip/"
+exportPath="/mem/mongo_backup/"
 s3Path="/s3mnt/db_backup/raw_data/"
 s3DashboardPath="/s3mnt/db_backup/dashboard_data/"
 livefile="config.live.js"
@@ -68,11 +68,23 @@ fi
 #dashboarddb="countly_snow"
 #dashboard="192.168.4.18:27017"
 
+## stop nginx service
+cmd="sudo service nginx stop"
+echo $cmd
+$cmd
+
+sleep 10
 ## restart service
 cmd="sudo restart countly-supervisor"
 #cmd="sudo restart countly-snow"
 echo $cmd
 $cmd
+
+## start nginx service
+cmd="sudo service nginx start"
+echo $cmd
+$cmd
+
 ## sudo restart countly-supervisor
 ## backup raw data
 ## mongodump -h localhost:27017 -db countly -o ./20141002

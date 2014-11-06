@@ -8,7 +8,9 @@ var countlyConfig = {
         db_batch: "countly_raw1",
         db_ibb: "countly_snow_ibb",
         port: 27017,
-        max_pool_size: 10000
+        max_batch_pool_size: 1000,
+        max_db_pool_size: 1000,
+        max_raw_pool_size: 10000
     },
     /*mongodb: {
         host: "catdb",
