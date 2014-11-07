@@ -7,7 +7,7 @@ function error_exp
 	#| mail -s "Daily BB data import exception" $dashboard_team
 	echo -e "Countly Batch Error Please check log in clad.cyberlink.com>/usr/local/countly/log/cron_batch.log" $(tail -20 /usr/local/countly/log/cron_batch.log)\
 	| mail -s "Countly Batch Error Trap" gary_huang@cyberlink.com,snow_chen@cyberlink.com
-	sleep 1
+	#sleep 1
 	rm -f ${LOCKFILE}
 	exit 1
 }
@@ -17,7 +17,7 @@ if [ -e ${LOCKFILE} ] ; then
 	echo "already running"
 	echo -e "Countly Batch already running, please manual run" $(date +%Y%m%d)\
 	| mail -s "Countly Batch Already running" gary_huang@cyberlink.com,snow_chen@cyberlink.com
-	sleep 1
+	#sleep 1
 	rm -f ${LOCKFILE}
 	exit 1
 else
@@ -195,5 +195,5 @@ echo $end
 echo "==============================================================="
 echo -e "Countly Batch run from $start to $end\n" $(tail -20 /usr/local/countly/log/cron_batch.log)\
 | mail -s "Countly Batch Finished" gary_huang@cyberlink.com,snow_chen@cyberlink.com
-sleep 1
+#sleep 1
 rm -f ${LOCKFILE}
