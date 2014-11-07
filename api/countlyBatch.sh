@@ -73,7 +73,7 @@ cmd="sudo service nginx stop"
 echo $cmd
 $cmd
 
-sleep 10
+sleep 15
 ## restart service
 cmd="sudo restart countly-supervisor"
 #cmd="sudo restart countly-snow"
