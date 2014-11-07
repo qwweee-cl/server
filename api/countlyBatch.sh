@@ -74,8 +74,19 @@ echo $cmd
 $cmd
 
 sleep 15
-## restart service
-cmd="sudo restart countly-supervisor"
+
+## stop countly-supervisor service
+cmd="sudo stop countly-supervisor"
+echo $cmd
+$cmd
+
+## restart mongodb service
+cmd="sudo service mongodb restart"
+echo $cmd
+$cmd
+
+## start countly-supervisor service
+cmd="sudo start countly-supervisor"
 #cmd="sudo restart countly-snow"
 echo $cmd
 $cmd
