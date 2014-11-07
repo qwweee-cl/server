@@ -39,6 +39,14 @@ function insertRawColl(coll, eventp, params) {
     eventp.tz = params.qstring.tz;
     eventp.ip_address = params.ip_address;
     //console.log('[db insert]:%j', eventp);
+    if (!eventp.app_key) {
+        console.log('Null app_key: '+eventp.ip_address);
+        return;
+    }
+    if (!eventp.device_id) {
+        console.log('Null device_id: '+eventp.ip_address+' app key: '+eventp.app_key);
+        return;
+    }
     common.db_raw.collection(coll).insert(eventp, function(err, res) {
         if (err) {
        	    console.log('DB operation error');
