@@ -7,7 +7,9 @@ var countlyConfig = {
         db_batch: "countly_raw1",
         db_ibb: "countly_snow_ibb",
         port: 27017,
-        max_pool_size: 1000
+        max_batch_pool_size: 1000,
+        max_db_pool_size: 1000,
+        max_raw_pool_size: 10000
     },
     /*  or for a replica set
     mongodb: {
@@ -28,9 +30,9 @@ var countlyConfig = {
         host: "localhost",
         safe: false,
         session_duration_limit: 3601,
-        max_sockets: 1024,
-        cl_endsession_ongoing_timeout: 1,
-	cl_wait_time: 6,
+        max_sockets: 10240,
+        cl_endsession_ongoing_timeout: 10,
+        cl_wait_time: 6,
         cl_is_debug: false,
         /*
             If the last end_session is received less than 1 seconds ago we will ignore
