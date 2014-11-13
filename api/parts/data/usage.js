@@ -43,6 +43,7 @@ var process = require('process');
 
     //query user data and execute processUserSession
     usage.processSession = function (app, isFinal, appinfo) {
+        //console.log(app[0].device_id);
         var appinfos = {};
         //if (appinfo) console.log(appinfo);
         if (appinfo) {
@@ -394,8 +395,8 @@ var process = require('process');
         if (dbAppUser) { //set sessionObj[0] = dbAppUser to compute on-going session
 	    //console.log('dbAppUser=%j', dbAppUser);
             dbAppUser.acc_duration = parseInt(dbAppUser[common.dbUserMap['session_duration']]);
+            dbAppUser.time = common.initTimeObj(dbAppUser.appTimezone, dbAppUser.timestamp, dbAppUser.tz);
             sessionObj[0] = common.clone(dbAppUser);
-            sessionObj[0].time = common.initTimeObj(dbAppUser.appTimezone, dbAppUser.timestamp, dbAppUser.tz);
             last_end_session_timestamp = dbAppUser[common.dbUserMap['last_end_session_timestamp']];
         } else { //new user
             sessionObj[0] = {};

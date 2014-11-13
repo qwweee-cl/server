@@ -265,6 +265,8 @@ var common = {},
             timeObj = params.time;
 
         if (!timeObj || !timeObj.yearly || !timeObj.monthly || !timeObj.weekly || !timeObj.daily || !timeObj.hourly) {
+            console.log('no timestamp to decrease');
+            console.log(timeObj);
             return false;
         }
 

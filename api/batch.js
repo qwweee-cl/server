@@ -22,8 +22,9 @@ http.globalAgent.maxSockets = common.config.api.max_sockets || 1024;
 
 var date = new Date();
 console.log(date.toString());
-var begin_date = new Date(date.getFullYear(),date.getMonth(), date.getDate()-30);
+var begin_date = new Date(date.getFullYear(),date.getMonth(), date.getDate()-60);
 var end_date = new Date(date.getFullYear(),date.getMonth(), date.getDate()+1);
+
 //console.log('proc_date = '+begin_date+':'+end_date);
 var bdd = Math.floor(begin_date.getTime()/1000);
 var edd = Math.floor(end_date.getTime()/1000);
@@ -33,6 +34,21 @@ var eid = new ObjectID(edd.toString(16)+'0000000000000000');
 //var eid = new ObjectID('542a50e0981a3d812e000007');
 var log_id = '000000000000000000000000';
 
+/*var startStr = "2014-10-06T00:00-07:00",
+    endStr = "2014-10-07T00:00-07:00",
+    startDate = new Date(Date.parse(startStr)),
+    endDate = new Date(Date.parse(endStr)),
+    moment = require('moment'),
+    zone = "-0700",
+    timezone = "",
+    startI = 06,
+    endI = 06,
+    mstart = moment(startDate).zone(zone),
+    mend = moment(endDate).zone(zone);
+    startSec = startDate.getTime()/1000;
+    endSec = endDate.getTime()/1000;
+    bid = new ObjectID(startSec.toString(16)+'0000000000000000');
+    eid = new ObjectID(endSec.toString(16)+'0000000000000000');*/
 console.log("raw:"+common.db_raw._dbconn.databaseName);
 console.log("batch:"+common.db_batch._dbconn.databaseName);
 
