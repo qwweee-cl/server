@@ -6,7 +6,7 @@ function error_exp
 	#echo -e "Daily BB data import failed. Please check log in elephant1>/home/hadoop/new_script/dashborad_script/logs/log_daily_bb_import.log\nLog scraps: "$(tail -10 ~/new_script/dashborad_script/logs/log_daily_bb_import.log)\
 	#| mail -s "Daily BB data import exception" $dashboard_team
 	echo -e "Countly Batch Error Please check log in clad.cyberlink.com>/usr/local/countly/log/cron_batch.log" $(tail -20 /usr/local/countly/log/cron_batch.log)\
-	| mail -s "Countly Batch Error Trap" gary_huang@cyberlink.com,snow_chen@cyberlink.com
+	| mail -s "Countly Batch Error Trap" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
 	#sleep 1
 	rm -f ${LOCKFILE}
 	exit 1
@@ -16,7 +16,7 @@ LOCKFILE="/tmp/Batchlock.lock"
 if [ -e ${LOCKFILE} ] ; then
 	echo "already running"
 	echo -e "Countly Batch already running, please manual run" $(date +%Y%m%d)\
-	| mail -s "Countly Batch Already running" gary_huang@cyberlink.com,snow_chen@cyberlink.com
+	| mail -s "Countly Batch Already running" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
 	#sleep 1
 	rm -f ${LOCKFILE}
 	exit 1
@@ -42,6 +42,7 @@ curdate=$(date +%Y%m%d)
 rawdate=$curdate"_raw"
 dashboarddate=$curdate"_countly"
 echo "==============================================================="
+echo "======================Countly Batch Start======================"
 start=$(date +%Y-%m-%d_%H-%M)
 cd $path
 echo $PWD
@@ -84,15 +85,13 @@ fi
 #dashboarddb="countly_snow"
 #dashboard="192.168.4.18:27017"
 
-## stop nginx service
-cmd="sudo service nginx stop"
+## stop countly-supervisor service
+cmd="sudo stop countly-supervisor"
 echo $cmd
 $cmd
 
-sleep 15
-
-## stop countly-supervisor service
-cmd="sudo stop countly-supervisor"
+## stop nginx service
+cmd="sudo service nginx stop"
 echo $cmd
 $cmd
 
@@ -100,6 +99,8 @@ $cmd
 cmd="sudo service mongodb restart"
 echo $cmd
 $cmd
+
+sleep 10
 
 ## start countly-supervisor service
 cmd="sudo start countly-supervisor"
@@ -194,6 +195,6 @@ echo $start
 echo $end
 echo "==============================================================="
 echo -e "Countly Batch run from $start to $end\n" $(tail -20 /usr/local/countly/log/cron_batch.log)\
-| mail -s "Countly Batch Finished" gary_huang@cyberlink.com,snow_chen@cyberlink.com
+| mail -s "Countly Batch Finished" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
 #sleep 1
 rm -f ${LOCKFILE}

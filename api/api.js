@@ -178,7 +178,8 @@ function getIpAddress(req) {
 }
 
 if (cluster.isMaster) {
-    console.log('start api ====================================================');
+    var now = new Date();
+    console.log('start api =========================='+now+'==========================');
     var workerCount = (common.config.api.workers)? common.config.api.workers : os.cpus().length;
 
     for (var i = 0; i < workerCount; i++) {
