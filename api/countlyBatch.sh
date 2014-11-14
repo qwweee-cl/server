@@ -90,10 +90,14 @@ cmd="sudo stop countly-supervisor"
 echo $cmd
 $cmd
 
+sleep 10
+
 ## stop nginx service
 cmd="sudo service nginx stop"
 echo $cmd
 $cmd
+
+sleep 10
 
 ## restart mongodb service
 cmd="sudo service mongodb restart"
@@ -107,6 +111,8 @@ cmd="sudo start countly-supervisor"
 #cmd="sudo restart countly-snow"
 echo $cmd
 $cmd
+
+sleep 10
 
 ## start nginx service
 cmd="sudo service nginx start"

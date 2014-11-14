@@ -280,6 +280,7 @@ if (cluster.isMaster) {
                 } else {
                     //common.returnMessage(params, 400, 'Missing parameter "requests"');
                     common.returnMessage(params, 200, 'Success');
+                    console.log('Send 200 Success');
                     return false;
                 }
 
@@ -343,6 +344,7 @@ if (cluster.isMaster) {
                 if (!params.qstring.api_key) {
                     //common.returnMessage(params, 400, 'Missing parameter "api_key"');
                     common.returnMessage(params, 200, 'Success');
+                    console.log('Send 200 Success');
                     return false;
                 }
 
@@ -359,6 +361,7 @@ if (cluster.isMaster) {
                     default:
                         //common.returnMessage(params, 400, 'Invalid path, must be one of /create, /update or /delete');
                         common.returnMessage(params, 200, 'Success');
+                        console.log('Send 200 Success');
                         break;
                 }
 
@@ -378,6 +381,7 @@ if (cluster.isMaster) {
                 if (!params.qstring.api_key) {
                     //common.returnMessage(params, 400, 'Missing parameter "api_key"');
                     common.returnMessage(params, 200, 'Success');
+                    console.log('Send 200 Success');
                     return false;
                 }
 
@@ -397,6 +401,7 @@ if (cluster.isMaster) {
                     default:
                         //common.returnMessage(params, 400, 'Invalid path, must be one of /create, /update, /delete or /reset');
                         common.returnMessage(params, 200, 'Success');
+                        console.log('Send 200 Success');
                         break;
                 }
 
@@ -410,6 +415,7 @@ if (cluster.isMaster) {
                     console.log('Missing parameter "app_key" or "device_id"');
                     console.log(params);
                     common.returnMessage(params, 200, 'Success');
+                    console.log("Send 200 Success");
                     return false;
                 } else {
                     // Set app_user_id that is unique for each user of an application.
@@ -434,6 +440,7 @@ if (cluster.isMaster) {
                         console.log('Parse metrics JSON failed');
                         console.log(params);
                         common.returnMessage(params, 200, 'Success');
+                        console.log('Send 200 Success');
                         return false
                     }
                 }
@@ -445,6 +452,7 @@ if (cluster.isMaster) {
                         console.log('Parse events JSON failed');
                         console.log('source:'+params.qstring.events);
                         common.returnMessage(params, 200, 'Success');
+                        console.log('Send 200 Success');
                         return false;
                     }
                 }
@@ -457,6 +465,7 @@ if (cluster.isMaster) {
                 if (!params.qstring.api_key) {
                     common.returnMessage(params, 400, 'Missing parameter "api_key"');
                     //common.returnMessage(params, 200, 'Success');
+                    console.log('Send 400');
                     return false;
                 }
 
@@ -470,6 +479,7 @@ if (cluster.isMaster) {
                     default:
                         common.returnMessage(params, 400, 'Invalid path, must be one of /all or /me');
                         //common.returnMessage(params, 200, 'Success');
+                        console.log('Send 400');
                         break;
                 }
 
@@ -480,6 +490,7 @@ if (cluster.isMaster) {
                 if (!params.qstring.api_key) {
                     common.returnMessage(params, 400, 'Missing parameter "api_key"');
                     //common.returnMessage(params, 200, 'Success');
+                    console.log('Send 400');
                     return false;
                 }
 
@@ -493,6 +504,7 @@ if (cluster.isMaster) {
                     default:
                         common.returnMessage(params, 400, 'Invalid path, must be one of /all or /mine');
                         //common.returnMessage(params, 200, 'Success');
+                        console.log('Send 400');
                         break;
                 }
 
@@ -503,12 +515,14 @@ if (cluster.isMaster) {
                 if (!params.qstring.api_key) {
                     common.returnMessage(params, 400, 'Missing parameter "api_key"');
                     //common.returnMessage(params, 200, 'Success');
+                    console.log('Send 400');
                     return false;
                 }
 
                 if (!params.qstring.app_id) {
                     common.returnMessage(params, 400, 'Missing parameter "app_id"');
                     //common.returnMessage(params, 200, 'Success');
+                    console.log('Send 400');
                     return false;
                 }
 
@@ -537,6 +551,7 @@ if (cluster.isMaster) {
                                 console.log('Parse events array failed');
                                 console.log('source:'+params.qstring.events);
                                 common.returnMessage(params, 400, 'events JSON is not properly formed');
+                                console.log('Send 400 Failed');
                                 break;
                             }
 
@@ -551,6 +566,7 @@ if (cluster.isMaster) {
                     default:
                         common.returnMessage(params, 400, 'Invalid method');
                         //common.returnMessage(params, 200, 'Success');
+                        console.log('Send 400');
                         break;
                 }
 
@@ -561,12 +577,14 @@ if (cluster.isMaster) {
                 if (!params.qstring.api_key) {
                     common.returnMessage(params, 400, 'Missing parameter "api_key"');
                     //common.returnMessage(params, 200, 'Success');
+                    console.log('Send 400');
                     return false;
                 }
 
                 if (!params.qstring.app_id) {
                     common.returnMessage(params, 400, 'Missing parameter "app_id"');
                     //common.returnMessage(params, 200, 'Success');
+                    console.log('Send 400');
                     return false;
                 }
 
@@ -580,6 +598,7 @@ if (cluster.isMaster) {
                     default:
                         common.returnMessage(params, 400, 'Invalid path, must be one of /dashboard or /countries');
                         //common.returnMessage(params, 200, 'Success');
+                        console.log('Send 400');
                         break;
                 }
 
