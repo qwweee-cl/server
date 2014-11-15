@@ -35,7 +35,7 @@ livefile="config.live.js"
 batchfile="config.batch.js"
 srcfile="config.js"
 mongo="localhost:27017"
-dashboard="172.31.3.233:27017"
+dashboard="claddb:27017"
 batchdb=""
 dashboarddb="countly"
 curdate=$(date +%Y%m%d)
@@ -90,7 +90,7 @@ cmd="sudo stop countly-supervisor"
 echo $cmd
 $cmd
 
-sleep 10
+sleep 60
 
 ## stop nginx service
 cmd="sudo service nginx stop"
