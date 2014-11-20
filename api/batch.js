@@ -230,10 +230,13 @@ fs.readFile(oidFileName, 'utf8', function (err,data) {
         if (collectionCount <= 0) {
         	var new_cnt = dbonoff.getCnt('raw');
         	if (new_cnt == cnt) {
-        	    repeat_times++;
-        	    console.log('repeat wait = ' + repeat_times);
-        	} else cnt = new_cnt;
-		if (repeat_times == 2) {
+                    repeat_times++;
+                    console.log('repeat wait = ' + repeat_times);
+                } else {
+                    cnt = new_cnt;
+                    repeat_times = 0;
+                }
+		if (repeat_times == (wait_cnt-2)) {
 		    var date1 = new Date();
 		    console.log(date1.toString());
 		}

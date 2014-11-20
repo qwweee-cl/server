@@ -86,38 +86,38 @@ fi
 #dashboard="192.168.4.18:27017"
 
 ## stop countly-supervisor service
-cmd="sudo stop countly-supervisor"
-echo $cmd
-$cmd
+#cmd="sudo stop countly-supervisor"
+#echo $cmd
+#$cmd
 
-sleep 60
+#sleep 60
 
 ## stop nginx service
-cmd="sudo service nginx stop"
-echo $cmd
-$cmd
+#cmd="sudo service nginx stop"
+#echo $cmd
+#$cmd
 
-sleep 10
+#sleep 10
 
 ## restart mongodb service
-cmd="sudo service mongodb restart"
-echo $cmd
-$cmd
+#cmd="sudo service mongodb restart"
+#echo $cmd
+#$cmd
 
-sleep 10
+#sleep 10
 
 ## start countly-supervisor service
-cmd="sudo start countly-supervisor"
-#cmd="sudo restart countly-snow"
+#cmd="sudo start countly-supervisor"
+cmd="sudo restart countly-supervisor"
 echo $cmd
 $cmd
 
-sleep 10
+#sleep 10
 
 ## start nginx service
-cmd="sudo service nginx start"
-echo $cmd
-$cmd
+#cmd="sudo service nginx start"
+#echo $cmd
+#$cmd
 
 ## sudo restart countly-supervisor
 ## backup raw data
@@ -144,6 +144,7 @@ $cmd
 cmd="/usr/bin/node $path/batch.js"
 echo $cmd
 $cmd
+
 ## remove raw data ( move to end )
 ## mongo test --eval "printjson(db.getCollectionNames())"
 #cmd="/usr/bin/mongo $mongo/$batchdb --eval printjson(db.dropDatabase());"
