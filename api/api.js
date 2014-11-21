@@ -205,14 +205,18 @@ if (cluster.isMaster) {
 
         if (queryString.app_id && queryString.app_id.length != 24) {
             console.log('Invalid parameter "app_id"');
+            console.log('===========================================================');
             console.log(params);
+            console.log('===========================================================');
             common.returnMessage(params, 200, 'Success');
             return false;
         }
 
         if (queryString.user_id && queryString.user_id.length != 24) {
             console.log('Invalid parameter "user_id"');
+            console.log('===========================================================');
             console.log(params);
+            console.log('===========================================================');
             common.returnMessage(params, 200, 'Success');
             return false;
         }
@@ -275,7 +279,7 @@ if (cluster.isMaster) {
                         requests = JSON.parse(requests);
                     } catch (SyntaxError) {
                         console.log('Parse bulk JSON failed');
-                        console.log('source:'+requests);
+                        console.log('source:'+queryString);
                     }
                 } else {
                     //common.returnMessage(params, 400, 'Missing parameter "requests"');
@@ -410,17 +414,29 @@ if (cluster.isMaster) {
             case '/i':
             {
                 params.ip_address =  getIpAddress(req);
+                var tmp_str = "";
+
+                if (params.qstring) {
+                    try {
+                        tmp_str = JSON.parse(params.qstring);
+                    } catch (SyntaxError) {
+                        console.log('Parse qstring JSON failed');
+                        console.log('source:'+tmp_str);
+                        common.returnMessage(params, 400, 'Success');
+                        console.log('Send 400 Success');
+                        return false;
+                    }
+                }
 
                 if (!params.qstring.app_key || !params.qstring.device_id) {
                     console.log('Missing parameter "app_key" or "device_id"');
-                    console.log(params);
+                    console.log(params.qstring);
                     common.returnMessage(params, 200, 'Success');
                     console.log("Send 200 Success");
                     return false;
-                } else {
-                    // Set app_user_id that is unique for each user of an application.
-                    params.app_user_id = common.crypto.createHash('sha1').update(params.app_key + params.qstring.device_id + "").digest('hex');
                 }
+                // Set app_user_id that is unique for each user of an application.
+                params.app_user_id = common.crypto.createHash('sha1').update(params.app_key + params.qstring.device_id + "").digest('hex');
 
                 if (params.qstring.metrics) {
                     try {
@@ -438,7 +454,7 @@ if (cluster.isMaster) {
 
                     } catch (SyntaxError) {
                         console.log('Parse metrics JSON failed');
-                        console.log(params);
+                        console.log(params.qstring);
                         common.returnMessage(params, 200, 'Success');
                         console.log('Send 200 Success');
                         return false
@@ -450,7 +466,7 @@ if (cluster.isMaster) {
                         params.events = JSON.parse(params.qstring.events);
                     } catch (SyntaxError) {
                         console.log('Parse events JSON failed');
-                        console.log('source:'+params.qstring.events);
+                        console.log('source:'+params.qstring);
                         common.returnMessage(params, 200, 'Success');
                         console.log('Send 200 Success');
                         return false;
