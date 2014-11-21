@@ -92,6 +92,21 @@ var common = {},
             //console.log("this is a oem "+srNumberName);
         } else {
             //console.log(srNumberName+" there is no oem");
+            dbOEMName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/oem_' + srNumberName + '?auto_reconnect=true');
+            common.db_oem[srNumberName]=mongo.db(dbOEMName, dbRawOptions);
+            oem = common.db_oem[srNumberName];
+        }
+        oem.tag = srNumberName;
+        return oem;
+    }
+
+    common.getGenericDB = function () {
+        var srNumberName = "generic".replace(/system\.|\.\.|\$/g, "");
+        var oem = common.db_oem[srNumberName];
+        if (oem) {
+            //console.log("this is a oem "+srNumberName);
+        } else {
+            //console.log(srNumberName+" there is no oem");
             dbOEMName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/' + srNumberName + '?auto_reconnect=true');
             common.db_oem[srNumberName]=mongo.db(dbOEMName, dbRawOptions);
             oem = common.db_oem[srNumberName];
