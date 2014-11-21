@@ -28,6 +28,8 @@ function logDbError(err, res) {
 }
 
 function insertRawColl(coll, eventp, params) {
+    var dealNumber = "";
+    var oem = false;
     //console.log('insert collection name:'+coll);
     eventp.app_key = params.qstring.app_key;
     //eventp.app_id = params.app_id;
@@ -38,6 +40,11 @@ function insertRawColl(coll, eventp, params) {
     eventp.timestamp = params.qstring.timestamp;
     eventp.tz = params.qstring.tz;
     eventp.ip_address = params.ip_address;
+    if (params.qstring.vendor_info) {
+        eventp.vendor = params.qstring.vendor_info;
+        oem = true;
+        dealNumber = eventp.vendor.deal_no;
+    }
     //console.log('[db insert]:%j', eventp);
     if (!eventp.app_key) {
         console.log('Null app_key: '+eventp.ip_address);
@@ -47,12 +54,33 @@ function insertRawColl(coll, eventp, params) {
         console.log('Null device_id: '+eventp.ip_address+' app key: '+eventp.app_key);
         return;
     }
-    common.db_raw.collection(coll).insert(eventp, function(err, res) {
-        if (err) {
-       	    console.log('DB operation error');
-            console.log(err);
-        } 
-    });
+    if (oem) {
+        var oemdb = common.getOEMDB(dealNumber);
+        if (oemdb) {
+            oemdb.collection(coll).insert(eventp, function(err, res) {
+                if (err) {
+                    console.log('DB operation error');
+                    console.log(err);
+                }
+            });
+        } else {
+            console.log("can not get OEM database : ("+dealNumber+")");
+            oemdb = common.getGenericDB();
+            oemdb.collection(coll).insert(eventp, function(err, res) {
+                if (err) {
+                    console.log('DB operation error');
+                    console.log(err);
+                }
+            });
+        }
+    } else {
+        common.db_raw.collection(coll).insert(eventp, function(err, res) {
+            if (err) {
+                console.log('DB operation error');
+                console.log(err);
+            }
+        });
+    }
 }
 
 function insertRawEvent(coll,params) {
@@ -456,7 +484,19 @@ if (cluster.isMaster) {
                         console.log(params.qstring);
                         common.returnMessage(params, 200, 'Success');
                         console.log('Send 200 Success');
-                        return false
+                        return false;
+                    }
+                }
+
+                if (params.qstring.vendor_info) {
+                    try {
+                        params.qstring.vendor_info = JSON.parse(params.qstring.vendor_info);
+                    } catch (SyntaxError) {
+                        console.log('Parse vendor_info JSON failed');
+                        console.log(params.qstring);
+                        common.returnMessage(params, 200, 'Success');
+                        console.log('Send 200 Success');
+                        return false;
                     }
                 }
 
