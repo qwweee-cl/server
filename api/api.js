@@ -415,14 +415,13 @@ if (cluster.isMaster) {
             {
                 params.ip_address =  getIpAddress(req);
                 var tmp_str = "";
-
                 if (params.qstring) {
                     try {
-                        tmp_str = JSON.parse(params.qstring);
+                        tmp_str = JSON.parse(JSON.stringify(params.qstring));
                     } catch (SyntaxError) {
                         console.log('Parse qstring JSON failed');
                         console.log('source:'+tmp_str);
-                        common.returnMessage(params, 400, 'Success');
+                        common.returnMessage(params, 400, 'Parse qstring JSON failed');
                         console.log('Send 400 Success');
                         return false;
                     }
