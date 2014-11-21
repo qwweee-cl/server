@@ -50,7 +50,8 @@ var common = {},
 
     var dbName;
     var dbOptions = { safe:false, maxPoolSize: countlyConfig.mongodb.max_pool_size || 1000 };
-    var dbBatchOptions = { safe:false, maxPoolSize: 1};
+    var dbRawOptions = { safe:false, maxPoolSize: countlyConfig.mongodb.max_raw_pool_size || 1000 };
+    var dbBatchOptions = { safe:false, maxPoolSize: countlyConfig.mongodb.max_batch_pool_size};
 
     if (typeof countlyConfig.mongodb === "string") {
         dbName = countlyConfig.mongodb;
@@ -66,9 +67,14 @@ var common = {},
     dbIbbName = (countlyConfig.mongodb.host + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_ibb + '?auto_reconnect=true');
 
     common.db = mongo.db(dbName, dbOptions);
-    common.db_raw = mongo.db(dbRawName, dbOptions);
+    common.db.tag = countlyConfig.mongodb.db.replace(/system\.|\.\.|\$/g, "");
+    common.db_raw = mongo.db(dbRawName, dbRawOptions);
+    common.db_raw.tag = countlyConfig.mongodb.db_raw.replace(/system\.|\.\.|\$/g, "");
     common.db_batch = mongo.db(dbBatchName, dbBatchOptions);
+    common.db_batch.tag = countlyConfig.mongodb.db_batch.replace(/system\.|\.\.|\$/g, "");
     common.db_ibb = mongo.db(dbIbbName, dbOptions);
+    common.db_ibb.tag = countlyConfig.mongodb.db_ibb.replace(/system\.|\.\.|\$/g, "");
+    common.db_oem = [];
 
     common.config = countlyConfig;
 
@@ -78,6 +84,21 @@ var common = {},
     common.momentz = momentz;
 
     common.crypto = crypto;
+
+    common.getOEMDB = function (srNumber) {
+        var srNumberName = srNumber.replace(/system\.|\.\.|\$/g, "");
+        var oem = common.db_oem[srNumberName];
+        if (oem) {
+            //console.log("this is a oem "+srNumberName);
+        } else {
+            //console.log(srNumberName+" there is no oem");
+            dbOEMName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/' + srNumberName + '?auto_reconnect=true');
+            common.db_oem[srNumberName]=mongo.db(dbOEMName, dbRawOptions);
+            oem = common.db_oem[srNumberName];
+        }
+        oem.tag = srNumberName;
+        return oem;
+    }
 
     common.computeGeoInfo = function (params) {
         // Location of the user is retrieved using geoip-lite module from her IP address.
