@@ -41,6 +41,7 @@ function insertRawColl(coll, eventp, params) {
     eventp.tz = params.qstring.tz;
     eventp.ip_address = params.ip_address;
     if (params.qstring.vendor_info) {
+        console.log
         eventp.vendor = params.qstring.vendor_info;
         oem = true;
         dealNumber = eventp.vendor.deal_no;
@@ -234,7 +235,7 @@ if (cluster.isMaster) {
         if (queryString.app_id && queryString.app_id.length != 24) {
             console.log('Invalid parameter "app_id"');
             console.log('===========================================================');
-            console.log(params);
+            console.log(JSON.stringify(params));
             console.log('===========================================================');
             common.returnMessage(params, 200, 'Success');
             return false;
@@ -243,7 +244,7 @@ if (cluster.isMaster) {
         if (queryString.user_id && queryString.user_id.length != 24) {
             console.log('Invalid parameter "user_id"');
             console.log('===========================================================');
-            console.log(params);
+            console.log(JSON.stringify(params));
             console.log('===========================================================');
             common.returnMessage(params, 200, 'Success');
             return false;
@@ -448,7 +449,7 @@ if (cluster.isMaster) {
                         tmp_str = JSON.parse(JSON.stringify(params.qstring));
                     } catch (SyntaxError) {
                         console.log('Parse qstring JSON failed');
-                        console.log('source:'+tmp_str);
+                        console.log('source:'+JSON.stringify(params.qstring));
                         common.returnMessage(params, 400, 'Parse qstring JSON failed');
                         console.log('Send 400 Success');
                         return false;
@@ -457,7 +458,7 @@ if (cluster.isMaster) {
 
                 if (!params.qstring.app_key || !params.qstring.device_id) {
                     console.log('Missing parameter "app_key" or "device_id"');
-                    console.log(params.qstring);
+                    console.log(JSON.stringify(params.qstring));
                     common.returnMessage(params, 200, 'Success');
                     console.log("Send 200 Success");
                     return false;
@@ -481,7 +482,7 @@ if (cluster.isMaster) {
 
                     } catch (SyntaxError) {
                         console.log('Parse metrics JSON failed');
-                        console.log(params.qstring);
+                        console.log(JSON.stringify(params.qstring));
                         common.returnMessage(params, 200, 'Success');
                         console.log('Send 200 Success');
                         return false;
@@ -493,7 +494,7 @@ if (cluster.isMaster) {
                         params.qstring.vendor_info = JSON.parse(params.qstring.vendor_info);
                     } catch (SyntaxError) {
                         console.log('Parse vendor_info JSON failed');
-                        console.log(params.qstring);
+                        console.log(JSON.stringify(params.qstring));
                         common.returnMessage(params, 200, 'Success');
                         console.log('Send 200 Success');
                         return false;
@@ -505,7 +506,7 @@ if (cluster.isMaster) {
                         params.events = JSON.parse(params.qstring.events);
                     } catch (SyntaxError) {
                         console.log('Parse events JSON failed');
-                        console.log('source:'+params.qstring);
+                        console.log('source:'+JSON.stringify(params.qstring));
                         common.returnMessage(params, 200, 'Success');
                         console.log('Send 200 Success');
                         return false;
