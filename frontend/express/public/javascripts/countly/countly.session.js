@@ -614,6 +614,10 @@
 
         return barData;
     };
+    
+    countlySession.getSessionDb = function () {
+        return _sessionDb;
+    };
 
     //Private Methods
     function calcSparklineData() {
