@@ -27,6 +27,30 @@ function logDbError(err, res) {
     }
 }
 
+function insertOEMs(vendor_info) {
+    var oems = {};
+    oems.name = vendor_info.vendor_name;
+    oems.deal_no = vendor_info.deal_no;
+    oems.start = vendor_info.start;
+    oems.end = vendor_info.end;
+    var deal = oems.deal_no;
+    common.db.collection('oems').findOne({deal_no:deal}, function(err, res) {
+        if (err) {
+            console.log('DB operation error');
+            console.log(err);
+        } else {
+            if (!res) {
+                common.db.collection('oems').insert(oems, function(err, res) {
+                    if (err) {
+                        console.log('DB operation error');
+                        console.log(err);
+                    }
+                });
+            }
+        }
+    });
+}
+
 function insertRawColl(coll, eventp, params) {
     var dealNumber = "";
     var oem = false;
@@ -74,6 +98,7 @@ function insertRawColl(coll, eventp, params) {
                 }
             });
         }
+        insertOEMs(eventp.vendor);
     } else {
         common.db_raw.collection(coll).insert(eventp, function(err, res) {
             if (err) {
@@ -448,7 +473,8 @@ if (cluster.isMaster) {
                     try {
                         tmp_str = JSON.parse(JSON.stringify(params.qstring));
                     } catch (SyntaxError) {
-                        console.log('Parse qstring JSON failed');
+                        var now = new Date();
+                        console.log('Parse qstring JSON failed'+'=========='+now+'==========');
                         console.log('source:'+JSON.stringify(params.qstring));
                         common.returnMessage(params, 400, 'Parse qstring JSON failed');
                         console.log('Send 400 Success');
@@ -457,7 +483,8 @@ if (cluster.isMaster) {
                 }
 
                 if (!params.qstring.app_key || !params.qstring.device_id) {
-                    console.log('Missing parameter "app_key" or "device_id"');
+                    var now = new Date();
+                    console.log('Missing parameter "app_key" or "device_id"'+'=========='+now+'==========');
                     console.log(JSON.stringify(params.qstring));
                     common.returnMessage(params, 200, 'Success');
                     console.log("Send 200 Success");
@@ -481,7 +508,8 @@ if (cluster.isMaster) {
                         }
 
                     } catch (SyntaxError) {
-                        console.log('Parse metrics JSON failed');
+                        var now = new Date();
+                        console.log('Parse metrics JSON failed'+'=========='+now+'==========');
                         console.log(JSON.stringify(params.qstring));
                         common.returnMessage(params, 200, 'Success');
                         console.log('Send 200 Success');
@@ -493,7 +521,8 @@ if (cluster.isMaster) {
                     try {
                         params.qstring.vendor_info = JSON.parse(params.qstring.vendor_info);
                     } catch (SyntaxError) {
-                        console.log('Parse vendor_info JSON failed');
+                        var now = new Date();
+                        console.log('Parse vendor_info JSON failed'+'=========='+now+'==========');
                         console.log(JSON.stringify(params.qstring));
                         common.returnMessage(params, 200, 'Success');
                         console.log('Send 200 Success');
@@ -505,7 +534,8 @@ if (cluster.isMaster) {
                     try {
                         params.events = JSON.parse(params.qstring.events);
                     } catch (SyntaxError) {
-                        console.log('Parse events JSON failed');
+                        var now = new Date();
+                        console.log('Parse events JSON failed'+'=========='+now+'==========');
                         console.log('source:'+JSON.stringify(params.qstring));
                         common.returnMessage(params, 200, 'Success');
                         console.log('Send 200 Success');
