@@ -88,6 +88,10 @@ var bag = {};
             }
 
             if (currEvent.key == '_UMA_ID') {
+                if (!currEvent.segmentation) {
+                    console.log(currEvent);
+                    continue;
+                }
                 if (currEvent.segmentation.google_play_advertising_id) 
                     uma.google_play_advertising_id = currEvent.segmentation.google_play_advertising_id;
                 if (currEvent.segmentation.android_id) 

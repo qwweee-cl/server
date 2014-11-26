@@ -213,7 +213,7 @@ var common = {},
             property.substr(0,2) == (common.dbMap["loyalty"] + ".") ||
             property.substr(0,3) == (common.dbMap["durations"] + "."))
         {
-            object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property] = increment;
+            object[timeObj.yofw + ".w" + timeObj.weekly + '.' + property] = increment;
         }
     };
 
@@ -290,10 +290,10 @@ var common = {},
             property.substr(0,2) == (common.dbMap["loyalty"] + ".") ||
             property.substr(0,3) == (common.dbMap["durations"] + "."))
         {
-            if (object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property]) 
-                object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property] += increment;
+            if (object[timeObj.yofw + ".w" + timeObj.weekly + '.' + property])
+                object[timeObj.yofw + ".w" + timeObj.weekly + '.' + property] += increment;
             else 
-                object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property] = increment;
+                object[timeObj.yofw + ".w" + timeObj.weekly + '.' + property] = increment;
         }
     };
 
@@ -344,12 +344,12 @@ var common = {},
             property.substr(0,2) == (common.dbMap["loyalty"] + ".") ||
             property.substr(0,3) == (common.dbMap["durations"] + "."))
         {
-            if (object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property]) {
-                object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property] -= increment;
-                if (object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property] == 0) 
-                    delete(object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property]);
+            if (object[timeObj.yofw + ".w" + timeObj.weekly + '.' + property]) {
+                object[timeObj.yofw + ".w" + timeObj.weekly + '.' + property] -= increment;
+                if (object[timeObj.yofw + ".w" + timeObj.weekly + '.' + property] == 0)
+                    delete(object[timeObj.yofw + ".w" + timeObj.weekly + '.' + property]);
             } else 
-                object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property] = 0 - increment;
+                object[timeObj.yofw + ".w" + timeObj.weekly + '.' + property] = 0 - increment;
         }
     };
 
@@ -379,6 +379,11 @@ var common = {},
         //currDateWithoutTimestamp.setTimezone(appTimezone);
 
         var tmpMoment = momentz(currDate).tz(appTimezone);
+        var weekofyear = tmpMoment.format("w");
+        var tmpYOW = tmpMoment.format("YYYY");
+        if (tmpMoment.month() == 11 && tmpMoment.week() == 1) {
+            tmpYOW = (tmpMoment.year()+1).toString();
+        }
         //var withoutMoment = momentz(currDateWithoutTimestamp).tz(appTimezone);
 
 /*
@@ -396,7 +401,8 @@ var common = {},
             monthly: tmpMoment.format("YYYY.M"),
             daily: tmpMoment.format("YYYY.M.D"),
             hourly: tmpMoment.format("YYYY.M.D.H"),
-            weekly: Math.ceil(tmpMoment.format("DDD") / 7)
+            weekly: tmpMoment.format("w"),
+            yofw: tmpYOW
         };
     };
 
