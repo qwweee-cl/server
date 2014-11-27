@@ -80,7 +80,7 @@ function insertRawColl(coll, eventp, params) {
         return;
     }
     if (oem) {
-        var oemdb = common.getOEMDB(dealNumber);
+        var oemdb = common.getOEMRawDB(dealNumber);
         if (oemdb) {
             oemdb.collection(coll).insert(eventp, function(err, res) {
                 if (err) {
@@ -90,7 +90,7 @@ function insertRawColl(coll, eventp, params) {
             });
         } else {
             console.log("can not get OEM database : ("+dealNumber+")");
-            oemdb = common.getGenericDB();
+            oemdb = common.getErrorDB();
             oemdb.collection(coll).insert(eventp, function(err, res) {
                 if (err) {
                     console.log('DB operation error');
