@@ -69,6 +69,9 @@ function insertRawColl(coll, eventp, params) {
         eventp.vendor = params.qstring.vendor_info;
         oem = true;
         dealNumber = eventp.vendor.deal_no;
+        if (eventp.vendor.deal_no == "cyberlink000") {
+            oem = false;
+        }
     }
     //console.log('[db insert]:%j', eventp);
     if (!eventp.app_key) {
