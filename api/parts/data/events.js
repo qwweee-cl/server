@@ -9,7 +9,7 @@ var bag = {};
     bag.eventArray = [];           
 
 (function (events) {
-    events.processEvents = function(app, isFinal, appinfo) {
+    events.processEvents = function(dbs, app, isFinal, appinfo) {
         var updateSessions = {};
         var uma = {}; 
         var appinfos = {};
@@ -31,13 +31,13 @@ var bag = {};
             common.incrTimeObject(app[i], updateSessions, common.dbMap['events']); 
             eventAddup(bag, app[i], appinfos, uma); //will be computed in old user, that's ok
     	}
-        updateUma(uma, appinfos);
+        updateUma(dbs, uma, appinfos);
         //logCurrUserEvents(app, appinfos);
 
     	if (isFinal) {
-            updateEvents(bag);
-    	    updateEventMeta(bag, appinfos);
-    	    updateReqSessions(updateSessions,appinfos.app_id);
+            updateEvents(dbs, bag);
+    	    updateEventMeta(dbs, bag, appinfos);
+    	    updateReqSessions(dbs, updateSessions,appinfos.app_id);
             bag.eventCollections = {};
             bag.eventSegments = {};
             bag.eventArray = [];
@@ -45,9 +45,16 @@ var bag = {};
     	}
     }
 
-    function updateUma(uma, appinfo) {
+    function updateUma(dbs, uma, appinfo) {
         //console.log(uma);
-        common.db.collection('uma').update({'_id':appinfo.device_id}, {'$set':uma}, {'upsert': true}
+        dbs.save.collection('uma').update({'_id':appinfo.device_id}, {'$set':uma}, {'upsert': true}
+            , function (err, data) {
+                if (err){
+                    console.log('[processEvent]uma log error:' + err);  
+                }
+                //dbonoff.on('raw');
+        });
+        dbs.base.collection('uma').update({'_id':appinfo.device_id}, {'$set':uma}, {'upsert': true}
             , function (err, data) {
                 if (err){
                     console.log('[processEvent]uma log error:' + err);  
@@ -56,14 +63,21 @@ var bag = {};
         });
     }
 
-    function updateReqSessions(updateSessions, app_id) {
-        common.db.collection('sessions').update({'_id':app_id}, {'$inc':updateSessions},  
+    function updateReqSessions(dbs, updateSessions, app_id) {
+        dbs.save.collection('sessions').update({'_id':app_id}, {'$inc':updateSessions},  
     	    {'upsert': true}, function (err, data) {
             	if (err){
                     console.log('[processEvent]user req log error:' + err);  
             	}
-    		dbonoff.on('raw');
+    		//dbonoff.on('raw');
     	});
+        dbs.base.collection('sessions').update({'_id':app_id}, {'$inc':updateSessions},  
+            {'upsert': true}, function (err, data) {
+                if (err){
+                    console.log('[processEvent]user req log error:' + err);  
+                }
+            dbonoff.on('raw');
+        });
         process.emit('hi_mongo');
     }
 
@@ -72,6 +86,10 @@ var bag = {};
             tmpEventColl = {},
             shortCollectionName = "",
             eventCollectionName = "";
+
+        if (!params.events) {
+            console.log(params);
+        }
 
         for (var i=0; i < params.events.length; i++) {
 
@@ -229,18 +247,24 @@ var bag = {};
     }
 
 
-    function updateEvents(bag) {
+    function updateEvents(dbs, bag) {
         // update Segmentation_key+App_id collections
         for (var collection in bag.eventCollections) {
             for (var segment in bag.eventCollections[collection]) {
                 if (segment == "no-segment" && bag.eventSegments[collection]) {
-                    common.db.collection(collection).update({'_id': segment}, 
+                    dbs.save.collection(collection).update({'_id': segment}, 
 			{'$inc': bag.eventCollections[collection][segment], 
-			'$addToSet': bag.eventSegments[collection]}, {'upsert': true}, eventCallback);
+			'$addToSet': bag.eventSegments[collection]}, {'upsert': true}, eventCallback_off);
+                    dbs.base.collection(collection).update({'_id': segment}, 
+            {'$inc': bag.eventCollections[collection][segment], 
+            '$addToSet': bag.eventSegments[collection]}, {'upsert': true}, eventCallback);
                 } else {
-                    common.db.collection(collection).update({'_id': segment}, 
+                    dbs.save.collection(collection).update({'_id': segment}, 
 			{'$inc': bag.eventCollections[collection][segment]}, 
-			{'upsert': true}, eventCallback);
+			{'upsert': true}, eventCallback_off);
+                    dbs.base.collection(collection).update({'_id': segment}, 
+            {'$inc': bag.eventCollections[collection][segment]}, 
+            {'upsert': true}, eventCallback);
                 }
             }
         }
@@ -253,7 +277,13 @@ var bag = {};
     	dbonoff.on('raw');
     }
 
-    function updateEventMeta(bag, appinfos) {
+    function eventCallback_off(err, res) {
+        if (err){
+            console.log('userEvent log error:' + err);  
+        }
+    }
+
+    function updateEventMeta(dbs, bag, appinfos) {
         // update events collection
         if (bag.eventArray.length) {
             var eventSegmentList = {'$addToSet': {'list': {'$each': bag.eventArray}}};
@@ -268,12 +298,19 @@ var bag = {};
                 }
             }
 
-            common.db.collection('events').update({'_id': appinfos.app_id}, eventSegmentList, {'upsert': true}, 
+            dbs.save.collection('events').update({'_id': appinfos.app_id}, eventSegmentList, {'upsert': true}, 
         		function(err, data) {
                 	if (err){
                     	console.log('Event Meta log error:' + err);  
         		    }
-        	        dbonoff.on('raw');
+        	        //dbonoff.on('raw');
+            });
+            dbs.base.collection('events').update({'_id': appinfos.app_id}, eventSegmentList, {'upsert': true}, 
+                function(err, data) {
+                    if (err){
+                        console.log('Event Meta log error:' + err);  
+                    }
+                    dbonoff.on('raw');
             });
         } 
     };

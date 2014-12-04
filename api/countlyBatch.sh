@@ -141,7 +141,7 @@ cmd="/usr/bin/node $path/createIndex.js"
 echo $cmd
 $cmd
 ## run batch
-cmd="/usr/bin/node $path/batch.js"
+cmd="/usr/bin/node $path/newBatch.js"
 echo $cmd
 $cmd
 

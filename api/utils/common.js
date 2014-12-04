@@ -75,6 +75,7 @@ var common = {},
     common.db_ibb = mongo.db(dbIbbName, dbOptions);
     common.db_ibb.tag = countlyConfig.mongodb.db_ibb.replace(/system\.|\.\.|\$/g, "");
     common.db_oem = [];
+    common.db_oem_dashboard = [];
 
     common.config = countlyConfig;
 
@@ -85,7 +86,7 @@ var common = {},
 
     common.crypto = crypto;
 
-    initOEMRawDBs();
+    //initOEMRawDBs();
 
     common.getOEMRawDB = function (srNumber) {
         var raw_name = countlyConfig.mongodb.db_raw.match(/\w*(_\w*)/);
@@ -103,19 +104,34 @@ var common = {},
         return oem;
     }
 
+    common.getOEMDB = function (srNumber) {
+        var srNumberName = srNumber.replace(/system\.|\.\.|\$/g, "");
+        var oem = common.db_oem_dashboard[srNumberName];
+        if (oem) {
+            //console.log("this is a oem "+srNumberName);
+        } else {
+            //console.log(srNumberName+" there is no oem");
+            dbOEMName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/countly_' + srNumberName + '?auto_reconnect=true');
+            common.db_oem_dashboard[srNumberName]=mongo.db(dbOEMName, dbOptions);
+            oem = common.db_oem_dashboard[srNumberName];
+        }
+        oem.tag = "countly_"+srNumberName;
+        return oem;
+    }
+
     common.getGenericDB = function () {
         var raw_name = countlyConfig.mongodb.db_raw.match(/\w*(_\w*)/);
-        var srNumberName = "generic".replace(/system\.|\.\.|\$/g, "");
+        var srNumberName = "countly_generic".replace(/system\.|\.\.|\$/g, "");
         var oem = common.db_oem[srNumberName];
         if (oem) {
             //console.log("this is a oem "+srNumberName);
         } else {
             //console.log(srNumberName+" there is no oem");
-            dbOEMName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/' + srNumberName + raw_name[1] + '?auto_reconnect=true');
+            dbOEMName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/' + srNumberName + '?auto_reconnect=true');
             common.db_oem[srNumberName]=mongo.db(dbOEMName, dbRawOptions);
             oem = common.db_oem[srNumberName];
         }
-        oem.tag = srNumberName+raw_name[1];
+        oem.tag = srNumberName;
         return oem;
     }
 
@@ -238,8 +254,10 @@ var common = {},
     function initOEMRawDBs() {
         common.db.collection('oems').find().toArray(function(err, data) {
             for (var i = 0 ; i < data.length ; i ++) {
-                var oemdb = common.getOEMRawDB(data[i].deal_no);
-                //print(oemdb.tag);
+                var oemdb1 = common.getOEMRawDB(data[i].deal_no);
+                var oemdb2 = common.getOEMDB(data[i].deal_no);
+                //print(oemdb1.tag);
+                //print(oemdb2.tag);
             }
         });
     }

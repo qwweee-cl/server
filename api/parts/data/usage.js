@@ -42,7 +42,7 @@ var process = require('process');
     dataBag.cityArray['meta.cities']['$each'] = [];
 
     //query user data and execute processUserSession
-    usage.processSession = function (app, isFinal, appinfo) {
+    usage.processSession = function (dbs, app, isFinal, appinfo) {
         //console.log(app[0].device_id);
         var appinfos = {};
         //if (appinfo) console.log(appinfo);
@@ -59,7 +59,15 @@ var process = require('process');
         
         var uma = appinfos.app_id;
 
-        common.db.collection('uma').update({'_id':app[0].device_id}, {'$addToSet': {'my_apps': uma}}, {'upsert': true}
+        dbs.save.collection('uma').update({'_id':app[0].device_id}, {'$addToSet': {'my_apps': uma}}, {'upsert': true}
+            , function (err, data) {
+                if (err){
+                    console.log('[processSession]uma log error:' + err);  
+                }
+                //dbonoff.on('raw');
+        });
+
+        dbs.base.collection('uma').update({'_id':app[0].device_id}, {'$addToSet': {'my_apps': uma}}, {'upsert': true}
             , function (err, data) {
                 if (err){
                     console.log('[processSession]uma log error:' + err);  
@@ -67,15 +75,15 @@ var process = require('process');
                 dbonoff.on('raw');
         });
 
-       	common.db.collection('app_users' + appinfos.app_id).findOne({'_id': app[0].app_user_id}, 
-       	    function (err, dbAppUser){
+        dbs.base.collection('app_users' + appinfos.app_id).findOne({'_id': app[0].app_user_id}, 
+            function (err, dbAppUser){
                 dataBag.apps = app;
                 var final = isFinal;
                 var info = appinfos;
                 //console.log('process Session');
 
-               	processUserSession(dataBag, dbAppUser, isFinal, info);
-       	});
+                processUserSession(dbs, dataBag, dbAppUser, isFinal, info);
+        });
     }
 
 
@@ -84,6 +92,12 @@ var process = require('process');
             console.log(errHeader+':'+err);  
        	}
         dbonoff.on('raw');
+    }
+
+    function dbCallback_off(err, object) {
+        if (err){
+            console.log(errHeader+':'+err);  
+        }
     }
 
     function durationRange(totalSessionDuration) {
@@ -186,37 +200,39 @@ var process = require('process');
     }
 
 
-    function updateRangeMeta(ranges, coll, id) {
-        common.db.collection(coll).update({'_id': id}, {'$addToSet': ranges}, {'upsert': true}, dbCallback); 
+    function updateRangeMeta(dbs, ranges, coll, id) {
+        dbs.save.collection(coll).update({'_id': id}, {'$addToSet': ranges}, {'upsert': true}, dbCallback_off);
+        dbs.base.collection(coll).update({'_id': id}, {'$addToSet': ranges}, {'upsert': true}, dbCallback); 
     }
 
-    function updateCollection(collName, id, data, op, errHeader) {
+    function updateCollection(dbs, collName, id, data, op, errHeader) {
     	var opSet = {};
     	opSet[op] = data;
-        common.db.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback); 
+        dbs.save.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback_off); 
+        dbs.base.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback);
     }
 
-    function reallyUpdateAll(dataBag, appinfos) {
+    function reallyUpdateAll(dbs, dataBag, appinfos) {
         console.log("isFinal:"+appinfos.app_id);
-        updateRangeMeta(dataBag.userRanges, 'users', appinfos.app_id);
-        updateCollection('users', appinfos.app_id, dataBag.updateUsers, '$inc', '[updateUsers]');
+        updateRangeMeta(dbs, dataBag.userRanges, 'users', appinfos.app_id);
+        updateCollection(dbs, 'users', appinfos.app_id, dataBag.updateUsers, '$inc', '[updateUsers]');
 
-        updateRangeMeta(dataBag.countryArray, 'locations', appinfos.app_id);
-        updateCollection('locations', appinfos.app_id, dataBag.updateLocations, '$inc', '[updateLocations]');
+        updateRangeMeta(dbs, dataBag.countryArray, 'locations', appinfos.app_id);
+        updateCollection(dbs, 'locations', appinfos.app_id, dataBag.updateLocations, '$inc', '[updateLocations]');
  
-        updateRangeMeta(dataBag.sessionRanges, 'sessions', appinfos.app_id);
-        updateCollection('sessions', appinfos.app_id, dataBag.updateSessions, '$inc', '[updateSessions]');
+        updateRangeMeta(dbs, dataBag.sessionRanges, 'sessions', appinfos.app_id);
+        updateCollection(dbs, 'sessions', appinfos.app_id, dataBag.updateSessions, '$inc', '[updateSessions]');
 
         if (common.config.api.city_data !== false) {
-            updateRangeMeta(dataBag.cityArray, 'cities', appinfos.app_id);
-            updateCollection('cities', appinfos.app_id, dataBag.updateCities, '$inc', '[updateCities]');
+            updateRangeMeta(dbs, dataBag.cityArray, 'cities', appinfos.app_id);
+            updateCollection(dbs, 'cities', appinfos.app_id, dataBag.updateCities, '$inc', '[updateCities]');
         }
 
 
         for (var i=0; i < predefinedMetrics.length; i++) {
             //console.log(dataBag.MetricMetaSet[predefinedMetrics[i].db]);
-            updateRangeMeta(dataBag.MetricMetaSet[predefinedMetrics[i].db], predefinedMetrics[i].db, appinfos.app_id);
-            updateCollection(predefinedMetrics[i].db, appinfos.app_id, dataBag.updateMetrics[predefinedMetrics[i].db], '$inc', '[updateMetrics:'+predefinedMetrics[i].db+']');
+            updateRangeMeta(dbs, dataBag.MetricMetaSet[predefinedMetrics[i].db], predefinedMetrics[i].db, appinfos.app_id);
+            updateCollection(dbs, predefinedMetrics[i].db, appinfos.app_id, dataBag.updateMetrics[predefinedMetrics[i].db], '$inc', '[updateMetrics:'+predefinedMetrics[i].db+']');
         }
         process.emit('hi_mongo');
         console.log('send out hi mongo');
@@ -334,7 +350,7 @@ var process = require('process');
         updateMetricTimeObj(dataBag, sessionObject, prop, toFill, sessions);
     }
 
-    function updateUserProfile(dataBag, sessionObject, finalUserObject, appinfos) {
+    function updateUserProfile(dbs, dataBag, sessionObject, finalUserObject, appinfos) {
         var userProps = {};
         userProps[common.dbUserMap['device_id']] = sessionObject.device_id;
         userProps[common.dbUserMap['session_duration']] = parseInt(sessionObject.acc_duration);
@@ -352,7 +368,7 @@ var process = require('process');
         userProps.app_id = appinfos.app_id;
         userProps.app_user_id = sessionObject.app_user_id;
         userProps.ip_address = sessionObject.ip_address;
-        updateCollection('app_users'+appinfos.app_id, sessionObject.app_user_id, userProps, '$set', '[userProps]'); 
+        updateCollection(dbs, 'app_users'+appinfos.app_id, sessionObject.app_user_id, userProps, '$set', '[userProps]'); 
     }
 
     function cpUniqueOneByOne(x, y) {
@@ -380,7 +396,7 @@ var process = require('process');
         //console.log(dataBag.updateSessions);
     }
 
-    function processUserSession(dataBag, dbAppUser, isFinal, appinfos) {
+    function processUserSession(dbs, dataBag, dbAppUser, isFinal, appinfos) {
         var apps = dataBag.apps;
         var sessionObj = [];
         var last_end_session_timestamp = 0;
@@ -519,11 +535,11 @@ var process = require('process');
         }
 
         //use last session object to update user profiles (metrics)
-        updateUserProfile(dataBag, sessionObj[currObjIdx], finalUserObject, appinfos);
+        updateUserProfile(dbs, dataBag, sessionObj[currObjIdx], finalUserObject, appinfos);
 
         //do the real update job in MongoDB
     	if (isFinal) {
-	       reallyUpdateAll(dataBag, appinfos);
+	       reallyUpdateAll(dbs, dataBag, appinfos);
     	}
     }
 }(usage));

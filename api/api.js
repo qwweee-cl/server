@@ -4,6 +4,8 @@ var http = require('http'),
     url = require('url'),
     common = require('./utils/common.js'),
     exec = require('child_process').exec,
+    oemMaps = [],
+    oemCount = 0,
     countlyApi = {
         data:{
             usage:require('./parts/data/usage.js'),
@@ -29,6 +31,7 @@ function logDbError(err, res) {
 
 function insertOEMs(vendor_info) {
     var oems = {};
+    oems._id = vendor_info.deal_no;
     oems.name = vendor_info.vendor_name;
     oems.deal_no = vendor_info.deal_no;
     oems.start = vendor_info.start;
@@ -101,7 +104,7 @@ function insertRawColl(coll, eventp, params) {
                 }
             });
         }
-        insertOEMs(eventp.vendor);
+        //insertOEMs(eventp.vendor);
     } else {
         common.db_raw.collection(coll).insert(eventp, function(err, res) {
             if (err) {
@@ -239,9 +242,21 @@ if (cluster.isMaster) {
     console.log('start api =========================='+now+'==========================');
     var workerCount = (common.config.api.workers)? common.config.api.workers : os.cpus().length;
 
-    for (var i = 0; i < workerCount; i++) {
-        cluster.fork();
-    }
+    common.db.collection('oems').find().toArray(function(err, data) {
+        for (var i = 0 ; i < data.length ; i ++) {
+            var oemdb1 = common.getOEMRawDB(data[i].deal_no);
+            var oemdb2 = common.getOEMDB(data[i].deal_no);
+            //console.log(oemdb1.tag);
+            //console.log(oemdb2.tag);
+            oemMaps[oemCount] = data[i];
+            oemCount++;
+        }
+
+        for (var i = 0; i < workerCount; i++) {
+            console.log("fluster fork");
+            cluster.fork();
+        }
+    });
 
     cluster.on('exit', function(worker) {
         cluster.fork();
