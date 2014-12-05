@@ -82,9 +82,26 @@ function insertRawColl(coll, eventp, params) {
             //console.log(JSON.stringify(oemMaps, null, 2));
             if (!checkOEM) {
                 oem = false;
-                console.log("not in oem table :"+dealNumber);
+                //console.log("not in oem table :"+dealNumber);
             } else {
-                console.log("in oem table :"+dealNumber);
+                //console.log("in oem table :"+dealNumber);
+                // check start and end (timestamp per sec)
+                if (eventp.timestamp) {
+                    if (checkOEM.start && checkOEM.start*1000 > eventp.timestamp) {
+                        //console.log("before start oem false");
+                        checkOEM = false;
+                    } else {
+                        if (checkOEM.end && checkOEM.end*1000 < eventp.timestamp) {
+                            //console.log("after end oem false");
+                            oem = false;
+                        } else {
+                            //console.log("before end oem true");
+                        }
+                    }
+                } else {
+                    //console.log("no timestamp oem false");
+                    oem = false;
+                }
             }
         }
     }
