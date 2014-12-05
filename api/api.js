@@ -4,6 +4,8 @@ var http = require('http'),
     url = require('url'),
     common = require('./utils/common.js'),
     exec = require('child_process').exec,
+    jsonQuery = require('json-query'),
+    workerEnv = {},
     oemMaps = [],
     oemCount = 0,
     countlyApi = {
@@ -68,12 +70,22 @@ function insertRawColl(coll, eventp, params) {
     eventp.tz = params.qstring.tz;
     eventp.ip_address = params.ip_address;
     if (params.qstring.vendor_info) {
-        console.log
+        //console.log(JSON.stringify(params.qstring.vendor_info, null, 2));
         eventp.vendor = params.qstring.vendor_info;
         oem = true;
         dealNumber = eventp.vendor.deal_no;
         if (eventp.vendor.deal_no == "cyberlink000") {
             oem = false;
+        } else {
+
+            var checkOEM = jsonQuery(['[deal_no=?]',dealNumber], {data: oemMaps}).value;
+            //console.log(JSON.stringify(oemMaps, null, 2));
+            if (!checkOEM) {
+                oem = false;
+                console.log("not in oem table :"+dealNumber);
+            } else {
+                console.log("in oem table :"+dealNumber);
+            }
         }
     }
     //console.log('[db insert]:%j', eventp);
@@ -251,18 +263,21 @@ if (cluster.isMaster) {
             oemMaps[oemCount] = data[i];
             oemCount++;
         }
+        workerEnv["OEMS"] = JSON.stringify(oemMaps);
 
         for (var i = 0; i < workerCount; i++) {
-            console.log("fluster fork");
-            cluster.fork();
+            cluster.fork(workerEnv);
         }
     });
 
     cluster.on('exit', function(worker) {
-        cluster.fork();
+        cluster.fork(workerEnv);
     });
 
 } else {
+    var oems = process.env['OEMS'];
+    oemMaps = JSON.parse(oems);
+    //console.log(oemMaps);
 
     http.Server(function (req, res) {
 
