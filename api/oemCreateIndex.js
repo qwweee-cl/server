@@ -5,6 +5,7 @@ var common = require('./utils/common.js'),
     events = require('events'),
     config = require('./config.js'),
     eventEmitter = new events.EventEmitter(),
+    deal_no = "",
     print = console.log;
 
 function executeCmd(cmd) {
@@ -61,15 +62,24 @@ function createScript(oemdb1, oemdb2) {
 }
 
 function initOEMRawDBs() {
-    dbonoff.open(common.db);
-    common.db.collection('oems').find().toArray(function(err, data) {
-        for (var i = 0 ; i < data.length ; i ++) {
-            var oemdb1 = common.getOEMRawDB(data[i].deal_no);
-            var oemdb2 = common.getOEMDB(data[i].deal_no);
-            createScript(oemdb1, oemdb2);
-        }
-        dbonoff.close(common.db);
-    });
+    if (process.argv.length < 3) {
+        deal_no = 'all';
+        dbonoff.open(common.db);
+        common.db.collection('oems').find().toArray(function(err, data) {
+            for (var i = 0 ; i < data.length ; i ++) {
+                var oemdb1 = common.getOEMRawDB(data[i].deal_no);
+                var oemdb2 = common.getOEMDB(data[i].deal_no);
+                createScript(oemdb1, oemdb2);
+            }
+            dbonoff.close(common.db);
+        });
+    } else { //process only one APP
+        deal_no = process.argv[2];
+        var oemdb1 = common.getOEMRawDB(deal_no);
+        var oemdb2 = common.getOEMDB(deal_no);
+        createScript(oemdb1, oemdb2);
+    }
+    
 }
 
 eventEmitter.on('createScript', createScript);

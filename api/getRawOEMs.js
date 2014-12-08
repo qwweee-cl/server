@@ -8,7 +8,8 @@ common.db.collection('oems').find().toArray(
         if (data) {
             var str = "";
             for (i=0; i<data.length; i++) {
-                str += data[i].deal_no+", ";
+                var oemdb1 = common.getOEMRawDB(data[i].deal_no);
+                str += oemdb1.tag+", ";
             }
             print(str);
         } else {
