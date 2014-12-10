@@ -13,7 +13,10 @@ var countlyView = Backbone.View.extend({
     dateChanged:function () {    //called when user changes the date selected
         this.renderCommon();
     },
-    appChanged:function () {    //called when user changes selected app from the sidebar
+    appChanged:function (isOEM) {    //called when user changes selected app from the sidebar
+        if (isOEM) {
+            location.reload();
+        }
         countlyEvent.reset();
 
         var self = this;
@@ -1622,6 +1625,10 @@ window.ManageAppsView = countlyView.extend({
                 $("#sidebar-app-select").find(".text").text(countlyGlobal['apps'][appId].name);
                 $("#sidebar-app-select").attr('title', countlyGlobal['apps'][appId].name);
                 $("#sidebar-app-select").tipsy({gravity:$.fn.tipsy.autoNS,fade:true,offset:3,cssClass:'yellow narrow',opacity:1,html:true});
+                //$("#sidebar-app-select2").find(".logo").css("background-image", "url('/appimages/" + appId + ".png')");
+                //$("#sidebar-app-select2").find(".text").text(countlyGlobal['oems'][appId].name);
+                //$("#sidebar-app-select2").attr('title', countlyGlobal['oems'][appId].name);
+                //$("#sidebar-app-select2").tipsy({gravity:$.fn.tipsy.autoNS,fade:true,offset:3,cssClass:'yellow narrow',opacity:1,html:true});
             }
 
             $("#app-edit-id").val(appId);
@@ -1987,6 +1994,7 @@ window.ManageAppsView = countlyView.extend({
                                     "background-image":"url(" + file + ")"
                                 });
                                 $("#sidebar-app-select .logo").css("background-image", $("#sidebar-app-select .logo").css("background-image"));
+                                $("#sidebar-app-select2 .logo").css("background-image", $("#sidebar-app-select2 .logo").css("background-image"));
                             }
 
                             initAppManagement(appId);
@@ -2215,6 +2223,7 @@ window.ManageExportView = countlyView.extend({
         $(this.el).html(this.template({
             events:countlyEvent.getEventsWithSegmentations(),
             app_name:app.activeAppName,
+            oem_name:app.activeOemName,
             exports:[]
         }));
 
@@ -2576,6 +2585,8 @@ var AppRouter = Backbone.Router.extend({
     dateFromSelected:null, //date from selected from the date picker
     activeAppName:'',
     activeAppKey:'',
+    activeOemName:'',
+    activeOemKey:'',
     main:function () {
         this.navigate("/", true);
     },
@@ -2869,7 +2880,36 @@ var AppRouter = Backbone.Router.extend({
                     sidebarApp.tipsy({gravity:$.fn.tipsy.autoNS,fade:true,offset:3,cssClass:'yellow narrow',opacity:1,html:true});
                     sidebarApp.find(".logo").css("background-image", appImage);
                     sidebarApp.removeClass("active");
-                    self.activeView.appChanged();
+                    self.activeView.appChanged(false);
+                }});
+            });
+
+            $(".app-navigate2").live("click", function () {
+                var oemId = $(this).data("id"),
+                    oemName = $(this).find(".name").text(),
+                    oemImage = $(this).find(".logo").css("background-image"),
+                    sidebarApp2 = $("#sidebar-app-select2");
+                
+                if (self.activeOemKey == oemId) 
+                {
+                    sidebarApp2.removeClass("active");
+                    $("#app-nav2").animate({left:'-60px'}, {duration:500, easing:'easeInBack'});
+                    self.activeOemName = oemName;
+                    self.activeOemKey = oemId;
+                    return false;
+                }
+
+                self.activeOemName = oemName;
+                self.activeOemKey = oemId;
+
+                $("#app-nav2").animate({left:'-60px'}, {duration:500, easing:'easeInBack', complete:function () {
+                    countlyCommon.setActiveOem(oemId);
+                    sidebarApp2.find(".text").text(oemName);
+                    sidebarApp2.attr('title', oemName);
+                    sidebarApp2.tipsy({gravity:$.fn.tipsy.autoNS,fade:true,offset:3,cssClass:'yellow narrow',opacity:1,html:true});
+                    sidebarApp2.find(".logo").css("background-image", oemImage);
+                    sidebarApp2.removeClass("active");
+                    self.activeView.appChanged(true);
                 }});
             });
 
@@ -2902,10 +2942,15 @@ var AppRouter = Backbone.Router.extend({
                         $("#app-nav").animate({left:'-60px'}, {duration:500, easing:'easeInBack'});
                         $("#sidebar-app-select").removeClass("active");
                     }
+                    if ($("#app-nav2").offset().left == 201) {
+                        $("#app-nav2").animate({left:'-60px'}, {duration:500, easing:'easeInBack'});
+                        $("#sidebar-app-select2").removeClass("active");
+                    }
                 }
 
                 if ($(this).attr("href")) {
                     $("#sidebar-app-select").removeClass("disabled");
+                    $("#sidebar-app-select2").removeClass("disabled");
                 }
             });
 
@@ -2918,13 +2963,20 @@ var AppRouter = Backbone.Router.extend({
                 if ($(this).attr("href") == "#/manage/apps") {
                     $("#sidebar-app-select").addClass("disabled");
                     $("#sidebar-app-select").removeClass("active");
+                    $("#sidebar-app-select2").addClass("disabled");
+                    $("#sidebar-app-select2").removeClass("active");
                 } else {
                     $("#sidebar-app-select").removeClass("disabled");
+                    $("#sidebar-app-select2").removeClass("disabled");
                 }
 
                 if ($("#app-nav").offset().left == 201) {
                     $("#app-nav").animate({left:'-60px'}, {duration:500, easing:'easeInBack'});
                     $("#sidebar-app-select").removeClass("active");
+                }
+                if ($("#app-nav2").offset().left == 201) {
+                    $("#app-nav2").animate({left:'-60px'}, {duration:500, easing:'easeInBack'});
+                    $("#sidebar-app-select2").removeClass("active");
                 }
 
                 $(".sidebar-submenu .item").removeClass("active");
@@ -2951,6 +3003,29 @@ var AppRouter = Backbone.Router.extend({
                     $("#app-nav").animate({left:'-60px'}, {duration:500, easing:'easeInBack'});
                 } else {
                     $("#app-nav").animate({left:'201px'}, {duration:500, easing:'easeOutBack'});
+                }
+
+            });
+
+            $("#sidebar-app-select2").click(function () {
+
+                if ($(this).hasClass("disabled")) {
+                    return true;
+                }
+
+                if ($(this).hasClass("active")) {
+                    $(this).removeClass("active");
+                } else {
+                    $(this).addClass("active");
+                }
+
+                $("#app-nav2").show();
+                var left = $("#app-nav2").offset().left;
+
+                if (left == 201) {
+                    $("#app-nav2").animate({left:'-60px'}, {duration:500, easing:'easeInBack'});
+                } else {
+                    $("#app-nav2").animate({left:'201px'}, {duration:500, easing:'easeOutBack'});
                 }
 
             });
@@ -3132,6 +3207,19 @@ var AppRouter = Backbone.Router.extend({
                 $("#sidebar-app-select").attr('title', countlyGlobal['apps'][countlyCommon.ACTIVE_APP_ID].name);
                 $("#sidebar-app-select").tipsy({gravity:$.fn.tipsy.autoNS,fade:true,offset:3,cssClass:'yellow narrow',opacity:1,html:true});
                 self.activeAppName = countlyGlobal['apps'][countlyCommon.ACTIVE_APP_ID].name;
+            }
+            if (!countlyCommon.ACTIVE_OEM_ID) {
+                for (var oemId in countlyGlobal['oems']) {
+                    countlyCommon.setActiveOem(oemId);
+                    self.activeOemName = countlyGlobal['oems'][oemId].name;
+                    break;
+                }
+            } else {
+                $("#sidebar-app-select2").find(".logo").css("background-image", "url('/appimages/" + countlyCommon.ACTIVE_OEM_ID + ".png')");
+                $("#sidebar-app-select2 .text").text(countlyGlobal['oems'][countlyCommon.ACTIVE_OEM_ID].name);
+                $("#sidebar-app-select2").attr('title', countlyGlobal['oems'][countlyCommon.ACTIVE_OEM_ID].name);
+                $("#sidebar-app-select2").tipsy({gravity:$.fn.tipsy.autoNS,fade:true,offset:3,cssClass:'yellow narrow',opacity:1,html:true});
+                self.activeOemName = countlyGlobal['oems'][countlyCommon.ACTIVE_OEM_ID].name;
             }
         } else {
             $("#new-install-overlay").show();

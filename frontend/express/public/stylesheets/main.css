@@ -10,7 +10,7 @@ a:active { color:inherit; }
 
 /* SIDEBAR */
 #sidebar { position:fixed; left:0; width:224px; background-image:url('../images/dashboard/menu_bg.png'); background-position:0 400px; height:100%; z-index:998; user-select:none; }
-#sidebar-top { height:112px; padding-top:11px; background-image:url('../images/dashboard/logo_bg.png'); }
+#sidebar-top { height:170px; padding-top:11px; background-image:url('../images/dashboard/logo_bg2.png'); }
 #sidebar-logo { background-image:url('../images/dashboard/logo.png'); width:144px; height:44px; margin:0 auto; }
 #sidebar-app-select { width:170px; height:16px; padding:10px; background-image:url('../images/dashboard/combobox.png'); margin:0 auto; margin-top:21px; cursor:pointer; }
 	#sidebar-app-select:hover { background-position:-190px; }
@@ -20,6 +20,15 @@ a:active { color:inherit; }
 	#sidebar-app-select.disabled:hover { background-position:0; }
 	#sidebar-app-select .text { width:120px; text-overflow:ellipsis; white-space:nowrap; overflow:hidden; font:13px Ubuntu,Helvetica,sans-serif; line-height:111%; color:#505050; text-shadow:0 1px #CCC; float:left; }
 	#sidebar-app-select .logo { width:20px; height:20px; background-size:20px 20px; float:left; margin-right:10px; margin-top:-3px; background-position:center; border-radius:4px; border:1px solid #555; }
+
+#sidebar-app-select2 { width:170px; height:16px; padding:10px; background-image:url('../images/dashboard/combobox.png'); margin:0 auto; margin-top:21px; cursor:pointer; }
+	#sidebar-app-select2:hover { background-position:-190px; }
+	#sidebar-app-select2.active { background-position:-380px; }
+	#sidebar-app-select2.active:hover { background-position:-570px; }
+	#sidebar-app-select2.disabled { opacity:0.3; }
+	#sidebar-app-select2.disabled:hover { background-position:0; }
+	#sidebar-app-select2 .text { width:120px; text-overflow:ellipsis; white-space:nowrap; overflow:hidden; font:13px Ubuntu,Helvetica,sans-serif; line-height:111%; color:#505050; text-shadow:0 1px #CCC; float:left; }
+	#sidebar-app-select2 .logo { width:20px; height:20px; background-size:20px 20px; float:left; margin-right:10px; margin-top:-3px; background-position:center; border-radius:4px; border:1px solid #555; }
 
 #sidebar-bottom-container { z-index:2; position:absolute; background-color:#222222; bottom:14px; left:14px; padding:5px 10px; width:170px; font:13px Ubuntu,Helvetica,sans-serif; line-height:111%; color:#505050; box-shadow:inset 0 1px 0 #2D2D2D; text-shadow:0 -1px #161616; border:1px solid #1A1A1A; border-radius:5px; }
 #sidebar-bottom-container .reveal-menu { width:14px; height:15px; background-image:url('../images/dashboard/settings.png'); float:right; cursor:pointer; }
@@ -219,9 +228,14 @@ a:active { color:inherit; }
 #app-management-bar { z-index:3; }
 #app-management-bar #app-nav-head { padding-left:15px; }
 #app-nav-title { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:85px; float:left; padding-top:3px; }
+#app-nav-title2 { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:85px; float:left; padding-top:3px; }
 #app-nav { width:280px; display:none; text-align:right; background-color:#CCC; height:100%; position:fixed; left:31px; z-index:997; background-image:url('../images/dashboard/dropdown_bg.png'); }
+#app-nav2 { width:280px; display:none; text-align:right; background-color:#CCC; height:100%; position:fixed; left:31px; z-index:997; background-image:url('../images/dashboard/dropdown_bg.png'); }
 #app-nav-head { height:27px; padding:20px; padding-left:32px; color:#BFBFBF; text-shadow:0 -1px #232323; font:18px Ubuntu,Helvetica,sans-serif; line-height:111%; background-image:url('../images/dashboard/dropdown_head.png'); text-align:left; }
 	#app-nav-head .button-container { overflow:hidden; position:absolute; top:19px; right:10px; }
+#app-nav-head2 { height:27px; padding:20px; padding-left:32px; color:#BFBFBF; text-shadow:0 -1px #232323; font:18px Ubuntu,Helvetica,sans-serif; line-height:111%; background-image:url('../images/dashboard/dropdown_head.png'); text-align:left; }
+	#app-nav-head2 .button-container { overflow:hidden; position:absolute; top:19px; right:10px; }
+
 .app-container { cursor:pointer; height:30px; background-image:url('../images/dashboard/dropdown_item.png'); padding:8px 12px; padding-left:32px; overflow:auto; }
 .app-container:hover { opacity:0.7; }
 .app-container:last-child { margin-bottom:60px; }
@@ -231,6 +245,10 @@ a:active { color:inherit; }
 	.app-container.app-navigate { position:relative; }
 	.app-container.app-navigate .name { width:199px; }
 	.app-container.app-navigate .drag { display:none; width:15px; height:13px; background-image:url('../images/dashboard/app-order.png'); cursor:move; position:absolute; top:17px; right:12px; }
+
+	.app-container.app-navigate2 { position:relative; }
+	.app-container.app-navigate2 .name { width:199px; }
+	.app-container.app-navigate2 .drag { display:none; width:15px; height:13px; background-image:url('../images/dashboard/app-order.png'); cursor:move; position:absolute; top:17px; right:12px; }
 
 #sort-app-button .icon { margin:0; width:21px; height:18px; background-image:url('../images/dashboard/app-order-activate.png'); }
 /* APP NAVIGATION END */

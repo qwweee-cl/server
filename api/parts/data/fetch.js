@@ -10,8 +10,19 @@ var fetch = {},
 (function (fetch) {
 
     fetch.prefetchEventData = function (collection, params) {
+        var dbs = common.db;
+        if (!params.qstring.oem_id || (params.qstring.oem_id && params.qstring.oem_id == 'all')) {
+            //console.log("[prefetchEventData] all");
+        } else {
+            //console.log("[prefetchEventData] "+params.qstring.oem_id);
+            dbs = common.getOEMDB(params.qstring.oem_id);
+            if (!dbs) {
+                dbs = common.db;
+            }
+        }
+
         if (!params.qstring.event) {
-            common.db.collection('events').findOne({'_id':params.app_id}, function (err, result) {
+            dbs.collection('events').findOne({'_id':params.app_id}, function (err, result) {
                 if (result && result.list) {
                     if (result.order) {
                         collection = result.order[0];
@@ -38,7 +49,18 @@ var fetch = {},
             fetchFields['meta'] = 1;
         }
 
-        common.db.collection(collection).find({}, fetchFields).toArray(function (err, result) {
+        var dbs = common.db;
+        if (!params.qstring.oem_id || (params.qstring.oem_id && params.qstring.oem_id == 'all')) {
+            //console.log("[fetchEventData] all");
+        } else {
+            //console.log("[fetchEventData] "+params.qstring.oem_id);
+            dbs = common.getOEMDB(params.qstring.oem_id);
+            if (!dbs) {
+                dbs = common.db;
+            }
+        }
+
+        dbs.collection(collection).find({}, fetchFields).toArray(function (err, result) {
             if (!result || !result.length) {
                 now = new common.time.Date();
                 result = {};
@@ -142,7 +164,17 @@ var fetch = {},
     };
 
     fetch.fetchCollection = function (collection, params) {
-        common.db.collection(collection).findOne({'_id':params.app_id}, function (err, result) {
+        var dbs = common.db;
+        if (!params.qstring.oem_id || (params.qstring.oem_id && params.qstring.oem_id == 'all')) {
+            //console.log("[fetchCollection] all");
+        } else {
+            //console.log("[fetchCollection] "+params.qstring.oem_id);
+            dbs = common.getOEMDB(params.qstring.oem_id);
+            if (!dbs) {
+                dbs = common.db;
+            }
+        }
+        dbs.collection(collection).findOne({'_id':params.app_id}, function (err, result) {
             if (!result) {
                 result = {};
             }
@@ -163,7 +195,18 @@ var fetch = {},
             fetchFields['meta'] = 1;
         }
 
-        common.db.collection(collection).findOne({'_id':params.app_id}, fetchFields, function (err, result) {
+        var dbs = common.db;
+        if (!params.qstring.oem_id || (params.qstring.oem_id && params.qstring.oem_id == 'all')) {
+            //console.log("[fetchTimeData] all");
+        } else {
+            //console.log("[fetchTimeData] "+params.qstring.oem_id);
+            dbs = common.getOEMDB(params.qstring.oem_id);
+            if (!dbs) {
+                dbs = common.db;
+            }
+        }
+
+        dbs.collection(collection).findOne({'_id':params.app_id}, fetchFields, function (err, result) {
             if (!result) {
                 now = new common.time.Date();
                 result = {};

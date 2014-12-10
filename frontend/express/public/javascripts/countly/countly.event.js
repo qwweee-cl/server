@@ -32,6 +32,7 @@
                     data: {
                         "api_key": countlyGlobal.member.api_key,
                         "app_id" : countlyCommon.ACTIVE_APP_ID,
+                        "oem_id":countlyCommon.ACTIVE_OEM_ID,
                         "method" : "get_events"
                     },
                     dataType: "jsonp",
@@ -48,6 +49,7 @@
                     data: {
                         "api_key": countlyGlobal.member.api_key,
                         "app_id" : countlyCommon.ACTIVE_APP_ID,
+                        "oem_id":countlyCommon.ACTIVE_OEM_ID,
                         "method" : "events",
                         "event": _activeEvent
                     },
@@ -87,6 +89,7 @@
                     data: {
                         "api_key": countlyGlobal.member.api_key,
                         "app_id" : countlyCommon.ACTIVE_APP_ID,
+                        "oem_id":countlyCommon.ACTIVE_OEM_ID,
                         "method" : "get_events"
                     },
                     dataType: "jsonp",
@@ -103,6 +106,7 @@
                     data: {
                         "api_key": countlyGlobal.member.api_key,
                         "app_id" : countlyCommon.ACTIVE_APP_ID,
+                        "oem_id":countlyCommon.ACTIVE_OEM_ID,
                         "method" : "events",
                         "action" : "refresh",
                         "event": _activeEvent
@@ -157,6 +161,7 @@
                 data:{
                     "api_key": countlyGlobal.member.api_key,
                     "app_id": countlyCommon.ACTIVE_APP_ID,
+                    "oem_id":countlyCommon.ACTIVE_OEM_ID,
                     "method":"get_events"
                 },
                 dataType:"jsonp",
@@ -542,6 +547,7 @@
             data: {
                 "api_key": countlyGlobal.member.api_key,
                 "app_id" : countlyCommon.ACTIVE_APP_ID,
+                "oem_id":countlyCommon.ACTIVE_OEM_ID,
                 "method" : "events",
                 "events": JSON.stringify(eventKeysArr)
             },

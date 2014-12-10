@@ -65,7 +65,7 @@ var common = {},
     dbRawName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_raw + '?auto_reconnect=true');
     dbBatchName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_batch + '?auto_reconnect=true');
     dbIbbName = (countlyConfig.mongodb.host + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_ibb + '?auto_reconnect=true');
-    dbReportName = ("oem_report" + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_raw + '?auto_reconnect=true');
+    dbReportName = (countlyConfig.mongodb.host + ':' + countlyConfig.mongodb.port + '/' + "oem_report" + '?auto_reconnect=true');
 
     common.db = mongo.db(dbName, dbOptions);
     common.db.tag = countlyConfig.mongodb.db.replace(/system\.|\.\.|\$/g, "");

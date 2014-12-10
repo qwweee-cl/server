@@ -125,30 +125,53 @@ app.get('/dashboard', function (req, res, next) {
             if (member) {
                 var adminOfApps = [],
                     userOfApps = [],
+                    adminOfOems = [],
+                    userOfOems = [],
                     countlyGlobalApps = {},
-                    countlyGlobalAdminApps = {};
+                    countlyGlobalAdminApps = {},
+                    countlyGlobalOems = {},
+                    countlyGlobalAdminOems = {};
 
                 member.user_id = crypto.createHash('md5').update(member._id + member.email).digest('hex');
                 member.user_hash = crypto.createHash('sha1').update('xuiee4eb' + member.user_id).digest('hex');
 
                 if (member['global_admin']) {
-                    countlyDb.collection('apps').find({}).toArray(function (err, apps) {
-                        adminOfApps = apps;
-                        userOfApps = apps;
-
-                        for (var i = 0; i < apps.length; i++) {
-                            countlyGlobalApps[apps[i]["_id"]] = {
-                                "_id":"" + apps[i]["_id"],
-                                "name":apps[i]["name"],
-                                "key":apps[i]["key"],
-                                "category":apps[i]["category"],
-                                "timezone":apps[i]["timezone"],
-                                "country":apps[i]["country"]
+                    countlyDb.collection('oems').find({}).toArray(function (err, oems) {
+                        oems[oems.length] = {'_id':'generic', 'name':'generic', 'deal_no':'generic','start':'','end':''};
+                        oems[oems.length] = oems[0];
+                        oems[0] = {'_id':'all', 'name':'all', 'deal_no':'all','start':'','end':''};
+                        adminOfOems = oems;
+                        userOfOems = oems;
+                        for (var i = 0; i < oems.length; i++) {
+                            countlyGlobalOems[oems[i]["_id"]] = {
+                                "_id":"" + oems[i]["_id"],
+                                "name":oems[i]["name"],
+                                "deal_no":oems[i]["deal_no"],
+                                "start":oems[i]["start"],
+                                "end":oems[i]["end"]
                             };
                         }
 
-                        countlyGlobalAdminApps = countlyGlobalApps;
-                        renderDashboard();
+                        countlyGlobalAdminOems = countlyGlobalOems;
+
+                        countlyDb.collection('apps').find({}).toArray(function (err, apps) {
+                            adminOfApps = apps;
+                            userOfApps = apps;
+
+                            for (var i = 0; i < apps.length; i++) {
+                                countlyGlobalApps[apps[i]["_id"]] = {
+                                    "_id":"" + apps[i]["_id"],
+                                    "name":apps[i]["name"],
+                                    "key":apps[i]["key"],
+                                    "category":apps[i]["category"],
+                                    "timezone":apps[i]["timezone"],
+                                    "country":apps[i]["country"]
+                                };
+                            }
+
+                            countlyGlobalAdminApps = countlyGlobalApps;
+                            renderDashboard();
+                        });
                     });
                 } else {
                     var adminOfAppIds = [],
@@ -186,23 +209,40 @@ app.get('/dashboard', function (req, res, next) {
                                 "country":admin_of[i]["country"]
                             };
                         }
-
-                        countlyDb.collection('apps').find({ _id:{ '$in':userOfAppIds } }).toArray(function (err, user_of) {
-                            adminOfApps = admin_of;
-                            userOfApps = user_of;
-
-                            for (var i = 0; i < user_of.length; i++) {
-                                countlyGlobalApps[user_of[i]["_id"]] = {
-                                    "_id":"" + user_of[i]["_id"],
-                                    "name":user_of[i]["name"],
-                                    "key":user_of[i]["key"],
-                                    "category":user_of[i]["category"],
-                                    "timezone":user_of[i]["timezone"],
-                                    "country":user_of[i]["country"]
+                        countlyDb.collection('oems').find({}).toArray(function (err, oems) {
+                            oems[oems.length] = {'_id':'generic', 'name':'generic', 'deal_no':'generic','start':'','end':''};
+                            oems[oems.length] = oems[0];
+                            oems[0] = {'_id':'all', 'name':'all', 'deal_no':'all','start':'','end':''};
+                            adminOfOems = oems;
+                            userOfOems = oems;
+                            for (var i = 0; i < oems.length; i++) {
+                                    countlyGlobalOems[oems[i]["_id"]] = {
+                                    "_id":"" + oems[i]["_id"],
+                                    "name":oems[i]["name"],
+                                    "deal_no":oems[i]["deal_no"],
+                                    "start":oems[i]["start"],
+                                    "end":oems[i]["end"]
                                 };
                             }
+                            countlyGlobalAdminOems = countlyGlobalOems;
 
-                            renderDashboard();
+                            countlyDb.collection('apps').find({ _id:{ '$in':userOfAppIds } }).toArray(function (err, user_of) {
+                                adminOfApps = admin_of;
+                                userOfApps = user_of;
+
+                                for (var i = 0; i < user_of.length; i++) {
+                                    countlyGlobalApps[user_of[i]["_id"]] = {
+                                        "_id":"" + user_of[i]["_id"],
+                                        "name":user_of[i]["name"],
+                                        "key":user_of[i]["key"],
+                                        "category":user_of[i]["category"],
+                                        "timezone":user_of[i]["timezone"],
+                                        "country":user_of[i]["country"]
+                                    };
+                                }
+
+                                renderDashboard();
+                            });
                         });
                     });
                 }
@@ -219,6 +259,8 @@ app.get('/dashboard', function (req, res, next) {
                         res.expose({
                             apps:countlyGlobalApps,
                             admin_apps:countlyGlobalAdminApps,
+                            oems:countlyGlobalOems,
+                            admin_oems:countlyGlobalAdminOems,
                             csrf_token:req.session._csrf,
                             member:member
                         }, 'countlyGlobal');
@@ -226,11 +268,15 @@ app.get('/dashboard', function (req, res, next) {
                         if (settings && !err) {
                             adminOfApps = sortBy(adminOfApps, settings.appSortList || []);
                             userOfApps = sortBy(userOfApps, settings.appSortList || []);
+                            adminOfOems = sortBy(adminOfOems, settings.appSortList || []);
+                            userOfOems = sortBy(userOfOems, settings.appSortList || []);
                         }
 
                         res.render('dashboard', {
                             adminOfApps:adminOfApps,
                             userOfApps:userOfApps,
+                            adminOfOems:adminOfOems,
+                            userOfOems:userOfOems,
                             countlyVersion:"13.10",
                             member:member,
                                 cdn: countlyConfig.cdn || ""
