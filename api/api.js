@@ -74,7 +74,7 @@ function insertRawColl(coll, eventp, params) {
         eventp.vendor = params.qstring.vendor_info;
         oem = true;
         dealNumber = eventp.vendor.deal_no;
-        if (eventp.vendor.deal_no == "cyberlink000") {
+        if (eventp.vendor.deal_no == "cyberlink000" || eventp.vendor.deal_no == "Cyberlink000") {
             oem = false;
         } else {
 
