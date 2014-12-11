@@ -27,7 +27,33 @@ function logDbError(err, res) {
     }
 }
 
+function insertOEMs(vendor_info) {
+    var oems = {};
+    oems.name = vendor_info.vendor_name;
+    oems.deal_no = vendor_info.deal_no;
+    oems.start = vendor_info.start;
+    oems.end = vendor_info.end;
+    var deal = oems.deal_no;
+    common.db.collection('oems').findOne({deal_no:deal}, function(err, res) {
+        if (err) {
+            console.log('DB operation error');
+            console.log(err);
+        } else {
+            if (!res) {
+                common.db.collection('oems').insert(oems, function(err, res) {
+                    if (err) {
+                        console.log('DB operation error');
+                        console.log(err);
+                    }
+                });
+            }
+        }
+    });
+}
+
 function insertRawColl(coll, eventp, params) {
+    var dealNumber = "";
+    var oem = false;
     //console.log('insert collection name:'+coll);
     eventp.app_key = params.qstring.app_key;
     //eventp.app_id = params.app_id;
@@ -38,6 +64,15 @@ function insertRawColl(coll, eventp, params) {
     eventp.timestamp = params.qstring.timestamp;
     eventp.tz = params.qstring.tz;
     eventp.ip_address = params.ip_address;
+    if (params.qstring.vendor_info) {
+        console.log
+        eventp.vendor = params.qstring.vendor_info;
+        oem = true;
+        dealNumber = eventp.vendor.deal_no;
+        if (eventp.vendor.deal_no == "cyberlink000") {
+            oem = false;
+        }
+    }
     //console.log('[db insert]:%j', eventp);
     if (!eventp.app_key) {
         console.log('Null app_key: '+eventp.ip_address);
@@ -47,12 +82,34 @@ function insertRawColl(coll, eventp, params) {
         console.log('Null device_id: '+eventp.ip_address+' app key: '+eventp.app_key);
         return;
     }
-    common.db_raw.collection(coll).insert(eventp, function(err, res) {
-        if (err) {
-       	    console.log('DB operation error');
-            console.log(err);
-        } 
-    });
+    if (oem) {
+        var oemdb = common.getOEMRawDB(dealNumber);
+        if (oemdb) {
+            oemdb.collection(coll).insert(eventp, function(err, res) {
+                if (err) {
+                    console.log('DB operation error');
+                    console.log(err);
+                }
+            });
+        } else {
+            console.log("can not get OEM database : ("+dealNumber+")");
+            oemdb = common.getErrorDB();
+            oemdb.collection(coll).insert(eventp, function(err, res) {
+                if (err) {
+                    console.log('DB operation error');
+                    console.log(err);
+                }
+            });
+        }
+        insertOEMs(eventp.vendor);
+    } else {
+        common.db_raw.collection(coll).insert(eventp, function(err, res) {
+            if (err) {
+                console.log('DB operation error');
+                console.log(err);
+            }
+        });
+    }
 }
 
 function insertRawEvent(coll,params) {
@@ -206,7 +263,7 @@ if (cluster.isMaster) {
         if (queryString.app_id && queryString.app_id.length != 24) {
             console.log('Invalid parameter "app_id"');
             console.log('===========================================================');
-            console.log(params);
+            console.log(JSON.stringify(params));
             console.log('===========================================================');
             common.returnMessage(params, 200, 'Success');
             return false;
@@ -215,7 +272,7 @@ if (cluster.isMaster) {
         if (queryString.user_id && queryString.user_id.length != 24) {
             console.log('Invalid parameter "user_id"');
             console.log('===========================================================');
-            console.log(params);
+            console.log(JSON.stringify(params));
             console.log('===========================================================');
             common.returnMessage(params, 200, 'Success');
             return false;
@@ -419,8 +476,9 @@ if (cluster.isMaster) {
                     try {
                         tmp_str = JSON.parse(JSON.stringify(params.qstring));
                     } catch (SyntaxError) {
-                        console.log('Parse qstring JSON failed');
-                        console.log('source:'+tmp_str);
+                        var now = new Date();
+                        console.log('Parse qstring JSON failed'+'=========='+now+'==========');
+                        console.log('source:'+JSON.stringify(params.qstring));
                         common.returnMessage(params, 400, 'Parse qstring JSON failed');
                         console.log('Send 400 Success');
                         return false;
@@ -428,8 +486,9 @@ if (cluster.isMaster) {
                 }
 
                 if (!params.qstring.app_key || !params.qstring.device_id) {
-                    console.log('Missing parameter "app_key" or "device_id"');
-                    console.log(params.qstring);
+                    var now = new Date();
+                    console.log('Missing parameter "app_key" or "device_id"'+'=========='+now+'==========');
+                    console.log(JSON.stringify(params.qstring));
                     common.returnMessage(params, 200, 'Success');
                     console.log("Send 200 Success");
                     return false;
@@ -452,11 +511,25 @@ if (cluster.isMaster) {
                         }
 
                     } catch (SyntaxError) {
-                        console.log('Parse metrics JSON failed');
-                        console.log(params.qstring);
+                        var now = new Date();
+                        console.log('Parse metrics JSON failed'+'=========='+now+'==========');
+                        console.log(JSON.stringify(params.qstring));
                         common.returnMessage(params, 200, 'Success');
                         console.log('Send 200 Success');
-                        return false
+                        return false;
+                    }
+                }
+
+                if (params.qstring.vendor_info) {
+                    try {
+                        params.qstring.vendor_info = JSON.parse(params.qstring.vendor_info);
+                    } catch (SyntaxError) {
+                        var now = new Date();
+                        console.log('Parse vendor_info JSON failed'+'=========='+now+'==========');
+                        console.log(JSON.stringify(params.qstring));
+                        common.returnMessage(params, 200, 'Success');
+                        console.log('Send 200 Success');
+                        return false;
                     }
                 }
 
@@ -464,8 +537,9 @@ if (cluster.isMaster) {
                     try {
                         params.events = JSON.parse(params.qstring.events);
                     } catch (SyntaxError) {
-                        console.log('Parse events JSON failed');
-                        console.log('source:'+params.qstring);
+                        var now = new Date();
+                        console.log('Parse events JSON failed'+'=========='+now+'==========');
+                        console.log('source:'+JSON.stringify(params.qstring));
                         common.returnMessage(params, 200, 'Success');
                         console.log('Send 200 Success');
                         return false;
