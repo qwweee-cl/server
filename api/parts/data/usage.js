@@ -433,6 +433,10 @@ var process = require('process');
             if (apps[i].begin_session) {
                 common.computeGeoInfo(apps[i]);
                 //console.log('dataBag app:'+i+':begin_session');
+                if (apps[i].timestamp < 0) {
+                    console.log(apps[i].timestamp);
+                    apps[i].timestamp = ObjId2Timestamp(apps[i]._id);
+                }
                 if ((apps[i].timestamp - last_end_session_timestamp) < common.config.api.cl_endsession_ongoing_timeout) { //ongoing session
                     last_end_session_timestamp = 0;
                     continue;
@@ -526,6 +530,9 @@ var process = require('process');
 	       reallyUpdateAll(dataBag, appinfos);
     	}
     }
+    function ObjId2Timestamp (objectId) {
+	return parseInt(objectId.toString().substring(0, 8), 16);
+    };
 }(usage));
 
 module.exports = usage;
