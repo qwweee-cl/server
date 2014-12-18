@@ -51,7 +51,7 @@ var common = {},
     var dbName;
     var dbOptions = { safe:false, maxPoolSize: countlyConfig.mongodb.max_pool_size || 1000 };
     var dbRawOptions = { safe:false, maxPoolSize: countlyConfig.mongodb.max_raw_pool_size || 1000 };
-    var dbBatchOptions = { safe:false, maxPoolSize: countlyConfig.mongodb.max_batch_pool_size};
+    var dbBatchOptions = { safe:false, maxPoolSize: countlyConfig.mongodb.max_batch_pool_size || 1000};
 
     if (typeof countlyConfig.mongodb === "string") {
         dbName = countlyConfig.mongodb;
