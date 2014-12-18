@@ -141,7 +141,12 @@ cmd="/usr/bin/node $path/createIndex.js"
 echo $cmd
 $cmd
 ## run batch
-cmd="/usr/bin/node $path/batch.js"
+cmd="/usr/bin/node $path/newBatch.js"
+echo $cmd
+$cmd
+
+## run OEM batch
+cmd="$path/runOEM.sh >> /usr/local/countly/log/oem_batch.log 2>&1"
 echo $cmd
 $cmd
 

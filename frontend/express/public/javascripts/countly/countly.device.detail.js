@@ -25,6 +25,7 @@
                 data:{
                     "api_key":countlyGlobal.member.api_key,
                     "app_id":countlyCommon.ACTIVE_APP_ID,
+                    "oem_id":countlyCommon.ACTIVE_OEM_ID,
                     "method":"device_details"
                 },
                 dataType:"jsonp",
@@ -55,6 +56,7 @@
                 data:{
                     "api_key":countlyGlobal.member.api_key,
                     "app_id":countlyCommon.ACTIVE_APP_ID,
+                    "oem_id":countlyCommon.ACTIVE_OEM_ID,
                     "method":"device_details",
                     "action":"refresh"
                 },
@@ -201,7 +203,7 @@
         var osVersions = countlyCommon.extractBarData(_deviceDetailsDb, _os_versions, countlyDeviceDetails.clearDeviceDetailsObject);
 
         for (var i = 0; i < osVersions.length; i++) {
-            osVersions[i].name = fixOSVersion(osVersions[i].name);
+            osVersions[i].name = countlyDeviceDetails.fixOSVersion(osVersions[i].name);
         }
 
         return osVersions;
@@ -227,7 +229,7 @@
 
         if (oSVersionData.chartData) {
             for (var i = 0; i < oSVersionData.chartData.length; i++) {
-                oSVersionData.chartData[i].os_version = fixOSVersion(oSVersionData.chartData[i].os_version);
+                oSVersionData.chartData[i].os_version = countlyDeviceDetails.fixOSVersion(oSVersionData.chartData[i].os_version);
 
                 if (oSVersionData.chartData[i].os_version.indexOf(osSegmentation) == -1) {
                     delete oSVersionData.chartData[i];
@@ -288,7 +290,7 @@
         }
     }
 
-    function fixOSVersion(osName) {
+    countlyDeviceDetails.fixOSVersion = function (osName) {
         return osName
             .replace(/:/g, ".")
             .replace(/i/g, "iOS ")

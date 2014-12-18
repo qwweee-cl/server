@@ -30,6 +30,10 @@
 				<div class="logo" <% if (userOfApps[0]){ %>style="background-image:url('/appimages/<%= userOfApps[0]._id %>.png')"<% } %>></div>
 				<div class="text"><% if (userOfApps[0]){ %><%= userOfApps[0].name %><% } %></div>
 			</div>
+			<div id="sidebar-app-select2">
+				<div class="logo" <% if (userOfOems[0]){ %>style="background-image:url('/appimages/<%= userOfOems[0]._id %>.png')"<% } %>></div>
+				<div class="text"><% if (userOfOems[0]){ %><%= userOfOems[0].name %><% } %></div>
+			</div>
 		</div>
 		<div id="sidebar-menu">
 			<a href="#/" class="item active">
@@ -184,6 +188,34 @@
 		</div>
 		<div id="sidebar-new-app">
 			<div class="app-container app-navigate" id="">
+				<div class="logo"></div>
+				<div class="name"></div>
+				<div class="drag"></div>
+			</div>
+		</div>
+	</div>
+	<div id="app-nav2">
+		<div id="app-nav-head2">
+			<div id="app-nav-title2" style="max-width: 105px;" data-localize="management-oems.title"></div>
+			<div class="button-container">
+				<% if(member['global_admin'] && adminOfOems.length > 1) { %>
+				<div class="icon-button dark help-zone-vs" id="sort-app-button">
+					<div class="icon"></div>
+				</div>
+				<% } %>
+			</div>
+		</div>
+		<div class="apps-scrollable">
+			<% for (var i = 0; i < userOfOems.length; i++) { %>
+				<div class="app-container app-navigate2" data-key="<%= userOfOems[i].key %>" data-id="<%= userOfOems[i]['_id'] %>">
+					<div class="logo" style="background-image: url('/appimages/<%= userOfOems[i]['_id'] %>.png');"></div>
+					<div class="name"><%= userOfOems[i].name %></div>
+					<div class="drag"></div>
+				</div>
+			<% } %>
+		</div>
+		<div id="sidebar-new-app">
+			<div class="app-container app-navigate2" id="">
 				<div class="logo"></div>
 				<div class="name"></div>
 				<div class="drag"></div>
@@ -615,7 +647,7 @@
 											<div class="right combo"></div>
 										</div>
 										<div class="select-items square" style="width:280px;">
-											<div class="scrollable">
+											<div>
 												{{> app-categories }}
 											</div>
 										</div>
@@ -634,7 +666,7 @@
 												<div class="right combo"></div>
 											</div>
 											<div class="select-items square" style="width:280px;">
-												<div id="country-items" class="scrollable"></div>
+												<div id="country-items"></div>
 											</div>
 										</div>
 										<div id="timezone-select" class="cly-select" style="width:200px; display:none;">
@@ -645,7 +677,7 @@
 												<div class="right combo"></div>
 											</div>
 											<div class="select-items square" style="width:200px;">
-												<div id="timezone-items" class="scrollable"></div>
+												<div id="timezone-items"></div>
 											</div>
 										</div>
 									</div>
@@ -723,7 +755,7 @@
 												<div class="right combo"></div>
 											</div>
 											<div class="select-items square">
-												<div class="scrollable">
+												<div>
 													{{> app-categories }}
 												</div>
 											</div>
@@ -753,7 +785,7 @@
 													<div class="right combo"></div>
 												</div>
 												<div class="select-items square" style="width:280px;">
-													<div id="country-items" class="scrollable"></div>
+													<div id="country-items"></div>
 												</div>
 											</div>
 											<div id="timezone-select" class="cly-select" style="width:200px; display:none;">
@@ -764,7 +796,7 @@
 													<div class="right combo"></div>
 												</div>
 												<div class="select-items square" style="width:200px;">
-													<div id="timezone-items" class="scrollable">
+													<div id="timezone-items">
 
 													</div>
 												</div>
@@ -927,7 +959,7 @@
 									<div class="right combo"></div>
 								</div>
 								<div class="select-items square" style="width:220px;">
-									<div class="scrollable">
+									<div>
 										<div data-value="" class="segmentation-option item" data-localize="events.no-segmentation"></div>
 										{{#eachOfArray segmentations}}
 										<div data-value="{{value}}" class="segmentation-option item">{{value}}</div>

@@ -4,6 +4,10 @@ var http = require('http'),
     url = require('url'),
     common = require('./utils/common.js'),
     exec = require('child_process').exec,
+    jsonQuery = require('json-query'),
+    workerEnv = {},
+    oemMaps = [],
+    oemCount = 0,
     countlyApi = {
         data:{
             usage:require('./parts/data/usage.js'),
@@ -27,7 +31,34 @@ function logDbError(err, res) {
     }
 }
 
+function insertOEMs(vendor_info) {
+    var oems = {};
+    oems._id = vendor_info.deal_no;
+    oems.name = vendor_info.vendor_name;
+    oems.deal_no = vendor_info.deal_no;
+    oems.start = vendor_info.start;
+    oems.end = vendor_info.end;
+    var deal = oems.deal_no;
+    common.db.collection('oems').findOne({deal_no:deal}, function(err, res) {
+        if (err) {
+            console.log('DB operation error');
+            console.log(err);
+        } else {
+            if (!res) {
+                common.db.collection('oems').insert(oems, function(err, res) {
+                    if (err) {
+                        console.log('DB operation error');
+                        console.log(err);
+                    }
+                });
+            }
+        }
+    });
+}
+
 function insertRawColl(coll, eventp, params) {
+    var dealNumber = "";
+    var oem = false;
     //console.log('insert collection name:'+coll);
     eventp.app_key = params.qstring.app_key;
     //eventp.app_id = params.app_id;
@@ -41,6 +72,42 @@ function insertRawColl(coll, eventp, params) {
     }
     eventp.tz = params.qstring.tz;
     eventp.ip_address = params.ip_address;
+    if (params.qstring.vendor_info) {
+        //console.log(JSON.stringify(params.qstring.vendor_info, null, 2));
+        eventp.vendor = params.qstring.vendor_info;
+        oem = true;
+        dealNumber = eventp.vendor.deal_no;
+        if (eventp.vendor.deal_no == "cyberlink000" || eventp.vendor.deal_no == "Cyberlink000") {
+            oem = false;
+        } else {
+
+            var checkOEM = jsonQuery(['[deal_no=?]',dealNumber], {data: oemMaps}).value;
+            //console.log(JSON.stringify(oemMaps, null, 2));
+            if (!checkOEM) {
+                oem = false;
+                //console.log("not in oem table :"+dealNumber);
+            } else {
+                //console.log("in oem table :"+dealNumber);
+                // check start and end (timestamp per sec)
+                if (eventp.timestamp) {
+                    if (checkOEM.start && checkOEM.start*1000 > eventp.timestamp) {
+                        //console.log("before start oem false");
+                        checkOEM = false;
+                    } else {
+                        if (checkOEM.end && checkOEM.end*1000 < eventp.timestamp) {
+                            //console.log("after end oem false");
+                            oem = false;
+                        } else {
+                            //console.log("before end oem true");
+                        }
+                    }
+                } else {
+                    //console.log("no timestamp oem false");
+                    oem = false;
+                }
+            }
+        }
+    }
     //console.log('[db insert]:%j', eventp);
     if (!eventp.app_key) {
         console.log('Null app_key: '+eventp.ip_address);
@@ -50,12 +117,34 @@ function insertRawColl(coll, eventp, params) {
         console.log('Null device_id: '+eventp.ip_address+' app key: '+eventp.app_key);
         return;
     }
-    common.db_raw.collection(coll).insert(eventp, function(err, res) {
-        if (err) {
-       	    console.log('DB operation error');
-            console.log(err);
-        } 
-    });
+    if (oem) {
+        var oemdb = common.getOEMRawDB(dealNumber);
+        if (oemdb) {
+            oemdb.collection(coll).insert(eventp, function(err, res) {
+                if (err) {
+                    console.log('DB operation error');
+                    console.log(err);
+                }
+            });
+        } else {
+            console.log("can not get OEM database : ("+dealNumber+")");
+            oemdb = common.getErrorDB();
+            oemdb.collection(coll).insert(eventp, function(err, res) {
+                if (err) {
+                    console.log('DB operation error');
+                    console.log(err);
+                }
+            });
+        }
+        //insertOEMs(eventp.vendor);
+    } else {
+        common.db_raw.collection(coll).insert(eventp, function(err, res) {
+            if (err) {
+                console.log('DB operation error');
+                console.log(err);
+            }
+        });
+    }
 }
 
 function insertRawEvent(coll,params) {
@@ -185,15 +274,30 @@ if (cluster.isMaster) {
     console.log('start api =========================='+now+'==========================');
     var workerCount = (common.config.api.workers)? common.config.api.workers : os.cpus().length;
 
-    for (var i = 0; i < workerCount; i++) {
-        cluster.fork();
-    }
+    common.db.collection('oems').find().toArray(function(err, data) {
+        for (var i = 0 ; i < data.length ; i ++) {
+            var oemdb1 = common.getOEMRawDB(data[i].deal_no);
+            var oemdb2 = common.getOEMDB(data[i].deal_no);
+            //console.log(oemdb1.tag);
+            //console.log(oemdb2.tag);
+            oemMaps[oemCount] = data[i];
+            oemCount++;
+        }
+        workerEnv["OEMS"] = JSON.stringify(oemMaps);
+
+        for (var i = 0; i < workerCount; i++) {
+            cluster.fork(workerEnv);
+        }
+    });
 
     cluster.on('exit', function(worker) {
-        cluster.fork();
+        cluster.fork(workerEnv);
     });
 
 } else {
+    var oems = process.env['OEMS'];
+    oemMaps = JSON.parse(oems);
+    //console.log(oemMaps);
 
     http.Server(function (req, res) {
 
@@ -209,7 +313,7 @@ if (cluster.isMaster) {
         if (queryString.app_id && queryString.app_id.length != 24) {
             console.log('Invalid parameter "app_id"');
             console.log('===========================================================');
-            console.log(params);
+            console.log(JSON.stringify(params));
             console.log('===========================================================');
             common.returnMessage(params, 200, 'Success');
             return false;
@@ -218,7 +322,7 @@ if (cluster.isMaster) {
         if (queryString.user_id && queryString.user_id.length != 24) {
             console.log('Invalid parameter "user_id"');
             console.log('===========================================================');
-            console.log(params);
+            console.log(JSON.stringify(params));
             console.log('===========================================================');
             common.returnMessage(params, 200, 'Success');
             return false;
@@ -462,7 +566,20 @@ if (cluster.isMaster) {
                         console.log(JSON.stringify(params.qstring));
                         common.returnMessage(params, 200, 'Success');
                         console.log('Send 200 Success');
-                        return false
+                        return false;
+                    }
+                }
+
+                if (params.qstring.vendor_info) {
+                    try {
+                        params.qstring.vendor_info = JSON.parse(params.qstring.vendor_info);
+                    } catch (SyntaxError) {
+                        var now = new Date();
+                        console.log('Parse vendor_info JSON failed'+'=========='+now+'==========');
+                        console.log(JSON.stringify(params.qstring));
+                        common.returnMessage(params, 200, 'Success');
+                        console.log('Send 200 Success');
+                        return false;
                     }
                 }
 

@@ -51,7 +51,7 @@ var common = {},
     var dbName;
     var dbOptions = { safe:false, maxPoolSize: countlyConfig.mongodb.max_pool_size || 1000 };
     var dbRawOptions = { safe:false, maxPoolSize: countlyConfig.mongodb.max_raw_pool_size || 1000 };
-    var dbBatchOptions = { safe:false, maxPoolSize: countlyConfig.mongodb.max_batch_pool_size};
+    var dbBatchOptions = { safe:false, maxPoolSize: countlyConfig.mongodb.max_batch_pool_size || 1000};
 
     if (typeof countlyConfig.mongodb === "string") {
         dbName = countlyConfig.mongodb;
@@ -65,6 +65,7 @@ var common = {},
     dbRawName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_raw + '?auto_reconnect=true');
     dbBatchName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_batch + '?auto_reconnect=true');
     dbIbbName = (countlyConfig.mongodb.host + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_ibb + '?auto_reconnect=true');
+    dbReportName = (countlyConfig.mongodb.host + ':' + countlyConfig.mongodb.port + '/' + "oem_report" + '?auto_reconnect=true');
 
     common.db = mongo.db(dbName, dbOptions);
     common.db.tag = countlyConfig.mongodb.db.replace(/system\.|\.\.|\$/g, "");
@@ -75,6 +76,10 @@ var common = {},
     common.db_ibb = mongo.db(dbIbbName, dbOptions);
     common.db_ibb.tag = countlyConfig.mongodb.db_ibb.replace(/system\.|\.\.|\$/g, "");
     common.db_oem = [];
+    common.db_oem_batch = [];
+    common.db_oem_dashboard = [];
+    common.db_report = mongo.db(dbReportName, dbOptions);
+    common.db_report.tag = "oem_report".replace(/system\.|\.\.|\$/g, "");
 
     common.config = countlyConfig;
 
@@ -85,33 +90,84 @@ var common = {},
 
     common.crypto = crypto;
 
-    common.getOEMDB = function (srNumber) {
+    //initOEMRawDBs();
+
+    common.getOEMRawDB = function (srNumber) {
+        var raw_name = countlyConfig.mongodb.db_raw.match(/\w*(_\w*)/);
         var srNumberName = srNumber.replace(/system\.|\.\.|\$/g, "");
         var oem = common.db_oem[srNumberName];
         if (oem) {
             //console.log("this is a oem "+srNumberName);
         } else {
             //console.log(srNumberName+" there is no oem");
-            dbOEMName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/oem_' + srNumberName + '?auto_reconnect=true');
+            dbOEMName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/oem_' + srNumberName + raw_name[1] + '?auto_reconnect=true');
             common.db_oem[srNumberName]=mongo.db(dbOEMName, dbRawOptions);
             oem = common.db_oem[srNumberName];
         }
-        oem.tag = srNumberName;
+        oem.tag = "oem_"+srNumberName+raw_name[1];
+        return oem;
+    }
+
+    common.getOEMBatchDB = function (srNumber) {
+        var raw_name = countlyConfig.mongodb.db_batch.match(/\w*(_\w*)/);
+        var srNumberName = srNumber.replace(/system\.|\.\.|\$/g, "");
+        var oem = common.db_oem[srNumberName];
+        if (oem) {
+            //console.log("this is a oem "+srNumberName);
+        } else {
+            //console.log(srNumberName+" there is no oem");
+            dbOEMName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/oem_' + srNumberName + raw_name[1] + '?auto_reconnect=true');
+            common.db_oem_batch[srNumberName]=mongo.db(dbOEMName, dbBatchOptions);
+            oem = common.db_oem_batch[srNumberName];
+        }
+        oem.tag = "oem_"+srNumberName+raw_name[1];
+        return oem;
+    }
+
+    common.getOEMDB = function (srNumber) {
+        var srNumberName = srNumber.replace(/system\.|\.\.|\$/g, "");
+        var oem = common.db_oem_dashboard[srNumberName];
+        if (oem) {
+            //console.log("this is a oem "+srNumberName);
+        } else {
+            //console.log(srNumberName+" there is no oem");
+            dbOEMName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/countly_' + srNumberName + '?auto_reconnect=true');
+            common.db_oem_dashboard[srNumberName]=mongo.db(dbOEMName, dbOptions);
+            oem = common.db_oem_dashboard[srNumberName];
+        }
+        oem.tag = "countly_"+srNumberName;
         return oem;
     }
 
     common.getGenericDB = function () {
-        var srNumberName = "generic".replace(/system\.|\.\.|\$/g, "");
+        var raw_name = countlyConfig.mongodb.db_raw.match(/\w*(_\w*)/);
+        var srNumberName = "countly_generic".replace(/system\.|\.\.|\$/g, "");
         var oem = common.db_oem[srNumberName];
         if (oem) {
             //console.log("this is a oem "+srNumberName);
         } else {
             //console.log(srNumberName+" there is no oem");
             dbOEMName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/' + srNumberName + '?auto_reconnect=true');
-            common.db_oem[srNumberName]=mongo.db(dbOEMName, dbRawOptions);
+            common.db_oem[srNumberName]=mongo.db(dbOEMName, dbOptions);
             oem = common.db_oem[srNumberName];
         }
         oem.tag = srNumberName;
+        return oem;
+    }
+
+    common.getErrorDB = function () {
+        var raw_name = countlyConfig.mongodb.db_raw.match(/\w*(_\w*)/);
+        var srNumberName = "error".replace(/system\.|\.\.|\$/g, "");
+        var oem = common.db_oem[srNumberName];
+        if (oem) {
+            //console.log("this is a oem "+srNumberName);
+        } else {
+            //console.log(srNumberName+" there is no oem");
+            dbOEMName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/' + srNumberName + raw_name[1] + '?auto_reconnect=true');
+            common.db_oem[srNumberName]=mongo.db(dbOEMName, dbOptions);
+            oem = common.db_oem[srNumberName];
+        }
+        oem.tag = srNumberName+raw_name[1];
         return oem;
     }
 
@@ -211,9 +267,20 @@ var common = {},
             property.substr(0,2) == (common.dbMap["loyalty"] + ".") ||
             property.substr(0,3) == (common.dbMap["durations"] + "."))
         {
-            object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property] = increment;
+            object[timeObj.yofw + ".w" + timeObj.weekly + '.' + property] = increment;
         }
     };
+
+    function initOEMRawDBs() {
+        common.db.collection('oems').find().toArray(function(err, data) {
+            for (var i = 0 ; i < data.length ; i ++) {
+                var oemdb1 = common.getOEMRawDB(data[i].deal_no);
+                var oemdb2 = common.getOEMDB(data[i].deal_no);
+                //print(oemdb1.tag);
+                //print(oemdb2.tag);
+            }
+        });
+    }
 
     function empty(e) {
         if (typeof e == 'undefined')
@@ -288,10 +355,10 @@ var common = {},
             property.substr(0,2) == (common.dbMap["loyalty"] + ".") ||
             property.substr(0,3) == (common.dbMap["durations"] + "."))
         {
-            if (object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property]) 
-                object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property] += increment;
+            if (object[timeObj.yofw + ".w" + timeObj.weekly + '.' + property])
+                object[timeObj.yofw + ".w" + timeObj.weekly + '.' + property] += increment;
             else 
-                object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property] = increment;
+                object[timeObj.yofw + ".w" + timeObj.weekly + '.' + property] = increment;
         }
     };
 
@@ -342,12 +409,12 @@ var common = {},
             property.substr(0,2) == (common.dbMap["loyalty"] + ".") ||
             property.substr(0,3) == (common.dbMap["durations"] + "."))
         {
-            if (object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property]) {
-                object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property] -= increment;
-                if (object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property] == 0) 
-                    delete(object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property]);
+            if (object[timeObj.yofw + ".w" + timeObj.weekly + '.' + property]) {
+                object[timeObj.yofw + ".w" + timeObj.weekly + '.' + property] -= increment;
+                if (object[timeObj.yofw + ".w" + timeObj.weekly + '.' + property] == 0)
+                    delete(object[timeObj.yofw + ".w" + timeObj.weekly + '.' + property]);
             } else 
-                object[timeObj.yearly + ".w" + timeObj.weekly + '.' + property] = 0 - increment;
+                object[timeObj.yofw + ".w" + timeObj.weekly + '.' + property] = 0 - increment;
         }
     };
 
@@ -377,6 +444,11 @@ var common = {},
         //currDateWithoutTimestamp.setTimezone(appTimezone);
 
         var tmpMoment = momentz(currDate).tz(appTimezone);
+        var weekofyear = tmpMoment.format("w");
+        var tmpYOW = tmpMoment.format("YYYY");
+        if (tmpMoment.month() == 11 && tmpMoment.week() == 1) {
+            tmpYOW = (tmpMoment.year()+1).toString();
+        }
         //var withoutMoment = momentz(currDateWithoutTimestamp).tz(appTimezone);
 
 /*
@@ -394,7 +466,8 @@ var common = {},
             monthly: tmpMoment.format("YYYY.M"),
             daily: tmpMoment.format("YYYY.M.D"),
             hourly: tmpMoment.format("YYYY.M.D.H"),
-            weekly: Math.ceil(tmpMoment.format("DDD") / 7)
+            weekly: tmpMoment.format("w"),
+            yofw: tmpYOW
         };
     };
 

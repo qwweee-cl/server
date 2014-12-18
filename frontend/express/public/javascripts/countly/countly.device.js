@@ -23,6 +23,7 @@
                 data:{
                     "api_key":countlyGlobal.member.api_key,
                     "app_id":countlyCommon.ACTIVE_APP_ID,
+                    "oem_id":countlyCommon.ACTIVE_OEM_ID,
                     "method":"devices"
                 },
                 dataType:"jsonp",
@@ -53,6 +54,7 @@
                 data:{
                     "api_key":countlyGlobal.member.api_key,
                     "app_id":countlyCommon.ACTIVE_APP_ID,
+                    "oem_id":countlyCommon.ACTIVE_OEM_ID,
                     "method":"devices",
                     "action":"refresh"
                 },
@@ -79,7 +81,7 @@
             {
                 name:"device",
                 func:function (rangeArr, dataObj) {
-                    return deviceFullName(rangeArr);
+                    return countlyDevice.getDeviceFullName(rangeArr);
                 }
             },
             { "name":"t" },
@@ -150,7 +152,7 @@
 
                 if (rangeUsers != 0) {
                     dataArr[0]["data"][dataArr[0]["data"].length] = [j, rangeUsers];
-                    ticks[j] = [j, deviceFullName(_deviceDb["devices"][j])];
+                    ticks[j] = [j, countlyDevice.getDeviceFullName(_deviceDb["devices"][j])];
                 }
             } else {
                 for (var i = 0; i < (_periodObj.currentPeriodArr.length); i++) {
@@ -163,7 +165,7 @@
 
                 if (rangeUsers != 0) {
                     dataArr[0]["data"][dataArr[0]["data"].length] = [j, rangeUsers];
-                    ticks[j] = [j, deviceFullName(_deviceDb["devices"][j])];
+                    ticks[j] = [j, countlyDevice.getDeviceFullName(_deviceDb["devices"][j])];
                 }
             }
         }
@@ -187,7 +189,7 @@
         return obj;
     };
 
-    function deviceFullName(shortName) {
+    countlyDevice.getDeviceFullName = function (shortName) {
         var fullName = "";
 
         switch (shortName) {

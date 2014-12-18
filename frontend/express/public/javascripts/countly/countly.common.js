@@ -6,6 +6,8 @@
     // Public Properties
     countlyCommon.ACTIVE_APP_KEY = 0;
     countlyCommon.ACTIVE_APP_ID = 0;
+    countlyCommon.ACTIVE_OEM_KEY = 0;
+    countlyCommon.ACTIVE_OEM_ID = 0;
     countlyCommon.BROWSER_LANG = jQuery.i18n.browserLang();
     countlyCommon.BROWSER_LANG_SHORT = jQuery.i18n.browserLang().split("-")[0];
     countlyCommon.HELP_MAP = {};
@@ -15,6 +17,12 @@
         if (countlyGlobal['apps'][store.get("countly_active_app")]) {
             countlyCommon.ACTIVE_APP_KEY = countlyGlobal['apps'][store.get("countly_active_app")].key;
             countlyCommon.ACTIVE_APP_ID = store.get("countly_active_app");
+        }
+    }
+    if (store.get("countly_active_oem")) {
+        if (countlyGlobal['oems'][store.get("countly_active_oem")]) {
+            countlyCommon.ACTIVE_OEM_KEY = countlyGlobal['oems'][store.get("countly_active_oem")].deal_no;
+            countlyCommon.ACTIVE_OEM_ID = store.get("countly_active_oem");
         }
     }
 
@@ -40,6 +48,12 @@
         countlyCommon.ACTIVE_APP_KEY = countlyGlobal['apps'][appId].key;
         countlyCommon.ACTIVE_APP_ID = appId;
         store.set("countly_active_app", appId);
+    };
+
+    countlyCommon.setActiveOem = function (oemId) {
+        countlyCommon.ACTIVE_OEM_KEY = countlyGlobal['oems'][oemId].deal_no;
+        countlyCommon.ACTIVE_OEM_ID = oemId;
+        store.set("countly_active_oem", oemId);
     };
 
     // Calculates the percent change between previous and current values.
