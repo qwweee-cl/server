@@ -51,7 +51,7 @@ var common = {},
     var dbName;
     var dbOptions = { safe:false, maxPoolSize: countlyConfig.mongodb.max_pool_size || 1000 };
     var dbRawOptions = { safe:false, maxPoolSize: countlyConfig.mongodb.max_raw_pool_size || 1000 };
-    var dbBatchOptions = { safe:false, maxPoolSize: countlyConfig.mongodb.max_batch_pool_size || 1000};
+    var dbBatchOptions = { safe:false, maxPoolSize: countlyConfig.mongodb.max_batch_pool_size || 1000 };
 
     if (typeof countlyConfig.mongodb === "string") {
         dbName = countlyConfig.mongodb;
@@ -111,7 +111,7 @@ var common = {},
     common.getOEMBatchDB = function (srNumber) {
         var raw_name = countlyConfig.mongodb.db_batch.match(/\w*(_\w*)/);
         var srNumberName = srNumber.replace(/system\.|\.\.|\$/g, "");
-        var oem = common.db_oem[srNumberName];
+        var oem = common.db_oem_batch[srNumberName];
         if (oem) {
             //console.log("this is a oem "+srNumberName);
         } else {

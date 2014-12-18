@@ -336,6 +336,8 @@ if (cluster.isMaster) {
         switch (apiPath) {
             case '/batch':
             {
+                //common.returnMessage(params, 401, 'Run Batch by app key is not support.');
+                //return;
                 var appkey = queryString.app_key;
                 if (!appkey) {
                     common.returnMessage(params, 401, 'App does not exist :'+appkey);
@@ -351,20 +353,21 @@ if (cluster.isMaster) {
                     }
                     var appid = app['_id'];
                     try {
-                        process.chdir('../../api');
+                        process.chdir('/usr/local/countly/api');
                         //console.log('New directory: ' + process.cwd());
                     } catch (err) {
-                        //console.log('chdir: ' + err);
+                        console.log('chdir: ' + err);
                     }
-                    var cmd="node batch.js "+appid;
+                    var cmd="node newBatch.js "+appkey;
                     console.log("cmd:"+cmd);
                     common.returnMessage(params, 200, 'Success cmd:'+cmd);
                     exec(cmd,  function (error, stdout, stderr) {
                         //console.log('stdout: ' + stdout);
                         //console.log('stderr: ' + stderr);
-                        if (error !== null) {
+                        if (error) {
                             console.log('exec error: ' + error);
                         }
+                        console.log('process finished');
                         return true;
                     });
                     return true;

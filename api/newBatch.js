@@ -92,7 +92,7 @@ function processRaw(dbs, collectionName, processData, sortOrder, appinfo) {
         var curr_app_user = null;
         var isFirst = true;
         var apps = [];
-    	b_coll.find({_id:{$lt:eid, $gte:bid}},{batchSize:1000}).sort(sortOrder).each(
+    	b_coll.find({_id:{$lt:eid, $gt:bid}},{batchSize:1000}).sort(sortOrder).each(
             function(err, res) {
                 var appinfos = appinfo;
         	    if (err) {
@@ -197,6 +197,7 @@ if (isDebug) {
 
 var collectionCount = 0;
 var collectionNameList = [];
+var baseTimeOut = 60000;
 
 fs.readFile(oidFileName, 'utf8', function (err,data) {
     if (!err && data.length>=24) {
@@ -227,6 +228,8 @@ fs.readFile(oidFileName, 'utf8', function (err,data) {
             callRaw();
         });
     } else {
+        wait_cnt = 10;
+        baseTimeOut = 5000;
         dbs.base.collection('apps').findOne({key:app_key},
             function(err, res) {
                 console.log(res);
@@ -258,7 +261,7 @@ fs.readFile(oidFileName, 'utf8', function (err,data) {
         	    process.exit(0);
         	}
         }
-    }, 60000);
+    }, baseTimeOut);
 });
 
 

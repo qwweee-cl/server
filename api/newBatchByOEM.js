@@ -23,7 +23,7 @@ http.globalAgent.maxSockets = common.config.api.max_sockets || 1024;
 
 var date = new Date();
 console.log(date.toString());
-var begin_date = new Date(date.getFullYear(),date.getMonth(), date.getDate()-60);
+var begin_date = new Date(date.getFullYear(),date.getMonth(), date.getDate()-90);
 var end_date = new Date(date.getFullYear(),date.getMonth(), date.getDate()+1);
 
 //console.log('proc_date = '+begin_date+':'+end_date);

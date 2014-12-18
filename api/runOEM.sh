@@ -28,7 +28,7 @@ dashboarddate=$curdate"_countly"
 
 ## cat debug use
 #path="/home/hadoop/gary/countly/api"
-#dashboard="localhost:27017"
+dashboard="localhost:27017"
 
 echo "==============================================================="
 echo "======================Countly OEM Batch Start======================"

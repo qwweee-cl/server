@@ -215,9 +215,9 @@ var bag = {};
             }
 
             mergeEvents(bag.eventCollections[eventCollectionName], tmpEventColl);
-            return bag.eventCollections;
         }
-
+        return bag.eventCollections;
+        
         function mergeEvents(firstObj, secondObj) {
             for (var firstLevel in secondObj) {
 
