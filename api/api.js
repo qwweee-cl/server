@@ -36,6 +36,9 @@ function insertRawColl(coll, eventp, params) {
     eventp.app_user_id = params.app_user_id;
     eventp.device_id = params.qstring.device_id;
     eventp.timestamp = params.qstring.timestamp;
+    if (eventp.timestamp < 0) {
+        eventp.timestamp = (new Date() / 1000 | 0);
+    }
     eventp.tz = params.qstring.tz;
     eventp.ip_address = params.ip_address;
     //console.log('[db insert]:%j', eventp);
@@ -419,7 +422,8 @@ if (cluster.isMaster) {
                     try {
                         tmp_str = JSON.parse(JSON.stringify(params.qstring));
                     } catch (SyntaxError) {
-                        console.log('Parse qstring JSON failed');
+                        var now = new Date();
+                        console.log('Parse qstring JSON failed'+'=========='+now+'==========');
                         console.log('source:'+tmp_str);
                         common.returnMessage(params, 400, 'Parse qstring JSON failed');
                         console.log('Send 400 Success');
@@ -428,7 +432,8 @@ if (cluster.isMaster) {
                 }
 
                 if (!params.qstring.app_key || !params.qstring.device_id) {
-                    console.log('Missing parameter "app_key" or "device_id"');
+                    var now = new Date();
+                    console.log('Missing parameter "app_key" or "device_id"'+'=========='+now+'==========');
                     console.log(params.qstring);
                     common.returnMessage(params, 200, 'Success');
                     console.log("Send 200 Success");
@@ -452,8 +457,9 @@ if (cluster.isMaster) {
                         }
 
                     } catch (SyntaxError) {
-                        console.log('Parse metrics JSON failed');
-                        console.log(params.qstring);
+                        var now = new Date();
+                        console.log('Parse metrics JSON failed'+'=========='+now+'==========');
+                        console.log(JSON.stringify(params.qstring));
                         common.returnMessage(params, 200, 'Success');
                         console.log('Send 200 Success');
                         return false
@@ -464,8 +470,9 @@ if (cluster.isMaster) {
                     try {
                         params.events = JSON.parse(params.qstring.events);
                     } catch (SyntaxError) {
-                        console.log('Parse events JSON failed');
-                        console.log('source:'+params.qstring);
+                        var now = new Date();
+                        console.log('Parse events JSON failed'+'=========='+now+'==========');
+                        console.log('source:'+JSON.stringify(params.qstring));
                         common.returnMessage(params, 200, 'Success');
                         console.log('Send 200 Success');
                         return false;
