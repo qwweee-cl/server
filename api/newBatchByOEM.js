@@ -180,7 +180,7 @@ function callRaw() {
 var app_key;
 if (process.argv.length < 3) {
     console.log('no app key parameter');
-    process.exit(1);
+    process.exit(0);
 } else { //process only one OEM DB
     app_key = process.argv[2];
     app_key = app_key.replace(/system\.|\.\.|\$/g, "");
@@ -217,7 +217,7 @@ fs.readFile(oidFileName, 'utf8', function (err,data) {
         if (!collection.length) {
         	console.log('no data');
         	dbClose(dbs);
-        	process.exit(1);
+        	process.exit(0);
         }
         for (var i=0; i<collection.length; i++) {
             if (collection[i].collectionName == 'raw_session_53f554ef847577512100130a') continue;

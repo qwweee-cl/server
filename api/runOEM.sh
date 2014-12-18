@@ -8,7 +8,8 @@ function error_exp
 	echo -e "Countly OEM Batch Error Please check log in clad.cyberlink.com>/usr/local/countly/log/oem_batch.log" $(tail -20 /usr/local/countly/log/oem_batch.log)\
 	| mail -s "Countly OEM Batch Error Trap" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
 	#sleep 1
-	exit 1
+	echo "Countly OEM Batch Error"
+	exit 0
 }
 
 path="/usr/local/countly/api"
@@ -29,6 +30,7 @@ dashboarddate=$curdate"_countly"
 ## cat debug use
 #path="/home/hadoop/gary/countly/api"
 #dashboard="localhost:27017"
+##
 
 echo "==============================================================="
 echo "======================Countly OEM Batch Start======================"
@@ -64,6 +66,37 @@ echo -e $cmd
 string=`$cmd`
 IFS=', ' read -a generic <<< "$string"
 echo -e $generic
+
+## backup generic dashboard data
+cd $path
+echo $PWD
+dashboarddb="$generic"
+oemdashboarddate="generic_"$dashboarddate
+## backup countly dashboard data
+## dump countly dashboard data
+cmd="mongodump -h $dashboard -db $dashboarddb -o $exportPath$oemdashboarddate"
+echo $cmd
+$cmd
+## zip backup file
+cd $exportPath
+echo $PWD
+cmd="/bin/tar czf $gzipPath$oemdashboarddate.tgz ./"
+echo $cmd
+$cmd
+cmd="/bin/rm ./$oemdashboarddate -rf"
+echo $cmd
+$cmd
+## move dashboard zip file to s3
+if [ ! -d "$s3GenericDashboardPath" ]; then
+	echo "mkdir $s3GenericDashboardPath"
+	mkdir $s3GenericDashboardPath$generic
+fi
+cmd="/bin/cp $gzipPath$oemdashboarddate.tgz $s3GenericDashboardPath"
+echo $cmd
+$cmd
+cmd="/bin/rm $gzipPath$oemdashboarddate.tgz"
+echo $cmd
+$cmd
 
 ## backup raw data
 for (( i = 0 ; i < ${#raw_apps[@]} ; i++ )) do
@@ -151,37 +184,6 @@ for (( i = 0 ; i < ${#raw_apps[@]} ; i++ )) do
 	echo $cmd
 	$cmd
 done
-
-## backup generic dashboard data
-cd $path
-echo $PWD
-dashboarddb="$generic"
-oemdashboarddate="generic_"$dashboarddate
-## backup countly dashboard data
-## dump countly dashboard data
-cmd="mongodump -h $dashboard -db $dashboarddb -o $exportPath$oemdashboarddate"
-echo $cmd
-$cmd
-## zip backup file
-cd $exportPath
-echo $PWD
-cmd="/bin/tar czf $gzipPath$oemdashboarddate.tgz ./"
-echo $cmd
-$cmd
-cmd="/bin/rm ./$oemdashboarddate -rf"
-echo $cmd
-$cmd
-## move dashboard zip file to s3
-if [ ! -d "$s3GenericDashboardPath" ]; then
-	echo "mkdir $s3GenericDashboardPath"
-	mkdir $s3GenericDashboardPath$generic
-fi
-cmd="/bin/cp $gzipPath$oemdashboarddate.tgz $s3GenericDashboardPath"
-echo $cmd
-$cmd
-cmd="/bin/rm $gzipPath$oemdashboarddate.tgz"
-echo $cmd
-$cmd
 
 end=$(date +%Y-%m-%d_%H-%M)
 echo $start
