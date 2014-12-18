@@ -55,8 +55,8 @@ dbs.raw = common.db_raw // live raw log
     endSec = endDate.getTime()/1000;
     bid = new ObjectID(startSec.toString(16)+'0000000000000000');
     eid = new ObjectID(endSec.toString(16)+'0000000000000000');*/
-console.log("raw:"+dbs.raw._dbconn.databaseName);
-console.log("batch:"+dbs.batch._dbconn.databaseName);
+console.log("raw:"+dbs.raw.tag);
+console.log("batch:"+dbs.batch.tag);
 
 var isDebug = common.config.api.cl_is_debug || false;
 var oidFileName = '_next_oid';
@@ -232,7 +232,7 @@ fs.readFile(oidFileName, 'utf8', function (err,data) {
                 console.log(res);
                 console.log('here'+common.rawCollection['session']+app_key);
                 processRaw(common.rawCollection['event']+app_key, processEvents,{app_user_id:1}, res);
-                processRaw(common.rawCollection['session']+app_key, processSessions, {app_user_id:1, timestamp:1}, res);
+                processRaw(common.rawCollection['session']+app_key, processSessions, {app_user_id:1, timestamp:1, _id:1}, res);
              }
         );
     }

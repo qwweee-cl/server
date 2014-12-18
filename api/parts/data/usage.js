@@ -75,6 +75,7 @@ var process = require('process');
                 dbonoff.on('raw');
         });
 
+        /* use base db, because user was oem before, and now oem expire, it will be a new user on generic */
         dbs.base.collection('app_users' + appinfos.app_id).findOne({'_id': app[0].app_user_id}, 
             function (err, dbAppUser){
                 dataBag.apps = app;
@@ -420,10 +421,13 @@ var process = require('process');
                 if (apps[normalSessionStart].begin_session) break;
     	    }
         }
-    	if (normalSessionStart >= apps.length) { //no begin_session for new user -->for the remaining logs from previous data
-    	    //console.log('Incomplete session data from past users');
-    	    return;
-    	}
+        if (normalSessionStart >= apps.length) { //no begin_session for new user -->for the remaining logs from previous data
+            //console.log('Incomplete session data from past users ' + apps[0].device_id);
+            if (isFinal) {
+                reallyUpdateAll(dbs, dataBag, appinfos);
+            }
+            return;
+        }
         /* for boundary condition:
             1. dbAppUser contains begin_session(last_end_session_timestamp=0): 
                 end_session will update last_end_session_timestamp, 
@@ -437,6 +441,19 @@ var process = require('process');
         */
         var currObjIdx = 0;
         //console.log('normal start='+normalSessionStart+'; length='+apps.length);
+        /* Gary debug */
+        /*var arrayTmp = [
+        "91_QpmD17L7zRKiIc3drt6L3ShsLDYbib2vgjODy8cQ~",
+        "gh9HTHWdVnQ6TsuLzfqG73MS0oX7R46JsVLHTGlvRgY~",
+        "nt8Cjth9a5Wq47fdv7DrElb4JMr3x1CskyM-3qUg1es~",
+        "ErkpeBzUEOAeqmwd9xfXghe6KdwNCE8e8b02FWSzV94~"];
+        var found = (arrayTmp.indexOf(apps[0].device_id) > -1);
+        if (arrayTmp.indexOf(apps[0].device_id) > -1) {
+            console.log(apps[0].device_id);
+            for (i=0;i<apps.length;i++) {
+                console.log(apps[i].timestamp+" "+apps[i].begin_session);
+            }
+        }*/
         for (i=normalSessionStart; i<apps.length; i++) {
     	    if (!apps[i].timestamp) {
         		console.log('no timestamp');
@@ -471,7 +488,10 @@ var process = require('process');
                 total_duration += parseInt(apps[i].session_duration);
             }
         }
-
+        /* Gary debug */
+        /*if (found) {
+            console.log('sessionObj:'+currObjIdx);
+        }*/
         //console.log('sessionObj:'+currObjIdx);
         //Prepare final Session info to update
         var finalUserObject = {};
@@ -543,11 +563,11 @@ var process = require('process');
 
         //do the real update job in MongoDB
     	if (isFinal) {
-	       reallyUpdateAll(dbs, dataBag, appinfos);
+            reallyUpdateAll(dbs, dataBag, appinfos);
     	}
     }
     function ObjId2Timestamp (objectId) {
-	return parseInt(objectId.toString().substring(0, 8), 16);
+        return parseInt(objectId.toString().substring(0, 8), 16);
     };
 }(usage));
 

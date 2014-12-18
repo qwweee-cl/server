@@ -145,6 +145,11 @@ cmd="/usr/bin/node $path/newBatch.js"
 echo $cmd
 $cmd
 
+## run OEM batch
+cmd="$path/runOEM.sh >> /usr/local/countly/log/oem_batch.log 2>&1"
+echo $cmd
+$cmd
+
 ## remove raw data ( move to end )
 ## mongo test --eval "printjson(db.getCollectionNames())"
 #cmd="/usr/bin/mongo $mongo/$batchdb --eval printjson(db.dropDatabase());"

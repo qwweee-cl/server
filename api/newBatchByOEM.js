@@ -170,7 +170,7 @@ function callRaw() {
     } else if (collectionName.indexOf(common.rawCollection['session'])>=0) {
         var keys = collectionName.substr(common.rawCollection['session'].length).trim();
         dbs.base.collection('apps').findOne({key:keys}, function(err, res) {
-                processRaw(dbs, collectionName, processSessions, {app_user_id:1, timestamp:1}, res);
+                processRaw(dbs, collectionName, processSessions, {app_user_id:1, timestamp:1, _id:1}, res);
             }
         );
     }
@@ -204,11 +204,13 @@ fs.readFile(oidFileName, 'utf8', function (err,data) {
     	}
     }
 
-    var wait_cnt = 10;
-    dbs.batch = common.getOEMRawDB(app_key); // batch raw log
+    var wait_cnt = 15;
+    dbs.batch = common.getOEMBatchDB(app_key); // batch raw log
     dbs.save = common.getOEMDB(app_key); // dashboard
     dbs.base = common.db; // apps
     dbs.raw = common.db_raw // live raw log
+    console.log("raw:"+dbs.raw.tag);
+    console.log("batch:"+dbs.batch.tag);
     process.on("hi_mongo", callRaw);
  	//wait_cnt = wait_cnt * 5; // wait 5 times for all logs
     dbs.batch.collections(function(err,collection) {

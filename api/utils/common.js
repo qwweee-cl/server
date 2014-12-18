@@ -76,6 +76,7 @@ var common = {},
     common.db_ibb = mongo.db(dbIbbName, dbOptions);
     common.db_ibb.tag = countlyConfig.mongodb.db_ibb.replace(/system\.|\.\.|\$/g, "");
     common.db_oem = [];
+    common.db_oem_batch = [];
     common.db_oem_dashboard = [];
     common.db_report = mongo.db(dbReportName, dbOptions);
     common.db_report.tag = "oem_report".replace(/system\.|\.\.|\$/g, "");
@@ -107,6 +108,22 @@ var common = {},
         return oem;
     }
 
+    common.getOEMBatchDB = function (srNumber) {
+        var raw_name = countlyConfig.mongodb.db_batch.match(/\w*(_\w*)/);
+        var srNumberName = srNumber.replace(/system\.|\.\.|\$/g, "");
+        var oem = common.db_oem[srNumberName];
+        if (oem) {
+            //console.log("this is a oem "+srNumberName);
+        } else {
+            //console.log(srNumberName+" there is no oem");
+            dbOEMName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/oem_' + srNumberName + raw_name[1] + '?auto_reconnect=true');
+            common.db_oem_batch[srNumberName]=mongo.db(dbOEMName, dbBatchOptions);
+            oem = common.db_oem_batch[srNumberName];
+        }
+        oem.tag = "oem_"+srNumberName+raw_name[1];
+        return oem;
+    }
+
     common.getOEMDB = function (srNumber) {
         var srNumberName = srNumber.replace(/system\.|\.\.|\$/g, "");
         var oem = common.db_oem_dashboard[srNumberName];
@@ -131,7 +148,7 @@ var common = {},
         } else {
             //console.log(srNumberName+" there is no oem");
             dbOEMName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/' + srNumberName + '?auto_reconnect=true');
-            common.db_oem[srNumberName]=mongo.db(dbOEMName, dbRawOptions);
+            common.db_oem[srNumberName]=mongo.db(dbOEMName, dbOptions);
             oem = common.db_oem[srNumberName];
         }
         oem.tag = srNumberName;
@@ -147,7 +164,7 @@ var common = {},
         } else {
             //console.log(srNumberName+" there is no oem");
             dbOEMName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/' + srNumberName + raw_name[1] + '?auto_reconnect=true');
-            common.db_oem[srNumberName]=mongo.db(dbOEMName, dbRawOptions);
+            common.db_oem[srNumberName]=mongo.db(dbOEMName, dbOptions);
             oem = common.db_oem[srNumberName];
         }
         oem.tag = srNumberName+raw_name[1];

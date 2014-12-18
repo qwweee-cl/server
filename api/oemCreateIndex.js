@@ -67,7 +67,7 @@ function initOEMRawDBs() {
         dbonoff.open(common.db);
         common.db.collection('oems').find().toArray(function(err, data) {
             for (var i = 0 ; i < data.length ; i ++) {
-                var oemdb1 = common.getOEMRawDB(data[i].deal_no);
+                var oemdb1 = common.getOEMBatchDB(data[i].deal_no);
                 var oemdb2 = common.getOEMDB(data[i].deal_no);
                 createScript(oemdb1, oemdb2);
             }
@@ -75,7 +75,7 @@ function initOEMRawDBs() {
         });
     } else { //process only one APP
         deal_no = process.argv[2];
-        var oemdb1 = common.getOEMRawDB(deal_no);
+        var oemdb1 = common.getOEMBatchDB(deal_no);
         var oemdb2 = common.getOEMDB(deal_no);
         createScript(oemdb1, oemdb2);
     }
