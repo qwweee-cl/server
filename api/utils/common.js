@@ -131,7 +131,7 @@ var common = {},
             //console.log("this is a oem "+srNumberName);
         } else {
             //console.log(srNumberName+" there is no oem");
-            dbOEMName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/countly_' + srNumberName + '?auto_reconnect=true');
+            dbOEMName = (countlyConfig.mongodb.host + ':' + countlyConfig.mongodb.port + '/countly_' + srNumberName + '?auto_reconnect=true');
             common.db_oem_dashboard[srNumberName]=mongo.db(dbOEMName, dbOptions);
             oem = common.db_oem_dashboard[srNumberName];
         }
@@ -147,7 +147,7 @@ var common = {},
             //console.log("this is a oem "+srNumberName);
         } else {
             //console.log(srNumberName+" there is no oem");
-            dbOEMName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/' + srNumberName + '?auto_reconnect=true');
+            dbOEMName = (countlyConfig.mongodb.host + ':' + countlyConfig.mongodb.port + '/' + srNumberName + '?auto_reconnect=true');
             common.db_oem[srNumberName]=mongo.db(dbOEMName, dbOptions);
             oem = common.db_oem[srNumberName];
         }

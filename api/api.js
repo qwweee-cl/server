@@ -284,6 +284,7 @@ if (cluster.isMaster) {
             oemCount++;
         }
         workerEnv["OEMS"] = JSON.stringify(oemMaps);
+        console.log("oem-length:"+data.length);
 
         for (var i = 0; i < workerCount; i++) {
             cluster.fork(workerEnv);
