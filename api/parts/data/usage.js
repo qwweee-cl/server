@@ -217,6 +217,7 @@ var process = require('process');
         console.log("isFinal:"+appinfos.app_id);
         updateRangeMeta(dbs, dataBag.userRanges, 'users', appinfos.app_id);
         updateCollection(dbs, 'users', appinfos.app_id, dataBag.updateUsers, '$inc', '[updateUsers]');
+        //console.log("reallyUpdate: %j",dataBag.updateUsers);
 
         updateRangeMeta(dbs, dataBag.countryArray, 'locations', appinfos.app_id);
         updateCollection(dbs, 'locations', appinfos.app_id, dataBag.updateLocations, '$inc', '[updateLocations]');
@@ -260,7 +261,7 @@ var process = require('process');
         dataBag.cityArray['meta.cities']['$each'] = [];
     }
 
-    function updateFreqRange(dataBag, sessionObj, dbAppUser) {
+    function updateFreqRange(userData, dataBag, sessionObj, dbAppUser) {
         // Calculate the frequency range of the user
 	//console.log('updateFreqRange:%j', sessionObj);
 	//console.log(dbAppUser);
@@ -271,16 +272,21 @@ var process = require('process');
                 calculatedFrequency = computeFreqRange(sessionObj.timestamp, dbAppUser.timestamp);
     	}
         if (calculatedFrequency != '') {
-            common.fillTimeObject(sessionObj, dataBag.updateUsers, common.dbMap['frequency'] + '.' + calculatedFrequency);
+            common.fillTimeObject(sessionObj, userData.updateUsers, common.dbMap['frequency'] + '.' + calculatedFrequency);
             common.arrayAddUniq(dataBag.userRanges['meta.f-ranges']['$each'],calculatedFrequency);
         }
     } 
 
-    function updateLoyaltyRange(dataBag, sessionObj, session_count) {
+    function updateLoyaltyRange(userData, dataBag, sessionObj, session_count) {
         // Calculate the loyalty range of the user
         var calculatedLoyaltyRange = computeLoyaltyRange(session_count);
-        common.fillTimeObject(sessionObj, dataBag.updateUsers, common.dbMap['loyalty'] + '.' + calculatedLoyaltyRange);
-	common.arrayAddUniq(dataBag.userRanges['meta.l-ranges']['$each'], calculatedLoyaltyRange);
+        var oldLoyaltyRange = computeLoyaltyRange(userData.session_count);
+        //console.log("loyaltyRange: "+calculatedLoyaltyRange);
+        common.fillTimeObject(sessionObj, userData.updateUsers, common.dbMap['loyalty'] + '.' + calculatedLoyaltyRange);
+        common.arrayAddUniq(dataBag.userRanges['meta.l-ranges']['$each'], calculatedLoyaltyRange);
+        if (calculatedLoyaltyRange != oldLoyaltyRange) {
+
+        }
     } 
    
     function getTimeFunction(toFill) {
@@ -372,6 +378,7 @@ var process = require('process');
         updateCollection(dbs, 'app_users'+appinfos.app_id, sessionObject.app_user_id, userProps, '$set', '[userProps]'); 
     }
 
+    /* copy x to y */
     function cpUniqueOneByOne(x, y) {
         for (var times in x) {
             //console.log(times+":"+y[times]);
@@ -397,24 +404,33 @@ var process = require('process');
         //console.log(dataBag.updateSessions);
     }
 
+    function cpUniqueUser(dataBag, uniqueUser) {
+        cpUniqueOneByOne(uniqueUser.updateUsers, dataBag.updateUsers);
+        //cpUniqueOneByOne(uniqueUser.userRanges, dataBag.userRanges);
+        //console.log(uniqueSession.updateSessions);
+        //console.log("cpUniqueUser: %j",uniqueUser.updateUsers);
+    }
+
     function processUserSession(dbs, dataBag, dbAppUser, isFinal, appinfos) {
         var apps = dataBag.apps;
         var sessionObj = [];
         var last_end_session_timestamp = 0;
+        var last_end_session_timestamp_loyalty = 0;
         var total_duration = 0;
-	var i = 0;
-	var normalSessionStart = 0;
-    //console.log(dataBag.apps);
+        var i = 0;
+        var normalSessionStart = 0;
+        //console.log(dataBag.apps);
 
-	//console.log('process user session length='+dataBag.apps.length);
-	//if (dbAppUser) console.log(dbAppUser);
-	//else console.log(apps[0]);
+        //console.log('process user session length='+dataBag.apps.length);
+        //if (dbAppUser) console.log(dbAppUser);
+        //else console.log(apps[0]);
         if (dbAppUser) { //set sessionObj[0] = dbAppUser to compute on-going session
 	    //console.log('dbAppUser=%j', dbAppUser);
             dbAppUser.acc_duration = parseInt(dbAppUser[common.dbUserMap['session_duration']]);
             dbAppUser.time = common.initTimeObj(dbAppUser.appTimezone, dbAppUser.timestamp, dbAppUser.tz);
             sessionObj[0] = common.clone(dbAppUser);
             last_end_session_timestamp = dbAppUser[common.dbUserMap['last_end_session_timestamp']];
+            last_end_session_timestamp_loyalty = dbAppUser[common.dbUserMap['last_end_session_timestamp']];
         } else { //new user
             sessionObj[0] = {};
     	    for (;normalSessionStart<apps.length; normalSessionStart++) {
@@ -511,6 +527,16 @@ var process = require('process');
         uniqueSession.updateCities = {};
         uniqueSession.updateMetrics = {};
 
+        var uniqueUser={};
+        uniqueUser.updateUsers = {};
+        uniqueUser.userRanges = {};
+        uniqueUser.userRanges['meta.f-ranges'] = {};
+        uniqueUser.userRanges['meta.l-ranges'] = {};
+        uniqueUser.userRanges['meta.f-ranges']['$each'] = [];
+        uniqueUser.userRanges['meta.l-ranges']['$each'] = [];
+        uniqueUser.session_count = dbAppUser?dbAppUser[common.dbUserMap['session_count']]:0;
+        uniqueUser.last_end_session_timestamp = last_end_session_timestamp_loyalty;
+
         for (i=startIdx; i<=currObjIdx; i++) { 
             if (sessionDay != sessionObj[i].time.daily) { //sort sessions by day
                 sessionDay = sessionObj[i].time.daily;
@@ -533,18 +559,21 @@ var process = require('process');
         //For frequency computation, no need to do with sessions in the same day as old sessions(dbAppUser)
         //The 1st session will be dealt with in new user block
         for (i=1; i<sessionObjByDay.length; i++) { 
-            updateFreqRange(dataBag, sessionObjByDay[i][0], sessionObjByDay[i-1][sessionObjByDay[i-1].length-1]);
+            updateFreqRange(uniqueUser, dataBag, sessionObjByDay[i][0], sessionObjByDay[i-1][sessionObjByDay[i-1].length-1]);
         }
 
         //update loyalty from the 2nd day
         var session_count = dbAppUser?dbAppUser[common.dbUserMap['session_count']]:0;
+        //console.log("user: "+apps[0].device_id+" session_count: "+session_count);
+        //console.log("sessionObjByDay: "+sessionObjByDay.length);
         for (i=1; i<sessionObjByDay.length; i++) {
             session_count += sessionObjByDay[i-1].length;
-            updateLoyaltyRange(dataBag, sessionObjByDay[i][0], session_count);
+            updateLoyaltyRange(uniqueUser, dataBag, sessionObjByDay[i][0], session_count);
         }
 
         //If there is on-going session coming in at first...
         if (dbAppUser) {
+            //console.log("non new user");
             //Update last session in DB to include new session duration sent after last processing, also update duration ranges
             if (dbAppUser.acc_duration>0) {
                 updateSessionDuration(dataBag, dbAppUser, OP_DECREASE);
@@ -553,10 +582,16 @@ var process = require('process');
             updateStatistics(dataBag, dbAppUser, common.dbMap['unique'], OP_DECREASE); // reset previous add in sessionObj
 
         } else { //set new user count in necessary collections   
+            //console.log("new user");
             updateStatistics(dataBag, sessionObjByDay[0][0], common.dbMap['new'], OP_INCREASE);
-            updateLoyaltyRange(dataBag, sessionObjByDay[0][0], 1); //session count = 1
-            updateFreqRange(dataBag, sessionObjByDay[0][0], sessionObjByDay[0][0]); //set 1st session
+            updateLoyaltyRange(uniqueUser, dataBag, sessionObjByDay[0][0], 1); //session count = 1
+            updateFreqRange(uniqueUser, dataBag, sessionObjByDay[0][0], sessionObjByDay[0][0]); //set 1st session
         }
+
+        //console.log(uniqueUser.updateUsers);
+
+
+        cpUniqueUser(dataBag, uniqueUser);
 
         //use last session object to update user profiles (metrics)
         updateUserProfile(dbs, dataBag, sessionObj[currObjIdx], finalUserObject, appinfos);
