@@ -59,13 +59,13 @@ var process = require('process');
         
         var uma = appinfos.app_id;
 
-        dbs.save.collection('uma').update({'_id':app[0].device_id}, {'$addToSet': {'my_apps': uma}}, {'upsert': true}
+        /*dbs.save.collection('uma').update({'_id':app[0].device_id}, {'$addToSet': {'my_apps': uma}}, {'upsert': true}
             , function (err, data) {
                 if (err){
                     console.log('[processSession]uma log error:' + err);  
                 }
                 //dbonoff.on('raw');
-        });
+        });*/
 
         dbs.base.collection('uma').update({'_id':app[0].device_id}, {'$addToSet': {'my_apps': uma}}, {'upsert': true}
             , function (err, data) {
@@ -202,14 +202,14 @@ var process = require('process');
 
 
     function updateRangeMeta(dbs, ranges, coll, id) {
-        dbs.save.collection(coll).update({'_id': id}, {'$addToSet': ranges}, {'upsert': true}, dbCallback_off);
+        /*dbs.save.collection(coll).update({'_id': id}, {'$addToSet': ranges}, {'upsert': true}, dbCallback_off);*/
         dbs.base.collection(coll).update({'_id': id}, {'$addToSet': ranges}, {'upsert': true}, dbCallback); 
     }
 
     function updateCollection(dbs, collName, id, data, op, errHeader) {
     	var opSet = {};
     	opSet[op] = data;
-        dbs.save.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback_off); 
+        /*dbs.save.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback_off); */
         dbs.base.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback);
     }
 
@@ -234,7 +234,13 @@ var process = require('process');
         for (var i=0; i < predefinedMetrics.length; i++) {
             //console.log(dataBag.MetricMetaSet[predefinedMetrics[i].db]);
             updateRangeMeta(dbs, dataBag.MetricMetaSet[predefinedMetrics[i].db], predefinedMetrics[i].db, appinfos.app_id);
-            updateCollection(dbs, predefinedMetrics[i].db, appinfos.app_id, dataBag.updateMetrics[predefinedMetrics[i].db], '$inc', '[updateMetrics:'+predefinedMetrics[i].db+']');
+            for (var times in dataBag.updateMetrics[predefinedMetrics[i].db]) {
+                //console.log(times+":"+dataBag.updateMetrics[predefinedMetrics[i].db][times]);
+                var tmp = {};
+                tmp[times] = dataBag.updateMetrics[predefinedMetrics[i].db][times];
+                updateCollection(dbs, predefinedMetrics[i].db, appinfos.app_id, tmp, '$inc', '[updateMetrics:'+predefinedMetrics[i].db+']');
+            }
+            //updateCollection(dbs, predefinedMetrics[i].db, appinfos.app_id, dataBag.updateMetrics[predefinedMetrics[i].db], '$inc', '[updateMetrics:'+predefinedMetrics[i].db+']');
         }
         process.emit('hi_mongo');
         console.log('send out hi mongo');
