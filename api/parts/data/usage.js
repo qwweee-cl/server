@@ -206,9 +206,33 @@ var process = require('process');
         dbs.base.collection(coll).update({'_id': id}, {'$addToSet': ranges}, {'upsert': true}, dbCallback); 
     }
 
+    function isEmptyObject(obj) {
+        for (var key in obj) {
+            if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     function updateCollection(dbs, collName, id, data, op, errHeader) {
-    	var opSet = {};
-    	opSet[op] = data;
+        var tmp = {};
+        var opSet = {};
+        for (var times in data) {
+            if ((JSON.stringify(tmp).length + data[times]?JSON.stringify(data[times]).length:0) >= 16000000) {
+                //console.log(JSON.stringify(tmp).length+" "+tmp);
+                opSet = {};
+                opSet[op] = tmp;
+                dbs.base.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback);
+                tmp = {};
+            }
+            tmp[times] = data[times];
+        }
+    	opSet = {};
+        if (isEmptyObject(tmp)) {
+            console.log("tmp is Empty");
+        }
+    	opSet[op] = tmp;
         /*dbs.save.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback_off); */
         dbs.base.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback);
     }
@@ -234,13 +258,7 @@ var process = require('process');
         for (var i=0; i < predefinedMetrics.length; i++) {
             //console.log(dataBag.MetricMetaSet[predefinedMetrics[i].db]);
             updateRangeMeta(dbs, dataBag.MetricMetaSet[predefinedMetrics[i].db], predefinedMetrics[i].db, appinfos.app_id);
-            for (var times in dataBag.updateMetrics[predefinedMetrics[i].db]) {
-                //console.log(times+":"+dataBag.updateMetrics[predefinedMetrics[i].db][times]);
-                var tmp = {};
-                tmp[times] = dataBag.updateMetrics[predefinedMetrics[i].db][times];
-                updateCollection(dbs, predefinedMetrics[i].db, appinfos.app_id, tmp, '$inc', '[updateMetrics:'+predefinedMetrics[i].db+']');
-            }
-            //updateCollection(dbs, predefinedMetrics[i].db, appinfos.app_id, dataBag.updateMetrics[predefinedMetrics[i].db], '$inc', '[updateMetrics:'+predefinedMetrics[i].db+']');
+            updateCollection(dbs, predefinedMetrics[i].db, appinfos.app_id, dataBag.updateMetrics[predefinedMetrics[i].db], '$inc', '[updateMetrics:'+predefinedMetrics[i].db+']');
         }
         process.emit('hi_mongo');
         console.log('send out hi mongo');
