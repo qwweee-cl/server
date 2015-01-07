@@ -418,6 +418,21 @@ var common = {},
         }
     };
 
+    // Check drop data by timestamp
+    common.checkTimestamp = function (timestamp) {
+        var duration_time = common.config.api.data_drop_duration_time || 3;
+        var now = new Date();
+        var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        var checkMoment = moment(today).add(-duration_time, 'months');
+        var baseTimestamp = checkMoment.valueOf()/1000;
+        if (timestamp >= baseTimestamp) {
+            return true;
+        } else {
+            //console.log(new Date(timestamp*1000)+" is before "+checkMoment.format());
+            return false;
+        }
+    }
+
     // Adjusts the time to current app's configured timezone appTimezone and returns a time object.
     common.initTimeObj = function (appTimezone, reqTimestamp, reqTZ) {
         var currTimestamp,

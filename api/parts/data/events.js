@@ -26,6 +26,14 @@ var bag = {};
         //uma[appinfos.app_id] = app[0].app_user_id;
 
         for (var i=0; i<app.length; i++) {
+            if (!app[i].timestamp) {
+                console.log('[event] no timestamp');
+                continue;
+            }
+            if (!common.checkTimestamp(app[i].timestamp)) {
+                continue;
+            }
+
             app[i].time = common.initTimeObj(appinfos.appTimezone, app[i].timestamp, app[i].tz);
             //update requests count
             common.incrTimeObject(app[i], updateSessions, common.dbMap['events']); 

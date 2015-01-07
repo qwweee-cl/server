@@ -496,9 +496,13 @@ var process = require('process');
         }*/
         for (i=normalSessionStart; i<apps.length; i++) {
     	    if (!apps[i].timestamp) {
-        		console.log('no timestamp');
+                console.log('[session] no timestamp');
         		continue;
             }
+            if (!common.checkTimestamp(apps[i].timestamp)) {
+                continue;
+            }
+
             apps[i].time = common.initTimeObj(appinfos.appTimezone, apps[i].timestamp, apps[i].tz);
 
             //set event(request) count for every request
