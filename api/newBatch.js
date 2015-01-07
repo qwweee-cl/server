@@ -86,7 +86,7 @@ function processSessions(dbs, app, isFinal, appinfo) {
 
 function processRaw(dbs, collectionName, processData, sortOrder, appinfo) {
     //debug.writeLog('/usr/local/countly/log/batch.log', collectionName+":bid = "+bid+" eid = "+eid+" date:"+date.toString());
-    console.log(collectionName+":bid = "+bid+" eid = "+eid);
+    console.log("[processRaw]"+collectionName+":bid = "+bid+" eid = "+eid);
     try {
     	var b_coll = dbs.batch.collection(collectionName);
         var curr_app_user = null;
@@ -234,8 +234,8 @@ fs.readFile(oidFileName, 'utf8', function (err,data) {
             function(err, res) {
                 console.log(res);
                 console.log('here'+common.rawCollection['session']+app_key);
-                processRaw(common.rawCollection['event']+app_key, processEvents,{app_user_id:1}, res);
-                processRaw(common.rawCollection['session']+app_key, processSessions, {app_user_id:1, timestamp:1, _id:1}, res);
+                processRaw(dbs,common.rawCollection['event']+app_key, processEvents,{app_user_id:1}, res);
+                processRaw(dbs,common.rawCollection['session']+app_key, processSessions, {app_user_id:1, timestamp:1, _id:1}, res);
              }
         );
     }
