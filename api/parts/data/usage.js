@@ -219,10 +219,10 @@ var process = require('process');
         var tmp = {};
         var opSet = {};
         for (var times in data) {
-            if ((JSON.stringify(tmp).length + data[times]?JSON.stringify(data[times]).length:0) >= 16000000) {
-                //console.log(JSON.stringify(tmp).length+" "+tmp);
+            if ((JSON.stringify(tmp).length + (data[times]?JSON.stringify(data[times]).length:0)) >= 10000) {
                 opSet = {};
                 opSet[op] = tmp;
+                //console.log("[yes]"+JSON.stringify(tmp).length);
                 dbs.base.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback);
                 tmp = {};
             }
@@ -234,6 +234,7 @@ var process = require('process');
         }
     	opSet[op] = tmp;
         /*dbs.save.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback_off); */
+        //console.log("[no]"+JSON.stringify(tmp).length);
         dbs.base.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback);
     }
 
@@ -256,7 +257,8 @@ var process = require('process');
 
 
         for (var i=0; i < predefinedMetrics.length; i++) {
-            //console.log(dataBag.MetricMetaSet[predefinedMetrics[i].db]);
+            //console.log(" ["+predefinedMetrics[i].db+"] : ");
+            //console.log(dataBag.updateMetrics[predefinedMetrics[i].db]);
             updateRangeMeta(dbs, dataBag.MetricMetaSet[predefinedMetrics[i].db], predefinedMetrics[i].db, appinfos.app_id);
             updateCollection(dbs, predefinedMetrics[i].db, appinfos.app_id, dataBag.updateMetrics[predefinedMetrics[i].db], '$inc', '[updateMetrics:'+predefinedMetrics[i].db+']');
         }
@@ -618,7 +620,7 @@ var process = require('process');
             }
         }
 
-        //console.log(uniqueUser.updateUsers);
+        //console.log(uniqueUser);
 
 
         cpUniqueUser(dataBag, uniqueUser);
