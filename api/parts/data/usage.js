@@ -611,9 +611,11 @@ var process = require('process');
 
         } else { //set new user count in necessary collections   
             //console.log("new user");
-            updateStatistics(dataBag, sessionObjByDay[0][0], common.dbMap['new'], OP_INCREASE);
-            updateLoyaltyRange(uniqueUser, dataBag, sessionObjByDay[0][0], 1); //session count = 1
-            updateFreqRange(uniqueUser, dataBag, sessionObjByDay[0][0], sessionObjByDay[0][0]); //set 1st session
+            if (sessionObjByDay.length > 0) {
+                updateStatistics(dataBag, sessionObjByDay[0][0], common.dbMap['new'], OP_INCREASE);
+                updateLoyaltyRange(uniqueUser, dataBag, sessionObjByDay[0][0], 1); //session count = 1
+                updateFreqRange(uniqueUser, dataBag, sessionObjByDay[0][0], sessionObjByDay[0][0]); //set 1st session
+            }
         }
 
         //console.log(uniqueUser.updateUsers);

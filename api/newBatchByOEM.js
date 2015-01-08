@@ -59,7 +59,7 @@ var log_id = '000000000000000000000000';
 //console.log("batch:"+dbs.batch._dbconn.databaseName);
 
 var isDebug = common.config.api.cl_is_debug || false;
-var oidFileName = '_next_oid';
+var oidFileName = '_oem_next_oid';
 var hasOidFile = false;
 
 function processEvents(dbs, app, isFinal, appinfo) {
