@@ -59,13 +59,13 @@ var process = require('process');
         
         var uma = appinfos.app_id;
 
-        /*dbs.save.collection('uma').update({'_id':app[0].device_id}, {'$addToSet': {'my_apps': uma}}, {'upsert': true}
+        dbs.save.collection('uma').update({'_id':app[0].device_id}, {'$addToSet': {'my_apps': uma}}, {'upsert': true}
             , function (err, data) {
                 if (err){
                     console.log('[processSession]uma log error:' + err);  
                 }
-                //dbonoff.on('raw');
-        });*/
+                dbonoff.on('raw');
+        });
 
         dbs.base.collection('uma').update({'_id':app[0].device_id}, {'$addToSet': {'my_apps': uma}}, {'upsert': true}
             , function (err, data) {
@@ -202,7 +202,7 @@ var process = require('process');
 
 
     function updateRangeMeta(dbs, ranges, coll, id) {
-        /*dbs.save.collection(coll).update({'_id': id}, {'$addToSet': ranges}, {'upsert': true}, dbCallback_off);*/
+        dbs.save.collection(coll).update({'_id': id}, {'$addToSet': ranges}, {'upsert': true}, dbCallback);
         dbs.base.collection(coll).update({'_id': id}, {'$addToSet': ranges}, {'upsert': true}, dbCallback); 
     }
 
@@ -222,6 +222,7 @@ var process = require('process');
             if ((JSON.stringify(tmp).length + (data[times]?JSON.stringify(data[times]).length:0)) >= 10000) {
                 opSet = {};
                 opSet[op] = tmp;
+                dbs.save.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback);
                 //console.log("[yes]"+JSON.stringify(tmp).length);
                 dbs.base.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback);
                 tmp = {};
@@ -233,7 +234,7 @@ var process = require('process');
             console.log("tmp is Empty");
         }
     	opSet[op] = tmp;
-        /*dbs.save.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback_off); */
+        dbs.save.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback);
         //console.log("[no]"+JSON.stringify(tmp).length);
         dbs.base.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback);
     }
