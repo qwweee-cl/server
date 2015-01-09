@@ -224,6 +224,8 @@ fs.readFile(oidFileName, 'utf8', function (err,data) {
                     collectionNameList[collectionCount++] = collection[i].collectionName;
                 }
             }
+            collectionNameList.sort();
+            console.log(collectionNameList);
             callRaw();
         });
     } else {
