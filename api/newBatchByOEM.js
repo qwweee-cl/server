@@ -178,12 +178,21 @@ function callRaw() {
 
 
 var app_key;
+var oem_app_key;
+var caseValue = 0;
 if (process.argv.length < 3) {
     console.log('no app key parameter');
     process.exit(0);
-} else { //process only one OEM DB
+} else if (process.argv.length == 4) { //process only one OEM DB
+    app_key = process.argv[2];
+    oem_app_key = process.argv[3];
+    app_key = app_key.replace(/system\.|\.\.|\$/g, "");
+    oem_app_key = oem_app_key.replace(/system\.|\.\.|\$/g, "");
+    caseValue = 2;
+} else if (process.argv.length == 3) {
     app_key = process.argv[2];
     app_key = app_key.replace(/system\.|\.\.|\$/g, "");
+    caseValue = 1;
 }
 
 process.setMaxListeners(0);
@@ -193,6 +202,7 @@ if (isDebug) {
 
 var collectionCount = 0;
 var collectionNameList = [];
+var baseTimeOut = 60000;
 
 fs.readFile(oidFileName, 'utf8', function (err,data) {
     if (!err && data.length>=24) {
@@ -203,32 +213,53 @@ fs.readFile(oidFileName, 'utf8', function (err,data) {
     	    eid = new ObjectID(data.substr(25,24));
     	}
     }
-
     var wait_cnt = 15;
-    dbs.batch = common.getOEMBatchDB(app_key); // batch raw log
-    dbs.save = common.getOEMDB(app_key); // dashboard
-    dbs.base = common.db; // apps
-    dbs.raw = common.db_raw // live raw log
-    console.log("raw:"+dbs.raw.tag);
-    console.log("batch:"+dbs.batch.tag);
-    process.on("hi_mongo", callRaw);
- 	//wait_cnt = wait_cnt * 5; // wait 5 times for all logs
-    dbs.batch.collections(function(err,collection) {
-        if (!collection.length) {
-        	console.log('no data');
-        	dbClose(dbs);
-        	process.exit(0);
-        }
-        for (var i=0; i<collection.length; i++) {
-            if (collection[i].collectionName == 'raw_session_53f554ef847577512100130a') continue;
-            if (collection[i].collectionName.indexOf(common.rawCollection['raw'])>=0) {
-                collectionNameList[collectionCount++] = collection[i].collectionName;
+    if (caseValue == 1) {
+        console.log("process oem all apps");
+        dbs.batch = common.getOEMBatchDB(app_key); // batch raw log
+        dbs.save = common.getOEMDB(app_key); // dashboard
+        dbs.base = common.db; // apps
+        dbs.raw = common.db_raw // live raw log
+        console.log("raw:"+dbs.raw.tag);
+        console.log("batch:"+dbs.batch.tag);
+        process.on("hi_mongo", callRaw);
+     	//wait_cnt = wait_cnt * 5; // wait 5 times for all logs
+        dbs.batch.collections(function(err,collection) {
+            if (!collection.length) {
+            	console.log('no data');
+            	dbClose(dbs);
+            	process.exit(0);
             }
-        }
-        collectionNameList.sort();
-        console.log(collectionNameList);
-        callRaw();
-    });
+            for (var i=0; i<collection.length; i++) {
+                if (collection[i].collectionName == 'raw_session_53f554ef847577512100130a') continue;
+                if (collection[i].collectionName.indexOf(common.rawCollection['raw'])>=0) {
+                    collectionNameList[collectionCount++] = collection[i].collectionName;
+                }
+            }
+            collectionNameList.sort();
+            console.log(collectionNameList);
+            callRaw();
+        });
+    } else if (caseValue == 2) {
+        wait_cnt = 10;
+        baseTimeOut = 5000;
+        dbs.batch = common.getOEMBatchDB(app_key); // batch raw log
+        dbs.save = common.getOEMDB(app_key); // dashboard
+        dbs.base = common.db; // apps
+        dbs.raw = common.db_raw // live raw log
+        console.log("raw:"+dbs.raw.tag);
+        console.log("batch:"+dbs.batch.tag);
+        console.log("save:"+dbs.save.tag);
+        console.log("process oem "+app_key+" apps "+oem_app_key);
+        dbs.base.collection('apps').findOne({key:oem_app_key},
+            function(err, res) {
+                console.log(res);
+                console.log('here'+common.rawCollection['session']+oem_app_key);
+                processRaw(dbs, common.rawCollection['event']+oem_app_key, processEvents,{app_user_id:1}, res);
+                processRaw(dbs, common.rawCollection['session']+oem_app_key, processSessions, {app_user_id:1, timestamp:1}, res);
+             }
+        );
+    }
 
     var cnt=0;
     var repeat_times = 0;
@@ -251,7 +282,7 @@ fs.readFile(oidFileName, 'utf8', function (err,data) {
         	    process.exit(0);
         	}
         }
-    }, 60000);
+    }, baseTimeOut);
 });
 
 
