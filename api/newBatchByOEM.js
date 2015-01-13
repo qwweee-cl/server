@@ -164,13 +164,21 @@ function callRaw() {
         var keys = collectionName.substr(common.rawCollection['event'].length).trim();
             dbs.base.collection('apps').findOne({key:keys}, function(err, res) {
                     //console.log('collName:'+collName);
-                    processRaw(dbs, collectionName, processEvents, {app_user_id:1}, res);
+                    if (res) {
+                        processRaw(dbs, collectionName, processEvents, {app_user_id:1}, res);
+                    } else {
+                        console.log("[event] "+keys+" can't found a appinfo");
+                    }
                 }
             );
     } else if (collectionName.indexOf(common.rawCollection['session'])>=0) {
         var keys = collectionName.substr(common.rawCollection['session'].length).trim();
         dbs.base.collection('apps').findOne({key:keys}, function(err, res) {
-                processRaw(dbs, collectionName, processSessions, {app_user_id:1, timestamp:1}, res);
+                if (res) {
+                    processRaw(dbs, collectionName, processSessions, {app_user_id:1, timestamp:1}, res);
+                } else {
+                    console.log("[event] "+keys+" can't found a appinfo");
+                }
             }
         );
     }
