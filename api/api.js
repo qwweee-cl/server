@@ -31,31 +31,6 @@ function logDbError(err, res) {
     }
 }
 
-function insertOEMs(vendor_info) {
-    var oems = {};
-    oems._id = vendor_info.deal_no;
-    oems.name = vendor_info.vendor_name;
-    oems.deal_no = vendor_info.deal_no;
-    oems.start = vendor_info.start;
-    oems.end = vendor_info.end;
-    var deal = oems.deal_no;
-    common.db.collection('oems').findOne({deal_no:deal}, function(err, res) {
-        if (err) {
-            console.log('DB operation error');
-            console.log(err);
-        } else {
-            if (!res) {
-                common.db.collection('oems').insert(oems, function(err, res) {
-                    if (err) {
-                        console.log('DB operation error');
-                        console.log(err);
-                    }
-                });
-            }
-        }
-    });
-}
-
 function insertRawColl(coll, eventp, params) {
     var dealNumber = "";
     var oem = false;
@@ -76,23 +51,21 @@ function insertRawColl(coll, eventp, params) {
         //console.log(JSON.stringify(params.qstring.vendor_info, null, 2));
         eventp.vendor = params.qstring.vendor_info;
         oem = true;
-        dealNumber = eventp.vendor.deal_no;
-        if (eventp.vendor.deal_no == "cyberlink000" || eventp.vendor.deal_no == "Cyberlink000") {
-            oem = false;
-        } else {
-
-            var checkOEM = jsonQuery(['[deal_no=?]',dealNumber], {data: oemMaps}).value;
-            //console.log(JSON.stringify(oemMaps, null, 2));
+        //dealNumber = eventp.vendor.deal_no;
+        srNumber = eventp.vendor.sr_no_ori;
+        if (srNumber) {
+            var checkOEM = jsonQuery(['[sr_no=?]',srNumber], {data: oemMaps}).value;
             if (!checkOEM) {
                 oem = false;
                 //console.log("not in oem table :"+dealNumber);
             } else {
                 //console.log("in oem table :"+dealNumber);
                 // check start and end (timestamp per sec)
+                dealNumber = checkOEM.deal_no;
                 if (eventp.timestamp) {
                     if (checkOEM.start && checkOEM.start*1000 > eventp.timestamp) {
                         //console.log("before start oem false");
-                        checkOEM = false;
+                        oem = false;
                     } else {
                         if (checkOEM.end && checkOEM.end*1000 < eventp.timestamp) {
                             //console.log("after end oem false");
@@ -105,7 +78,12 @@ function insertRawColl(coll, eventp, params) {
                     //console.log("no timestamp oem false");
                     oem = false;
                 }
+                if (!dealNumber) {
+                    oem = false;
+                }
             }
+        } else {
+            oem = false;
         }
     }
     //console.log('[db insert]:%j', eventp);
@@ -136,7 +114,6 @@ function insertRawColl(coll, eventp, params) {
                 }
             });
         }
-        //insertOEMs(eventp.vendor);
     } else {
         common.db_raw.collection(coll).insert(eventp, function(err, res) {
             if (err) {
@@ -280,8 +257,15 @@ if (cluster.isMaster) {
             var oemdb2 = common.getOEMDB(data[i].deal_no);
             //console.log(oemdb1.tag);
             //console.log(oemdb2.tag);
-            oemMaps[oemCount] = data[i];
-            oemCount++;
+            for (var j=0;j<data[i].sr_no.length;j++) {
+                oemData = {};
+                oemData.deal_no = data[i].deal_no;
+                oemData.start = data[i].start;
+                oemData.end = data[i].end;
+                oemData.sr_no = data[i].sr_no[j];
+                oemMaps[oemCount] = oemData;
+                oemCount++;
+            }
         }
         workerEnv["OEMS"] = JSON.stringify(oemMaps);
         console.log("oem-length:"+data.length);
@@ -340,6 +324,8 @@ if (cluster.isMaster) {
         switch (apiPath) {
             case '/batch':
             {
+                //common.returnMessage(params, 401, 'Run Batch by app key is not support.');
+                //return;
                 var appkey = queryString.app_key;
                 if (!appkey) {
                     common.returnMessage(params, 401, 'App does not exist :'+appkey);
@@ -355,20 +341,62 @@ if (cluster.isMaster) {
                     }
                     var appid = app['_id'];
                     try {
-                        process.chdir('../../api');
+                        process.chdir('/usr/local/countly/api');
                         //console.log('New directory: ' + process.cwd());
                     } catch (err) {
-                        //console.log('chdir: ' + err);
+                        console.log('chdir: ' + err);
                     }
-                    var cmd="node batch.js "+appid;
+                    var cmd="node newBatch.js "+appkey+" >> /usr/local/countly/log/"+appkey+"_gen.log 2>&1";
                     console.log("cmd:"+cmd);
                     common.returnMessage(params, 200, 'Success cmd:'+cmd);
                     exec(cmd,  function (error, stdout, stderr) {
                         //console.log('stdout: ' + stdout);
                         //console.log('stderr: ' + stderr);
-                        if (error !== null) {
+                        if (error) {
                             console.log('exec error: ' + error);
                         }
+                        console.log('process finished');
+                        return true;
+                    });
+                    return true;
+                });
+                //console.log('batch command!');
+                break;
+            }
+            case '/oembatch':
+            {
+                //common.returnMessage(params, 401, 'Run Batch by app key is not support.');
+                //return;
+                var appkey = queryString.app_key;
+                if (!appkey) {
+                    common.returnMessage(params, 401, 'App does not exist :'+appkey);
+                    console.log("app does not exist:"+appkey);
+                    return false;
+                }
+                common.db.collection('apps').findOne({'key':params.qstring.app_key}, function(err,app) {
+                    if (err || !app) {
+                        common.returnMessage(params, 401, 'App does not exist :'+appkey);
+                        if (err) console.log(err);
+                        else console.log('app not found');
+                        return false;
+                    }
+                    var appid = app['_id'];
+                    try {
+                        process.chdir('/usr/local/countly/api');
+                        //console.log('New directory: ' + process.cwd());
+                    } catch (err) {
+                        console.log('chdir: ' + err);
+                    }
+                    var cmd="node newBatchByOEM.js oem "+appkey+" >> /usr/local/countly/log/"+appkey+"_oem.log 2>&1";
+                    console.log("cmd:"+cmd);
+                    common.returnMessage(params, 200, 'Success cmd:'+cmd);
+                    exec(cmd,  function (error, stdout, stderr) {
+                        //console.log('stdout: ' + stdout);
+                        //console.log('stderr: ' + stderr);
+                        if (error) {
+                            console.log('exec error: ' + error);
+                        }
+                        console.log('process finished');
                         return true;
                     });
                     return true;

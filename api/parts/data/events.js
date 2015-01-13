@@ -26,6 +26,14 @@ var bag = {};
         //uma[appinfos.app_id] = app[0].app_user_id;
 
         for (var i=0; i<app.length; i++) {
+            if (!app[i].timestamp) {
+                console.log('[event] no timestamp');
+                continue;
+            }
+            if (!common.checkTimestamp(app[i].timestamp)) {
+                continue;
+            }
+
             app[i].time = common.initTimeObj(appinfos.appTimezone, app[i].timestamp, app[i].tz);
             //update requests count
             common.incrTimeObject(app[i], updateSessions, common.dbMap['events']); 
@@ -47,13 +55,13 @@ var bag = {};
 
     function updateUma(dbs, uma, appinfo) {
         //console.log(uma);
-        /*dbs.save.collection('uma').update({'_id':appinfo.device_id}, {'$set':uma}, {'upsert': true}
+        dbs.save.collection('uma').update({'_id':appinfo.device_id}, {'$set':uma}, {'upsert': true}
             , function (err, data) {
                 if (err){
                     console.log('[processEvent]uma log error:' + err);  
                 }
-                //dbonoff.on('raw');
-        });*/
+                dbonoff.on('raw');
+        });
         dbs.base.collection('uma').update({'_id':appinfo.device_id}, {'$set':uma}, {'upsert': true}
             , function (err, data) {
                 if (err){
@@ -64,13 +72,13 @@ var bag = {};
     }
 
     function updateReqSessions(dbs, updateSessions, app_id) {
-        /*dbs.save.collection('sessions').update({'_id':app_id}, {'$inc':updateSessions},  
+        dbs.save.collection('sessions').update({'_id':app_id}, {'$inc':updateSessions},  
     	    {'upsert': true}, function (err, data) {
             	if (err){
                     console.log('[processEvent]user req log error:' + err);  
             	}
-    		//dbonoff.on('raw');
-    	});*/
+    		dbonoff.on('raw');
+    	});
         dbs.base.collection('sessions').update({'_id':app_id}, {'$inc':updateSessions},  
             {'upsert': true}, function (err, data) {
                 if (err){
@@ -251,16 +259,16 @@ var bag = {};
         for (var collection in bag.eventCollections) {
             for (var segment in bag.eventCollections[collection]) {
                 if (segment == "no-segment" && bag.eventSegments[collection]) {
-                    /*dbs.save.collection(collection).update({'_id': segment}, 
+                    dbs.save.collection(collection).update({'_id': segment}, 
 			{'$inc': bag.eventCollections[collection][segment], 
-			'$addToSet': bag.eventSegments[collection]}, {'upsert': true}, eventCallback_off);*/
+			'$addToSet': bag.eventSegments[collection]}, {'upsert': true}, eventCallback_off);
                     dbs.base.collection(collection).update({'_id': segment}, 
             {'$inc': bag.eventCollections[collection][segment], 
             '$addToSet': bag.eventSegments[collection]}, {'upsert': true}, eventCallback);
                 } else {
-                    /*dbs.save.collection(collection).update({'_id': segment}, 
+                    dbs.save.collection(collection).update({'_id': segment}, 
 			{'$inc': bag.eventCollections[collection][segment]}, 
-			{'upsert': true}, eventCallback_off);*/
+			{'upsert': true}, eventCallback_off);
                     dbs.base.collection(collection).update({'_id': segment}, 
             {'$inc': bag.eventCollections[collection][segment]}, 
             {'upsert': true}, eventCallback);
@@ -297,13 +305,13 @@ var bag = {};
                 }
             }
 
-            /*dbs.save.collection('events').update({'_id': appinfos.app_id}, eventSegmentList, {'upsert': true}, 
+            dbs.save.collection('events').update({'_id': appinfos.app_id}, eventSegmentList, {'upsert': true}, 
         		function(err, data) {
                 	if (err){
                     	console.log('Event Meta log error:' + err);  
         		    }
-        	        //dbonoff.on('raw');
-            });*/
+        	        dbonoff.on('raw');
+            });
             dbs.base.collection('events').update({'_id': appinfos.app_id}, eventSegmentList, {'upsert': true}, 
                 function(err, data) {
                     if (err){

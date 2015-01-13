@@ -59,13 +59,13 @@ var process = require('process');
         
         var uma = appinfos.app_id;
 
-        /*dbs.save.collection('uma').update({'_id':app[0].device_id}, {'$addToSet': {'my_apps': uma}}, {'upsert': true}
+        dbs.save.collection('uma').update({'_id':app[0].device_id}, {'$addToSet': {'my_apps': uma}}, {'upsert': true}
             , function (err, data) {
                 if (err){
                     console.log('[processSession]uma log error:' + err);  
                 }
-                //dbonoff.on('raw');
-        });*/
+                dbonoff.on('raw');
+        });
 
         dbs.base.collection('uma').update({'_id':app[0].device_id}, {'$addToSet': {'my_apps': uma}}, {'upsert': true}
             , function (err, data) {
@@ -202,7 +202,7 @@ var process = require('process');
 
 
     function updateRangeMeta(dbs, ranges, coll, id) {
-        /*dbs.save.collection(coll).update({'_id': id}, {'$addToSet': ranges}, {'upsert': true}, dbCallback_off);*/
+        dbs.save.collection(coll).update({'_id': id}, {'$addToSet': ranges}, {'upsert': true}, dbCallback);
         dbs.base.collection(coll).update({'_id': id}, {'$addToSet': ranges}, {'upsert': true}, dbCallback); 
     }
 
@@ -219,10 +219,11 @@ var process = require('process');
         var tmp = {};
         var opSet = {};
         for (var times in data) {
-            if ((JSON.stringify(tmp).length + data[times]?JSON.stringify(data[times]).length:0) >= 16000000) {
-                //console.log(JSON.stringify(tmp).length+" "+tmp);
+            if ((JSON.stringify(tmp).length + (data[times]?JSON.stringify(data[times]).length:0)) >= 10000) {
                 opSet = {};
                 opSet[op] = tmp;
+                dbs.save.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback);
+                //console.log("[yes]"+JSON.stringify(tmp).length);
                 dbs.base.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback);
                 tmp = {};
             }
@@ -233,7 +234,8 @@ var process = require('process');
             console.log("tmp is Empty");
         }
     	opSet[op] = tmp;
-        /*dbs.save.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback_off); */
+        dbs.save.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback);
+        //console.log("[no]"+JSON.stringify(tmp).length);
         dbs.base.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback);
     }
 
@@ -256,7 +258,8 @@ var process = require('process');
 
 
         for (var i=0; i < predefinedMetrics.length; i++) {
-            //console.log(dataBag.MetricMetaSet[predefinedMetrics[i].db]);
+            //console.log(" ["+predefinedMetrics[i].db+"] : ");
+            //console.log(dataBag.updateMetrics[predefinedMetrics[i].db]);
             updateRangeMeta(dbs, dataBag.MetricMetaSet[predefinedMetrics[i].db], predefinedMetrics[i].db, appinfos.app_id);
             updateCollection(dbs, predefinedMetrics[i].db, appinfos.app_id, dataBag.updateMetrics[predefinedMetrics[i].db], '$inc', '[updateMetrics:'+predefinedMetrics[i].db+']');
         }
@@ -496,9 +499,13 @@ var process = require('process');
         }*/
         for (i=normalSessionStart; i<apps.length; i++) {
     	    if (!apps[i].timestamp) {
-        		console.log('no timestamp');
+                console.log('[session] no timestamp');
         		continue;
             }
+            if (!common.checkTimestamp(apps[i].timestamp)) {
+                continue;
+            }
+
             apps[i].time = common.initTimeObj(appinfos.appTimezone, apps[i].timestamp, apps[i].tz);
 
             //set event(request) count for every request
@@ -607,12 +614,14 @@ var process = require('process');
 
         } else { //set new user count in necessary collections   
             //console.log("new user");
-            updateStatistics(dataBag, sessionObjByDay[0][0], common.dbMap['new'], OP_INCREASE);
-            updateLoyaltyRange(uniqueUser, dataBag, sessionObjByDay[0][0], 1); //session count = 1
-            updateFreqRange(uniqueUser, dataBag, sessionObjByDay[0][0], sessionObjByDay[0][0]); //set 1st session
+            if (sessionObjByDay.length > 0) {
+                updateStatistics(dataBag, sessionObjByDay[0][0], common.dbMap['new'], OP_INCREASE);
+                updateLoyaltyRange(uniqueUser, dataBag, sessionObjByDay[0][0], 1); //session count = 1
+                updateFreqRange(uniqueUser, dataBag, sessionObjByDay[0][0], sessionObjByDay[0][0]); //set 1st session
+            }
         }
 
-        //console.log(uniqueUser.updateUsers);
+        //console.log(uniqueUser);
 
 
         cpUniqueUser(dataBag, uniqueUser);
