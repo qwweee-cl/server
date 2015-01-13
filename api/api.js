@@ -346,7 +346,7 @@ if (cluster.isMaster) {
                     } catch (err) {
                         console.log('chdir: ' + err);
                     }
-                    var cmd="node newBatch.js "+appkey;
+                    var cmd="node newBatch.js "+appkey+" >> /usr/local/countly/log/"+appkey+"_gen.log 2>&1";
                     console.log("cmd:"+cmd);
                     common.returnMessage(params, 200, 'Success cmd:'+cmd);
                     exec(cmd,  function (error, stdout, stderr) {
@@ -387,7 +387,7 @@ if (cluster.isMaster) {
                     } catch (err) {
                         console.log('chdir: ' + err);
                     }
-                    var cmd="node newBatchByOEM.js "+appkey;
+                    var cmd="node newBatchByOEM.js oem "+appkey+" >> /usr/local/countly/log/"+appkey+"_oem.log 2>&1";
                     console.log("cmd:"+cmd);
                     common.returnMessage(params, 200, 'Success cmd:'+cmd);
                     exec(cmd,  function (error, stdout, stderr) {
