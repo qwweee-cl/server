@@ -614,7 +614,8 @@ if (cluster.isMaster) {
 
                 if (params.qstring.events) {
                     try {
-                        params.events = JSON.parse(params.qstring.events);
+                        var str = JSON.parse(params.qstring.events);
+                        params.events = JSON.parse(JSON.stringify(str).replace(/\./g, "_"));
                     } catch (SyntaxError) {
                         var now = new Date();
                         console.log('Parse events JSON failed'+'=========='+now+'==========');
