@@ -2301,10 +2301,10 @@ window.EventsView = countlyView.extend({
                 var tmpDP = [];
                 var ticks = eventData.chartDP.ticks;
                 var dp = eventData.chartDP.dp[0];
-                ticks.sort();
+                //ticks.sort();
                 //window.prompt("no bar",JSON.stringify(ticks));
                 dp.data[0].sort();
-                var maxrank = 7;
+                var maxrank = 10;
                 var rankprecent = 0;
                 var sum = 0;
                 //window.prompt("no bar",JSON.stringify(dp.data));
