@@ -113,10 +113,17 @@ function processRaw(dbs, collectionName, processData, sortOrder, appinfo) {
                 	processData(dbs, apps, true, appinfos);
 
                     //_next_oid logging
-        	        if (isDebug || (hasOidFile && apps[cnt]._id > log_id)) {
-            		    log_id = apps[cnt]._id;
-            		    fs.writeFile(oidFileName, log_id, function(err){});
-            		}
+        	        if (isDebug) {
+                        console.log(apps[cnt]._id+" : "+log_id);
+                        if (apps[cnt]._id > log_id) {
+                            log_id = apps[cnt]._id;
+                            console.log("change "+log_id);
+                        } else {
+                            console.log("no change "+log_id);
+                        }
+                        fs.writeFile(oidFileName, log_id, function(err){});
+                        console.log(oidFileName+" write finished "+log_id);
+                    }
                     return true;
            	    }
 
@@ -131,6 +138,15 @@ function processRaw(dbs, collectionName, processData, sortOrder, appinfo) {
                             console.log(apps);
                         }*/
                         processData(dbs, apps, false, appinfos);
+                        if (isDebug) {
+                            console.log(apps[cnt]._id+" : "+log_id);
+                            if (apps[cnt]._id > log_id) {
+                                log_id = apps[cnt]._id;
+                                console.log("change "+log_id);
+                            } else {
+                                console.log("no change "+log_id);
+                            }
+                        }
                         curr_app_user = res.app_user_id;
                         apps = [];
                     }
