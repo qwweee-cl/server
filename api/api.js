@@ -63,11 +63,11 @@ function insertRawColl(coll, eventp, params) {
                 // check start and end (timestamp per sec)
                 dealNumber = checkOEM.deal_no;
                 if (eventp.timestamp) {
-                    if (checkOEM.start && checkOEM.start*1000 > eventp.timestamp) {
+                    if (checkOEM.start && checkOEM.start > eventp.timestamp) {
                         //console.log("before start oem false");
                         oem = false;
                     } else {
-                        if (checkOEM.end && checkOEM.end*1000 < eventp.timestamp) {
+                        if (checkOEM.end && checkOEM.end < eventp.timestamp) {
                             //console.log("after end oem false");
                             oem = false;
                         } else {
