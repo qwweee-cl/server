@@ -194,7 +194,7 @@ function callRaw() {
                 if (res) {
                     processRaw(dbs, collectionName, processSessions, {app_user_id:1, timestamp:1}, res);
                 } else {
-                    console.log("[event] "+keys+" can't found a appinfo");
+                    console.log("[session] "+keys+" can't found a appinfo");
                     process.emit('hi_mongo');
                 }
             }
