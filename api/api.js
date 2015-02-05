@@ -246,6 +246,19 @@ function getIpAddress(req) {
     return ipAddress.split(',')[0];
 }
 
+function findAndRemoveKey(array, value) {
+                    console.log('findAndRemoveKey');
+    for (var index in array) {
+        if (array[index].key == value) {
+            //Remove from array
+            array.splice(index, 1);
+            //console.log("remove");
+        } else {
+            //console.log("no remove");
+        }
+    }
+}
+
 if (cluster.isMaster) {
     var now = new Date();
     console.log('start api =========================='+now+'==========================');
@@ -614,7 +627,23 @@ if (cluster.isMaster) {
 
                 if (params.qstring.events) {
                     try {
-                        params.events = JSON.parse(params.qstring.events);
+                        var jsonData = JSON.parse(params.qstring.events);
+                        if (jsonData) {
+                            if (jsonData.length == 1 && jsonData[0].key &&
+                                jsonData[0].key == '_UMA_ID') {
+                                common.returnMessage(params, 200, 'Success');
+                                console.log('Send 200 Success');
+                                return true;
+                            }
+                            findAndRemoveKey(jsonData, '_UMA_ID');
+                            if (jsonData.length == 0) {
+                                //console.log("be removed, so no events");
+                                common.returnMessage(params, 200, 'Success');
+                                console.log('Send 200 Success');
+                                return true;
+                            }
+                        }
+                        params.events = jsonData;
                     } catch (SyntaxError) {
                         var now = new Date();
                         console.log('Parse events JSON failed'+'=========='+now+'==========');
