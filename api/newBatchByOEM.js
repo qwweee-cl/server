@@ -104,7 +104,6 @@ function processRaw(dbs, collectionName, processData, sortOrder, appinfo) {
             		    console.log('No data');
             		    return false;
             		}
-            		var cnt = apps.length - 1;
                     /*if (collectionName == 'raw_session_54002336f036d1673f003768') {
                         console.log(apps);
                     }*/
@@ -114,6 +113,7 @@ function processRaw(dbs, collectionName, processData, sortOrder, appinfo) {
 
                     //_next_oid logging
         	        if (isDebug) {
+                        var cnt = apps.length - 1;
                         console.log(apps[cnt]._id+" : "+log_id);
                         if (apps[cnt]._id > log_id) {
                             log_id = apps[cnt]._id;
@@ -139,6 +139,7 @@ function processRaw(dbs, collectionName, processData, sortOrder, appinfo) {
                         }*/
                         processData(dbs, apps, false, appinfos);
                         if (isDebug) {
+                            var cnt = apps.length - 1;
                             console.log(apps[cnt]._id+" : "+log_id);
                             if (apps[cnt]._id > log_id) {
                                 log_id = apps[cnt]._id;
@@ -301,6 +302,7 @@ fs.readFile(oidFileName, 'utf8', function (err,data) {
                 }
 		if (repeat_times == (wait_cnt-2)) {
 		    var date1 = new Date();
+            console.log(date.toString());
 		    console.log(date1.toString());
 		}
         	if (repeat_times > wait_cnt) {

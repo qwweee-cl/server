@@ -104,6 +104,9 @@ var bag = {};
             var currEvent = params.events[i];
             tmpEventObj = {};
             tmpEventColl = {};
+            if (!common.checkTimestamp(params.events[i].timestamp)) {
+                continue;
+            }
             
             //console.log('current event:%j', currEvent);
 
