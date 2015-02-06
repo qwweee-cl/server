@@ -247,14 +247,15 @@ function getIpAddress(req) {
 }
 
 function findAndRemoveKey(array, value) {
-                    console.log('findAndRemoveKey');
-    for (var index in array) {
+    //console.log('findAndRemoveKey');
+    for (var index=0;index<array.length;) {
         if (array[index].key == value) {
             //Remove from array
             array.splice(index, 1);
             //console.log("remove");
         } else {
             //console.log("no remove");
+            index++;
         }
     }
 }
@@ -632,14 +633,14 @@ if (cluster.isMaster) {
                             if (jsonData.length == 1 && jsonData[0].key &&
                                 jsonData[0].key == '_UMA_ID') {
                                 common.returnMessage(params, 200, 'Success');
-                                console.log('Send 200 Success');
+                                //console.log('Send 200 Success');
                                 return true;
                             }
                             findAndRemoveKey(jsonData, '_UMA_ID');
                             if (jsonData.length == 0) {
                                 //console.log("be removed, so no events");
                                 common.returnMessage(params, 200, 'Success');
-                                console.log('Send 200 Success');
+                                //console.log('Send 200 Success');
                                 return true;
                             }
                         }
