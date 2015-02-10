@@ -126,6 +126,9 @@ function insertRawColl(coll, eventp, params) {
 
 function insertRawEvent(coll,params) {
     var eventp = {};
+    if (params.qstring.metrics) {
+        eventp.metrics = params.qstring.metrics;
+    }
     eventp.events = params.events;
     insertRawColl(coll, eventp, params);
 }
