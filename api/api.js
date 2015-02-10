@@ -47,6 +47,7 @@ function insertRawColl(coll, eventp, params) {
     }
     eventp.tz = params.qstring.tz;
     eventp.ip_address = params.ip_address;
+    common.computeGeoInfo(eventp);
     if (params.qstring.vendor_info) {
         //console.log(JSON.stringify(params.qstring.vendor_info, null, 2));
         eventp.vendor = params.qstring.vendor_info;
