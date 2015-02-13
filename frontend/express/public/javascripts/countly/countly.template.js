@@ -2311,11 +2311,11 @@ window.EventsView = countlyView.extend({
                 for(var i=0,j=0;i<ticks.length;i++) {
                     if (ticks[i][1]) {
                         tmpDP[j]={label: ticks[i][1],
-                            data: [[0, dp.data[i][1]]]};
-                        sum += dp.data[i][1];
+                            data: [[0, dp.data[ticks[i][0]+1][1]]]};
+                        sum += dp.data[ticks[i][0]+1][1];
                         j++;
                         if (j==maxrank) {
-                            rankprecent = dp.data[i][1];
+                            rankprecent = dp.data[ticks[i][0]+1][1];
                         }
                     }
                 }
