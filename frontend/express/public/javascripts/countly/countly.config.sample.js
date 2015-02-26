@@ -14,7 +14,7 @@ countlyCommon.API_PARTS = {
         "r":countlyCommon.API_URL + "/o/users"
     }
 };
-countlyCommon.DASHBOARD_REFRESH_MS = 10000;
-countlyCommon.DASHBOARD_IDLE_MS = 3000000;
+countlyCommon.DASHBOARD_REFRESH_MS = 7200000;
+countlyCommon.DASHBOARD_IDLE_MS = 7200000;
 countlyCommon.GRAPH_COLORS = ["#88BBC8", "#ED8662", "#A0ED62", "#ed6262", "#edb762", "#ede262", "#62edb0", "#62beed", "#6279ed", "#c162ed", "#ed62c7", "#9A1B2F"];
 countlyCommon.CITY_DATA = true;
