@@ -41,7 +41,7 @@ livefile="config.live.js"
 batchfile="config.batch.js"
 srcfile="config.js"
 mongo="localhost:27017"
-dashboard="localhost:27017"
+dashboard="claddb:27017"
 remote="clad:27017"
 remotedb=$1
 batchdb=""
@@ -188,8 +188,8 @@ echo $start
 echo $end
 echo "==============================================================="
 echo -e "Clad2 Countly Batch run from $start to $end\n" $(tail -20 /usr/local/countly/log/clad2_batch.log)\
-| mail -s "Clad2 Countly Batch Finished" gary_huang@cyberlink.com
-#| mail -s "Clad2 Countly Batch Finished" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
+| mail -s "Clad2 Countly Batch Finished" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
+## | mail -s "Clad2 Countly Batch Finished" gary_huang@cyberlink.com
 rm -f ${LOCKFILE}
 exit 0
 
