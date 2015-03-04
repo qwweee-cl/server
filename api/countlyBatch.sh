@@ -119,6 +119,18 @@ $cmd
 #echo $cmd
 #$cmd
 
+## ssh to clad2 to run clad2Batch.sh
+## ssh ubuntu@clad2 /usr/local/countly/api/clad2Batch.sh $batchdb >> /usr/local/countly/log/clad2_batch.log 2>&1
+cmd="ssh ubuntu@clad2 /usr/local/countly/api/clad2Batch.sh $batchdb >> /usr/local/countly/log/clad2_batch.log"
+echo $cmd
+$cmd
+
+## ssh to clad2 to run clad2OEMBatch.sh
+## ssh ubuntu@clad2 /usr/local/countly/api/clad2OEMBatch.sh >> /usr/local/countly/log/clad2_oem_batch.log 2>&1
+cmd="ssh ubuntu@clad2 /usr/local/countly/api/clad2OEMBatch.sh >> /usr/local/countly/log/clad2_oem_batch.log"
+echo $cmd
+$cmd
+
 ## sudo restart countly-supervisor
 ## backup raw data
 ## mongodump -h localhost:27017 -db countly -o ./20141002
@@ -146,7 +158,7 @@ echo $cmd
 $cmd
 
 ## run OEM batch
-cmd="$path/runOEM.sh >> /usr/local/countly/log/oem_batch.log 2>&1"
+cmd="$path/runOEM.sh >> /usr/local/countly/log/oem_batch.log"
 echo $cmd
 $cmd
 
