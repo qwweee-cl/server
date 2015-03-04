@@ -35,8 +35,8 @@ dashboarddate=$curdate"_countly"
 #remote="cat:27017"
 ##
 
-echo "==============================================================="
-echo "======================Countly OEM Batch Start======================"
+echo "==================================================================="
+echo "==================Clad2 Countly OEM Batch Start===================="
 start=$(date +%Y-%m-%d_%H-%M)
 
 if [ ! -d "$s3OEMPath" ]; then
