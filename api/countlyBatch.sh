@@ -134,6 +134,28 @@ $cmd
 cmd="/bin/rm ./$rawdate -rf"
 echo $cmd
 $cmd
+
+## remove raw data ( move to end )
+## mongo test --eval "printjson(db.getCollectionNames())"
+#cmd="/usr/bin/mongo $mongo/$batchdb --eval printjson(db.dropDatabase());"
+#echo $cmd
+#$cmd
+## mongo -h $mongo --eval "db.dropDatabase();"
+## move zip file to s3
+if [ ! -d "$s3Path" ]; then
+	echo "mkdir $s3Path"
+	mkdir $s3Path
+fi
+cmd="/bin/cp $gzipPath$rawdate.tgz $s3Path"
+echo $cmd
+$cmd
+cmd="/bin/rm $gzipPath$rawdate.tgz"
+echo $cmd
+$cmd
+
+curr=$(date +%Y-%m-%d_%H-%M)
+echo "===== raw data cp to s3 end =>"$curr" ====="
+
 ## add index in database
 cd $path
 echo $PWD
@@ -157,16 +179,16 @@ $cmd
 #$cmd
 ## mongo -h $mongo --eval "db.dropDatabase();"
 ## move zip file to s3
-if [ ! -d "$s3Path" ]; then
-	echo "mkdir $s3Path"
-	mkdir $s3Path
-fi
-cmd="/bin/cp $gzipPath$rawdate.tgz $s3Path"
-echo $cmd
-$cmd
-cmd="/bin/rm $gzipPath$rawdate.tgz"
-echo $cmd
-$cmd
+#if [ ! -d "$s3Path" ]; then
+#	echo "mkdir $s3Path"
+#	mkdir $s3Path
+#fi
+#cmd="/bin/cp $gzipPath$rawdate.tgz $s3Path"
+#echo $cmd
+#$cmd
+#cmd="/bin/rm $gzipPath$rawdate.tgz"
+#echo $cmd
+#$cmd
 
 cd $path
 echo $PWD
