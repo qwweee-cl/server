@@ -50,7 +50,7 @@ curdate=$(date +%Y%m%d)
 rawdate=$curdate"_raw"
 dashboarddate=$curdate"_countly"
 echo "==============================================================="
-echo "======================Countly Batch Start======================"
+echo "================Clad2 Countly Batch Start======================"
 start=$(date +%Y-%m-%d_%H-%M)
 cd $path
 echo $PWD
