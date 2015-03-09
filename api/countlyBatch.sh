@@ -180,9 +180,10 @@ echo $cmd
 $cmd
 
 ## run OEM batch
-cmd="$path/runOEM.sh >> /usr/local/countly/log/oem_batch.log"
+#cmd="$path/runOEM.sh >> /usr/local/countly/log/oem_batch.log"
+cmd="$path/runOEM.sh"
 echo $cmd
-$cmd
+$cmd >> /usr/local/countly/log/oem_batch.log 2>&1
 
 ## remove raw data ( move to end )
 ## mongo test --eval "printjson(db.getCollectionNames())"
