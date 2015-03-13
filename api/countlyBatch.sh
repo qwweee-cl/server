@@ -119,6 +119,18 @@ $cmd
 #echo $cmd
 #$cmd
 
+## ssh to clad2 to run clad2Batch.sh
+## ssh ubuntu@clad2 /usr/local/countly/api/clad2Batch.sh $batchdb >> /usr/local/countly/log/clad2_batch.log 2>&1
+cmd="ssh ubuntu@clad2 /usr/local/countly/api/clad2Batch.sh $batchdb >> /usr/local/countly/log/clad2_batch.log"
+echo $cmd
+$cmd
+
+## ssh to clad2 to run clad2OEMBatch.sh
+## ssh ubuntu@clad2 /usr/local/countly/api/clad2OEMBatch.sh >> /usr/local/countly/log/clad2_oem_batch.log 2>&1
+cmd="ssh ubuntu@clad2 /usr/local/countly/api/clad2OEMBatch.sh >> /usr/local/countly/log/clad2_oem_batch.log"
+echo $cmd
+$cmd
+
 ## sudo restart countly-supervisor
 ## backup raw data
 ## mongodump -h localhost:27017 -db countly -o ./20141002
@@ -132,21 +144,6 @@ cmd="/bin/tar czf $gzipPath$rawdate.tgz ./"
 echo $cmd
 $cmd
 cmd="/bin/rm ./$rawdate -rf"
-echo $cmd
-$cmd
-## add index in database
-cd $path
-echo $PWD
-cmd="/usr/bin/node $path/createIndex.js"
-echo $cmd
-$cmd
-## run batch
-cmd="/usr/bin/node $path/newBatch.js"
-echo $cmd
-$cmd
-
-## run OEM batch
-cmd="$path/runOEM.sh >> /usr/local/countly/log/oem_batch.log 2>&1"
 echo $cmd
 $cmd
 
@@ -167,6 +164,44 @@ $cmd
 cmd="/bin/rm $gzipPath$rawdate.tgz"
 echo $cmd
 $cmd
+
+curr=$(date +%Y-%m-%d_%H-%M)
+echo "===== raw data cp to s3 end =>"$curr" ====="
+
+## add index in database
+cd $path
+echo $PWD
+cmd="/usr/bin/node $path/createIndex.js"
+echo $cmd
+$cmd
+## run batch
+cmd="/usr/bin/node $path/newBatch.js"
+echo $cmd
+$cmd
+
+## run OEM batch
+#cmd="$path/runOEM.sh >> /usr/local/countly/log/oem_batch.log"
+cmd="$path/runOEM.sh"
+echo $cmd
+$cmd >> /usr/local/countly/log/oem_batch.log 2>&1
+
+## remove raw data ( move to end )
+## mongo test --eval "printjson(db.getCollectionNames())"
+#cmd="/usr/bin/mongo $mongo/$batchdb --eval printjson(db.dropDatabase());"
+#echo $cmd
+#$cmd
+## mongo -h $mongo --eval "db.dropDatabase();"
+## move zip file to s3
+#if [ ! -d "$s3Path" ]; then
+#	echo "mkdir $s3Path"
+#	mkdir $s3Path
+#fi
+#cmd="/bin/cp $gzipPath$rawdate.tgz $s3Path"
+#echo $cmd
+#$cmd
+#cmd="/bin/rm $gzipPath$rawdate.tgz"
+#echo $cmd
+#$cmd
 
 cd $path
 echo $PWD

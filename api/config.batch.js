@@ -32,7 +32,7 @@ var countlyConfig = {
     mongodb: "localhost:27017/countly?auto_reconnect=true",
     */
     api: {
-        workers: 0,
+        workers: 10,
         port: 3001,
         host: "localhost",
         safe: false,
