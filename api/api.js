@@ -581,6 +581,11 @@ if (cluster.isMaster) {
                         return false;
                     }
                 }
+                if (params.qstring.app_key == '17a82958af48fdd76801a15991b2cafa1f0bcf92' ||
+                    params.qstring.app_key == 'ipsentry') {
+                    common.returnMessage(params, 200, 'Success');
+                    return;
+                }
 
                 if (!params.qstring.app_key || !params.qstring.device_id) {
                     var now = new Date();
