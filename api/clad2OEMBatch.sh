@@ -6,9 +6,9 @@ function error_exp
 	#echo -e "Daily BB data import failed. Please check log in elephant1>/home/hadoop/new_script/dashborad_script/logs/log_daily_bb_import.log\nLog scraps: "$(tail -10 ~/new_script/dashborad_script/logs/log_daily_bb_import.log)\
 	#| mail -s "Daily BB data import exception" $dashboard_team
 	echo -e "clad2 Countly OEM Batch Error Please check log in clad.cyberlink.com>/usr/local/countly/log/clad2_oem_batch.log" $(tail -20 /usr/local/countly/log/clad2_oem_batch.log)\
-	| mail -s "clad2 Countly OEM Batch Error Trap" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
+	| mail -s "Clad2 Countly OEM Batch Error Trap" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
 	#sleep 1
-	echo "clad2 Countly OEM Batch Error"
+	echo "Clad2 Countly OEM Batch Error"
 	exit 0
 }
 
@@ -122,8 +122,8 @@ end=$(date +%Y-%m-%d_%H-%M)
 echo $start
 echo $end
 echo "==============================================================="
-echo -e "clad2 Countly OEM Batch run from $start to $end\n" $(tail -20 /usr/local/countly/log/clad2_oem_batch.log)\
-| mail -s "clad2 Countly OEM Batch Finished" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
+echo -e "Clad2 Countly OEM Batch run from $start to $end\n" $(tail -20 /usr/local/countly/log/clad2_oem_batch.log)\
+| mail -s "Clad2 Countly OEM Batch Finished" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
 exit 0
 ## zip backup file
 #exit 0
