@@ -13,13 +13,16 @@ var mysqlPassword = 'cyberlink#1'
 
 //mysqlHostName="localhost";
 //mysqlUser="root";
+//mysqlHostName="claddb";
 mysqlHostName="54.248.118.203";
-var DBName = 'YMKData1';
-dbName = 'YMKData';
+mysqlUser = 'ymk';
+mysqlPassword = 'cyberlinkymk';
+var DBName = 'YMKData';
 var dbOptions = { safe:false, maxPoolSize: 1000 };
 var dbName = ('cat:27017/countly_raw0?auto_reconnect=true');
 //var db = mongo.db(dbName, dbOptions);
 var db = common.db_batch;
+//db = common.db_raw;
 var collectionList = ["raw_event_75edfca17dfbe875e63a66633ed6b00e30adcb92",
                       "raw_event_9219f32e8de29b826faf44eb9b619788e29041bb"];
 var currMoment = moment();
