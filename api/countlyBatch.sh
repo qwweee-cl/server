@@ -231,6 +231,11 @@ cmd="/bin/rm $gzipPath$dashboarddate.tgz"
 echo $cmd
 $cmd
 
+## ymk event script
+cmd="$path/ymkEvent.sh"
+echo $cmd
+$cmd >> /usr/local/countly/log/ymkEvent_batch.log 2>&1
+
 ## remove raw data
 ## mongo test --eval "printjson(db.getCollectionNames())"
 cmd="/usr/bin/mongo $mongo/$batchdb --eval printjson(db.dropDatabase());"
