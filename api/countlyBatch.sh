@@ -232,6 +232,7 @@ echo $cmd
 $cmd
 
 ## ymk event script
+cd $path
 cmd="$path/ymkEvent.sh"
 echo $cmd
 $cmd >> /usr/local/countly/log/ymkEvent_batch.log 2>&1
