@@ -39,7 +39,7 @@ dashboard="claddb:27017"
 batchdb=""
 dashboarddb="countly"
 curdate=$(date +%Y%m%d)
-rawdate=$curdate"_raw"
+rawdate=$curdate"_raw_2"
 dashboarddate=$curdate"_countly"
 echo "==============================================================="
 echo "======================Countly Batch Start======================"

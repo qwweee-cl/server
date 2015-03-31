@@ -246,7 +246,7 @@ fs.readFile(oidFileName, 'utf8', function (err,data) {
         dbs.batch = common.getOEMBatchDB(app_key); // batch raw log
         dbs.save = common.getOEMDB(app_key); // dashboard
         dbs.base = common.db; // apps
-        dbs.raw = common.db_raw // live raw log
+        dbs.raw = common.getLocalRawDB(); // live raw log
         console.log("raw:"+dbs.raw.tag);
         console.log("batch:"+dbs.batch.tag);
         process.on("hi_mongo", callRaw);
@@ -273,7 +273,7 @@ fs.readFile(oidFileName, 'utf8', function (err,data) {
         dbs.batch = common.getOEMBatchDB(app_key); // batch raw log
         dbs.save = common.getOEMDB(app_key); // dashboard
         dbs.base = common.db; // apps
-        dbs.raw = common.db_raw // live raw log
+        dbs.raw = common.getLocalRawDB(); // live raw log
         console.log("raw:"+dbs.raw.tag);
         console.log("batch:"+dbs.batch.tag);
         console.log("save:"+dbs.save.tag);

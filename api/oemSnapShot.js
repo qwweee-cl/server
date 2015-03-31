@@ -25,7 +25,7 @@ if (0&&tmpMoment.format("D")!=1) {
     print("exit oemSnapShot");
     return;
 }
-var mongoUrl=config.mongodb.hostbatch+":"+config.mongodb.port+"/"+config.mongodb.db;
+var mongoUrl=config.mongodb.host+":"+config.mongodb.port+"/"+config.mongodb.db;
 
 //eventEmitter.on('saveSessions', saveSessions);
 //eventEmitter.on('insertData', insertData);
@@ -51,7 +51,7 @@ function runOEMSnapCommand(name) {
     var command = '/usr/bin/mongo '+mongoUrl+' --eval "\n';
     var omeDBName = 'countly_'+name;
     print(omeDBName);
-    command += 'db.copyDatabase(\''+omeDBName+'\', \''+dateStr+'\', \''+config.mongodb.hostbatch+'\');"';
+    command += 'db.copyDatabase(\''+omeDBName+'\', \''+dateStr+'\', \''+config.mongodb.host+'\');"';
     print(command);
     executeCmd(command);
 }

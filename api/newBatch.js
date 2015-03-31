@@ -35,10 +35,10 @@ var eid = new ObjectID(edd.toString(16)+'0000000000000000');
 //var eid = new ObjectID('542a50e0981a3d812e000007');
 var log_id = '000000000000000000000000';
 
-dbs.batch = common.db_batch; // batch raw log
+dbs.batch = common.getLocalBatchDB(); // batch raw log
 dbs.save = common.getGenericDB(); // dashboard
 dbs.base = common.db; // apps
-dbs.raw = common.db_raw // live raw log
+dbs.raw = common.getLocalRawDB(); // live raw log
 
 /*var startStr = "2014-10-06T00:00-07:00",
     endStr = "2014-10-07T00:00-07:00",

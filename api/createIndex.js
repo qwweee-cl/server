@@ -21,11 +21,11 @@ eventEmitter.on('executeCmd', executeCmd);
 var mongoUrl=config.mongodb.hostbatch+":"+config.mongodb.port+"/"+config.mongodb.db_batch;
 var shardingUrl=config.mongodb.hostbatch+":30000/admin";
 
-dbonoff.open(common.db_batch);
-common.db_batch.collections(function(err,collection) {
+dbonoff.open(common.getLocalBatchDB());
+common.getLocalBatchDB().collections(function(err,collection) {
     if (!collection.length) {
         common.db.close();
-	    common.db_batch.close();
+	    common.getLocalBatchDB().close();
 	    print('no data');
         return;
     }
@@ -54,5 +54,5 @@ common.db_batch.collections(function(err,collection) {
     //print(shardingCmd);
     //eventEmitter.emit('executeCmd', shardingCmd);
 
-    dbonoff.close(common.db_batch);
+    dbonoff.close(common.getLocalBatchDB());
 });

@@ -116,7 +116,8 @@ function insertRawColl(coll, eventp, params) {
             });
         }
     } else {
-        common.db_raw.collection(coll).insert(eventp, function(err, res) {
+        //common.db_raw.collection(coll).insert(eventp, function(err, res) {
+        common.getRawDB(eventp.app_key).collection(coll).insert(eventp, function(err, res) {
             if (err) {
                 console.log('DB operation error');
                 console.log(err);

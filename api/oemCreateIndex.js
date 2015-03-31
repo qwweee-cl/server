@@ -20,8 +20,10 @@ function executeCmd(cmd) {
 function createScript(oemdb1, oemdb2) {
     print(oemdb1.tag);
     print(oemdb2.tag);
-    var mongoUrl=config.mongodb.hostbatch+":"+config.mongodb.port+"/"+oemdb1.tag;
-    var shardingUrl=config.mongodb.hostbatch+":30000/admin";
+    //var mongoUrl=config.mongodb.hostbatch+":"+config.mongodb.port+"/"+oemdb1.tag;
+    //var shardingUrl=config.mongodb.hostbatch+":30000/admin";
+    var mongoUrl=config.mongodb.oemhost+":"+config.mongodb.port+"/"+oemdb1.tag;
+    var shardingUrl=config.mongodb.oemhost+":30000/admin";
     dbonoff.open(oemdb1);
     oemdb1.collections(function(err,collection) {
         if (!collection.length) {

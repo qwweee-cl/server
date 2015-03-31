@@ -7,7 +7,7 @@ var excelbuilder = require('msexcel-builder'),
     print = console.log;
 
 var dbOptions = { safe:false, maxPoolSize: 1000 };
-var dbName = config.mongodb.hostbatch+":"+config.mongodb.port+"/"+config.mongodb.db;
+var dbName = config.mongodb.host+":"+config.mongodb.port+"/"+config.mongodb.db;
 var db = mongo.db(dbName, dbOptions);
 var allData = {};
 var iapData = {};
@@ -125,8 +125,8 @@ function pad2(number) {
 }
 
 function getApps(oemName, year, month) {
-    var dbOemName = config.mongodb.hostbatch+':'+config.mongodb.port+'/countly_'+oemName;
-    dbOemName = config.mongodb.hostbatch+':'+config.mongodb.port+'/'+dateStr;
+    var dbOemName = config.mongodb.host+':'+config.mongodb.port+'/countly_'+oemName;
+    dbOemName = config.mongodb.host+':'+config.mongodb.port+'/'+dateStr;
     print(dbOemName);
     var dbOem = mongo.db(dbOemName, dbOptions);
     dbOem.collections(function(err,collection) {

@@ -62,24 +62,46 @@ var common = {},
         dbName = (countlyConfig.mongodb.host + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db + '?auto_reconnect=true');
     }
 
-    dbRawName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_raw + '?auto_reconnect=true');
-    dbBatchName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_batch + '?auto_reconnect=true');
+    dbLocalRawName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_raw + '?auto_reconnect=true');
+    dbLocalBatchName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_batch + '?auto_reconnect=true');
+
+    common.local_raw = mongo.db(dbLocalRawName, dbRawOptions);
+    common.local_raw.tag = countlyConfig.mongodb.db_raw.replace(/system\.|\.\.|\$/g, "");
+    common.local_batch = mongo.db(dbLocalBatchName, dbBatchOptions);
+    common.local_batch.tag = countlyConfig.mongodb.db_batch.replace(/system\.|\.\.|\$/g, "");
+
+
+    dbRawName1 = (countlyConfig.mongodb.hostbatch1 + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_raw + '?auto_reconnect=true');
+    dbBatchName1 = (countlyConfig.mongodb.hostbatch1 + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_batch + '?auto_reconnect=true');
+    dbRawName2 = (countlyConfig.mongodb.hostbatch2 + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_raw + '?auto_reconnect=true');
+    dbBatchName2 = (countlyConfig.mongodb.hostbatch2 + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_batch + '?auto_reconnect=true');
+
     dbIbbName = (countlyConfig.mongodb.host + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_ibb + '?auto_reconnect=true');
-    dbReportName = (countlyConfig.mongodb.host + ':' + countlyConfig.mongodb.port + '/' + "oem_report" + '?auto_reconnect=true');
+
+    dbReportName = (countlyConfig.mongodb.oemhost + ':' + countlyConfig.mongodb.port + '/' + "oem_report" + '?auto_reconnect=true');
 
     common.db = mongo.db(dbName, dbOptions);
     common.db.tag = countlyConfig.mongodb.db.replace(/system\.|\.\.|\$/g, "");
-    common.db_raw = mongo.db(dbRawName, dbRawOptions);
-    common.db_raw.tag = countlyConfig.mongodb.db_raw.replace(/system\.|\.\.|\$/g, "");
-    common.db_batch = mongo.db(dbBatchName, dbBatchOptions);
-    common.db_batch.tag = countlyConfig.mongodb.db_batch.replace(/system\.|\.\.|\$/g, "");
+
+    common.db_raw1 = mongo.db(dbRawName1, dbRawOptions);
+    common.db_raw1.tag = countlyConfig.mongodb.db_raw.replace(/system\.|\.\.|\$/g, "");
+    common.db_batch1 = mongo.db(dbBatchName1, dbBatchOptions);
+    common.db_batch1.tag = countlyConfig.mongodb.db_batch.replace(/system\.|\.\.|\$/g, "");
+
+    common.db_raw2 = mongo.db(dbRawName2, dbRawOptions);
+    common.db_raw2.tag = countlyConfig.mongodb.db_raw.replace(/system\.|\.\.|\$/g, "");
+    common.db_batch2 = mongo.db(dbBatchName2, dbBatchOptions);
+    common.db_batch2.tag = countlyConfig.mongodb.db_batch.replace(/system\.|\.\.|\$/g, "");
+
+    common.db_report = mongo.db(dbReportName, dbOptions);
+    common.db_report.tag = "oem_report".replace(/system\.|\.\.|\$/g, "");
+
     common.db_ibb = mongo.db(dbIbbName, dbOptions);
     common.db_ibb.tag = countlyConfig.mongodb.db_ibb.replace(/system\.|\.\.|\$/g, "");
+
     common.db_oem = [];
     common.db_oem_batch = [];
     common.db_oem_dashboard = [];
-    common.db_report = mongo.db(dbReportName, dbOptions);
-    common.db_report.tag = "oem_report".replace(/system\.|\.\.|\$/g, "");
 
     common.config = countlyConfig;
 
@@ -91,6 +113,29 @@ var common = {},
     common.crypto = crypto;
 
     //initOEMRawDBs();
+    common.getRawDB = function (appKey) {
+        if (appKey == 'e315c111663af26a53e5fe4c82cc1baeecf50599' ||
+            appKey == 'c277de0546df31757ff26a723907bc150add4254') {
+            return common.db_raw1;
+        }
+        return common.db_raw2;
+    };
+
+    common.getBatchDB = function (appKey) {
+        if (appKey == 'e315c111663af26a53e5fe4c82cc1baeecf50599' ||
+            appKey == 'c277de0546df31757ff26a723907bc150add4254') {
+            return common.db_batch1;
+        }
+        return common.db_batch2;
+    };
+
+    common.getLocalRawDB = function (appKey) {
+        return common.local_raw;
+    };
+
+    common.getLocalBatchDB = function (appKey) {
+        return common.local_batch;
+    };
 
     common.getOEMRawDB = function (srNumber) {
         var raw_name = countlyConfig.mongodb.db_raw.match(/\w*(_\w*)/);
@@ -100,13 +145,13 @@ var common = {},
             //console.log("this is a oem "+srNumberName);
         } else {
             //console.log(srNumberName+" there is no oem");
-            dbOEMName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/oem_' + srNumberName + raw_name[1] + '?auto_reconnect=true');
+            dbOEMName = (countlyConfig.mongodb.oemhost + ':' + countlyConfig.mongodb.port + '/oem_' + srNumberName + raw_name[1] + '?auto_reconnect=true');
             common.db_oem[srNumberName]=mongo.db(dbOEMName, dbRawOptions);
             oem = common.db_oem[srNumberName];
         }
         oem.tag = "oem_"+srNumberName+raw_name[1];
         return oem;
-    }
+    };
 
     common.getOEMBatchDB = function (srNumber) {
         var raw_name = countlyConfig.mongodb.db_batch.match(/\w*(_\w*)/);
@@ -116,13 +161,13 @@ var common = {},
             //console.log("this is a oem "+srNumberName);
         } else {
             //console.log(srNumberName+" there is no oem");
-            dbOEMName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/oem_' + srNumberName + raw_name[1] + '?auto_reconnect=true');
+            dbOEMName = (countlyConfig.mongodb.oemhost + ':' + countlyConfig.mongodb.port + '/oem_' + srNumberName + raw_name[1] + '?auto_reconnect=true');
             common.db_oem_batch[srNumberName]=mongo.db(dbOEMName, dbBatchOptions);
             oem = common.db_oem_batch[srNumberName];
         }
         oem.tag = "oem_"+srNumberName+raw_name[1];
         return oem;
-    }
+    };
 
     common.getOEMDB = function (srNumber) {
         var srNumberName = srNumber.replace(/system\.|\.\.|\$/g, "");
@@ -137,7 +182,7 @@ var common = {},
         }
         oem.tag = "countly_"+srNumberName;
         return oem;
-    }
+    };
 
     common.getGenericDB = function () {
         var raw_name = countlyConfig.mongodb.db_raw.match(/\w*(_\w*)/);
@@ -153,7 +198,7 @@ var common = {},
         }
         oem.tag = srNumberName;
         return oem;
-    }
+    };
 
     common.getErrorDB = function () {
         var raw_name = countlyConfig.mongodb.db_raw.match(/\w*(_\w*)/);
@@ -169,7 +214,7 @@ var common = {},
         }
         oem.tag = srNumberName+raw_name[1];
         return oem;
-    }
+    };
 
     common.computeGeoInfo = function (params) {
         // Location of the user is retrieved using geoip-lite module from her IP address.
@@ -192,7 +237,7 @@ var common = {},
                 params.lng = locationData.ll[1];
            }
         }
-    }
+    };
 
     common.getDescendantProp = function (obj, desc) {
         desc = String(desc);

@@ -1,7 +1,12 @@
 var countlyConfig = {
     mongodb: {
-        host: "localhost",
-        hostbatch: "localhost",
+        host: "localhost", // dashboard db host
+        //hostbatch: "54.64.188.23", // localhost(mongodb) setting batch host
+        //hostbatch: "54.65.51.11", // localhost(mongodb) setting batch host
+        hostbatch: "localhost", // localhost(mongodb) setting batch host
+        hostbatch1: "localhost", // YCP raw data db host
+        hostbatch2: "localhost", // YMK + Others raw data db host
+        oemhost: "localhost", // Only OEM raw data host
         db: "countly",
         db_raw: "countly_raw0",
         db_batch: "countly_raw1",
