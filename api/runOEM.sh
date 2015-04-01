@@ -24,6 +24,14 @@ mongo="localhost:27017"
 dashboard="claddb:27017"
 batchdb=""
 curdate=$(date +%Y%m%d)
+echo $curdate
+if [ -z "$1" ]; then
+    echo "runOEM No argument supplied"
+else
+	curdate=$1
+fi
+echo $curdate
+
 rawdate=$curdate"_raw"
 dashboarddate=$curdate"_countly"
 
@@ -190,7 +198,7 @@ echo $start
 echo $end
 echo "==============================================================="
 echo -e "Countly OEM Batch run from $start to $end\n" $(tail -20 /usr/local/countly/log/oem_batch.log)\
-| mail -s "Countly OEM Batch Finished" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
+| mail -s "[$curdate]Countly OEM Batch Finished" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
 ## zip backup file
 #exit 0
 #cd /home/hadoop/gary/countly/api/

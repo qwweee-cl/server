@@ -181,7 +181,7 @@ $cmd
 
 ## run OEM batch
 #cmd="$path/runOEM.sh >> /usr/local/countly/log/oem_batch.log"
-cmd="$path/runOEM.sh"
+cmd="$path/runOEM.sh $curdate"
 echo $cmd
 $cmd >> /usr/local/countly/log/oem_batch.log 2>&1
 
@@ -248,6 +248,6 @@ echo $start
 echo $end
 echo "==============================================================="
 echo -e "Countly Batch run from $start to $end\n" $(tail -20 /usr/local/countly/log/cron_batch.log)\
-| mail -s "Countly Batch Finished" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
+| mail -s "[$curdate]Countly Batch Finished" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
 #sleep 1
 rm -f ${LOCKFILE}
