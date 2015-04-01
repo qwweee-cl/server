@@ -647,6 +647,12 @@ var common = {},
         params.res.end();
     };
 
+    common.returnHtml = function (params, returnCode, message) {
+        params.res.writeHeader(200, {"Content-Type": "text/html"});
+        params.res.write(message);
+        params.res.end();
+    };
+
     common.returnOutput = function (params, output) {
         params.res.writeHead(200, {'Content-Type': 'application/json; charset=utf-8'});
         if (params.qstring.callback) {
