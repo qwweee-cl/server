@@ -19,8 +19,8 @@ mysqlUser = 'ymk';
 mysqlPassword = 'cyberlinkymk';
 var DBName = 'YMKData';
 var dbOptions = { safe:false, maxPoolSize: 1000 };
-var dbName = ('cat:27017/countly_raw0?auto_reconnect=true');
-//var db = mongo.db(dbName, dbOptions);
+//var mongodbName = ('cat:27017/countly_raw0?auto_reconnect=true');
+//var db = mongo.db(mongodbName, dbOptions);
 //var db = common.db_batch;
 var db = common.getLocalBatchDB();
 //db = common.db_raw;
@@ -305,9 +305,13 @@ function save2Mysql(collectionName) {
 	        if (!res.metrics || res.metrics.length == 0) {
 	        	basic.appVersion = 'Old';
 	        	basic.os = 'O';
+				print("no metrics");
+				return;
 	        } else {
 	        	if (!res.metrics._app_version) {
 	        		basic.appVersion = 'Old';
+					print("app version error");
+					return;
 	        	} else {
 	        		basic.appVersion = res.metrics._app_version;
 	        	}
@@ -320,6 +324,8 @@ function save2Mysql(collectionName) {
 	        			basic.os = 'I';
 	        		} else {
 	        			basic.os= 'O';
+						print("os error");
+						return;
 	        		}
 	        	}
 	        }
