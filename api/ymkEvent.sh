@@ -43,5 +43,5 @@ echo $start
 echo $end
 echo "==============================================================="
 echo -e "Clad YMK Event run from $start to $end\n" $(tail -20 /usr/local/countly/log/ymkEvent_batch.log)\
-| mail -s "Clad YMK Event Finished" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
+| mail -s "[$nowDate]Clad YMK Event Finished" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
 

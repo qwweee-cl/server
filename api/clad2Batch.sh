@@ -188,7 +188,7 @@ echo $start
 echo $end
 echo "==============================================================="
 echo -e "Clad2 Countly Batch run from $start to $end\n" $(tail -20 /usr/local/countly/log/clad2_batch.log)\
-| mail -s "Clad2 Countly Batch Finished" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
+| mail -s "[$curdate]Clad2 Countly Batch Finished" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
 ## | mail -s "Clad2 Countly Batch Finished" gary_huang@cyberlink.com
 rm -f ${LOCKFILE}
 exit 0
