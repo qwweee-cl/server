@@ -113,6 +113,13 @@ var common = {},
     common.crypto = crypto;
 
     //initOEMRawDBs();
+    common.getDBByName = function (inDBName) {
+        var db_name = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/' + inDBName + '?auto_reconnect=true');
+        var dbInstance = mongo.db(db_name, dbBatchOptions);
+        dbInstance.tag = inDBName.replace(/system\.|\.\.|\$/g, "");
+        return dbInstance;
+    };
+
     common.getRawDB = function (appKey) {
         if (appKey == 'e315c111663af26a53e5fe4c82cc1baeecf50599' ||
             appKey == 'c277de0546df31757ff26a723907bc150add4254') {
