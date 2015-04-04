@@ -34,6 +34,10 @@ common.getLocalBatchDB().collections(function(err,collection) {
     var shardingCmd = '/usr/bin/mongo '+shardingUrl+' --eval "\n';
     for (var i=0; i<collection.length; i++) {
         var collectionName = collection[i].collectionName;
+        collectionName = collectionName.replace('"','');
+        collectionName = collectionName.replace('}','');
+        collectionName = collectionName.replace(':','');
+        collectionName = collectionName.replace('{','');
         if (collectionName.indexOf(common.rawCollection['event'])>=0) {
             //print("Entering event :"+collectionName);
             eventCmd += "db."+collectionName+".ensureIndex({app_user_id:1});\n";

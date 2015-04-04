@@ -599,6 +599,10 @@ if (cluster.isMaster) {
                     console.log("Send 200 Success");
                     return false;
                 }
+                params.qstring.app_key = params.qstring.app_key.replace('"','');
+                params.qstring.app_key = params.qstring.app_key.replace('{','');
+                params.qstring.app_key = params.qstring.app_key.replace(':','');
+                params.qstring.app_key = params.qstring.app_key.replace('}','');
                 // Set app_user_id that is unique for each user of an application.
                 params.app_user_id = common.crypto.createHash('sha1').update(params.app_key + params.qstring.device_id + "").digest('hex');
 
