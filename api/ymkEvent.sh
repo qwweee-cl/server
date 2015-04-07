@@ -21,7 +21,7 @@ echo -e $beginDate
 nowDate=$(date +%Y%m%d)
 echo $nowDate
 if [ -z "$1" ]; then
-    echo "runOEM No argument supplied"
+    echo "ymkEvent No argument supplied"
 else
 	nowDate=$1
 fi
