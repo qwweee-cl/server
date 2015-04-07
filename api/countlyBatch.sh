@@ -233,7 +233,7 @@ $cmd
 
 ## ymk event script
 cd $path
-cmd="$path/ymkEvent.sh"
+cmd="$path/ymkEvent.sh $curdate"
 echo $cmd
 $cmd >> /usr/local/countly/log/ymkEvent_batch.log 2>&1
 

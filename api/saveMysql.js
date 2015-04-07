@@ -197,7 +197,15 @@ function processEvents(basic, events, connection) {
 		    } else if (featureVal.indexOf('texture') != -1) {
 		    	var str = featureKey+featureMap[featureKey][i];
 		    	if (events.segmentation[str]) {
-		    		data.texture = events.segmentation[str].replace(/\s/g, '');
+		    		if (featureKey == 'eyeshadow') {
+		    			if (events.segmentation[str].indexOf('shimmer')) {
+			    			data.texture = 'shimmer';
+			    		} else {
+			    			data.texture = 'na';
+			    		}
+		    		} else {
+		    			data.texture = events.segmentation[str].replace(/\s/g, '');
+		    		}
 				}
 		    } else if (featureVal.indexOf('sku') != -1) {
 		    	var str = featureKey+featureMap[featureKey][i];
