@@ -75,6 +75,36 @@ else
 	batchdb="countly_raw1"
 fi
 
+cd $path
+echo $PWD
+## backup countly dashboard data
+## dump countly dashboard data
+cmd="mongodump -h $dashboard -db $dashboarddb -o $exportPath$dashboarddate"
+echo $cmd
+$cmd
+## zip backup file
+cd $exportPath
+echo $PWD
+cmd="/bin/tar czf $gzipPath$dashboarddate.tgz ./"
+echo $cmd
+$cmd
+cmd="/bin/rm ./$dashboarddate -rf"
+echo $cmd
+$cmd
+## move dashboard zip file to s3
+if [ ! -d "$s3DashboardPath" ]; then
+	echo "mkdir $s3DashboardPath"
+	mkdir $s3DashboardPath
+fi
+cmd="/bin/cp $gzipPath$dashboarddate.tgz $s3DashboardPath"
+echo $cmd
+$cmd
+cmd="/bin/rm $gzipPath$dashboarddate.tgz"
+echo $cmd
+$cmd
+
+cd $path
+echo $PWD
 #path="/home/hadoop/countly_snow/api"
 #batchdb="countly_raw_snow"
 #dashboarddb="countly_snow"
@@ -121,13 +151,19 @@ $cmd
 
 ## ssh to clad2 to run clad2Batch.sh
 ## ssh ubuntu@clad2 /usr/local/countly/api/clad2Batch.sh $batchdb >> /usr/local/countly/log/clad2_batch.log 2>&1
-cmd="ssh ubuntu@clad2 /usr/local/countly/api/clad2Batch.sh $batchdb >> /usr/local/countly/log/clad2_batch.log"
-echo $cmd
-$cmd
+#cmd="ssh ubuntu@clad2 /usr/local/countly/api/clad2Batch.sh $batchdb >> /usr/local/countly/log/clad2_batch.log"
+#echo $cmd
+#$cmd
 
 ## ssh to clad2 to run clad2OEMBatch.sh
 ## ssh ubuntu@clad2 /usr/local/countly/api/clad2OEMBatch.sh >> /usr/local/countly/log/clad2_oem_batch.log 2>&1
-cmd="ssh ubuntu@clad2 /usr/local/countly/api/clad2OEMBatch.sh >> /usr/local/countly/log/clad2_oem_batch.log"
+#cmd="ssh ubuntu@clad2 /usr/local/countly/api/clad2OEMBatch.sh >> /usr/local/countly/log/clad2_oem_batch.log"
+#echo $cmd
+#$cmd
+
+## ssh to clad2 to run slaveCountlyBatch.sh
+## ssh ubuntu@clad2 /usr/local/countly/api/slaveCountlyBatch.sh $batchdb >> /usr/local/countly/log/slave_batch.log 2>&1
+cmd="ssh ubuntu@clad2 /usr/local/countly/api/slaveCountlyBatch.sh $batchdb >> /usr/local/countly/log/slave_batch.log"
 echo $cmd
 $cmd
 
@@ -181,7 +217,7 @@ $cmd
 
 ## run OEM batch
 #cmd="$path/runOEM.sh >> /usr/local/countly/log/oem_batch.log"
-cmd="$path/runOEM.sh"
+cmd="$path/runOEM.sh $curdate"
 echo $cmd
 $cmd >> /usr/local/countly/log/oem_batch.log 2>&1
 
@@ -203,38 +239,39 @@ $cmd >> /usr/local/countly/log/oem_batch.log 2>&1
 #echo $cmd
 #$cmd
 
-cd $path
-echo $PWD
+#cd $path
+#echo $PWD
 ## backup countly dashboard data
 ## dump countly dashboard data
-cmd="mongodump -h $dashboard -db $dashboarddb -o $exportPath$dashboarddate"
-echo $cmd
-$cmd
+#cmd="mongodump -h $dashboard -db $dashboarddb -o $exportPath$dashboarddate"
+#echo $cmd
+#$cmd
 ## zip backup file
-cd $exportPath
-echo $PWD
-cmd="/bin/tar czf $gzipPath$dashboarddate.tgz ./"
-echo $cmd
-$cmd
-cmd="/bin/rm ./$dashboarddate -rf"
-echo $cmd
-$cmd
+#cd $exportPath
+#echo $PWD
+#cmd="/bin/tar czf $gzipPath$dashboarddate.tgz ./"
+#echo $cmd
+#$cmd
+#cmd="/bin/rm ./$dashboarddate -rf"
+#echo $cmd
+#$cmd
 ## move dashboard zip file to s3
-if [ ! -d "$s3DashboardPath" ]; then
-	echo "mkdir $s3DashboardPath"
-	mkdir $s3DashboardPath
-fi
-cmd="/bin/cp $gzipPath$dashboarddate.tgz $s3DashboardPath"
-echo $cmd
-$cmd
-cmd="/bin/rm $gzipPath$dashboarddate.tgz"
-echo $cmd
-$cmd
+#if [ ! -d "$s3DashboardPath" ]; then
+#	echo "mkdir $s3DashboardPath"
+#	mkdir $s3DashboardPath
+#fi
+#cmd="/bin/cp $gzipPath$dashboarddate.tgz $s3DashboardPath"
+#echo $cmd
+#$cmd
+#cmd="/bin/rm $gzipPath$dashboarddate.tgz"
+#echo $cmd
+#$cmd
 
 ## ymk event script
-cmd="$path/ymkEvent.sh"
-echo $cmd
-$cmd >> /usr/local/countly/log/ymkEvent_batch.log 2>&1
+#cd $path
+#cmd="$path/ymkEvent.sh $curdate"
+#echo $cmd
+#$cmd >> /usr/local/countly/log/ymkEvent_batch.log 2>&1
 
 ## remove raw data
 ## mongo test --eval "printjson(db.getCollectionNames())"
@@ -247,6 +284,6 @@ echo $start
 echo $end
 echo "==============================================================="
 echo -e "Countly Batch run from $start to $end\n" $(tail -20 /usr/local/countly/log/cron_batch.log)\
-| mail -s "Countly Batch Finished" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
+| mail -s "[$curdate]Countly Batch Finished" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
 #sleep 1
 rm -f ${LOCKFILE}
