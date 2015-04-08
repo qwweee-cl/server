@@ -166,8 +166,8 @@ function processEvents(basic, events, connection) {
 	for (var key in events.segmentation) {
 		featureKey = key.substring(0,key.indexOf('_'));
 		if (!featureMap[featureKey]) {
-			print("error key:"+featureKey);
-			print(JSON.stringify(events.segmentation));
+			//print("error key:"+featureKey);
+			//print(JSON.stringify(events.segmentation));
 			return;
 		}
 		for (var i=0;i<featureMap[featureKey].length;i++) {
