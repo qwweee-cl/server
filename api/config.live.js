@@ -50,7 +50,7 @@ var countlyConfig = {
             If the last end_session is received less than 1 seconds ago we will ignore
             current begin_session request and mark this user as having an ongoing session
         */
-        city_data: true
+        city_data: false
     },
     apps: {
         country: "TR",
