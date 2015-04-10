@@ -224,7 +224,7 @@ if (isDebug) {
 
 var collectionCount = 0;
 var collectionNameList = [];
-var baseTimeOut = 60000;
+var baseTimeOut = 5000;
 
 fs.readFile(oidFileName, 'utf8', function (err,data) {
     if (!err && data.length>=24) {
