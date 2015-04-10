@@ -5,8 +5,8 @@ function error_exp
 {
 	#echo -e "Daily BB data import failed. Please check log in elephant1>/home/hadoop/new_script/dashborad_script/logs/log_daily_bb_import.log\nLog scraps: "$(tail -10 ~/new_script/dashborad_script/logs/log_daily_bb_import.log)\
 	#| mail -s "Daily BB data import exception" $dashboard_team
-	echo -e "Countly Batch Error Please check log in clad.cyberlink.com>/usr/local/countly/log/cron_batch.log" $(tail -20 /usr/local/countly/log/cron_batch.log)\
-	| mail -s "Countly Batch Error Trap" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
+	echo -e "Countly Batch Error Please check log in clad.cyberlink.com>/usr/local/countly/log/slave_batch.log" $(tail -20 /usr/local/countly/log/slave_batch.log)\
+	| mail -s "Slave Countly Batch Error Trap" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
 	#sleep 1
 	rm -f ${LOCKFILE}
 	exit 1
@@ -16,7 +16,7 @@ LOCKFILE="/tmp/Batchlock.lock"
 if [ -e ${LOCKFILE} ] ; then
 	echo "already running"
 	echo -e "Countly Batch already running, please manual run" $(date +%Y%m%d)\
-	| mail -s "Countly Batch Already running" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
+	| mail -s "Slave Countly Batch Already running" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
 	#sleep 1
 	rm -f ${LOCKFILE}
 	exit 1
@@ -57,7 +57,7 @@ fi
 ## cp next config to countly service
 file="/usr/local/countly/api/switch_file.empty"
 liveconf=0
-if [ -f "$file" ]; then
+if [ $1 = "countly_raw0" ]; then
 	liveconf=0
 	rm $file -rf
 	echo "copy "$batchfile" to "$srcfile
@@ -65,15 +65,40 @@ if [ -f "$file" ]; then
 	echo "db_batch : countly_raw0"
 	cp $batchfile $srcfile -a
 	batchdb="countly_raw0"
-else
-	liveconf=1
-	touch $file
-	echo "copy "$livefile" to "$srcfile
-	echo "db_raw : countly_raw0"
-	echo "db_batch : countly_raw1"
-	cp $livefile $srcfile -a
-	batchdb="countly_raw1"
+#	remotedb="test_raw0"
+else 
+	if [ $1 = "countly_raw1" ]; then
+		liveconf=1
+		touch $file
+		echo "copy "$livefile" to "$srcfile
+		echo "db_raw : countly_raw0"
+		echo "db_batch : countly_raw1"
+		cp $livefile $srcfile -a
+		batchdb="countly_raw1"
+#		remotedb="test_raw0"
+	else
+		echo "error argument: $1"
+		rm -f ${LOCKFILE}
+		exit 1
+	fi
 fi
+#if [ -f "$file" ]; then
+#	liveconf=0
+#	rm $file -rf
+#	echo "copy "$batchfile" to "$srcfile
+#	echo "db_raw : countly_raw1"
+#	echo "db_batch : countly_raw0"
+#	cp $batchfile $srcfile -a
+#	batchdb="countly_raw0"
+#else
+#	liveconf=1
+#	touch $file
+#	echo "copy "$livefile" to "$srcfile
+#	echo "db_raw : countly_raw0"
+#	echo "db_batch : countly_raw1"
+#	cp $livefile $srcfile -a
+#	batchdb="countly_raw1"
+#fi
 
 #path="/home/hadoop/countly_snow/api"
 #batchdb="countly_raw_snow"
@@ -168,6 +193,12 @@ $cmd
 curr=$(date +%Y-%m-%d_%H-%M)
 echo "===== raw data cp to s3 end =>"$curr" ====="
 
+## ymk event script
+cd $path
+cmd="$path/ymkEvent.sh $curdate &"
+echo $cmd
+$cmd >> /usr/local/countly/log/ymkEvent_batch.log 2>&1
+
 ## add index in database
 cd $path
 echo $PWD
@@ -232,10 +263,10 @@ $cmd
 #$cmd
 
 ## ymk event script
-cd $path
-cmd="$path/ymkEvent.sh $curdate"
-echo $cmd
-$cmd >> /usr/local/countly/log/ymkEvent_batch.log 2>&1
+#cd $path
+#cmd="$path/ymkEvent.sh $curdate"
+#echo $cmd
+#$cmd >> /usr/local/countly/log/ymkEvent_batch.log 2>&1
 
 ## remove raw data
 ## mongo test --eval "printjson(db.getCollectionNames())"
@@ -248,6 +279,6 @@ echo $start
 echo $end
 echo "==============================================================="
 echo -e "Countly Batch run from $start to $end\n" $(tail -20 /usr/local/countly/log/cron_batch.log)\
-| mail -s "[$curdate]Countly Batch Finished" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
+| mail -s "Slave [$curdate]Countly Batch Finished" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
 #sleep 1
 rm -f ${LOCKFILE}
