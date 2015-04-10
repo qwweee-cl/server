@@ -29,7 +29,7 @@ fi
 echo $nowDate
 
 # save rawlog to mysql log
-node saveMysql.js
+node saveLocalMysql.js
 #node processData.js
 
 # 1. delete data that in update range
@@ -42,7 +42,7 @@ call YMKData.insert_transfer_data_not_in('$beginDate');"
 #call YMKData1.insert_transfer_data_in('$beginDate');
 #call YMKData1.insert_transfer_data_not_in('$beginDate');"
 
-mysql -h 54.248.118.203 -u ymk -pcyberlinkymk -e "$query"
+mysql -h localhost -u ymk -pcyberlinkymk -e "$query"
 #mysql -h localhost -u root -pcyberlinkymk -e "$query"
 
 exportMySqlPath="/mem/mysql_backup/"
@@ -60,7 +60,7 @@ fi
 cd $exportMySqlPath
 echo $PWD
 #mysqldump -h claddb -u ymk -pcyberlinkymk YMKData > ymk_backup.sql
-cmd="mysqldump -h claddb -u ymk -pcyberlinkymk YMKData"
+cmd="mysqldump -h localhost -u ymk -pcyberlinkymk YMKData"
 echo -e $cmd
 $cmd > "ymk_backup_$nowDate.sql"
 #tar czvf ymk_backup.tgz ymk_backup.sql

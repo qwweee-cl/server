@@ -58,6 +58,19 @@ if [ ! -d "$gzipPath" ]; then
 	mkdir $gzipPath
 fi
 
+if [ ! -d "$s3OEMPath" ]; then
+	echo "mkdir $s3OEMPath"
+	mkdir $s3OEMPath
+fi
+if [ ! -d "$s3OEMDashboardPath" ]; then
+	echo "mkdir $s3OEMDashboardPath"
+	mkdir $s3OEMDashboardPath
+fi
+if [ ! -d "$s3GenericDashboardPath" ]; then
+	echo "mkdir $s3GenericDashboardPath"
+	mkdir $s3GenericDashboardPath
+fi
+
 ## switch empty file 
 ## cp next config to countly service
 file="/usr/local/countly/api/switch_file.empty"
@@ -107,6 +120,134 @@ $cmd
 cmd="/bin/rm $gzipPath$dashboarddate.tgz"
 echo $cmd
 $cmd
+
+
+cd $path
+
+cmd="node getBatchOEMs.js"
+echo -e $cmd
+string=`$cmd`
+IFS=', ' read -a raw_apps <<< "$string"
+
+cmd="node getOEMs.js"
+echo -e $cmd
+string=`$cmd`
+IFS=', ' read -a apps <<< "$string"
+
+cmd="node getGeneric.js"
+echo -e $cmd
+string=`$cmd`
+IFS=', ' read -a generic <<< "$string"
+echo -e $generic
+
+## backup generic dashboard data
+cd $path
+echo $PWD
+dashboarddb="$generic"
+oemdashboarddate="generic_"$dashboarddate
+## backup countly dashboard data
+## dump countly dashboard data
+cmd="mongodump -h $dashboard -db $dashboarddb -o $exportPath$oemdashboarddate"
+echo $cmd
+$cmd
+## zip backup file
+cd $exportPath
+echo $PWD
+cmd="/bin/tar czf $gzipPath$oemdashboarddate.tgz ./"
+echo $cmd
+$cmd
+cmd="/bin/rm ./$oemdashboarddate -rf"
+echo $cmd
+$cmd
+## move dashboard zip file to s3
+if [ ! -d "$s3GenericDashboardPath" ]; then
+	echo "mkdir $s3GenericDashboardPath"
+	mkdir $s3GenericDashboardPath$generic
+fi
+cmd="/bin/cp $gzipPath$oemdashboarddate.tgz $s3GenericDashboardPath"
+echo $cmd
+$cmd
+cmd="/bin/rm $gzipPath$oemdashboarddate.tgz"
+echo $cmd
+$cmd
+
+## backup raw data
+for (( i = 0 ; i < ${#raw_apps[@]} ; i++ )) do
+	echo $i" "${raw_apps[$i]}
+	cd $path
+
+	cmd="$s3OEMPath${apps[$i]}"
+	if [ ! -d "$cmd" ]; then
+		echo -e $cmd
+		mkdir $cmd
+	fi
+	cmd="$s3OEMDashboardPath${apps[$i]}"
+	if [ ! -d "$cmd" ]; then
+		echo -e $cmd
+		mkdir $cmd
+	fi
+	batchdb=${raw_apps[$i]}
+
+	OEMrawdate=${apps[$i]}"_"$rawdate
+	cmd="mongodump -h $mongo -db $batchdb -o $exportPath$OEMrawdate"
+	echo $cmd
+	$cmd
+	## zip backup file
+	cd $exportPath
+	echo $PWD
+	cmd="/bin/tar czf $gzipPath$OEMrawdate.tgz ./"
+	echo $cmd
+	$cmd
+	cmd="/bin/rm ./$OEMrawdate -rf"
+	echo $cmd
+	$cmd
+	## add index in database
+	## run batch
+	## move zip file to s3
+	if [ ! -d "$s3OEMPath${apps[$i]}" ]; then
+		echo "mkdir $s3Path"
+		mkdir $s3Path
+	fi
+	cmd="/bin/cp $gzipPath$OEMrawdate.tgz $s3OEMPath${apps[$i]}"
+	echo $cmd
+	$cmd
+	cmd="/bin/rm $gzipPath$OEMrawdate.tgz"
+	echo $cmd
+	$cmd
+
+	cd $path
+	echo $PWD
+	dashboarddb="countly_${apps[$i]}"
+	oemdashboarddate=${apps[$i]}"_"$dashboarddate
+	## backup countly dashboard data
+	## dump countly dashboard data
+	cmd="mongodump -h $dashboard -db $dashboarddb -o $exportPath$oemdashboarddate"
+	echo $cmd
+	$cmd
+	## zip backup file
+	cd $exportPath
+	echo $PWD
+	cmd="/bin/tar czf $gzipPath$oemdashboarddate.tgz ./"
+	echo $cmd
+	$cmd
+	cmd="/bin/rm ./$oemdashboarddate -rf"
+	echo $cmd
+	$cmd
+	## move dashboard zip file to s3
+	if [ ! -d "$s3OEMDashboardPath${apps[$i]}" ]; then
+		echo "mkdir $s3OEMDashboardPath${apps[$i]}"
+		mkdir $s3OEMDashboardPath${apps[$i]}
+	fi
+	cmd="/bin/cp $gzipPath$oemdashboarddate.tgz $s3OEMDashboardPath${apps[$i]}"
+	echo $cmd
+	$cmd
+	cmd="/bin/rm $gzipPath$oemdashboarddate.tgz"
+	echo $cmd
+	$cmd
+	## remove raw data
+	## mongo test --eval "printjson(db.getCollectionNames())"
+done
+
 
 cd $path
 echo $PWD
@@ -222,7 +363,7 @@ $cmd
 
 ## run OEM batch
 #cmd="$path/runOEM.sh >> /usr/local/countly/log/oem_batch.log"
-cmd="$path/runOEM.sh $curdate"
+cmd="$path/mainRunOEM.sh $curdate"
 echo $cmd
 $cmd >> /usr/local/countly/log/oem_batch.log 2>&1
 

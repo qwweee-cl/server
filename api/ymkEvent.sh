@@ -10,6 +10,7 @@ function error_exp
 	#sleep 1
 	exit 0
 }
+echo "YMK Event pid is [$$]"
 
 start=$(date +%Y-%m-%d_%H-%M)
 # get 1.5 months date

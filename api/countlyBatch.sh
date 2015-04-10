@@ -235,7 +235,7 @@ $cmd
 cd $path
 cmd="$path/ymkEvent.sh $curdate"
 echo $cmd
-$cmd >> /usr/local/countly/log/ymkEvent_batch.log 2>&1
+#$cmd >> /usr/local/countly/log/ymkEvent_batch.log 2>&1
 
 ## remove raw data
 ## mongo test --eval "printjson(db.getCollectionNames())"

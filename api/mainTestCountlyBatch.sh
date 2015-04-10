@@ -6,7 +6,7 @@ function error_exp
 	#echo -e "Daily BB data import failed. Please check log in elephant1>/home/hadoop/new_script/dashborad_script/logs/log_daily_bb_import.log\nLog scraps: "$(tail -10 ~/new_script/dashborad_script/logs/log_daily_bb_import.log)\
 	#| mail -s "Daily BB data import exception" $dashboard_team
 	echo -e "Countly Batch Error Please check log in clad.cyberlink.com>/usr/local/countly/log/cron_batch.log" $(tail -20 /usr/local/countly/log/cron_batch.log)\
-	| mail -s "Main Countly Batch Error Trap" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
+	| mail -s "[test]Main Countly Batch Error Trap" gary_huang@cyberlink.com,qwweee@gmail.com
 	#sleep 1
 	rm -f ${LOCKFILE}
 	exit 1
@@ -16,7 +16,7 @@ LOCKFILE="/tmp/Batchlock.lock"
 if [ -e ${LOCKFILE} ] ; then
 	echo "already running"
 	echo -e "Countly Batch already running, please manual run" $(date +%Y%m%d)\
-	| mail -s "Main Countly Batch Already running" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
+	| mail -s "[test]Main Countly Batch Already running" gary_huang@cyberlink.com,qwweee@gmail.com
 	#sleep 1
 	rm -f ${LOCKFILE}
 	exit 1
@@ -29,18 +29,18 @@ fi
 path="/usr/local/countly/api"
 gzipPath="/mem/mongo_gzip/"
 exportPath="/mem/mongo_backup/"
-s3Path="/s3mnt/db_backup/raw_data/"
-s3DashboardPath="/s3mnt/db_backup/dashboard_data/"
+s3Path="/s3mnt/test/raw_data/"
+s3DashboardPath="/s3mnt/test/dashboard_data/"
 
-s3OEMPath="/s3mnt/db_backup/oem_raw_data/"
-s3OEMDashboardPath="/s3mnt/db_backup/oem_dashboard_data/"
-s3GenericDashboardPath="/s3mnt/db_backup/generic_dashboard_data/"
+s3OEMPath="/s3mnt/test/oem_raw_data/"
+s3OEMDashboardPath="/s3mnt/test/oem_dashboard_data/"
+s3GenericDashboardPath="/s3mnt/test/generic_dashboard_data/"
 
 livefile="config.live.js"
 batchfile="config.batch.js"
 srcfile="config.js"
 mongo="localhost:27017"
-dashboard="claddb:27017"
+dashboard="test-clad1:27017"
 batchdb=""
 dashboarddb="countly"
 curdate=$(date +%Y%m%d)
@@ -81,7 +81,7 @@ if [ -f "$file" ]; then
 	echo "copy "$batchfile" to "$srcfile
 	echo "db_raw : countly_raw1"
 	echo "db_batch : countly_raw0"
-	cp $batchfile $srcfile -a
+	#cp $batchfile $srcfile -a
 	batchdb="countly_raw0"
 else
 	liveconf=1
@@ -89,9 +89,11 @@ else
 	echo "copy "$livefile" to "$srcfile
 	echo "db_raw : countly_raw0"
 	echo "db_batch : countly_raw1"
-	cp $livefile $srcfile -a
+	#cp $livefile $srcfile -a
 	batchdb="countly_raw1"
 fi
+
+batchdb="test_raw1"
 
 cd $path
 echo $PWD
@@ -309,7 +311,7 @@ $cmd
 
 ## ssh to clad2 to run slaveCountlyBatch.sh
 ## ssh ubuntu@clad2 /usr/local/countly/api/slaveCountlyBatch.sh $batchdb >> /usr/local/countly/log/slave_batch.log 2>&1
-cmd="ssh ubuntu@clad2 /usr/local/countly/api/slaveCountlyBatch.sh $batchdb >> /usr/local/countly/log/slave_batch.log"
+cmd="ssh ubuntu@test-clad2 /usr/local/countly/api/slaveTestCountlyBatch.sh $batchdb >> /usr/local/countly/log/slave_batch.log &"
 echo $cmd
 $cmd
 
@@ -357,13 +359,13 @@ cmd="/usr/bin/node $path/createIndex.js"
 echo $cmd
 $cmd
 ## run batch
-cmd="/usr/bin/node $path/newBatch.js"
+cmd="/usr/bin/node $path/testNewBatch.js"
 echo $cmd
 $cmd
 
 ## run OEM batch
 #cmd="$path/runOEM.sh >> /usr/local/countly/log/oem_batch.log"
-cmd="$path/mainRunOEM.sh $curdate"
+cmd="$path/testMainRunOEM.sh $curdate"
 echo $cmd
 $cmd >> /usr/local/countly/log/oem_batch.log 2>&1
 
@@ -423,13 +425,13 @@ $cmd >> /usr/local/countly/log/oem_batch.log 2>&1
 ## mongo test --eval "printjson(db.getCollectionNames())"
 cmd="/usr/bin/mongo $mongo/$batchdb --eval printjson(db.dropDatabase());"
 echo $cmd
-$cmd
+#$cmd
 
 end=$(date +%Y-%m-%d_%H-%M)
 echo $start
 echo $end
 echo "==============================================================="
 echo -e "Countly Batch run from $start to $end\n" $(tail -20 /usr/local/countly/log/cron_batch.log)\
-| mail -s "Main [$curdate]Countly Batch Finished" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
+| mail -s "[test]Main [$curdate]Countly Batch Finished" gary_huang@cyberlink.com,qwweee@gmail.com
 #sleep 1
 rm -f ${LOCKFILE}

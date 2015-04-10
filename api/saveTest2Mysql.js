@@ -24,8 +24,9 @@ var dbOptions = { safe:false, maxPoolSize: 1000 };
 //var db = common.db_batch;
 var db = common.getLocalBatchDB();
 //db = common.db_raw;
-var collectionList = ["raw_event_75edfca17dfbe875e63a66633ed6b00e30adcb92",
-                      "raw_event_9219f32e8de29b826faf44eb9b619788e29041bb"];
+//var collectionList = ["raw_event_75edfca17dfbe875e63a66633ed6b00e30adcb92",
+//                      "raw_event_9219f32e8de29b826faf44eb9b619788e29041bb"];
+var collectionList = ["raw_event_9219f32e8de29b826faf44eb9b619788e29041bb"];
 var currMoment = moment();
 var appTimezone = "America/Denver";
 var allData = {};
