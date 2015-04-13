@@ -286,7 +286,7 @@ end=$(date +%Y-%m-%d_%H-%M)
 echo $start
 echo $end
 echo "==============================================================="
-echo -e "Countly Batch run from $start to $end\n" $(tail -20 /usr/local/countly/log/cron_batch.log)\
+echo -e "Countly Batch run from $start to $end\n" $(tail -20 /usr/local/countly/log/slave_batch.log)\
 | mail -s "Slave [$curdate]Countly Batch Finished" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
 #sleep 1
 rm -f ${LOCKFILE}
