@@ -66,6 +66,7 @@ if [ $1 = "test_raw0" ]; then
 #	cp $batchfile $srcfile -a
 	batchdb="test_raw0"
 #	remotedb="test_raw0"
+	rawdb="test_raw1"
 else 
 	if [ $1 = "test_raw1" ]; then
 		liveconf=1
@@ -76,6 +77,7 @@ else
 #		cp $livefile $srcfile -a
 		batchdb="test_raw1"
 #		remotedb="test_raw0"
+		rawdb="test_raw0"
 	else
 		echo "error argument: $1"
 		rm -f ${LOCKFILE}
