@@ -79,21 +79,26 @@ if [ -f "$file" ]; then
 	liveconf=0
 	rm $file -rf
 	echo "copy "$batchfile" to "$srcfile
-	echo "db_raw : countly_raw1"
-	echo "db_batch : countly_raw0"
+	echo "db_raw : test_raw1"
+	echo "db_batch : test_raw0"
 	#cp $batchfile $srcfile -a
-	batchdb="countly_raw0"
+	batchdb="test_raw0"
+	batchtmpdb="test_raw0"
+	rawdb="test_raw1"
 else
 	liveconf=1
 	touch $file
 	echo "copy "$livefile" to "$srcfile
-	echo "db_raw : countly_raw0"
-	echo "db_batch : countly_raw1"
+	echo "db_raw : test_raw0"
+	echo "db_batch : test_raw1"
 	#cp $livefile $srcfile -a
-	batchdb="countly_raw1"
+	batchdb="test_raw1"
+	batchtmpdb="test_raw1"
+	rawdb="test_raw0"
 fi
 
 batchdb="test_raw1"
+rawdb="test_raw0"
 
 cd $path
 echo $PWD
@@ -250,10 +255,18 @@ for (( i = 0 ; i < ${#raw_apps[@]} ; i++ )) do
 	## mongo test --eval "printjson(db.getCollectionNames())"
 done
 
-batchdb="test_raw1"
+batchdb=$batchtmpdb
+rawdb="test_raw0"
 
 cd $path
 echo $PWD
+
+## remove raw data
+## mongo test --eval "printjson(db.getCollectionNames())"
+cmd="/usr/bin/mongo $mongo/$rawdb --eval printjson(db.dropDatabase());"
+echo $cmd
+$cmd
+
 #path="/home/hadoop/countly_snow/api"
 #batchdb="countly_raw_snow"
 #dashboarddb="countly_snow"
@@ -424,8 +437,8 @@ $cmd >> /usr/local/countly/log/oem_batch.log 2>&1
 
 ## remove raw data
 ## mongo test --eval "printjson(db.getCollectionNames())"
-cmd="/usr/bin/mongo $mongo/$batchdb --eval printjson(db.dropDatabase());"
-echo $cmd
+#cmd="/usr/bin/mongo $mongo/$batchdb --eval printjson(db.dropDatabase());"
+#echo $cmd
 #$cmd
 
 end=$(date +%Y-%m-%d_%H-%M)

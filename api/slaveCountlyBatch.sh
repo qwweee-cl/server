@@ -65,6 +65,7 @@ if [ $1 = "countly_raw0" ]; then
 	echo "db_batch : countly_raw0"
 	cp $batchfile $srcfile -a
 	batchdb="countly_raw0"
+	rawdb="countly_raw1"
 #	remotedb="test_raw0"
 else 
 	if [ $1 = "countly_raw1" ]; then
@@ -75,6 +76,7 @@ else
 		echo "db_batch : countly_raw1"
 		cp $livefile $srcfile -a
 		batchdb="countly_raw1"
+		rawdb="countly_raw0"
 #		remotedb="test_raw0"
 	else
 		echo "error argument: $1"
@@ -109,6 +111,12 @@ fi
 #batchdb="countly_raw_snow"
 #dashboarddb="countly_snow"
 #dashboard="192.168.4.18:27017"
+
+## remove raw data
+## mongo test --eval "printjson(db.getCollectionNames())"
+cmd="/usr/bin/mongo $mongo/$rawdb --eval printjson(db.dropDatabase());"
+echo $cmd
+$cmd
 
 ## stop countly-supervisor service
 #cmd="sudo stop countly-supervisor"
@@ -197,7 +205,7 @@ echo "===== raw data cp to s3 end =>"$curr" ====="
 cd $path
 cmd="$path/ymkEvent.sh $curdate &"
 echo $cmd
-$cmd >> /usr/local/countly/log/ymkEvent_batch.log 2>&1
+#$cmd >> /usr/local/countly/log/ymkEvent_batch.log 2>&1
 
 ## add index in database
 cd $path
@@ -270,9 +278,9 @@ $cmd
 
 ## remove raw data
 ## mongo test --eval "printjson(db.getCollectionNames())"
-cmd="/usr/bin/mongo $mongo/$batchdb --eval printjson(db.dropDatabase());"
-echo $cmd
-$cmd
+#cmd="/usr/bin/mongo $mongo/$batchdb --eval printjson(db.dropDatabase());"
+#echo $cmd
+#$cmd
 
 end=$(date +%Y-%m-%d_%H-%M)
 echo $start

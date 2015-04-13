@@ -110,6 +110,12 @@ fi
 #dashboarddb="countly_snow"
 #dashboard="192.168.4.18:27017"
 
+## remove raw data
+## mongo test --eval "printjson(db.getCollectionNames())"
+cmd="/usr/bin/mongo $mongo/$rawdb --eval printjson(db.dropDatabase());"
+echo $cmd
+$cmd
+
 ## stop countly-supervisor service
 #cmd="sudo stop countly-supervisor"
 #echo $cmd
@@ -270,8 +276,8 @@ $cmd
 
 ## remove raw data
 ## mongo test --eval "printjson(db.getCollectionNames())"
-cmd="/usr/bin/mongo $mongo/$batchdb --eval printjson(db.dropDatabase());"
-echo $cmd
+#cmd="/usr/bin/mongo $mongo/$batchdb --eval printjson(db.dropDatabase());"
+#echo $cmd
 #$cmd
 
 end=$(date +%Y-%m-%d_%H-%M)

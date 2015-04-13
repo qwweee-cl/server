@@ -84,6 +84,7 @@ if [ -f "$file" ]; then
 	cp $batchfile $srcfile -a
 	batchdb="countly_raw0"
 	batchtmpdb="countly_raw0"
+	rawdb="countly_raw1"
 else
 	liveconf=1
 	touch $file
@@ -93,6 +94,7 @@ else
 	cp $livefile $srcfile -a
 	batchdb="countly_raw1"
 	batchtmpdb="countly_raw1"
+	rawdb="countly_raw0"
 fi
 
 cd $path
@@ -252,9 +254,15 @@ done
 
 batchdb=$batchtmpdb
 
-
 cd $path
 echo $PWD
+
+## remove raw data
+## mongo test --eval "printjson(db.getCollectionNames())"
+cmd="/usr/bin/mongo $mongo/$rawdb --eval printjson(db.dropDatabase());"
+echo $cmd
+$cmd
+
 #path="/home/hadoop/countly_snow/api"
 #batchdb="countly_raw_snow"
 #dashboarddb="countly_snow"
@@ -313,7 +321,7 @@ $cmd
 
 ## ssh to clad2 to run slaveCountlyBatch.sh
 ## ssh ubuntu@clad2 /usr/local/countly/api/slaveCountlyBatch.sh $batchdb >> /usr/local/countly/log/slave_batch.log 2>&1
-cmd="ssh ubuntu@clad2 /usr/local/countly/api/slaveCountlyBatch.sh $batchdb >> /usr/local/countly/log/slave_batch.log"
+cmd="ssh ubuntu@clad2 /usr/local/countly/api/slaveCountlyBatch.sh $batchdb >> /usr/local/countly/log/slave_batch.log &"
 echo $cmd
 $cmd
 
@@ -425,9 +433,9 @@ $cmd >> /usr/local/countly/log/oem_batch.log 2>&1
 
 ## remove raw data
 ## mongo test --eval "printjson(db.getCollectionNames())"
-cmd="/usr/bin/mongo $mongo/$batchdb --eval printjson(db.dropDatabase());"
-echo $cmd
-$cmd
+#cmd="/usr/bin/mongo $mongo/$batchdb --eval printjson(db.dropDatabase());"
+#echo $cmd
+#$cmd
 
 end=$(date +%Y-%m-%d_%H-%M)
 echo $start
