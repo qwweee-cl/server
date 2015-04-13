@@ -65,6 +65,7 @@ if [ -f "$file" ]; then
 	echo "db_batch : countly_raw0"
 	cp $batchfile $srcfile -a
 	batchdb="countly_raw0"
+	rawdb="countly_raw1"
 else
 	liveconf=1
 	touch $file
@@ -73,7 +74,14 @@ else
 	echo "db_batch : countly_raw1"
 	cp $livefile $srcfile -a
 	batchdb="countly_raw1"
+	rawdb="countly_raw0"
 fi
+
+## remove raw data
+## mongo test --eval "printjson(db.getCollectionNames())"
+cmd="/usr/bin/mongo $mongo/$rawdb --eval printjson(db.dropDatabase());"
+echo $cmd
+$cmd
 
 #path="/home/hadoop/countly_snow/api"
 #batchdb="countly_raw_snow"
@@ -239,9 +247,9 @@ echo $cmd
 
 ## remove raw data
 ## mongo test --eval "printjson(db.getCollectionNames())"
-cmd="/usr/bin/mongo $mongo/$batchdb --eval printjson(db.dropDatabase());"
-echo $cmd
-$cmd
+#cmd="/usr/bin/mongo $mongo/$batchdb --eval printjson(db.dropDatabase());"
+#echo $cmd
+#$cmd
 
 end=$(date +%Y-%m-%d_%H-%M)
 echo $start
