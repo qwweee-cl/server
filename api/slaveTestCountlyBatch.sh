@@ -63,7 +63,7 @@ if [ $1 = "test_raw0" ]; then
 	echo "copy "$batchfile" to "$srcfile
 	echo "db_raw : test_raw1"
 	echo "db_batch : test_raw0"
-	cp $batchfile $srcfile -a
+#	cp $batchfile $srcfile -a
 	batchdb="test_raw0"
 #	remotedb="test_raw0"
 else 
@@ -73,7 +73,7 @@ else
 		echo "copy "$livefile" to "$srcfile
 		echo "db_raw : test_raw0"
 		echo "db_batch : test_raw1"
-		cp $livefile $srcfile -a
+#		cp $livefile $srcfile -a
 		batchdb="test_raw1"
 #		remotedb="test_raw0"
 	else
@@ -206,7 +206,7 @@ cmd="/usr/bin/node $path/createIndex.js"
 echo $cmd
 $cmd
 ## run batch
-cmd="/usr/bin/node $path/newBatch.js"
+cmd="/usr/bin/node $path/testNewBatch.js"
 echo $cmd
 $cmd
 

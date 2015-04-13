@@ -64,7 +64,7 @@ for (( i = 0 ; i < ${#raw_apps[@]} ; i++ )) do
 	echo -e $cmd
 	$cmd
 	## run batch
-	cmd="/usr/bin/node $path/newBatchByOEM.js "${apps[$i]}
+	cmd="/usr/bin/node $path/testNewBatchByOEM.js "${apps[$i]}
 	echo $cmd
 	$cmd
 	## remove raw data
@@ -79,7 +79,7 @@ echo $start
 echo $end
 echo "==============================================================="
 echo -e "Countly OEM Batch run from $start to $end\n" $(tail -20 /usr/local/countly/log/oem_batch.log)\
-| mail -s "[test]Main [$curdate]Countly OEM Batch Finished" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
+| mail -s "[test]Main [$curdate]Countly OEM Batch Finished" gary_huang@cyberlink.com,qwweee@gmail.com
 ## zip backup file
 #exit 0
 #cd /home/hadoop/gary/countly/api/

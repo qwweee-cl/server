@@ -83,6 +83,7 @@ if [ -f "$file" ]; then
 	echo "db_batch : countly_raw0"
 	cp $batchfile $srcfile -a
 	batchdb="countly_raw0"
+	batchtmpdb="countly_raw0"
 else
 	liveconf=1
 	touch $file
@@ -91,6 +92,7 @@ else
 	echo "db_batch : countly_raw1"
 	cp $livefile $srcfile -a
 	batchdb="countly_raw1"
+	batchtmpdb="countly_raw1"
 fi
 
 cd $path
@@ -247,6 +249,8 @@ for (( i = 0 ; i < ${#raw_apps[@]} ; i++ )) do
 	## remove raw data
 	## mongo test --eval "printjson(db.getCollectionNames())"
 done
+
+batchdb=$batchtmpdb
 
 
 cd $path

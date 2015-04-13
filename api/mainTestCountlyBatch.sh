@@ -250,6 +250,7 @@ for (( i = 0 ; i < ${#raw_apps[@]} ; i++ )) do
 	## mongo test --eval "printjson(db.getCollectionNames())"
 done
 
+batchdb="test_raw1"
 
 cd $path
 echo $PWD

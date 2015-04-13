@@ -74,7 +74,7 @@ cmd="tar czvf ymk_backup_$nowDate.tgz ymk_backup_$nowDate.sql"
 echo -e $cmd
 $cmd
 #cp ymk_backup.tgz /s3mnt/db_backup/mysql_backup/
-cmd="cp ymk_backup_$nowDate.tgz /s3mnt/db_backup/mysql_backup/"
+cmd="cp ymk_backup_$nowDate.tgz $s3MySqlPath"
 echo -e $cmd
 $cmd
 #rm ymk_backup.*
