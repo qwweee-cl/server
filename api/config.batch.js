@@ -46,6 +46,7 @@ var countlyConfig = {
         cl_endsession_ongoing_timeout: 10,
         cl_wait_time: 15,
         cl_is_debug: false,
+        data_drop_duration_time: 1,
         /*
             If the last end_session is received less than 1 seconds ago we will ignore
             current begin_session request and mark this user as having an ongoing session
