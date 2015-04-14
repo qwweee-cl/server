@@ -14,7 +14,7 @@ echo "YMK Event pid is [$$]"
 
 start=$(date +%Y-%m-%d_%H-%M)
 exportMySqlPath="/mem/mysql_backup/"
-s3MySqlPath="/s3mnt/test/mysql_backup/"
+s3MySqlPath="/s3mnt/db_backup/mysql_backup/"
 # get 1.5 months date
 nowDate=$(date +%Y%m%d)
 echo -e "nowDate=$nowDate"
@@ -31,7 +31,7 @@ fi
 echo $nowDate
 
 # save rawlog to mysql log
-node saveMysql.js
+node --max-old-space-size=8192 saveMysql.js
 #node processData.js
 
 # 1. delete data that in update range
@@ -47,8 +47,6 @@ call YMKData.insert_transfer_data_not_in('$beginDate');"
 mysql -h 54.248.118.203 -u ymk -pcyberlinkymk -e "$query"
 #mysql -h localhost -u root -pcyberlinkymk -e "$query"
 
-exportMySqlPath="/mem/mysql_backup/"
-s3MySqlPath="/s3mnt/db_backup/mysql_backup/"
 echo $PWD
 if [ ! -d "$exportMySqlPath" ]; then
 	mkdir $exportMySqlPath

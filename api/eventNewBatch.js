@@ -249,7 +249,9 @@ fs.readFile(oidFileName, 'utf8', function (err,data) {
             for (var i=0; i<collection.length; i++) {
                 if (collection[i].collectionName == 'raw_session_53f554ef847577512100130a') continue;
                 if (collection[i].collectionName.indexOf(common.rawCollection['raw'])>=0) {
-                    collectionNameList[collectionCount++] = collection[i].collectionName;
+                    if (collection[i].collectionName.indexOf(common.rawCollection['event'])>=0) {
+                        collectionNameList[collectionCount++] = collection[i].collectionName;
+                    }
                 }
             }
             collectionNameList.sort();

@@ -214,7 +214,8 @@ cmd="/usr/bin/node $path/createIndex.js"
 echo $cmd
 $cmd
 ## run batch
-cmd="/usr/bin/node $path/newBatch.js"
+#cmd="/usr/bin/node --max-old-space-size=8192 $path/newBatch.js"
+cmd="/usr/bin/node --max-old-space-size=8192 $path/sessionNewBatch.js"
 echo $cmd
 $cmd
 
