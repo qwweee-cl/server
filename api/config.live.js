@@ -44,7 +44,7 @@ var countlyConfig = {
         session_duration_limit: 3601,
         max_sockets: 10240,
         cl_endsession_ongoing_timeout: 10,
-        cl_wait_time: 30,
+        cl_wait_time: 15,
         cl_is_debug: false,
         /*
             If the last end_session is received less than 1 seconds ago we will ignore

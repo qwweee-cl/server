@@ -58,7 +58,7 @@ IFS=', ' read -a apps <<< "$string"
 ## backup raw data
 for (( i = 0 ; i < ${#raw_apps[@]} ; i++ )) do
 	echo $i" "${raw_apps[$i]}
-	
+	batchdb=${raw_apps[$i]}
 	cd $path
 	cmd="/usr/bin/node $path/oemCreateIndex.js "${apps[$i]}
 	echo -e $cmd

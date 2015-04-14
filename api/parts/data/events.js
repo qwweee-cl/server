@@ -264,14 +264,14 @@ var bag = {};
                 if (segment == "no-segment" && bag.eventSegments[collection]) {
                     dbs.save.collection(collection).update({'_id': segment}, 
 			{'$inc': bag.eventCollections[collection][segment], 
-			'$addToSet': bag.eventSegments[collection]}, {'upsert': true}, eventCallback_off);
+			'$addToSet': bag.eventSegments[collection]}, {'upsert': true}, eventCallback);
                     dbs.base.collection(collection).update({'_id': segment}, 
             {'$inc': bag.eventCollections[collection][segment], 
             '$addToSet': bag.eventSegments[collection]}, {'upsert': true}, eventCallback);
                 } else {
                     dbs.save.collection(collection).update({'_id': segment}, 
 			{'$inc': bag.eventCollections[collection][segment]}, 
-			{'upsert': true}, eventCallback_off);
+			{'upsert': true}, eventCallback);
                     dbs.base.collection(collection).update({'_id': segment}, 
             {'$inc': bag.eventCollections[collection][segment]}, 
             {'upsert': true}, eventCallback);
