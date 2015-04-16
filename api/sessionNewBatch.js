@@ -92,18 +92,20 @@ function processSessions(dbs, app, isFinal, appinfo) {
     if (appinfo.key=="75edfca17dfbe875e63a66633ed6b00e30adcb92") { // Android
         return;
         userCount1++;
-        CountlyDB.collection('app_users543f37d0a62268c51e16d053').findOne({'app_user_id': appUserId}, 
-            function (err, dbAppUser){
+        YCPDB.collection('raw_session_e315c111663af26a53e5fe4c82cc1baeecf50599').findOne({'app_user_id': appUserId}, 
+        //CountlyDB.collection('app_users543f37d0a62268c51e16d053').findOne({'app_user_id': appUserId}, 
+            function (err, raw){
                 if (err) {
                     console.log(err);
                 }
-                if (dbAppUser) {
-                    YCPDB.collection('raw_session_e315c111663af26a53e5fe4c82cc1baeecf50599').findOne({'app_user_id': appUserId}, 
-                        function (err, raw){
+                if (raw) {
+                    CountlyDB.collection('app_users543f37d0a62268c51e16d053').findOne({'app_user_id': appUserId}, 
+                    //YCPDB.collection('raw_session_e315c111663af26a53e5fe4c82cc1baeecf50599').findOne({'app_user_id': appUserId}, 
+                        function (err, dbAppUser){
                             if (err) {
                                 console.log(err);
                             }
-                            if (raw) {
+                            if (dbAppUser) {
     process.nextTick(function() {
         var apps = app;
         var final = isFinal;
@@ -138,18 +140,20 @@ function processSessions(dbs, app, isFinal, appinfo) {
     } else if (appinfo.key=="9219f32e8de29b826faf44eb9b619788e29041bb") { // iOS
         userCount2++;
         isYMK = 2;
-        CountlyDB.collection('app_users543f8693a9e5b7ed76000012').findOne({'app_user_id': appUserId}, 
-            function (err, dbAppUser){
+        YCPDB.collection('raw_session_c277de0546df31757ff26a723907bc150add4254').findOne({'app_user_id': appUserId}, 
+        //CountlyDB.collection('app_users543f8693a9e5b7ed76000012').findOne({'app_user_id': appUserId}, 
+            function (err, raw){
                 if (err) {
                     console.log(err);
                 }
-                if (dbAppUser) {
-                    YCPDB.collection('raw_session_c277de0546df31757ff26a723907bc150add4254').findOne({'app_user_id': appUserId}, 
-                        function (err, raw){
+                if (raw) {
+                    CountlyDB.collection('app_users543f8693a9e5b7ed76000012').findOne({'app_user_id': appUserId}, 
+                    //YCPDB.collection('raw_session_c277de0546df31757ff26a723907bc150add4254').findOne({'app_user_id': appUserId}, 
+                        function (err, dbAppUser){
                             if (err) {
                                 console.log(err);
                             }
-                            if (raw) {
+                            if (dbAppUser) {
                                 process.nextTick(function() {
                                     var apps = app;
                                     var final = isFinal;
