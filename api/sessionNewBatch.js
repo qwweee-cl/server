@@ -90,7 +90,6 @@ function processSessions(dbs, app, isFinal, appinfo) {
     }
     var appUserId = app[0].app_user_id;
     if (appinfo.key=="75edfca17dfbe875e63a66633ed6b00e30adcb92") { // Android
-        return;
         userCount1++;
         YCPDB.collection('raw_session_e315c111663af26a53e5fe4c82cc1baeecf50599').findOne({'app_user_id': appUserId}, 
         //CountlyDB.collection('app_users543f37d0a62268c51e16d053').findOne({'app_user_id': appUserId}, 
@@ -361,7 +360,8 @@ fs.readFile(oidFileName, 'utf8', function (err,data) {
             }
             for (var i=0; i<collection.length; i++) {
                 if (collection[i].collectionName == 'raw_session_53f554ef847577512100130a') continue;
-                if (collection[i].collectionName.indexOf("9219f32e8de29b826faf44eb9b619788e29041bb")>=0) {
+                if (collection[i].collectionName.indexOf("9219f32e8de29b826faf44eb9b619788e29041bb")>=0 ||
+                    collection[i].collectionName.indexOf("75edfca17dfbe875e63a66633ed6b00e30adcb92")>=0) {
                     if (collection[i].collectionName.indexOf(common.rawCollection['session'])>=0) {
                         collectionNameList[collectionCount++] = collection[i].collectionName;
                     }
