@@ -42,7 +42,7 @@ var process = require('process');
     dataBag.cityArray['meta.cities']['$each'] = [];
 
     //query user data and execute processUserSession
-    usage.processSession = function (dbs, app, isFinal, appinfo, checkUU) {
+    usage.processSession = function (dbs, app, isFinal, appinfo, isUU) {
         //console.log(app[0].device_id);
         var appinfos = {};
         //if (appinfo) console.log(appinfo);
@@ -83,7 +83,7 @@ var process = require('process');
                 var info = appinfos;
                 //console.log('process Session');
 
-                processUserSession(dbs, dataBag, dbAppUser, isFinal, info);
+                processUserSession(dbs, dataBag, dbAppUser, isFinal, info, isUU);
         });
     }
 
@@ -239,7 +239,7 @@ var process = require('process');
         dbs.base.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback);
     }
 
-    function reallyUpdateAll(dbs, dataBag, appinfos) {
+    function reallyUpdateAll(dbs, dataBag, appinfos, isUU) {
         console.log("isFinal:"+appinfos.app_id);
         updateRangeMeta(dbs, dataBag.userRanges, 'users', appinfos.app_id);
         updateCollection(dbs, 'users', appinfos.app_id, dataBag.updateUsers, '$inc', '[updateUsers]');
@@ -247,6 +247,10 @@ var process = require('process');
 
         updateRangeMeta(dbs, dataBag.countryArray, 'locations', appinfos.app_id);
         updateCollection(dbs, 'locations', appinfos.app_id, dataBag.updateLocations, '$inc', '[updateLocations]');
+
+        if (!isUU) {
+            updateCollection(dbs, 'UU', appinfos.app_id, dataBag.updateLocations, '$inc', '[updateLocations]');
+        }
  
         updateRangeMeta(dbs, dataBag.sessionRanges, 'sessions', appinfos.app_id);
         updateCollection(dbs, 'sessions', appinfos.app_id, dataBag.updateSessions, '$inc', '[updateSessions]');
@@ -438,7 +442,7 @@ var process = require('process');
         //console.log("cpUniqueUser: %j",uniqueUser.updateUsers);
     }
 
-    function processUserSession(dbs, dataBag, dbAppUser, isFinal, appinfos, isYMK) {
+    function processUserSession(dbs, dataBag, dbAppUser, isFinal, appinfos, isUU) {
         var apps = dataBag.apps;
         var sessionObj = [];
         var last_end_session_timestamp = 0;
@@ -468,7 +472,7 @@ var process = require('process');
         if (normalSessionStart >= apps.length) { //no begin_session for new user -->for the remaining logs from previous data
             //console.log('Incomplete session data from past users ' + apps[0].device_id);
             if (isFinal) {
-                reallyUpdateAll(dbs, dataBag, appinfos);
+                reallyUpdateAll(dbs, dataBag, appinfos, isUU);
             }
             return;
         }
@@ -632,7 +636,7 @@ var process = require('process');
 
         //do the real update job in MongoDB
     	if (isFinal) {
-            reallyUpdateAll(dbs, dataBag, appinfos);
+            reallyUpdateAll(dbs, dataBag, appinfos, isUU);
     	}
     }
     function ObjId2Timestamp (objectId) {

@@ -84,7 +84,7 @@ function processSessions(dbs, app, isFinal, appinfo) {
     //console.log('entering sessions');
     //console.log(app[0].app_user_id);
     if (isFinal) {
-        process.emit('hi_mongo');
+        //process.emit('hi_mongo');
         console.log('Count1:'+userCount1);
         console.log('Count2:'+userCount2);
     }
@@ -105,13 +105,13 @@ function processSessions(dbs, app, isFinal, appinfo) {
                                 console.log(err);
                             }
                             if (dbAppUser) {
-    process.nextTick(function() {
-        var apps = app;
-        var final = isFinal;
-        var appinfos = appinfo;
-    	//console.log(appinfos);
+                                process.nextTick(function() {
+                                    var apps = app;
+                                    var final = isFinal;
+                                    var appinfos = appinfo;
+                                	//console.log(appinfos);
                                     console.log("Android:"+appUserId);
-                                    //countlyApi.data.usage.processSession(dbs, apps, final, appinfos, true);
+                                    countlyApi.data.usage.processSession(dbs, apps, final, appinfos, false);
                                     dbonoff.on('raw');
                                 });
                             } else {
@@ -120,7 +120,7 @@ function processSessions(dbs, app, isFinal, appinfo) {
                                     var final = isFinal;
                                     var appinfos = appinfo;
                                     //console.log(appinfos);
-                                    //countlyApi.data.usage.processSession(dbs, apps, final, appinfos, false);
+                                    countlyApi.data.usage.processSession(dbs, apps, final, appinfos, true);
                                     dbonoff.on('raw');
                                 });
                             }
@@ -131,11 +131,11 @@ function processSessions(dbs, app, isFinal, appinfo) {
                         var final = isFinal;
                         var appinfos = appinfo;
                         //console.log(appinfos);
-                        //countlyApi.data.usage.processSession(dbs, apps, final, appinfos, true);
+                        countlyApi.data.usage.processSession(dbs, apps, final, appinfos, true);
                         dbonoff.on('raw');
-    });
-}
-        });
+                    });
+                }
+            });
     } else if (appinfo.key=="9219f32e8de29b826faf44eb9b619788e29041bb") { // iOS
         userCount2++;
         isYMK = 2;
@@ -159,7 +159,7 @@ function processSessions(dbs, app, isFinal, appinfo) {
                                     var appinfos = appinfo;
                                     //console.log(appinfos);
                                     console.log("iOS:"+appUserId);
-                                    //countlyApi.data.usage.processSession(dbs, apps, final, appinfos, false);
+                                    countlyApi.data.usage.processSession(dbs, apps, final, appinfos, false);
                                     dbonoff.on('raw');
                                 });
                             } else {
@@ -168,7 +168,7 @@ function processSessions(dbs, app, isFinal, appinfo) {
                                     var final = isFinal;
                                     var appinfos = appinfo;
                                     //console.log(appinfos);
-                                    //countlyApi.data.usage.processSession(dbs, apps, final, appinfos, true);
+                                    countlyApi.data.usage.processSession(dbs, apps, final, appinfos, true);
                                     dbonoff.on('raw');
                                 });
                             }
@@ -179,7 +179,7 @@ function processSessions(dbs, app, isFinal, appinfo) {
                         var final = isFinal;
                         var appinfos = appinfo;
                         //console.log(appinfos);
-                        //countlyApi.data.usage.processSession(dbs, apps, final, appinfos, true);
+                        countlyApi.data.usage.processSession(dbs, apps, final, appinfos, true);
                         dbonoff.on('raw');
                     });
                 }
@@ -190,7 +190,7 @@ function processSessions(dbs, app, isFinal, appinfo) {
             var final = isFinal;
             var appinfos = appinfo;
             //console.log(appinfos);
-            //countlyApi.data.usage.processSession(dbs, apps, final, appinfos, true);
+            countlyApi.data.usage.processSession(dbs, apps, final, appinfos, true);
             dbonoff.on('raw');
         });
     }
