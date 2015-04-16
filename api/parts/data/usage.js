@@ -42,7 +42,7 @@ var process = require('process');
     dataBag.cityArray['meta.cities']['$each'] = [];
 
     //query user data and execute processUserSession
-    usage.processSession = function (dbs, app, isFinal, appinfo) {
+    usage.processSession = function (dbs, app, isFinal, appinfo, checkUU) {
         //console.log(app[0].device_id);
         var appinfos = {};
         //if (appinfo) console.log(appinfo);
@@ -438,7 +438,7 @@ var process = require('process');
         //console.log("cpUniqueUser: %j",uniqueUser.updateUsers);
     }
 
-    function processUserSession(dbs, dataBag, dbAppUser, isFinal, appinfos) {
+    function processUserSession(dbs, dataBag, dbAppUser, isFinal, appinfos, isYMK) {
         var apps = dataBag.apps;
         var sessionObj = [];
         var last_end_session_timestamp = 0;
@@ -446,6 +446,7 @@ var process = require('process');
         var total_duration = 0;
         var i = 0;
         var normalSessionStart = 0;
+        var saveYMK = isYMK;
         //console.log(dataBag.apps);
 
         //console.log('process user session length='+dataBag.apps.length);

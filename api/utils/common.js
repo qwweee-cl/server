@@ -144,6 +144,10 @@ var common = {},
         return common.local_batch;
     };
 
+    common.getYCPBatchDB = function () {
+        return common.db_batch1;
+    }
+
     common.getOEMRawDB = function (srNumber) {
         var raw_name = countlyConfig.mongodb.db_raw.match(/\w*(_\w*)/);
         var srNumberName = srNumber.replace(/system\.|\.\.|\$/g, "");
