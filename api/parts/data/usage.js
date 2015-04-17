@@ -59,7 +59,7 @@ var process = require('process');
         
         var uma = appinfos.app_id;
 
-        dbs.save.collection('uma').update({'_id':app[0].device_id}, {'$addToSet': {'my_apps': uma}}, {'upsert': true}
+        /*dbs.save.collection('uma').update({'_id':app[0].device_id}, {'$addToSet': {'my_apps': uma}}, {'upsert': true}
             , function (err, data) {
                 if (err){
                     console.log('[processSession]uma log error:' + err);  
@@ -73,7 +73,7 @@ var process = require('process');
                     console.log('[processSession]uma log error:' + err);  
                 }
                 dbonoff.on('raw');
-        });
+        });*/
 
         /* use base db, because user was oem before, and now oem expire, it will be a new user on generic */
         dbs.base.collection('app_users' + appinfos.app_id).findOne({'_id': app[0].app_user_id}, 
@@ -249,6 +249,7 @@ var process = require('process');
         updateCollection(dbs, 'locations', appinfos.app_id, dataBag.updateLocations, '$inc', '[updateLocations]');
 
         if (!isUU) {
+            console.log("["+appinfos.app_id+"]");
             //updateCollection(dbs, 'UU_users', appinfos.app_id, dataBag.updateUsers, '$inc', '[updateUsers]');
             updateRangeMeta(dbs, dataBag.countryArray, 'UU_locations', appinfos.app_id);
             updateCollection(dbs, 'UU_locations', appinfos.app_id, dataBag.updateLocations, '$inc', '[updateLocations]');
@@ -453,6 +454,7 @@ var process = require('process');
         var total_duration = 0;
         var i = 0;
         var normalSessionStart = 0;
+
         //console.log(dataBag.apps);
 
         //console.log('process user session length='+dataBag.apps.length);
