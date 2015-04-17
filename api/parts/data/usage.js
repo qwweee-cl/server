@@ -453,7 +453,6 @@ var process = require('process');
         var total_duration = 0;
         var i = 0;
         var normalSessionStart = 0;
-        var saveYMK = isYMK;
         //console.log(dataBag.apps);
 
         //console.log('process user session length='+dataBag.apps.length);

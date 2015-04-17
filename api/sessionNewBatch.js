@@ -23,7 +23,7 @@ http.globalAgent.maxSockets = common.config.api.max_sockets || 1024;
 
 var date = new Date();
 console.log(date.toString());
-var begin_date = new Date(date.getFullYear(),date.getMonth(), date.getDate()-60);
+var begin_date = new Date(date.getFullYear(),date.getMonth(), date.getDate()-300);
 var end_date = new Date(date.getFullYear(),date.getMonth(), date.getDate()+1);
 
 //console.log('proc_date = '+begin_date+':'+end_date);
@@ -366,8 +366,13 @@ fs.readFile(oidFileName, 'utf8', function (err,data) {
             }
             for (var i=0; i<collection.length; i++) {
                 if (collection[i].collectionName == 'raw_session_53f554ef847577512100130a') continue;
-                if (collection[i].collectionName.indexOf("9219f32e8de29b826faf44eb9b619788e29041bb")>=0 ||
+                /*if (collection[i].collectionName.indexOf("9219f32e8de29b826faf44eb9b619788e29041bb")>=0 ||
                     collection[i].collectionName.indexOf("75edfca17dfbe875e63a66633ed6b00e30adcb92")>=0) {
+                    if (collection[i].collectionName.indexOf(common.rawCollection['session'])>=0) {
+                        collectionNameList[collectionCount++] = collection[i].collectionName;
+                    }
+                }*/
+                if (collection[i].collectionName.indexOf("75edfca17dfbe875e63a66633ed6b00e30adcb92")>=0) {
                     if (collection[i].collectionName.indexOf(common.rawCollection['session'])>=0) {
                         collectionNameList[collectionCount++] = collection[i].collectionName;
                     }
