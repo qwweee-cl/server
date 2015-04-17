@@ -80,17 +80,22 @@ function processEvents(dbs, app, isFinal, appinfo) {
 }
 var userCount1 = 0;
 var userCount2 = 0;
+var ios = null;
+var android = null;
 function processSessions(dbs, app, isFinal, appinfo) {
     //console.log('entering sessions');
     //console.log(app[0].app_user_id);
     if (isFinal) {
         //process.emit('hi_mongo');
         console.log('Count1:'+userCount1);
+        console.log(android);
         console.log('Count2:'+userCount2);
+        console.log(ios);
     }
     var appUserId = app[0].app_user_id;
     if (appinfo.key=="75edfca17dfbe875e63a66633ed6b00e30adcb92") { // Android
         userCount1++;
+        android = appinfo;
         YCPDB.collection('raw_session_e315c111663af26a53e5fe4c82cc1baeecf50599').findOne({'app_user_id': appUserId}, 
         //CountlyDB.collection('app_users543f37d0a62268c51e16d053').findOne({'app_user_id': appUserId}, 
             function (err, raw){
@@ -138,6 +143,7 @@ function processSessions(dbs, app, isFinal, appinfo) {
             });
     } else if (appinfo.key=="9219f32e8de29b826faf44eb9b619788e29041bb") { // iOS
         userCount2++;
+        ios = appinfo;
         isYMK = 2;
         YCPDB.collection('raw_session_c277de0546df31757ff26a723907bc150add4254').findOne({'app_user_id': appUserId}, 
         //CountlyDB.collection('app_users543f8693a9e5b7ed76000012').findOne({'app_user_id': appUserId}, 
