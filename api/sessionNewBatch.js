@@ -363,6 +363,7 @@ fs.readFile(oidFileName, 'utf8', function (err,data) {
             	console.log('no data');
             	//dbClose(dbs);
             	//process.exit(1);
+                process.emit('hi_mongo');
             }
             for (var i=0; i<collection.length; i++) {
                 if (collection[i].collectionName == 'raw_session_53f554ef847577512100130a') continue;
