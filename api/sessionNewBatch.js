@@ -103,6 +103,7 @@ function processSessions(dbs, app, isFinal, appinfo) {
                     console.log(err);
                 }
                 if (raw) {
+                    dbonoff.on('raw');
                     CountlyDB.collection('app_users543f37d0a62268c51e16d053').findOne({'app_user_id': appUserId}, 
                     //YCPDB.collection('raw_session_e315c111663af26a53e5fe4c82cc1baeecf50599').findOne({'app_user_id': appUserId}, 
                         function (err, dbAppUser){
@@ -152,6 +153,7 @@ function processSessions(dbs, app, isFinal, appinfo) {
                     console.log(err);
                 }
                 if (raw) {
+                    dbonoff.on('raw');
                     CountlyDB.collection('app_users543f8693a9e5b7ed76000012').findOne({'app_user_id': appUserId}, 
                     //YCPDB.collection('raw_session_c277de0546df31757ff26a723907bc150add4254').findOne({'app_user_id': appUserId}, 
                         function (err, dbAppUser){
