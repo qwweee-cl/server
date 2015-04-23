@@ -488,7 +488,7 @@ var common = {},
 
     // Check drop data by timestamp
     common.checkTimestamp = function (timestamp) {
-        var duration_time = common.config.api.data_drop_duration_time || 3;
+        var duration_time = common.config.api.data_drop_duration_time || 1;
         var now = new Date();
         var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         var checkMoment = moment(today).add(-duration_time, 'months');
