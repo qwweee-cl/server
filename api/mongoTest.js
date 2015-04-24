@@ -38,7 +38,7 @@ var dbCount = 0;
 //upsetTotalU(eventDay, duration, appName, os, country, totalU)
 
 var uma_coll = db.collection('uma');
-
+/*
 // YCP Android
 var b_coll = db.collection(collectionName+YCP_And_Oid);
 b_coll.find({},{batchSize:1000}).each(function(err, res) {
@@ -98,8 +98,8 @@ b_coll.find({},{batchSize:1000}).each(function(err, res) {
 		});
 	}
 });
-
-// YMK Android
+*/
+// YMK iOS
 b_coll = db.collection(collectionName+YMK_iOS_Oid);
 b_coll.find({},{batchSize:1000}).each(function(err, res) {
 	dbCount++;

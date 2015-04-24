@@ -21,6 +21,8 @@ var YCP_And_Oid = new ObjectID("543f37d0a62268c51e16d053");
 var YMK_iOS_Oid = new ObjectID("543f866fa9e5b7ed76000011");
 var YMK_And_Oid = new ObjectID("543f37eaa62268c51e16d0c3");
 
+var AndAppList = [YCP_And_Oid,YMK_And_Oid];
+var iOSAppList = [YCP_iOS_Oid,YMK_iOS_Oid];
 var collectionName = "app_users";
 
 var mysqlHostName = "localhost";
@@ -59,6 +61,7 @@ print(yearStr);
 //upsetTotalU(eventDay, duration, appName, os, country, totalU)
 
 var b_coll = db.collection(collectionName+YMK_And_Oid);
+/*
 b_coll.count({country: {$nin: countryList}}, function (err, result) {
 	dbCount++;
 	if (!result) {
@@ -123,7 +126,18 @@ for (var index in countryList) {
 	getCountyCount(yearStr, monthStr, weekStr, dayStr,
 		"YCP", "iOS", countryList[index], b_coll);
 }
-
+*/
+b_coll = db.collection("uma");
+b_coll.count({country: {$nin: countryList}}, function (err, result) {
+	if (!result) {
+    	print("YCP_iOS no data");
+    	return;
+    }
+    upsetTotalU(dayStr, "Y", "YCP", "iOS", "Others", result);
+    upsetTotalU(dayStr, "M", "YCP", "iOS", "Others", result);
+    upsetTotalU(dayStr, "W", "YCP", "iOS", "Others", result);
+    upsetTotalU(dayStr, "D", "YCP", "iOS", "Others", result);
+});
 var cnt=0;
 var repeat_times = 0;
 var wait_cnt = 10;
