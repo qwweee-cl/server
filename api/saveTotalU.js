@@ -127,23 +127,63 @@ for (var index in countryList) {
 		"YCP", "iOS", countryList[index], b_coll);
 }
 */
+// BOTH Android
 b_coll = db.collection("uma");
-b_coll.count({country: {$nin: countryList}}, function (err, result) {
+b_coll.count({
+	$and: [
+	{country: 
+		{$nin: countryList}},
+	{my_apps: 
+		{$all: AndAppList}}
+	]
+}, function (err, result) {
 	if (!result) {
     	print("YCP_iOS no data");
     	return;
     }
-    upsetTotalU(dayStr, "Y", "YCP", "iOS", "Others", result);
-    upsetTotalU(dayStr, "M", "YCP", "iOS", "Others", result);
-    upsetTotalU(dayStr, "W", "YCP", "iOS", "Others", result);
-    upsetTotalU(dayStr, "D", "YCP", "iOS", "Others", result);
+    print(result);
+    upsetTotalU(dayStr, "Y", "BOTH", "And", "Others", result);
+    upsetTotalU(dayStr, "M", "BOTH", "And", "Others", result);
+    upsetTotalU(dayStr, "W", "BOTH", "And", "Others", result);
+    upsetTotalU(dayStr, "D", "BOTH", "And", "Others", result);
 });
+
+for (var index in countryList) {
+	getUUCountyCount(yearStr, monthStr, weekStr, dayStr,
+		"BOTH", "And", countryList[index], b_coll, AndAppList);
+}
+
+// BOTH iOS
+b_coll.count({
+	$and: [
+	{country: 
+		{$nin: countryList}},
+	{my_apps: 
+		{$all: iOSAppList}}
+	]
+}, function (err, result) {
+	if (!result) {
+    	print("YCP_iOS no data");
+    	return;
+    }
+    print(result);
+    upsetTotalU(dayStr, "Y", "BOTH", "iOS", "Others", result);
+    upsetTotalU(dayStr, "M", "BOTH", "iOS", "Others", result);
+    upsetTotalU(dayStr, "W", "BOTH", "iOS", "Others", result);
+    upsetTotalU(dayStr, "D", "BOTH", "iOS", "Others", result);
+});
+
+for (var index in countryList) {
+	getUUCountyCount(yearStr, monthStr, weekStr, dayStr,
+		"BOTH", "iOS", countryList[index], b_coll, iOSAppList);
+}
+
 var cnt=0;
 var repeat_times = 0;
 var wait_cnt = 10;
 var baseTimeOut = 3000;
 baseTimeOut = 10000;
-wait_cnt = 30;
+wait_cnt = 60;
 setInterval(function() {
     if (dbCount > 0) {
     	print(dbCount);
@@ -222,6 +262,24 @@ function upsetTotalU(eventDay, duration, appName, os, country, totalU) {
 function getCountyCount(yearStr, monthStr, weekStr, dayStr,
 	appName, os, countryName, b_coll) {
 	b_coll.count({country: countryName}, function (err, result) {
+		dbCount++;
+		if (!result) {
+	    	//print(appName+"_"+os+" no data");
+	    	return;
+	    }
+	    upsetTotalU(yearStr, "Y", appName, os, countryName, result);
+	    upsetTotalU(monthStr, "M", appName, os, countryName, result);
+	    upsetTotalU(weekStr, "W", appName, os, countryName, result);
+	    upsetTotalU(dayStr, "D", appName, os, countryName, result);
+	});
+}
+function getUUCountyCount(yearStr, monthStr, weekStr, dayStr,
+	appName, os, countryName, b_coll, appList) {
+	b_coll.count({$and: [
+	{country: countryName},
+	{my_apps: 
+		{$all: appList}}
+	]}, function (err, result) {
 		dbCount++;
 		if (!result) {
 	    	//print(appName+"_"+os+" no data");

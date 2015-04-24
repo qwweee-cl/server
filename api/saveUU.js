@@ -419,6 +419,7 @@ function getData(result, os, appName) {
 		var tmpObjDate = new Date(weekArray[tmp].year, weekArray[tmp].month-1, weekArray[tmp].day);
 		var sunday = getSunday(tmpObjDate);
 		var sunMoment = moment(sunday).add(1, "days");
+		var nextMoment = sunMoment.add(6, "days");
 		var startDate = sunMoment.format("YYYY-MM-DD");
 		var duration = "W";
 /*
