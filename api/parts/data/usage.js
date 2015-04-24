@@ -59,7 +59,9 @@ var process = require('process');
         
         var uma = appinfos.app_id;
 
-        dbs.save.collection('uma').update({'_id':app[0].device_id}, {'$addToSet': {'my_apps': uma}}, {'upsert': true}
+        dbs.save.collection('uma').update({'_id':app[0].device_id}
+            , {'$addToSet': {'my_apps': uma}, '$set': {'country': app[0].country}}
+            , {'upsert': true}
             , function (err, data) {
                 if (err){
                     console.log('[processSession]uma log error:' + err);  
@@ -67,7 +69,9 @@ var process = require('process');
                 dbonoff.on('raw');
         });
 
-        dbs.base.collection('uma').update({'_id':app[0].device_id}, {'$addToSet': {'my_apps': uma}}, {'upsert': true}
+        dbs.base.collection('uma').update({'_id':app[0].device_id}
+            , {'$addToSet': {'my_apps': uma}, '$set': {'country': app[0].country}}
+            , {'upsert': true}
             , function (err, data) {
                 if (err){
                     console.log('[processSession]uma log error:' + err);  
