@@ -315,10 +315,6 @@ var common = {},
         // For properties that hold the unique visitor count we store weekly data as well.
         if (property.substr(-2) == ("." + common.dbMap["unique"]) ||
             property == common.dbMap["unique"] ||
-            property.substr(-2) == ("." + common.dbMap["total"]) ||
-            property == common.dbMap["total"] ||
-            property.substr(-2) == ("." + common.dbMap["new"]) ||
-            property == common.dbMap["new"] ||
             property.substr(0,2) == (common.dbMap["frequency"] + ".") ||
             property.substr(0,2) == (common.dbMap["loyalty"] + ".") ||
             property.substr(0,3) == (common.dbMap["durations"] + "."))
@@ -407,10 +403,6 @@ var common = {},
         // For properties that hold the unique visitor count we store weekly data as well.
         if (property.substr(-2) == ("." + common.dbMap["unique"]) ||
             property == common.dbMap["unique"] ||
-            property.substr(-2) == ("." + common.dbMap["total"]) ||
-            property == common.dbMap["total"] ||
-            property.substr(-2) == ("." + common.dbMap["new"]) ||
-            property == common.dbMap["new"] ||
             property.substr(0,2) == (common.dbMap["frequency"] + ".") ||
             property.substr(0,2) == (common.dbMap["loyalty"] + ".") ||
             property.substr(0,3) == (common.dbMap["durations"] + "."))
@@ -465,10 +457,6 @@ var common = {},
         // For properties that hold the unique visitor count we store weekly data as well.
         if (property.substr(-2) == ("." + common.dbMap["unique"]) ||
             property == common.dbMap["unique"] ||
-            property.substr(-2) == ("." + common.dbMap["total"]) ||
-            property == common.dbMap["total"] ||
-            property.substr(-2) == ("." + common.dbMap["new"]) ||
-            property == common.dbMap["new"] ||
             property.substr(0,2) == (common.dbMap["frequency"] + ".") ||
             property.substr(0,2) == (common.dbMap["loyalty"] + ".") ||
             property.substr(0,3) == (common.dbMap["durations"] + "."))
