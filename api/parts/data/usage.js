@@ -61,7 +61,7 @@ var process = require('process');
         var uma = appinfos.app_id;
 
         dbs.save.collection('uma').update({'_id':app[0].device_id}
-            , {'$addToSet': {'my_apps': uma}, '$set': {'country': appinfos.app_cc}}
+            , {'$addToSet': {'my_apps': uma}, '$set': {'country': app[0].country}}
             , {'upsert': true}
             , function (err, data) {
                 if (err){
@@ -71,7 +71,7 @@ var process = require('process');
         });
 
         dbs.base.collection('uma').update({'_id':app[0].device_id}
-            , {'$addToSet': {'my_apps': uma}, '$set': {'country': appinfos.app_cc}}
+            , {'$addToSet': {'my_apps': uma}, '$set': {'country': app[0].country}}
             , {'upsert': true}
             , function (err, data) {
                 if (err){
