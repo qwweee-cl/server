@@ -138,7 +138,7 @@ b_coll.count({
 	]
 }, function (err, result) {
 	if (!result) {
-    	print("YCP_iOS no data");
+    	print("BOTH_And no data");
     	return;
     }
     print(result);
@@ -163,7 +163,7 @@ b_coll.count({
 	]
 }, function (err, result) {
 	if (!result) {
-    	print("YCP_iOS no data");
+    	print("BOTH_iOS no data");
     	return;
     }
     print(result);
@@ -212,40 +212,9 @@ return;
 function pad2(number) {
     return (number < 10 ? '0' : '') + number
 }
-function insertMysql(data) {
-	if ((JSON.stringify(insertArray).length+JSON.stringify(data).length)>100000) {
-		realInser2Mysql();
-		while (insertArray.length) {
-			insertArray.pop();
-		}
-	}
-	insertArray.push(data);
-}
-function realInser2Mysql() {
-	//print(JSON.stringify(insertArray));
-	var sql = "INSERT INTO BcTest.countlyIn (eventDay, duration, appName, os, "+
-		"country, activeU, totalU, newU, session) VALUES ?";
-	var values = [];
-	for (var row in insertArray) {
-		//print(insertArray[row]);
-		values.push([insertArray[row].eventDay, insertArray[row].duration, 
-			insertArray[row].appName, insertArray[row].os, insertArray[row].country,
-			insertArray[row].aU, insertArray[row].tU, insertArray[row].nU,
-			insertArray[row].sU]);
-	}
-	if (values.length) {
-		print(values);
-		connection.query(sql, [values], function(err) {
-			if (err) throw err;
-			if (insertArray.length) {
-				dbCount++;
-			}
-			insertArray.length = 0;
-		});
-	}
-}
 function callSP(sql) {
 	connection.query(sql, function(err, results, fields) {
+		dbCount++;
 		if (err) throw err;
 		if (results.affectedRows == 0) {
 			print(sql);

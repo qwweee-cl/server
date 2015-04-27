@@ -487,16 +487,27 @@ function insertMysql(data) {
 }
 function realInser2Mysql() {
 	//print(JSON.stringify(insertArray));
+/*
 	var sql = "INSERT INTO BcTest.countlyIn (eventDay, duration, appName, os, "+
 		"country, activeU, totalU, newU, session) VALUES ?";
+*/
 	var values = [];
 	for (var row in insertArray) {
 		//print(insertArray[row]);
+/*
 		values.push([insertArray[row].eventDay, insertArray[row].duration, 
 			insertArray[row].appName, insertArray[row].os, insertArray[row].country,
 			insertArray[row].aU, insertArray[row].tU, insertArray[row].nU,
 			insertArray[row].sU]);
+*/
+		// upsetCountlyIn(eventDay, duration, appName, os, country, newU, activeU, session)
+		upsetCountlyIn(insertArray[row].eventDay, insertArray[row].duration,
+			insertArray[row].appName, insertArray[row].os, insertArray[row].country,
+			insertArray[row].aU, insertArray[row].nU, insertArray[row].sU);
 	}
+	print(insertArray.length);
+	insertArray.length = 0;
+/*
 	if (values.length) {
 		print(values);
 		connection.query(sql, [values], function(err) {
@@ -507,4 +518,23 @@ function realInser2Mysql() {
 			insertArray.length = 0;
 		});
 	}
+*/
+}
+function callSP(sql) {
+	connection.query(sql, function(err, results, fields) {
+		dbCount++;
+		if (err) throw err;
+		if (results.affectedRows == 0) {
+			print(sql);
+		}
+	});
+}
+function upsetCountlyIn(eventDay, duration, appName, os, country, activeU, newU, session) {
+	print(eventDay+" "+duration+" "+appName+" "+os+" "+
+		country+" "+newU+" "+activeU+" "+session);
+	var sql = "call BcTest.countlyIn_upset_UU('"+eventDay+
+		"', '"+duration+"', '"+appName+"', '"+os+"', '"+country+"', "+
+		activeU+", "+newU+", "+session+");";
+	//print(sql);
+	callSP(sql);
 }
