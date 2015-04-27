@@ -61,7 +61,7 @@ print(yearStr);
 //upsetTotalU(eventDay, duration, appName, os, country, totalU)
 
 var b_coll = db.collection(collectionName+YMK_And_Oid);
-/*
+
 b_coll.count({country: {$nin: countryList}}, function (err, result) {
 	dbCount++;
 	if (!result) {
@@ -126,7 +126,7 @@ for (var index in countryList) {
 	getCountyCount(yearStr, monthStr, weekStr, dayStr,
 		"YCP", "iOS", countryList[index], b_coll);
 }
-*/
+
 // BOTH Android
 b_coll = db.collection("uma");
 b_coll.count({
