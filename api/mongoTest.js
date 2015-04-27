@@ -34,90 +34,97 @@ var connection = mysql.createConnection({
 });
 
 var dbCount = 0;
-
+if (process.argv.length != 3) {
+	print("error params");
+	return;
+}
+var type = parseInt(process.argv[2]);
 //upsetTotalU(eventDay, duration, appName, os, country, totalU)
 
 var uma_coll = db.collection('uma');
-/*
-// YCP Android
-var b_coll = db.collection(collectionName+YCP_And_Oid);
-b_coll.find({},{batchSize:1000}).each(function(err, res) {
-	dbCount++;
-	if (err) {
-		print(err);
-		return;
-	}
-	if (res && res.country && res.did) {
-		uma_coll.update({'_id':res.did}, 
-			{'$set': {'country':res.country},'$addToSet': {'my_apps': YCP_And_Oid}}, {'upsert': true}
-		    , function (err, data) {
-		    	dbCount++;
-		        if (err){
-		            console.log('[processSession]uma log error:' + err);  
-		    }
-		});
-	}
-});
-
-// YCP iOS
-b_coll = db.collection(collectionName+YCP_iOS_Oid);
-b_coll.find({},{batchSize:1000}).each(function(err, res) {
-	dbCount++;
-	if (err) {
-		print(err);
-		return;
-	}
-	if (res && res.country && res.did) {
-		uma_coll.update({'_id':res.did}, 
-			{'$set': {'country':res.country},'$addToSet': {'my_apps': YCP_iOS_Oid}}, {'upsert': true}
-		    , function (err, data) {
-		    	dbCount++;
-		        if (err){
-		            console.log('[processSession]uma log error:' + err);  
-		    }
-		});
-	}
-});
-
-// YMK Android
-b_coll = db.collection(collectionName+YMK_And_Oid);
-b_coll.find({},{batchSize:1000}).each(function(err, res) {
-	dbCount++;
-	if (err) {
-		print(err);
-		return;
-	}
-	if (res && res.country && res.did) {
-		uma_coll.update({'_id':res.did}, 
-			{'$set': {'country':res.country},'$addToSet': {'my_apps': YMK_And_Oid}}, {'upsert': true}
-		    , function (err, data) {
-		    	dbCount++;
-		        if (err){
-		            console.log('[processSession]uma log error:' + err);  
-		    }
-		});
-	}
-});
-*/
-// YMK iOS
-b_coll = db.collection(collectionName+YMK_iOS_Oid);
-b_coll.find({},{batchSize:1000}).each(function(err, res) {
-	dbCount++;
-	if (err) {
-		print(err);
-		return;
-	}
-	if (res && res.country && res.did) {
-		uma_coll.update({'_id':res.did}, 
-			{'$set': {'country':res.country},'$addToSet': {'my_apps': YMK_iOS_Oid}}, {'upsert': true}
-		    , function (err, data) {
-		    	dbCount++;
-		        if (err){
-		            console.log('[processSession]uma log error:' + err);  
-		    }
-		});
-	}
-});
+if (type == 1) {
+	// YCP Android
+	var b_coll = db.collection(collectionName+YCP_And_Oid);
+	b_coll.find({},{batchSize:1000}).each(function(err, res) {
+		dbCount++;
+		if (err) {
+			print(err);
+			return;
+		}
+		if (res && res.country && res.did) {
+			uma_coll.update({'_id':res.did}, 
+				{'$set': {'country':res.country},'$addToSet': {'my_apps': YCP_And_Oid}}, {'upsert': true}
+			    , function (err, data) {
+			    	dbCount++;
+			        if (err){
+			            console.log('[processSession]uma log error:' + err);  
+			    }
+			});
+		}
+	});
+} else if (type == 2) {
+	// YCP iOS
+	b_coll = db.collection(collectionName+YCP_iOS_Oid);
+	b_coll.find({},{batchSize:1000}).each(function(err, res) {
+		dbCount++;
+		if (err) {
+			print(err);
+			return;
+		}
+		if (res && res.country && res.did) {
+			uma_coll.update({'_id':res.did}, 
+				{'$set': {'country':res.country},'$addToSet': {'my_apps': YCP_iOS_Oid}}, {'upsert': true}
+			    , function (err, data) {
+			    	dbCount++;
+			        if (err){
+			            console.log('[processSession]uma log error:' + err);  
+			    }
+			});
+		}
+	});
+} else if (type == 3) {
+	// YMK Android
+	b_coll = db.collection(collectionName+YMK_And_Oid);
+	b_coll.find({},{batchSize:1000}).each(function(err, res) {
+		dbCount++;
+		if (err) {
+			print(err);
+			return;
+		}
+		if (res && res.country && res.did) {
+			uma_coll.update({'_id':res.did}, 
+				{'$set': {'country':res.country},'$addToSet': {'my_apps': YMK_And_Oid}}, {'upsert': true}
+			    , function (err, data) {
+			    	dbCount++;
+			        if (err){
+			            console.log('[processSession]uma log error:' + err);  
+			    }
+			});
+		}
+	});
+} else if (type == 4) {
+	// YMK iOS
+	b_coll = db.collection(collectionName+YMK_iOS_Oid);
+	b_coll.find({},{batchSize:1000}).each(function(err, res) {
+		dbCount++;
+		if (err) {
+			print(err);
+			return;
+		}
+		if (res && res.country && res.did) {
+			uma_coll.update({'_id':res.did}, 
+				{'$set': {'country':res.country},'$addToSet': {'my_apps': YMK_iOS_Oid}}, {'upsert': true}
+			    , function (err, data) {
+			    	dbCount++;
+			        if (err){
+			            console.log('[processSession]uma log error:' + err);  
+			    }
+			});
+		}
+	});
+} else {
+	print("error type "+type);
+}
 /*b_coll.update({'_id':'----ebhzYhbjzLt6bZiumgb9XaqNkBxUetZMKVla0wQ~'}, 
 	{'$set': {'country':'AI'},'$addToSet': {'my_apps': YCP_And_Oid}}, {'upsert': true}
     , function (err, data) {
