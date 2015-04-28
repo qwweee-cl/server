@@ -237,6 +237,9 @@ function getData(result, os, appName) {
 	for (var tmp in yearArray) {
 		var startDate = yearArray[tmp].year+"-01-01";
 		var duration = "Y";
+		others = {eventDay: '', duration: '', appName: appName,
+                  os: os, country: 'Others', aU: 0, tU: 0,
+                  nU: 0, sU: 0};
 /*
 		print(yearArray[tmp].year);
 		print(startDate);
@@ -296,6 +299,9 @@ function getData(result, os, appName) {
 	for (var tmp in monthArray) {
 		var startDate = monthArray[tmp].year+"-"+pad2(monthArray[tmp].month)+"-01";
 		var duration = "M";
+		others = {eventDay: '', duration: '', appName: appName,
+              os: os, country: 'Others', aU: 0, tU: 0,
+              nU: 0, sU: 0};
 /*
 		print(monthArray[tmp].year+" "+monthArray[tmp].month);
 		print(startDate);
@@ -356,6 +362,9 @@ function getData(result, os, appName) {
 	for (var tmp in dayArray) {
 		var startDate = dayArray[tmp].year+"-"+pad2(dayArray[tmp].month)+"-"+pad2(dayArray[tmp].day);
 		var duration = "D";
+		others = {eventDay: '', duration: '', appName: appName,
+              os: os, country: 'Others', aU: 0, tU: 0,
+              nU: 0, sU: 0};
 /*
 		print(dayArray[tmp].year+" "+dayArray[tmp].month+" "+dayArray[tmp].day);
 		print(startDate);
@@ -423,6 +432,9 @@ function getData(result, os, appName) {
 		var nextMoment = sunMoment.add(6, "days");
 		var startDate = sunMoment.format("YYYY-MM-DD");
 		var duration = "W";
+		others = {eventDay: '', duration: '', appName: appName,
+              os: os, country: 'Others', aU: 0, tU: 0,
+              nU: 0, sU: 0};
 /*
 		print(weekArray[tmp].year+" w"+weekArray[tmp].week);
 		print(startDate);
