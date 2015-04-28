@@ -35,7 +35,7 @@ print(date);
 date = nowMoment.toDate();
 print(date);
 
-var beginMoment = nowMoment.add(-1, "months");
+var beginMoment = nowMoment.add(-3, "months");
 var beginYear = beginMoment.format("YYYY");
 var beginMonth = beginMoment.format("M");
 var beginDate = beginMoment.format("D");
@@ -136,6 +136,7 @@ processArray.sort();
 
 var b_coll = db.collection(collectionName);
 var b_coll2 = db.collection(collectionName2);
+/*
 b_coll.findOne({_id:YMK_And_Oid}, function (err, result) {
     if (!result) {
     	print("BOTH_And no data");
@@ -151,7 +152,7 @@ b_coll.findOne({_id:YMK_iOS_Oid}, function (err, result) {
     }
     getData(result, "iOS", "BOTH");
 });
-
+*/
 b_coll2.findOne({_id:YMK_And_Oid}, function (err, result) {
 	dbCount++;
     if (!result) {
@@ -418,7 +419,7 @@ function getData(result, os, appName) {
 	for (var tmp in weekArray) {
 		var tmpObjDate = new Date(weekArray[tmp].year, weekArray[tmp].month-1, weekArray[tmp].day);
 		var sunday = getSunday(tmpObjDate);
-		var sunMoment = moment(sunday).add(1, "days");
+		var sunMoment = moment(sunday).add(2, "days");
 		var nextMoment = sunMoment.add(6, "days");
 		var startDate = sunMoment.format("YYYY-MM-DD");
 		var duration = "W";
@@ -426,6 +427,7 @@ function getData(result, os, appName) {
 		print(weekArray[tmp].year+" w"+weekArray[tmp].week);
 		print(startDate);
 */
+		print(startDate+" "+sunday);
 		if (result[weekArray[tmp].year] &&
 				result[weekArray[tmp].year]["w"+weekArray[tmp].week] &&
 				result[weekArray[tmp].year]["w"+weekArray[tmp].week]) {
