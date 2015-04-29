@@ -53,7 +53,7 @@ if (type == 1) {
 		}
 		if (res && res.country && res.did) {
 			uma_coll.update({'_id':res.did}, 
-				{'$set': {'country':res.country},'$addToSet': {'my_apps': YCP_And_Oid}}, {'upsert': true}
+				{'$set': {'country':res.country}}, {'upsert': true}
 			    , function (err, data) {
 			    	dbCount++;
 			        if (err){
@@ -73,7 +73,7 @@ if (type == 1) {
 		}
 		if (res && res.country && res.did) {
 			uma_coll.update({'_id':res.did}, 
-				{'$set': {'country':res.country},'$addToSet': {'my_apps': YCP_iOS_Oid}}, {'upsert': true}
+				{'$set': {'country':res.country}}, {'upsert': true}
 			    , function (err, data) {
 			    	dbCount++;
 			        if (err){
@@ -93,7 +93,7 @@ if (type == 1) {
 		}
 		if (res && res.country && res.did) {
 			uma_coll.update({'_id':res.did}, 
-				{'$set': {'country':res.country},'$addToSet': {'my_apps': YMK_And_Oid}}, {'upsert': true}
+				{'$set': {'country':res.country}}, {'upsert': true}
 			    , function (err, data) {
 			    	dbCount++;
 			        if (err){
@@ -113,7 +113,7 @@ if (type == 1) {
 		}
 		if (res && res.country && res.did) {
 			uma_coll.update({'_id':res.did}, 
-				{'$set': {'country':res.country},'$addToSet': {'my_apps': YMK_iOS_Oid}}, {'upsert': true}
+				{'$set': {'country':res.country}}, {'upsert': true}
 			    , function (err, data) {
 			    	dbCount++;
 			        if (err){
