@@ -62,6 +62,9 @@ var isDebug = common.config.api.cl_is_debug || false;
 var oidFileName = '_next_oid';
 var hasOidFile = false;
 
+var YCPDB = common.getYCPBatchDB();
+var CountlyDB = common.db;
+
 function processEvents(dbs, app, isFinal, appinfo) {
     //console.log('entering events');
     process.nextTick(function() {
@@ -72,16 +75,130 @@ function processEvents(dbs, app, isFinal, appinfo) {
     	countlyApi.data.events.processEvents(dbs, apps, final, appinfos);
     });
 }
-
+var userCount1 = 0;
+var userCount2 = 0;
+var ios = null;
+var android = null;
 function processSessions(dbs, app, isFinal, appinfo) {
     //console.log('entering sessions');
-    process.nextTick(function() {
-        var apps = app;
-        var final = isFinal;
-        var appinfos = appinfo;
-    	//console.log(appinfos);
-       	countlyApi.data.usage.processSession(dbs, apps, final, appinfos);
-    });
+    //console.log(app[0].app_user_id);
+    if (isFinal) {
+        //process.emit('hi_mongo');
+        console.log('Count1:'+userCount1);
+        console.log(android);
+        console.log('Count2:'+userCount2);
+        console.log(ios);
+    }
+    var appUserId = app[0].app_user_id;
+    if (appinfo.key=="75edfca17dfbe875e63a66633ed6b00e30adcb92") { // Android
+        userCount1++;
+        android = appinfo;
+        YCPDB.collection('raw_session_e315c111663af26a53e5fe4c82cc1baeecf50599').findOne({'app_user_id': appUserId},
+            function (err, raw){
+                if (err) {
+                    console.log(err);
+                    return false;
+                }
+                if (raw) {
+                    dbonoff.on('raw');
+                    CountlyDB.collection('app_users543f37d0a62268c51e16d053').findOne({'app_user_id': appUserId},
+                        function (err, dbAppUser){
+                            if (err) {
+                                console.log(err);
+                                return false;
+                            }
+                            if (dbAppUser) {
+                                process.nextTick(function() {
+                                    var apps = app;
+                                    var final = isFinal;
+                                    var appinfos = appinfo;
+                                    //console.log(appinfos);
+                                    //console.log("Android:"+appUserId);
+                                    countlyApi.data.usage.processSession(dbs, apps, final, appinfos, false);
+                                    dbonoff.on('raw');
+                                });
+                            } else {
+                                process.nextTick(function() {
+                                    var apps = app;
+                                    var final = isFinal;
+                                    var appinfos = appinfo;
+                                    //console.log(appinfos);
+                                    countlyApi.data.usage.processSession(dbs, apps, final, appinfos, true);
+                                    dbonoff.on('raw');
+                                });
+                            }
+                    });
+                } else {
+                    process.nextTick(function() {
+                        var apps = app;
+                        var final = isFinal;
+                        var appinfos = appinfo;
+                        //console.log(appinfos);
+                        countlyApi.data.usage.processSession(dbs, apps, final, appinfos, true);
+                        dbonoff.on('raw');
+                    });
+                }
+            });
+    } else if (appinfo.key=="9219f32e8de29b826faf44eb9b619788e29041bb") { // iOS
+        userCount2++;
+        ios = appinfo;
+        isYMK = 2;
+        YCPDB.collection('raw_session_c277de0546df31757ff26a723907bc150add4254').findOne({'app_user_id': appUserId},
+            function (err, raw){
+                if (err) {
+                    console.log(err);
+                    return false;
+                }
+                if (raw) {
+                    dbonoff.on('raw');
+                    CountlyDB.collection('app_users543f8693a9e5b7ed76000012').findOne({'app_user_id': appUserId},
+                        function (err, dbAppUser){
+                            if (err) {
+                                console.log(err);
+                                return false;
+                            }
+                            if (dbAppUser) {
+                                process.nextTick(function() {
+                                    var apps = app;
+                                    var final = isFinal;
+                                    var appinfos = appinfo;
+                                    //console.log(appinfos);
+                                    //console.log("iOS:"+appUserId);
+                                    countlyApi.data.usage.processSession(dbs, apps, final, appinfos, false);
+                                    dbonoff.on('raw');
+                                });
+                            } else {
+                                process.nextTick(function() {
+                                    var apps = app;
+                                    var final = isFinal;
+                                    var appinfos = appinfo;
+                                    //console.log(appinfos);
+                                    countlyApi.data.usage.processSession(dbs, apps, final, appinfos, true);
+                                    dbonoff.on('raw');
+                                });
+                            }
+                    });
+                } else {
+                    process.nextTick(function() {
+                        var apps = app;
+                        var final = isFinal;
+                        var appinfos = appinfo;
+                        //console.log(appinfos);
+                        countlyApi.data.usage.processSession(dbs, apps, final, appinfos, true);
+                        dbonoff.on('raw');
+                    });
+                }
+        });
+    } else {
+        process.nextTick(function() {
+            var apps = app;
+            var final = isFinal;
+            var appinfos = appinfo;
+            //console.log(appinfos);
+            countlyApi.data.usage.processSession(dbs, apps, final, appinfos, true);
+            dbonoff.on('raw');
+        });
+    }
 }
 
 function processRaw(dbs, collectionName, processData, sortOrder, appinfo) {
@@ -242,17 +359,19 @@ fs.readFile(oidFileName, 'utf8', function (err,data) {
      	//wait_cnt = wait_cnt * 5; // wait 5 times for all logs
         dbs.batch.collections(function(err,collection) {
             if (!collection.length) {
-            	console.log('no data');
-            	dbClose(dbs);
-            	process.exit(1);
+                console.log('no data');
+                //dbClose(dbs);
+                //process.exit(1);
+                process.emit('hi_mongo');
             }
             for (var i=0; i<collection.length; i++) {
                 if (collection[i].collectionName == 'raw_session_53f554ef847577512100130a') continue;
-                if (collection[i].collectionName.indexOf(common.rawCollection['raw'])>=0) {
+                //if (collection[i].collectionName.indexOf("9219f32e8de29b826faf44eb9b619788e29041bb")>=0 ||
+                //    collection[i].collectionName.indexOf("75edfca17dfbe875e63a66633ed6b00e30adcb92")>=0) {
                     if (collection[i].collectionName.indexOf(common.rawCollection['session'])>=0) {
                         collectionNameList[collectionCount++] = collection[i].collectionName;
                     }
-                }
+                //}
             }
             collectionNameList.sort();
             console.log(collectionNameList);

@@ -22,6 +22,7 @@ var process = require('process');
     dataBag.apps = [];
     dataBag.updateSessions = {};
     dataBag.updateLocations = {};
+    dataBag.updateUULocations = {};
     dataBag.updateUsers = {};
     dataBag.updateCities = {};
     dataBag.userRanges = {};
@@ -42,7 +43,7 @@ var process = require('process');
     dataBag.cityArray['meta.cities']['$each'] = [];
 
     //query user data and execute processUserSession
-    usage.processSession = function (dbs, app, isFinal, appinfo) {
+    usage.processSession = function (dbs, app, isFinal, appinfo, isUU) {
         //console.log(app[0].device_id);
         var appinfos = {};
         //if (appinfo) console.log(appinfo);
@@ -87,7 +88,7 @@ var process = require('process');
                 var info = appinfos;
                 //console.log('process Session');
 
-                processUserSession(dbs, dataBag, dbAppUser, isFinal, info);
+                processUserSession(dbs, dataBag, dbAppUser, isFinal, info, isUU);
         });
     }
 
@@ -243,14 +244,23 @@ var process = require('process');
         dbs.base.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback);
     }
 
-    function reallyUpdateAll(dbs, dataBag, appinfos) {
-        console.log("isFinal:"+appinfos.app_id);
+    function reallyUpdateAll(dbs, dataBag, appinfos, isUU) {
+        console.log("isFinal:"+appinfos.app_id+" "+isUU);
         updateRangeMeta(dbs, dataBag.userRanges, 'users', appinfos.app_id);
         updateCollection(dbs, 'users', appinfos.app_id, dataBag.updateUsers, '$inc', '[updateUsers]');
         //console.log("reallyUpdate: %j",dataBag.updateUsers);
 
         updateRangeMeta(dbs, dataBag.countryArray, 'locations', appinfos.app_id);
         updateCollection(dbs, 'locations', appinfos.app_id, dataBag.updateLocations, '$inc', '[updateLocations]');
+
+        if (appinfos.app_id=='543f37eaa62268c51e16d0c3' || 
+            appinfos.app_id=='543f866fa9e5b7ed76000011') {
+            console.log("["+appinfos.app_id+"]");
+            //updateCollection(dbs, 'UU_users', appinfos.app_id, dataBag.updateUsers, '$inc', '[updateUsers]');
+            updateRangeMeta(dbs, dataBag.countryArray, 'UU_locations', appinfos.app_id);
+            updateCollection(dbs, 'UU_locations', appinfos.app_id, dataBag.updateUULocations, '$inc', '[updateUULocations]');
+            //updateCollection(dbs, 'UU_sessions', appinfos.app_id, dataBag.updateSessions, '$inc', '[updateSessions]');
+        }
  
         updateRangeMeta(dbs, dataBag.sessionRanges, 'sessions', appinfos.app_id);
         updateCollection(dbs, 'sessions', appinfos.app_id, dataBag.updateSessions, '$inc', '[updateSessions]');
@@ -272,6 +282,7 @@ var process = require('process');
         dataBag.apps = [];
         dataBag.updateSessions = {};
         dataBag.updateLocations = {};
+        dataBag.updateUULocations = {};
         dataBag.updateUsers = {};
         dataBag.updateCities = {};
         dataBag.userRanges = {};
@@ -369,7 +380,7 @@ var process = require('process');
         }
     }
 
-    function updateStatistics(dataBag, sessionObject, prop, toFill, increase, tmp_session) {
+    function updateStatistics(isUU, dataBag, sessionObject, prop, toFill, increase, tmp_session) {
         var incr = increase? increase : 1;
         var updateTimeObject = getTimeFunction(toFill);
         var sessions;
@@ -380,6 +391,9 @@ var process = require('process');
     	}
         updateTimeObject(sessionObject, sessions.updateSessions, prop, incr);
         updateTimeObject(sessionObject, sessions.updateLocations, sessionObject.country + '.' + prop, incr);
+        if (!isUU) {
+            updateTimeObject(sessionObject, sessions.updateUULocations, sessionObject.country + '.' + prop, incr);
+        }
         common.arrayAddUniq(dataBag.countryArray['meta.countries']['$each'], sessionObject.country);
         if (common.config.api.city_data !== false) {
             updateTimeObject(sessionObject, sessions.updateCities, sessionObject.city + '.' + prop, incr);
@@ -424,6 +438,7 @@ var process = require('process');
     function cpUniqueSession(dataBag, uniqueSession) {
         cpUniqueOneByOne(uniqueSession.updateSessions, dataBag.updateSessions);
         cpUniqueOneByOne(uniqueSession.updateLocations, dataBag.updateLocations);
+        cpUniqueOneByOne(uniqueSession.updateUULocations, dataBag.updateUULocations);
         cpUniqueOneByOne(uniqueSession.updateCities, dataBag.updateCities);
         for (var i=0; i < predefinedMetrics.length; i++) {
             var metricDb = predefinedMetrics[i].db;
@@ -442,7 +457,7 @@ var process = require('process');
         //console.log("cpUniqueUser: %j",uniqueUser.updateUsers);
     }
 
-    function processUserSession(dbs, dataBag, dbAppUser, isFinal, appinfos) {
+    function processUserSession(dbs, dataBag, dbAppUser, isFinal, appinfos, isUU) {
         var apps = dataBag.apps;
         var sessionObj = [];
         var last_end_session_timestamp = 0;
@@ -450,6 +465,7 @@ var process = require('process');
         var total_duration = 0;
         var i = 0;
         var normalSessionStart = 0;
+
         //console.log(dataBag.apps);
 
         //console.log('process user session length='+dataBag.apps.length);
@@ -471,7 +487,7 @@ var process = require('process');
         if (normalSessionStart >= apps.length) { //no begin_session for new user -->for the remaining logs from previous data
             //console.log('Incomplete session data from past users ' + apps[0].device_id);
             if (isFinal) {
-                reallyUpdateAll(dbs, dataBag, appinfos);
+                reallyUpdateAll(dbs, dataBag, appinfos, isUU);
             }
             return;
         }
@@ -559,6 +575,7 @@ var process = require('process');
         var uniqueSession={};
         uniqueSession.updateSessions = {};
         uniqueSession.updateLocations = {};
+        uniqueSession.updateUULocations = {};
         uniqueSession.updateCities = {};
         uniqueSession.updateMetrics = {};
 
@@ -584,8 +601,8 @@ var process = require('process');
             }
 
             //set total user/unique user count in necessary collections   
-            updateStatistics(dataBag, sessionObj[i], common.dbMap['total'], OP_INCREASE); //will increase for every session
-            updateStatistics(dataBag, sessionObj[i], common.dbMap['unique'], OP_FILL, 1, uniqueSession); // only set once
+            updateStatistics(isUU, dataBag, sessionObj[i], common.dbMap['total'], OP_INCREASE); //will increase for every session
+            updateStatistics(isUU, dataBag, sessionObj[i], common.dbMap['unique'], OP_FILL, 1, uniqueSession); // only set once
             //console.log(uniqueSession.updateSessions);
         }
 	    //console.log('sessionObjByDay='+(i-startIdx+1));
@@ -613,13 +630,13 @@ var process = require('process');
             if (dbAppUser.acc_duration>0) {
                 updateSessionDuration(dataBag, dbAppUser, OP_DECREASE);
             }
-            updateStatistics(dataBag, dbAppUser, common.dbMap['total'], OP_DECREASE); 
-            updateStatistics(dataBag, dbAppUser, common.dbMap['unique'], OP_DECREASE); // reset previous add in sessionObj
+            updateStatistics(isUU, dataBag, dbAppUser, common.dbMap['total'], OP_DECREASE); 
+            updateStatistics(isUU, dataBag, dbAppUser, common.dbMap['unique'], OP_DECREASE); // reset previous add in sessionObj
 
         } else { //set new user count in necessary collections   
             //console.log("new user");
             if (sessionObjByDay.length > 0) {
-                updateStatistics(dataBag, sessionObjByDay[0][0], common.dbMap['new'], OP_INCREASE);
+                updateStatistics(isUU, dataBag, sessionObjByDay[0][0], common.dbMap['new'], OP_INCREASE);
                 updateLoyaltyRange(uniqueUser, dataBag, sessionObjByDay[0][0], 1); //session count = 1
                 updateFreqRange(uniqueUser, dataBag, sessionObjByDay[0][0], sessionObjByDay[0][0]); //set 1st session
             }
@@ -635,7 +652,7 @@ var process = require('process');
 
         //do the real update job in MongoDB
     	if (isFinal) {
-            reallyUpdateAll(dbs, dataBag, appinfos);
+            reallyUpdateAll(dbs, dataBag, appinfos, isUU);
     	}
     }
     function ObjId2Timestamp (objectId) {
