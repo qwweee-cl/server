@@ -62,16 +62,17 @@ print(yearStr);
 
 var b_coll = db.collection(collectionName+YMK_And_Oid);
 
-b_coll.count({country: {$nin: countryList}}, function (err, result) {
+//b_coll.count({country: {$nin: countryList}}, function (err, result) {
+b_coll.count({}, function (err, result) {
 	dbCount++;
 	if (!result) {
     	print("YMK_And no data");
     	return;
     }
-    upsetTotalU(yearStr, "Y", "YMK", "And", "Others", result);
-    upsetTotalU(monthStr, "M", "YMK", "And", "Others", result);
-    upsetTotalU(weekStr, "W", "YMK", "And", "Others", result);
-    upsetTotalU(dayStr, "D", "YMK", "And", "Others", result);
+    upsetTotalU(yearStr, "Y", "YMK", "And", "ALL", result);
+    upsetTotalU(monthStr, "M", "YMK", "And", "ALL", result);
+    upsetTotalU(weekStr, "W", "YMK", "And", "ALL", result);
+    upsetTotalU(dayStr, "D", "YMK", "And", "ALL", result);
 });
 for (var index in countryList) {
 	getCountyCount(yearStr, monthStr, weekStr, dayStr,
@@ -79,16 +80,17 @@ for (var index in countryList) {
 }
 
 b_coll = db.collection(collectionName+YMK_iOS_Oid);
-b_coll.count({country: {$nin: countryList}}, function (err, result) {
+//b_coll.count({country: {$nin: countryList}}, function (err, result) {
+b_coll.count({}, function (err, result) {
 	dbCount++;
 	if (!result) {
     	print("YMK_iOS no data");
     	return;
     }
-    upsetTotalU(yearStr, "Y", "YMK", "iOS", "Others", result);
-    upsetTotalU(monthStr, "M", "YMK", "iOS", "Others", result);
-    upsetTotalU(weekStr, "W", "YMK", "iOS", "Others", result);
-    upsetTotalU(dayStr, "D", "YMK", "iOS", "Others", result);
+    upsetTotalU(yearStr, "Y", "YMK", "iOS", "ALL", result);
+    upsetTotalU(monthStr, "M", "YMK", "iOS", "ALL", result);
+    upsetTotalU(weekStr, "W", "YMK", "iOS", "ALL", result);
+    upsetTotalU(dayStr, "D", "YMK", "iOS", "ALL", result);
 });
 for (var index in countryList) {
 	getCountyCount(yearStr, monthStr, weekStr, dayStr
@@ -96,15 +98,16 @@ for (var index in countryList) {
 }
 
 b_coll = db.collection(collectionName+YCP_And_Oid);
-b_coll.count({country: {$nin: countryList}}, function (err, result) {
+//b_coll.count({country: {$nin: countryList}}, function (err, result) {
+b_coll.count({}, function (err, result) {
 	if (!result) {
     	print("YCP_And no data");
     	return;
     }
-    upsetTotalU(yearStr, "Y", "YCP", "And", "Others", result);
-    upsetTotalU(monthStr, "M", "YCP", "And", "Others", result);
-    upsetTotalU(weekStr, "W", "YCP", "And", "Others", result);
-    upsetTotalU(dayStr, "D", "YCP", "And", "Others", result);
+    upsetTotalU(yearStr, "Y", "YCP", "And", "ALL", result);
+    upsetTotalU(monthStr, "M", "YCP", "And", "ALL", result);
+    upsetTotalU(weekStr, "W", "YCP", "And", "ALL", result);
+    upsetTotalU(dayStr, "D", "YCP", "And", "ALL", result);
 });
 for (var index in countryList) {
 	getCountyCount(yearStr, monthStr, weekStr, dayStr,
@@ -112,15 +115,16 @@ for (var index in countryList) {
 }
 
 b_coll = db.collection(collectionName+YCP_iOS_Oid);
-b_coll.count({country: {$nin: countryList}}, function (err, result) {
+//b_coll.count({country: {$nin: countryList}}, function (err, result) {
+b_coll.count({}, function (err, result) {
 	if (!result) {
     	print("YCP_iOS no data");
     	return;
     }
-    upsetTotalU(dayStr, "Y", "YCP", "iOS", "Others", result);
-    upsetTotalU(dayStr, "M", "YCP", "iOS", "Others", result);
-    upsetTotalU(dayStr, "W", "YCP", "iOS", "Others", result);
-    upsetTotalU(dayStr, "D", "YCP", "iOS", "Others", result);
+    upsetTotalU(dayStr, "Y", "YCP", "iOS", "ALL", result);
+    upsetTotalU(dayStr, "M", "YCP", "iOS", "ALL", result);
+    upsetTotalU(dayStr, "W", "YCP", "iOS", "ALL", result);
+    upsetTotalU(dayStr, "D", "YCP", "iOS", "ALL", result);
 });
 for (var index in countryList) {
 	getCountyCount(yearStr, monthStr, weekStr, dayStr,
@@ -129,6 +133,7 @@ for (var index in countryList) {
 
 // BOTH Android
 b_coll = db.collection("uma");
+/*
 b_coll.count({
 	$and: [
 	{country: 
@@ -137,15 +142,20 @@ b_coll.count({
 		{$all: AndAppList}}
 	]
 }, function (err, result) {
+*/
+b_coll.count({
+	{my_apps:
+		{$all: AndAppList}}
+}, function (err, result) {
 	if (!result) {
     	print("BOTH_And no data");
     	return;
     }
     print(result);
-    upsetTotalU(dayStr, "Y", "BOTH", "And", "Others", result);
-    upsetTotalU(dayStr, "M", "BOTH", "And", "Others", result);
-    upsetTotalU(dayStr, "W", "BOTH", "And", "Others", result);
-    upsetTotalU(dayStr, "D", "BOTH", "And", "Others", result);
+    upsetTotalU(dayStr, "Y", "BOTH", "And", "ALL", result);
+    upsetTotalU(dayStr, "M", "BOTH", "And", "ALL", result);
+    upsetTotalU(dayStr, "W", "BOTH", "And", "ALL", result);
+    upsetTotalU(dayStr, "D", "BOTH", "And", "ALL", result);
 });
 
 for (var index in countryList) {
@@ -154,6 +164,7 @@ for (var index in countryList) {
 }
 
 // BOTH iOS
+/*
 b_coll.count({
 	$and: [
 	{country: 
@@ -162,15 +173,20 @@ b_coll.count({
 		{$all: iOSAppList}}
 	]
 }, function (err, result) {
+*/
+b_coll.count({
+	{my_apps:
+		{$all: iOSAppList}}
+}, function (err, result) {
 	if (!result) {
     	print("BOTH_iOS no data");
     	return;
     }
     print(result);
-    upsetTotalU(dayStr, "Y", "BOTH", "iOS", "Others", result);
-    upsetTotalU(dayStr, "M", "BOTH", "iOS", "Others", result);
-    upsetTotalU(dayStr, "W", "BOTH", "iOS", "Others", result);
-    upsetTotalU(dayStr, "D", "BOTH", "iOS", "Others", result);
+    upsetTotalU(dayStr, "Y", "BOTH", "iOS", "ALL", result);
+    upsetTotalU(dayStr, "M", "BOTH", "iOS", "ALL", result);
+    upsetTotalU(dayStr, "W", "BOTH", "iOS", "ALL", result);
+    upsetTotalU(dayStr, "D", "BOTH", "iOS", "ALL", result);
 });
 
 for (var index in countryList) {
