@@ -8,7 +8,7 @@ var mongo = require('mongoskin'),
 
 var countryList = ['US','GB','CA','FR','DE','CN','TW','HK','JP',
                    'IN','RU','BR','MX','TR','IT','ES','ID','AU',
-                   'SG'];
+                   'SG','KR'];
 var processArray = [];
 var intRegex = /^\d+$/;
 
