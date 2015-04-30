@@ -37,7 +37,7 @@ print(date);
 date = nowMoment.toDate();
 print(date);
 
-var beginMoment = nowMoment.add(-3, "months");
+var beginMoment = nowMoment.add(-8, "months");
 var beginYear = beginMoment.format("YYYY");
 var beginMonth = beginMoment.format("M");
 var beginDate = beginMoment.format("D");
