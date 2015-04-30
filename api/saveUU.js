@@ -191,8 +191,8 @@ var cnt=0;
 var repeat_times = 0;
 var wait_cnt = 10;
 var baseTimeOut = 3000;
-baseTimeOut = 1000;
-wait_cnt = 10;
+baseTimeOut = 3000;
+wait_cnt = 20;
 setInterval(function() {
     if (dbCount > 0) {
     	print(dbCount);
