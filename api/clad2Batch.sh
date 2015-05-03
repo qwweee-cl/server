@@ -6,7 +6,7 @@ function error_exp
 	#echo -e "Daily BB data import failed. Please check log in elephant1>/home/hadoop/new_script/dashborad_script/logs/log_daily_bb_import.log\nLog scraps: "$(tail -10 ~/new_script/dashborad_script/logs/log_daily_bb_import.log)\
 	#| mail -s "Daily BB data import exception" $dashboard_team
 	echo -e "Clad2 Countly Batch Error Please check log in clad2.cyberlink.com>/usr/local/countly/log/clad2_batch.log" $(tail -20 /usr/local/countly/log/clad2_batch.log)\
-	| mail -s "Clad2 Countly Batch Error Trap" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
+	| mail -s "Clad2 Countly Batch Error Trap" gary_huang@cyberlink.com,qwweee@gmail.com
 	#sleep 1
 	rm -f ${LOCKFILE}
 	exit 1
@@ -188,7 +188,7 @@ echo $start
 echo $end
 echo "==============================================================="
 echo -e "Clad2 Countly Batch run from $start to $end\n" $(tail -20 /usr/local/countly/log/clad2_batch.log)\
-| mail -s "[$curdate]Clad2 Countly Batch Finished" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
+| mail -s "[$curdate]Clad2 Countly Batch Finished" gary_huang@cyberlink.com,qwweee@gmail.com
 ## | mail -s "Clad2 Countly Batch Finished" gary_huang@cyberlink.com
 rm -f ${LOCKFILE}
 exit 0
@@ -266,6 +266,6 @@ echo $start
 echo $end
 echo "==============================================================="
 echo -e "Clad2 Countly Batch run from $start to $end\n" $(tail -20 /usr/local/countly/log/cron_batch.log)\
-| mail -s "[$curdate]Clad2 Countly Batch Finished" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
+| mail -s "[$curdate]Clad2 Countly Batch Finished" gary_huang@cyberlink.com,qwweee@gmail.com
 #sleep 1
 rm -f ${LOCKFILE}

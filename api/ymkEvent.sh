@@ -6,7 +6,7 @@ function error_exp
 	#echo -e "Daily BB data import failed. Please check log in elephant1>/home/hadoop/new_script/dashborad_script/logs/log_daily_bb_import.log\nLog scraps: "$(tail -10 ~/new_script/dashborad_script/logs/log_daily_bb_import.log)\
 	#| mail -s "Daily BB data import exception" $dashboard_team
 	echo -e "Clad YMK Event failed clad.cyberlink.com>/usr/local/countly/log/ymkEvent_batch.log" $(tail -20 /usr/local/countly/log/ymkEvent_batch.log)\
-	| mail -s "Clad YMK Event Error Trap" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
+	| mail -s "Clad YMK Event Error Trap" gary_huang@cyberlink.com,qwweee@gmail.com
 	#sleep 1
 	exit 0
 }
@@ -81,5 +81,5 @@ echo $start
 echo $end
 echo "==============================================================="
 echo -e "Clad YMK Event run from $start to $end\n" $(tail -20 /usr/local/countly/log/ymkEvent_batch.log)\
-| mail -s "[$nowDate]Clad YMK Event Finished" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
+| mail -s "[$nowDate]Clad YMK Event Finished" gary_huang@cyberlink.com,qwweee@gmail.com
 

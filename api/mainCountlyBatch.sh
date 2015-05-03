@@ -6,7 +6,7 @@ function error_exp
 	#echo -e "Daily BB data import failed. Please check log in elephant1>/home/hadoop/new_script/dashborad_script/logs/log_daily_bb_import.log\nLog scraps: "$(tail -10 ~/new_script/dashborad_script/logs/log_daily_bb_import.log)\
 	#| mail -s "Daily BB data import exception" $dashboard_team
 	echo -e "Countly Batch Error Please check log in clad.cyberlink.com>/usr/local/countly/log/cron_batch.log" $(tail -20 /usr/local/countly/log/cron_batch.log)\
-	| mail -s "Main Countly Batch Error Trap" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
+	| mail -s "Main Countly Batch Error Trap" gary_huang@cyberlink.com,qwweee@gmail.com
 	#sleep 1
 	rm -f ${LOCKFILE}
 	exit 1
@@ -16,7 +16,7 @@ LOCKFILE="/tmp/Batchlock.lock"
 if [ -e ${LOCKFILE} ] ; then
 	echo "already running"
 	echo -e "Countly Batch already running, please manual run" $(date +%Y%m%d)\
-	| mail -s "Main Countly Batch Already running" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
+	| mail -s "Main Countly Batch Already running" gary_huang@cyberlink.com,qwweee@gmail.com
 	#sleep 1
 	rm -f ${LOCKFILE}
 	exit 1
@@ -362,6 +362,12 @@ $cmd
 curr=$(date +%Y-%m-%d_%H-%M)
 echo "===== raw data cp to s3 end =>"$curr" ====="
 
+## run OEM batch
+#cmd="$path/runOEM.sh >> /usr/local/countly/log/oem_batch.log"
+cmd="$path/mainRunOEM.sh $curdate"
+echo $cmd
+$cmd >> /usr/local/countly/log/oem_batch.log 2>&1
+
 ## add index in database
 cd $path
 echo $PWD
@@ -373,12 +379,6 @@ $cmd
 cmd="/usr/bin/node --max-old-space-size=8192 $path/sessionNewBatch.js"
 echo $cmd
 $cmd
-
-## run OEM batch
-#cmd="$path/runOEM.sh >> /usr/local/countly/log/oem_batch.log"
-cmd="$path/mainRunOEM.sh $curdate"
-echo $cmd
-$cmd >> /usr/local/countly/log/oem_batch.log 2>&1
 
 ## remove raw data ( move to end )
 ## mongo test --eval "printjson(db.getCollectionNames())"
@@ -443,6 +443,6 @@ echo $start
 echo $end
 echo "==============================================================="
 echo -e "Countly Batch run from $start to $end\n" $(tail -20 /usr/local/countly/log/cron_batch.log)\
-| mail -s "Main [$curdate]Countly Batch Finished" gary_huang@cyberlink.com,snow_chen@cyberlink.com,qwweee@gmail.com
+| mail -s "Main [$curdate]Countly Batch Finished" gary_huang@cyberlink.com,qwweee@gmail.com
 #sleep 1
 rm -f ${LOCKFILE}
