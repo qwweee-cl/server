@@ -56,7 +56,6 @@ echo -e $cmd
 cmd="/usr/bin/mysql -u root -pcyberlink#1 -e 
 'CALL BcTest.countlyIn_compute_totalu_monthly();' >> /usr/local/countly/log/compute_monthly_all.log"
 echo -e $cmd
-#$cmd >> /usr/local/countly/log/compute_monthly_all.log 2>&1
 /usr/bin/mysql -u root -pcyberlink#1 -e "CALL BcTest.countlyIn_compute_totalu_monthly();" 2>&1 >> /usr/local/countly/log/compute_monthly_all.log
 
 cd $exportPath
@@ -65,7 +64,7 @@ pwd
 cmd="/usr/bin/mysqldump -u root -pcyberlink#1 
 BcTest countlyIn > "$curdate"_countlyIn.sql"
 echo -e $cmd
-$cmd
+/usr/bin/mysqldump -u root -pcyberlink#1 BcTest countlyIn > ${curdate}_countlyIn.sql
 
 ## tar dump data that BcTest databse
 cmd="tar czvf $gzipPath"$curdate"_countlyIn.tgz "$curdate"_countlyIn.sql"
