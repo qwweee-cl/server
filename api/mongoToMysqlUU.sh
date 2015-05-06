@@ -44,19 +44,20 @@ pwd
 ## run get countly YCP, YMK new user, active user, session
 cmd="/usr/bin/node --max-old-space-size=10240 saveUU.js"
 echo -e $cmd
-$cmd >> /usr/local/countly/log/uu.log 2>&1
+$cmd >> /usr/local/countly/log/${curdate}_uu.log 2>&1
 
 ## run compute daily total user
 cmd="/usr/bin/mysql -u root -pcyberlink#1 -e 
-'CALL BcTest.countlyIn_compute_totalu_daily();'"
+'CALL BcTest.countlyIn_compute_totalu_daily();' >> /usr/local/countly/log/compute_daily_all.log"
 echo -e $cmd
-$cmd >> /usr/local/countly/log/compute_daily_all.log 2>&1
+/usr/bin/mysql -u root -pcyberlink#1 -e "CALL BcTest.countlyIn_compute_totalu_daily();" 2>&1 >> /usr/local/countly/log/compute_daily_all.log
 
 ## run compute monthly total user
 cmd="/usr/bin/mysql -u root -pcyberlink#1 -e 
-'CALL BcTest.countlyIn_compute_totalu_monthly();'"
+'CALL BcTest.countlyIn_compute_totalu_monthly();' >> /usr/local/countly/log/compute_monthly_all.log"
 echo -e $cmd
-$cmd >> /usr/local/countly/log/compute_monthly_all.log 2>&1
+#$cmd >> /usr/local/countly/log/compute_monthly_all.log 2>&1
+/usr/bin/mysql -u root -pcyberlink#1 -e "CALL BcTest.countlyIn_compute_totalu_monthly();" 2>&1 >> /usr/local/countly/log/compute_monthly_all.log
 
 cd $exportPath
 pwd
