@@ -446,3 +446,7 @@ echo -e "Countly Batch run from $start to $end\n" $(tail -20 /usr/local/countly/
 | mail -s "Main [$curdate]Countly Batch Finished" gary_huang@cyberlink.com,qwweee@gmail.com
 #sleep 1
 rm -f ${LOCKFILE}
+
+cmd="ssh ubuntu@claddb /usr/local/countly/api/mongoToMysqlUU.sh $curdate >> /usr/local/countly/log/mongoToMysql.log &"
+echo $cmd
+$cmd
