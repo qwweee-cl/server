@@ -37,6 +37,7 @@ if [ -z "$1" ]; then
     echo "mongoToMysqlUU No argument supplied"
 else
 	curdate=$1
+	mysqldate=$(date -d "${1}" +%Y-%m-%d)
 fi
 echo $curdate
 
