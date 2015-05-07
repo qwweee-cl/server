@@ -17,6 +17,7 @@ gzipPath="/mnt_other/tmp/UU_gzip/"
 exportPath="/mnt_other/tmp/UU_backup/"
 s3Path="/s3mnt/db_backup/UU_backup/"
 curdate=$(date +%Y%m%d)
+mysqldate=$(date +%Y-%m-%d)
 
 start=$(date +%Y-%m-%d_%H-%M)
 
@@ -50,13 +51,13 @@ $cmd >> /usr/local/countly/log/${curdate}_uu.log 2>&1
 cmd="/usr/bin/mysql -u root -pcyberlink#1 -e 
 'CALL BcTest.countlyIn_compute_totalu_daily();' >> /usr/local/countly/log/compute_daily_all.log"
 echo -e $cmd
-/usr/bin/mysql -u root -pcyberlink#1 -e "CALL BcTest.countlyIn_compute_totalu_daily();" 2>&1 >> /usr/local/countly/log/compute_daily_all.log
+/usr/bin/mysql -u root -pcyberlink#1 -e "CALL BcTest.countlyIn_compute_totalu_daily('"$mysqldate"');" >> /usr/local/countly/log/compute_daily_all.log 2>&1
 
 ## run compute monthly total user
 cmd="/usr/bin/mysql -u root -pcyberlink#1 -e 
 'CALL BcTest.countlyIn_compute_totalu_monthly();' >> /usr/local/countly/log/compute_monthly_all.log"
 echo -e $cmd
-/usr/bin/mysql -u root -pcyberlink#1 -e "CALL BcTest.countlyIn_compute_totalu_monthly();" 2>&1 >> /usr/local/countly/log/compute_monthly_all.log
+/usr/bin/mysql -u root -pcyberlink#1 -e "CALL BcTest.countlyIn_compute_totalu_monthly('"$mysqldate"');" >> /usr/local/countly/log/compute_monthly_all.log 2>&1
 
 cd $exportPath
 pwd
