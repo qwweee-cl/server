@@ -60,11 +60,14 @@ var common = {},
         dbName = countlyConfig.mongodb.replSetServers;
         dbOptions.database = countlyConfig.mongodb.db || 'countly';
     } else {
-        dbName = (countlyConfig.mongodb.host + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db + '?auto_reconnect=true');
+        dbName = (countlyConfig.mongodb.host + ':' + 
+            countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db + '?auto_reconnect=true');
     }
 
-    dbLocalRawName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_raw + '?auto_reconnect=true');
-    dbLocalBatchName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_batch + '?auto_reconnect=true');
+    dbLocalRawName = (countlyConfig.mongodb.hostbatch + ':' + 
+        countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_raw + '?auto_reconnect=true');
+    dbLocalBatchName = (countlyConfig.mongodb.hostbatch + ':' + 
+        countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_batch + '?auto_reconnect=true');
 
     common.local_raw = mongo.db(dbLocalRawName, dbRawOptions);
     common.local_raw.tag = countlyConfig.mongodb.db_raw.replace(/system\.|\.\.|\$/g, "");
@@ -72,14 +75,20 @@ var common = {},
     common.local_batch.tag = countlyConfig.mongodb.db_batch.replace(/system\.|\.\.|\$/g, "");
 
 
-    dbRawName1 = (countlyConfig.mongodb.hostbatch1 + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_raw + '?auto_reconnect=true');
-    dbBatchName1 = (countlyConfig.mongodb.hostbatch1 + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_batch + '?auto_reconnect=true');
-    dbRawName2 = (countlyConfig.mongodb.hostbatch2 + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_raw + '?auto_reconnect=true');
-    dbBatchName2 = (countlyConfig.mongodb.hostbatch2 + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_batch + '?auto_reconnect=true');
+    dbRawName1 = (countlyConfig.mongodb.hostbatch1 + ':' + 
+        countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_raw + '?auto_reconnect=true');
+    dbBatchName1 = (countlyConfig.mongodb.hostbatch1 + ':' + 
+        countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_batch + '?auto_reconnect=true');
+    dbRawName2 = (countlyConfig.mongodb.hostbatch2 + ':' + 
+        countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_raw + '?auto_reconnect=true');
+    dbBatchName2 = (countlyConfig.mongodb.hostbatch2 + ':' + 
+        countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_batch + '?auto_reconnect=true');
 
-    dbIbbName = (countlyConfig.mongodb.host + ':' + countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_ibb + '?auto_reconnect=true');
+    dbIbbName = (countlyConfig.mongodb.host + ':' + 
+        countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_ibb + '?auto_reconnect=true');
 
-    dbReportName = (countlyConfig.mongodb.oemhost + ':' + countlyConfig.mongodb.port + '/' + "oem_report" + '?auto_reconnect=true');
+    dbReportName = (countlyConfig.mongodb.oemhost + ':' + 
+        countlyConfig.mongodb.port + '/' + "oem_report" + '?auto_reconnect=true');
 
     common.db = mongo.db(dbName, dbOptions);
     common.db.tag = countlyConfig.mongodb.db.replace(/system\.|\.\.|\$/g, "");
@@ -115,7 +124,9 @@ var common = {},
 
     //initOEMRawDBs();
     common.getDBByName = function (inDBName) {
-        var db_name = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/' + inDBName + '?auto_reconnect=true');
+        var db_name = (countlyConfig.mongodb.hostbatch + ':' + 
+            countlyConfig.mongodb.port + '/' + inDBName + 
+            '?auto_reconnect=true');
         var dbInstance = mongo.db(db_name, dbBatchOptions);
         dbInstance.tag = inDBName.replace(/system\.|\.\.|\$/g, "");
         return dbInstance;
@@ -151,7 +162,9 @@ var common = {},
             //console.log("this is a oem "+srNumberName);
         } else {
             //console.log(srNumberName+" there is no oem");
-            dbOEMName = (countlyConfig.mongodb.oemhost + ':' + countlyConfig.mongodb.port + '/oem_' + srNumberName + raw_name[1] + '?auto_reconnect=true');
+            dbOEMName = (countlyConfig.mongodb.oemhost + ':' + 
+                countlyConfig.mongodb.port + '/oem_' + 
+                srNumberName + raw_name[1] + '?auto_reconnect=true');
             common.db_oem[srNumberName]=mongo.db(dbOEMName, dbRawOptions);
             oem = common.db_oem[srNumberName];
         }
@@ -167,7 +180,9 @@ var common = {},
             //console.log("this is a oem "+srNumberName);
         } else {
             //console.log(srNumberName+" there is no oem");
-            dbOEMName = (countlyConfig.mongodb.oemhost + ':' + countlyConfig.mongodb.port + '/oem_' + srNumberName + raw_name[1] + '?auto_reconnect=true');
+            dbOEMName = (countlyConfig.mongodb.oemhost + ':' + 
+                countlyConfig.mongodb.port + '/oem_' + 
+                srNumberName + raw_name[1] + '?auto_reconnect=true');
             common.db_oem_batch[srNumberName]=mongo.db(dbOEMName, dbBatchOptions);
             oem = common.db_oem_batch[srNumberName];
         }
@@ -182,7 +197,9 @@ var common = {},
             //console.log("this is a oem "+srNumberName);
         } else {
             //console.log(srNumberName+" there is no oem");
-            dbOEMName = (countlyConfig.mongodb.host + ':' + countlyConfig.mongodb.port + '/countly_' + srNumberName + '?auto_reconnect=true');
+            dbOEMName = (countlyConfig.mongodb.host + ':' + 
+                countlyConfig.mongodb.port + '/countly_' + 
+                srNumberName + '?auto_reconnect=true');
             common.db_oem_dashboard[srNumberName]=mongo.db(dbOEMName, dbOptions);
             oem = common.db_oem_dashboard[srNumberName];
         }
@@ -198,7 +215,9 @@ var common = {},
             //console.log("this is a oem "+srNumberName);
         } else {
             //console.log(srNumberName+" there is no oem");
-            dbOEMName = (countlyConfig.mongodb.host + ':' + countlyConfig.mongodb.port + '/' + srNumberName + '?auto_reconnect=true');
+            dbOEMName = (countlyConfig.mongodb.host + ':' + 
+                countlyConfig.mongodb.port + '/' + 
+                srNumberName + '?auto_reconnect=true');
             common.db_oem[srNumberName]=mongo.db(dbOEMName, dbOptions);
             oem = common.db_oem[srNumberName];
         }
@@ -214,7 +233,9 @@ var common = {},
             //console.log("this is a oem "+srNumberName);
         } else {
             //console.log(srNumberName+" there is no oem");
-            dbOEMName = (countlyConfig.mongodb.hostbatch + ':' + countlyConfig.mongodb.port + '/' + srNumberName + raw_name[1] + '?auto_reconnect=true');
+            dbOEMName = (countlyConfig.mongodb.hostbatch + ':' + 
+                countlyConfig.mongodb.port + '/' + 
+                srNumberName + raw_name[1] + '?auto_reconnect=true');
             common.db_oem[srNumberName]=mongo.db(dbOEMName, dbOptions);
             oem = common.db_oem[srNumberName];
         }
@@ -297,7 +318,8 @@ var common = {},
         var increment = (increment) ? +increment : 1,
             timeObj = params.time;
 
-        if (!timeObj || !timeObj.yearly || !timeObj.monthly || !timeObj.weekly || !timeObj.daily || !timeObj.hourly) {
+        if (!timeObj || !timeObj.yearly || !timeObj.monthly || 
+            !timeObj.weekly || !timeObj.daily || !timeObj.hourly) {
             return false;
         }
 
@@ -357,19 +379,25 @@ var common = {},
 	var path = '/home/hadoop/countly_snow/log/'
         if (tz) {
             if (!tz.match(regex)) {
-                debug.writeLog(path+'re.log', "not match data=>"+tz+" Typeof:"+(typeof tz)+" empty:"+empty(tz)+" "+reqTimestamp);
-                console.log("not match data=>"+tz+" Typeof:"+(typeof tz)+" empty:"+empty(tz));
+                debug.writeLog(path+'re.log', "not match data=>"+tz+
+                    " Typeof:"+(typeof tz)+" empty:"+empty(tz)+
+                    " "+reqTimestamp);
+                console.log("not match data=>"+tz+" Typeof:"+
+                    (typeof tz)+" empty:"+empty(tz));
                 return "";
             }
-            debug.writeLog(path+'tz.log', "Typeof:"+(typeof tz)+" empty:"+empty(tz)+" length:"+tz.length+"["+tz+"]");
+            debug.writeLog(path+'tz.log', "Typeof:"+(typeof tz)+
+                " empty:"+empty(tz)+" length:"+tz.length+"["+tz+"]");
             debug.writeLog(path+'tz.log', "substrig(0,1):",tz.substring(0,1));
             debug.writeLog(path+'g', (typeof tz)+" tz:["+tz+"] "+(tz>=0));
             var absTZ = Math.abs(tz);
             var timezone = (tz>=0?"+":"-")+pad2(Math.floor(absTZ/100))+":"+pad2(absTZ%100);
-            debug.writeLog(path+'ne.log', tz+" "+timezone+"("+timezone.length+") "+empty(tz)+" "+(typeof tz));
+            debug.writeLog(path+'ne.log', tz+" "+timezone+"("+
+                timezone.length+") "+empty(tz)+" "+(typeof tz));
             return timezone;
         } else {
-            debug.writeLog(path+'ne.log', "empty data=>"+tz+" Typeof:"+(typeof tz)+" empty:"+empty(tz));
+            debug.writeLog(path+'ne.log', "empty data=>"+tz+
+                " Typeof:"+(typeof tz)+" empty:"+empty(tz));
             return "";
         }
     }
@@ -379,23 +407,28 @@ var common = {},
         var increment = (increment) ? +increment : 1,
             timeObj = params.time;
 
-        if (!timeObj || !timeObj.yearly || !timeObj.monthly || !timeObj.weekly || !timeObj.daily || !timeObj.hourly) {
+        if (!timeObj || !timeObj.yearly || !timeObj.monthly ||
+         !timeObj.weekly || !timeObj.daily || !timeObj.hourly) {
             return false;
         }
 
-        if (object[timeObj.yearly + '.' + property]) object[timeObj.yearly + '.' + property] += increment;
+        if (object[timeObj.yearly + '.' + property]) object[timeObj.yearly + 
+            '.' + property] += increment;
         else object[timeObj.yearly + '.' + property] = increment;
 
-        if (object[timeObj.monthly + '.' + property]) object[timeObj.monthly + '.' + property] += increment;
+        if (object[timeObj.monthly + '.' + property]) object[timeObj.monthly + 
+            '.' + property] += increment;
         else object[timeObj.monthly + '.' + property] = increment;
         
-        if (object[timeObj.daily + '.' + property]) object[timeObj.daily + '.' + property] += increment;
+        if (object[timeObj.daily + '.' + property]) object[timeObj.daily + 
+            '.' + property] += increment;
         else object[timeObj.daily + '.' + property] = increment;
 
         // If the property parameter contains a dot, hourly data is not saved in
         // order to prevent two level data (such as 2012.7.20.TR.u) to get out of control.
         if (property.indexOf('.') === -1) {
-            if (object[timeObj.hourly + '.' + property]) object[timeObj.hourly + '.' + property] += increment;
+            if (object[timeObj.hourly + '.' + property]) object[timeObj.hourly + 
+                '.' + property] += increment;
             else object[timeObj.hourly + '.' + property] = increment;
         }
 
@@ -413,12 +446,14 @@ var common = {},
         }
     };
 
-   // decrease/add a time object in the format object["2012.7.20.property"] = -increment, and removed if zero.
+   // decrease/add a time object in the format object["2012.7.20.property"] = -increment,
+   // and removed if zero.
     common.decrTimeObject = function (params, object, property, increment) {
         var increment = (increment) ? increment : 1,
             timeObj = params.time;
 
-        if (!timeObj || !timeObj.yearly || !timeObj.monthly || !timeObj.weekly || !timeObj.daily || !timeObj.hourly) {
+        if (!timeObj || !timeObj.yearly || !timeObj.monthly || 
+            !timeObj.weekly || !timeObj.daily || !timeObj.hourly) {
             console.log('no timestamp to decrease');
             console.log(timeObj);
             return false;
@@ -576,7 +611,8 @@ var common = {},
     };
 
     /*
-     argProperties = { argName: { required: true, type: 'String', max-length: 25, min-length: 25, exclude-from-ret-obj: false }};
+     argProperties = { argName: { required: true, type: 'String', 
+     max-length: 25, min-length: 25, exclude-from-ret-obj: false }};
      */
     common.validateArgs = function (args, argProperties) {
 
@@ -595,12 +631,15 @@ var common = {},
 
             if (args[arg] !== void 0) {
                 if (argProperties[arg].type) {
-                    if (argProperties[arg].type === 'Number' || argProperties[arg].type === 'String') {
-                        if (toString.call(args[arg]) !== '[object ' + argProperties[arg].type + ']') {
+                    if (argProperties[arg].type === 'Number' || 
+                        argProperties[arg].type === 'String') {
+                        if (toString.call(args[arg]) !== '[object ' + 
+                            argProperties[arg].type + ']') {
                             return false;
                         }
                     } else if (argProperties[arg].type === 'Boolean') {
-                        if (!(args[arg] !== true || args[arg] !== false || toString.call(args[arg]) !== '[object Boolean]')) {
+                        if (!(args[arg] !== true || args[arg] !== false || 
+                            toString.call(args[arg]) !== '[object Boolean]')) {
                             return false;
                         }
                     } else if (argProperties[arg].type === 'Array') {
@@ -644,9 +683,11 @@ var common = {},
     };
 
     common.returnMessage = function (params, returnCode, message) {
-        params.res.writeHead(returnCode, {'Content-Type': 'application/json; charset=utf-8'});
+        params.res.writeHead(returnCode, 
+            {'Content-Type': 'application/json; charset=utf-8'});
         if (params.qstring.callback) {
-            params.res.write(params.qstring.callback + '(' + JSON.stringify({result: message}) + ')');
+            params.res.write(params.qstring.callback + '(' + 
+                JSON.stringify({result: message}) + ')');
         } else {
             params.res.write(JSON.stringify({result: message}));
         }
