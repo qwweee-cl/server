@@ -60,7 +60,7 @@ var process = require('process');
         
         var uma = appinfos.app_id;
 
-        dbs.save.collection('uma').update({'_id':app[0].device_id}
+        /*dbs.save.collection('uma').update({'_id':app[0].device_id}
             , {'$addToSet': {'my_apps': uma}, '$set': {'country': app[0].country}}
             , {'upsert': true}
             , function (err, data) {
@@ -68,9 +68,9 @@ var process = require('process');
                     console.log('[processSession]uma log error:' + err);  
                 }
                 dbonoff.on('raw');
-        });
+        });*/
 
-        dbs.base.collection('uma').update({'_id':app[0].device_id}
+        /*dbs.base.collection('uma').update({'_id':app[0].device_id}
             , {'$addToSet': {'my_apps': uma}, '$set': {'country': app[0].country}}
             , {'upsert': true}
             , function (err, data) {
@@ -78,7 +78,7 @@ var process = require('process');
                     console.log('[processSession]uma log error:' + err);  
                 }
                 dbonoff.on('raw');
-        });
+        });*/
 
         /* use base db, because user was oem before, and now oem expire, it will be a new user on generic */
         dbs.base.collection('app_users' + appinfos.app_id).findOne({'_id': app[0].app_user_id}, 
