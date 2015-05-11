@@ -44,7 +44,7 @@ var countlyConfig = {
         session_duration_limit: 3601,
         max_sockets: 10240,
         cl_endsession_ongoing_timeout: 10,
-        cl_wait_time: 100,
+        cl_wait_time: 60,
         cl_is_debug: false,
         data_drop_duration_time: 1,
         /*
