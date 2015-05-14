@@ -12,6 +12,7 @@ var countlyConfig = {
         db_raw: "countly_raw1",
         db_batch: "countly_raw0",
         db_ibb: "countly_snow_ibb",
+        db_maintain: "maintain_list",
         port: 27017,
         max_batch_pool_size: 1000,
         max_db_pool_size: 1000,

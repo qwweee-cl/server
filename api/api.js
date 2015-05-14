@@ -124,6 +124,12 @@ function insertRawColl(coll, eventp, params) {
                 console.log(err);
             }
         });
+        common.getHourlyRawDB().collection(coll).insert(eventp, function(err, res) {
+            if (err) {
+                console.log('DB operation error');
+                console.log(err);
+            }
+        });
     }
 }
 

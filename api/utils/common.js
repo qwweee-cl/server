@@ -87,6 +87,9 @@ var common = {},
     dbIbbName = (countlyConfig.mongodb.host + ':' + 
         countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_ibb + '?auto_reconnect=true');
 
+    dbMaintainName = (countlyConfig.mongodb.hostbatch + ':' + 
+        countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_maintain + '?auto_reconnect=true');
+
     dbReportName = (countlyConfig.mongodb.oemhost + ':' + 
         countlyConfig.mongodb.port + '/' + "oem_report" + '?auto_reconnect=true');
 
@@ -113,6 +116,12 @@ var common = {},
     common.db_oem_batch = [];
     common.db_oem_dashboard = [];
 
+    common.db_hourly = null;
+    common.db_closes = [];
+
+    common.db_maintain = mongo.db(dbMaintainName, dbOptions);
+    common.db_maintain.tag = countlyConfig.mongodb.db_maintain.replace(/system\.|\.\.|\$/g, "");
+
     common.config = countlyConfig;
 
     common.time = time;
@@ -121,6 +130,57 @@ var common = {},
     common.momentz = momentz;
 
     common.crypto = crypto;
+
+    common.getHourlyRawDB = function() {
+        var headName = 'countly_raw',
+            rawdbName = '',
+            currDate,
+            appTimezone = "America/Denver";
+
+        //print("getHourlyRawDB");
+        currDate = new Date();
+        var tmpMoment = momentz(currDate).tz(appTimezone);
+        var fileHeadName = tmpMoment.format("YYYYMMDD");
+        var tailName = tmpMoment.format("MMDD_HH_mm_");
+        tailName = tmpMoment.format("MMDD_");
+        var min = tmpMoment.minutes();
+        min = tmpMoment.hours();
+        var index = parseInt(min/6); // calculate index
+        var fullName = headName + tailName + (pad2(index)).toString();
+        var filename = fileHeadName+"_raw_"+(pad2(index)).toString();
+        fullName = fullName.replace(/system\.|\.\.|\$/g, "");
+        if (!common.db_hourly) {
+            //print("fullName: "+fullName);
+            common.db_hourly = common.getDBByName(fullName);
+            //print("tag: "+common.db_hourly.tag);
+            return common.db_hourly;
+        }
+        if (common.db_hourly.tag != fullName) {
+            var old = common.db_hourly;
+            common.db_closes.push(old);
+            if (common.db_closes.length == 5) {
+                // remove and close the first obj
+                //print("before: "+JSON.stringify(process.memoryUsage()));
+                var beRemoveDB = common.db_closes.shift();
+                beRemoveDB.close();
+                //print("after: "+JSON.stringify(process.memoryUsage()));
+            }
+            var insertData = {};
+            insertData.dbname = old.tag;
+            insertData.timestamp = Math.floor(Date.now()/1000);
+            insertData.filename = filename;
+            common.db_maintain.collection("raw_finished").update({dbname: old.tag},
+                {$set: insertData}, {'upsert': true}, function(err, res) {
+                    if (err) {
+                        print('raw_finished error');
+                        print(err);
+                    }
+                });
+            common.db_hourly = common.getDBByName(fullName);
+        }
+        //print("else tag: "+common.db_hourly.tag+" length: "+common.db_closes.length);
+        return common.db_hourly;
+    };
 
     //initOEMRawDBs();
     common.getDBByName = function (inDBName) {
@@ -723,3 +783,5 @@ var common = {},
 }(common));
 
 module.exports = common;
+
+common.getHourlyRawDB();
