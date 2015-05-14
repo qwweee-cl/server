@@ -252,7 +252,7 @@ var process = require('process');
 
         updateRangeMeta(dbs, dataBag.countryArray, 'locations', appinfos.app_id);
         updateCollection(dbs, 'locations', appinfos.app_id, dataBag.updateLocations, '$inc', '[updateLocations]');
-
+/*
         if (appinfos.app_id=='543f37eaa62268c51e16d0c3' || 
             appinfos.app_id=='543f866fa9e5b7ed76000011') {
             console.log("["+appinfos.app_id+"]");
@@ -261,7 +261,7 @@ var process = require('process');
             updateCollection(dbs, 'UU_locations', appinfos.app_id, dataBag.updateUULocations, '$inc', '[updateUULocations]');
             //updateCollection(dbs, 'UU_sessions', appinfos.app_id, dataBag.updateSessions, '$inc', '[updateSessions]');
         }
- 
+*/
         updateRangeMeta(dbs, dataBag.sessionRanges, 'sessions', appinfos.app_id);
         updateCollection(dbs, 'sessions', appinfos.app_id, dataBag.updateSessions, '$inc', '[updateSessions]');
 
