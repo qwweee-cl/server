@@ -171,10 +171,35 @@ function validateAppForWriteAPI(params) {
         insertRawSession(common.rawCollection['session']+params.qstring.app_key, params);
 
         // also insert to Perfect if app is YCP or YMK
-        if(-1 != listAppKeyToPerfect_And.indexOf(params.qstring.app_key))
-            insertRawSession(common.rawCollection['session']+appKey.key["Perfect_And"], params);
-        if(-1 != listAppKeyToPerfect_iOS.indexOf(params.qstring.app_key))
+        if(-1 != listAppKeyToPerfect_And.indexOf(params.qstring.app_key)) {
+            var tmpParams = {
+                'qstring': {'app_key':appKey.key["Perfect_And"]},
+                'res':params.res,
+                'app_user_id':params.app_user_id,
+                'ip_address':params.ip_address
+            };
+            for(var key in params.qstring) { // copy all property in qstring except app_key
+                if(key != 'app_key')
+                    tmpParams.qstring[key] = params.qstring[key];
+            }
+
+            insertRawSession(common.rawCollection['session']+appKey.key["Perfect_And"], tmpParams);
+        }
+
+        if(-1 != listAppKeyToPerfect_iOS.indexOf(params.qstring.app_key)) {
+            var tmpParams = {
+                'qstring': {'app_key':appKey.key["Perfect_iOS"]},
+                'res':params.res,
+                'app_user_id':params.app_user_id,
+                'ip_address':params.ip_address
+            };
+            for(var key in params.qstring) { // copy all property in qstring except app_key
+                if(key != 'app_key')
+                    tmpParams.qstring[key] = params.qstring[key];
+            }
             insertRawSession(common.rawCollection['session']+appKey.key["Perfect_iOS"], params);
+        }
+            
     }
 
     common.returnMessage(params, 200, 'Success');
