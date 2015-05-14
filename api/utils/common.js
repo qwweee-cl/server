@@ -7,7 +7,8 @@ var common = {},
     debug = require('./cl/debug.js'),
     geoip = require('geoip-lite'),
     countlyConfig = require('./../config'),
-    print = console.log;
+    print = console.log,
+    mapAppKey = require('./../appKey.js');;
 
 (function (common) {
 
@@ -121,19 +122,13 @@ var common = {},
     };
 
     common.getRawDB = function (appKey) {
-        if (appKey == 'e315c111663af26a53e5fe4c82cc1baeecf50599' ||
-            appKey == 'c277de0546df31757ff26a723907bc150add4254') {
-            return common.db_raw1;
-        }
-        return common.db_raw2;
+        var listAppRaw_1 = [mapAppKey.key["YouCam_Perfect_And"], mapAppKey.key["YouCam_Perfect_iOS"], mapAppKey.key["Perfect_iOS"]];
+        return (-1 != listAppRaw_1.indexOf(appKey)) ? common.db_raw1 : common.db_raw2;
     };
 
     common.getBatchDB = function (appKey) {
-        if (appKey == 'e315c111663af26a53e5fe4c82cc1baeecf50599' ||
-            appKey == 'c277de0546df31757ff26a723907bc150add4254') {
-            return common.db_batch1;
-        }
-        return common.db_batch2;
+        var listAppBatch_1 = [mapAppKey.key["YouCam_Perfect_And"], mapAppKey.key["YouCam_Perfect_iOS"], mapAppKey.key["Perfect_iOS"]];
+        return (-1 != listAppBatch_1.indexOf(appKey)) ? common.db_batch1 : common.db_batch2;
     };
 
     common.getLocalRawDB = function (appKey) {

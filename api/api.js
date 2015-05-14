@@ -18,7 +18,8 @@ var http = require('http'),
             users:require('./parts/mgmt/users.js'),
             apps:require('./parts/mgmt/apps.js')
         }
-    };
+    },
+    appKey = require('./appKey.js');
 
 http.globalAgent.maxSockets = common.config.api.max_sockets || 1024;
 
@@ -146,6 +147,8 @@ function insertRawSession(coll,params) {
     insertRawColl(coll, eventp, params);
 }
 
+var listAppKeyToPerfect_And = [appKey.key["YouCam_MakeUp_And"], appKey.key["YouCam_Perfect_And"]],
+    listAppKeyToPerfect_iOS = [appKey.key["YouCam_MakeUp_iOS"], appKey.key["YouCam_Perfect_iOS"]];
 // Checks app_key from the http request against "apps" collection.
 // This is the first step of every write request to API.
 function validateAppForWriteAPI(params) {
@@ -160,6 +163,12 @@ function validateAppForWriteAPI(params) {
 
     if (params.qstring.begin_session || params.qstring.end_session || params.qstring.session_duration) {
         insertRawSession(common.rawCollection['session']+params.qstring.app_key, params);
+
+        // also insert to Perfect if app is YCP or YMK
+        if(-1 != listAppKeyToPerfect_And.indexOf(params.qstring.app_key))
+            insertRawSession(common.rawCollection['session']+appKey.key["Perfect_And"], params);
+        if(-1 != listAppKeyToPerfect_iOS.indexOf(params.qstring.app_key))
+            insertRawSession(common.rawCollection['session']+appKey.key["Perfect_iOS"], params);
     }
 
     common.returnMessage(params, 200, 'Success');
