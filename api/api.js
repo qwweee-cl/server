@@ -197,7 +197,7 @@ function validateAppForWriteAPI(params) {
                 if(key != 'app_key')
                     tmpParams.qstring[key] = params.qstring[key];
             }
-            insertRawSession(common.rawCollection['session']+appKey.key["Perfect_iOS"], params);
+            insertRawSession(common.rawCollection['session']+appKey.key["Perfect_iOS"], tmpParams);
         }
             
     }
