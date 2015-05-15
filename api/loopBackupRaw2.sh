@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pid=`cat /tmp/loopBackupRaw.pid`
+pid=`cat /tmp/loopBackupRaw2.pid`
 
 logpath="/usr/local/countly/log/"
 
