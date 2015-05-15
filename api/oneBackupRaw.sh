@@ -80,5 +80,5 @@ for ((i=0;i<1;i++)); do
 		string=`${cmd}`
 		echo -e ${string}
 	fi
-	sleep 60
+	sleep 10
 done
