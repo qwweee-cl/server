@@ -154,7 +154,7 @@ var common = {},
         fullName = fullName.replace(/system\.|\.\.|\$/g, "");
 
         var listApps = [mapAppKey.key["YouCam_Perfect_And"], 
-        mapAppKey.key["YouCam_Perfect_iOS"], mapAppKey.key["Perfect_iOS"]];
+        mapAppKey.key["YouCam_Perfect_iOS"], mapAppKey.key["Perfect_And"]];
 
         if (-1 != listApps.indexOf(appKey)) {
             // clad1
@@ -252,13 +252,13 @@ var common = {},
 
     common.getRawDB = function (appKey) {
         var listAppRaw_1 = [mapAppKey.key["YouCam_Perfect_And"], 
-        mapAppKey.key["YouCam_Perfect_iOS"], mapAppKey.key["Perfect_iOS"]];
+        mapAppKey.key["YouCam_Perfect_iOS"], mapAppKey.key["Perfect_And"]];
         return (-1 != listAppRaw_1.indexOf(appKey)) ? common.db_raw1 : common.db_raw2;
     };
 
     common.getBatchDB = function (appKey) {
         var listAppBatch_1 = [mapAppKey.key["YouCam_Perfect_And"], 
-        mapAppKey.key["YouCam_Perfect_iOS"], mapAppKey.key["Perfect_iOS"]];
+        mapAppKey.key["YouCam_Perfect_iOS"], mapAppKey.key["Perfect_And"]];
         return (-1 != listAppBatch_1.indexOf(appKey)) ? common.db_batch1 : common.db_batch2;
     };
 
