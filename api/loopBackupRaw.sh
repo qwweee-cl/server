@@ -66,10 +66,13 @@ for ((;1;)); do
 		echo $cmd
 		$cmd
 
-		cmd="/bin/cp ${gzipPath}${rawdate}.tgz ${s3Path}"
+		cmd="/bin/cp ${gzipPath}${rawdate}.tgz ${s3Path}${rawdate}.tmp"
 		echo $cmd
 		$cmd
 		cmd="/bin/rm ${gzipPath}${rawdate}.tgz"
+		echo $cmd
+		$cmd
+		cmd="/bin/mv ${s3Path}${rawdate}.tmp ${s3Path}${rawdate}.tgz"
 		echo $cmd
 		$cmd
 
