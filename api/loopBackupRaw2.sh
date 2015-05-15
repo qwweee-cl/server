@@ -2,7 +2,7 @@
 
 pid=`cat /tmp/loopBackupRaw2.pid`
 
-logpath="/usr/local/countly/log/"
+logpath="/usr/local/countly/log/loopBackup/"
 
 path="/usr/local/countly/api"
 gzipPath="/mnt/mongodb/tmp/mongo_gzip/"
