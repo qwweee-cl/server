@@ -33,6 +33,7 @@ for ((;1;)); do
 	curdate=$(date +%Y%m%d-%H%M)
 	one_time_log="${logpath}${curdate}_log.log"
 	echo -e "Program(${pid}) starts on `date +"%Y-%m-%d %T"`." 2>&1 >> $one_time_log
+	echo -e "Program(${pid}) starts on `date +"%Y-%m-%d %T"`."
 	cd ${path}
 	## get current timestamp
 	curTimestamp=$(date +%s)
@@ -92,7 +93,9 @@ for ((;1;)); do
 		echo -e ${cmd} 2>&1 >> $one_time_log 
 		string=`${cmd}`
 		echo -e ${string} 2>&1 >> $one_time_log 
+		echo -e "${rawdate}.tgz has been backup"
 	fi
 	echo -e "Program(${pid}) stops on `date +"%Y-%m-%d %T"`." 2>&1 >> $one_time_log
+	echo -e "Program(${pid}) stops on `date +"%Y-%m-%d %T"`."
 	sleep 60
 done
