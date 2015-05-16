@@ -17,8 +17,16 @@ gzipPath="/mem/mongo_gzip/"
 exportPath="/mem/mongo_backup/"
 s3Path="/s3mnt/db_backup/raw_data/"
 s3DashboardPath="/s3mnt/db_backup/dashboard_data/"
+
+CachePath="/mem/tmp/s3cache/clcom2-countly/db_backup/raw_data/"
+DashboardCachePath="/mem/tmp/s3cache/clcom2-countly/db_backup/dashboard_data/"
+
 s3OEMPath="/s3mnt/db_backup/oem_raw_data/"
 s3OEMDashboardPath="/s3mnt/db_backup/oem_dashboard_data/"
+
+OEMCachePath="/mem/tmp/s3cache/clcom2-countly/db_backup/oem_raw_data/"
+OEMDashboardCachePath="/mem/tmp/s3cache/clcom2-countly/db_backup/oem_dashboard_data/"
+
 mongo="localhost:27017"
 dashboard="claddb:27017"
 batchdb=""
