@@ -32,9 +32,16 @@ exportPath="/mem/mongo_backup/"
 s3Path="/s3mnt/db_backup/raw_data/"
 s3DashboardPath="/s3mnt/db_backup/dashboard_data/"
 
+CachePath="/mem/tmp/s3cache/clcom2-countly/db_backup/raw_data/"
+DashboardCachePath="/mem/tmp/s3cache/clcom2-countly/db_backup/dashboard_data/"
+
 s3OEMPath="/s3mnt/db_backup/oem_raw_data/"
 s3OEMDashboardPath="/s3mnt/db_backup/oem_dashboard_data/"
 s3GenericDashboardPath="/s3mnt/db_backup/generic_dashboard_data/"
+
+OEMCachePath="/mem/tmp/s3cache/clcom2-countly/db_backup/oem_raw_data/"
+OEMDashboardCachePath="/mem/tmp/s3cache/clcom2-countly/db_backup/oem_dashboard_data/"
+GenericDashboardCachePath="/mem/tmp/s3cache/clcom2-countly/db_backup/generic_dashboard_data/"
 
 livefile="config.live.js"
 batchfile="config.batch.js"
@@ -125,6 +132,9 @@ cmd="/bin/rm $gzipPath$dashboarddate.tgz"
 echo $cmd
 $cmd
 
+cmd="sudo rm ${DashboardCachePath} -rf"
+echo $cmd
+$cmd
 
 cd $path
 
@@ -172,6 +182,10 @@ cmd="/bin/cp $gzipPath$oemdashboarddate.tgz $s3GenericDashboardPath"
 echo $cmd
 $cmd
 cmd="/bin/rm $gzipPath$oemdashboarddate.tgz"
+echo $cmd
+$cmd
+
+cmd="sudo rm ${GenericDashboardCachePath} -rf"
 echo $cmd
 $cmd
 
@@ -251,6 +265,13 @@ for (( i = 0 ; i < ${#raw_apps[@]} ; i++ )) do
 	## remove raw data
 	## mongo test --eval "printjson(db.getCollectionNames())"
 done
+
+cmd="sudo rm ${OEMCachePath} -rf"
+echo $cmd
+$cmd
+cmd="sudo rm ${OEMDashboardCachePath} -rf"
+echo $cmd
+$cmd
 
 batchdb=$batchtmpdb
 
@@ -356,6 +377,9 @@ cmd="/bin/cp $gzipPath$rawdate.tgz $s3Path"
 echo $cmd
 $cmd
 cmd="/bin/rm $gzipPath$rawdate.tgz"
+echo $cmd
+$cmd
+cmd="sudo rm ${CachePath} -rf"
 echo $cmd
 $cmd
 

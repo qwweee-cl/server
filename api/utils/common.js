@@ -153,14 +153,15 @@ var common = {},
         var filename = fileHeadName+"_raw_"+(pad2(index)).toString();
         fullName = fullName.replace(/system\.|\.\.|\$/g, "");
 
-        if (appKey == 'e315c111663af26a53e5fe4c82cc1baeecf50599' ||
-            appKey == 'c277de0546df31757ff26a723907bc150add4254') {
-            //clad1;
+        var listApps = [mapAppKey.key["YouCam_Perfect_And"], 
+        mapAppKey.key["YouCam_Perfect_iOS"], mapAppKey.key["Perfect_And"]];
+
+        if (-1 != listApps.indexOf(appKey)) {
+            // clad1
             return common.getDBByNameClad1(fullName, filename);
-        } else {
-            //clad2;
-            return common.getDBByNameClad2(fullName, filename);
         }
+        // clad2
+        return common.getDBByNameClad2(fullName, filename);
     };
 
     common.getDBByNameClad1 = function (inDBName, filename) {
@@ -250,12 +251,14 @@ var common = {},
     };
 
     common.getRawDB = function (appKey) {
-        var listAppRaw_1 = [mapAppKey.key["YouCam_Perfect_And"], mapAppKey.key["YouCam_Perfect_iOS"], mapAppKey.key["Perfect_iOS"]];
+        var listAppRaw_1 = [mapAppKey.key["YouCam_Perfect_And"], 
+        mapAppKey.key["YouCam_Perfect_iOS"], mapAppKey.key["Perfect_And"]];
         return (-1 != listAppRaw_1.indexOf(appKey)) ? common.db_raw1 : common.db_raw2;
     };
 
     common.getBatchDB = function (appKey) {
-        var listAppBatch_1 = [mapAppKey.key["YouCam_Perfect_And"], mapAppKey.key["YouCam_Perfect_iOS"], mapAppKey.key["Perfect_iOS"]];
+        var listAppBatch_1 = [mapAppKey.key["YouCam_Perfect_And"], 
+        mapAppKey.key["YouCam_Perfect_iOS"], mapAppKey.key["Perfect_And"]];
         return (-1 != listAppBatch_1.indexOf(appKey)) ? common.db_batch1 : common.db_batch2;
     };
 

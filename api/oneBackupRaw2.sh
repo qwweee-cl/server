@@ -1,23 +1,22 @@
 #!/bin/bash
 
-pid=`cat /tmp/loopBackupRaw.pid`
+pid=`cat /tmp/loopBackupRaw2.pid`
 
 logpath="/usr/local/countly/log/loopBackup/"
 
 path="/usr/local/countly/api"
 gzipPath="/mnt/mongodb/tmp/mongo_gzip/"
-gzipPath="/mem/mongo_hourly_gzip/"
+gzipPath="/mem/mongo_gzip/"
 exportPath="/mnt/mongodb/tmp/mongo_backup/"
-exportPath="/mem/mongo_hourly_backup/"
+exportPath="/mem/mongo_backup/"
 s3Path="/mnt/mongodb/tmp/s3_data/"
 s3Path="/s3mnt/db_backup/hourly_data/"
-CachePath="/mem/tmp/s3cache/clcom2-countly/db_backup/hourly_data/"
 mongo="localhost:27017"
 batchdb=""
-indexNum="1"
+indexNum="2"
 curdate=$(date +%Y%m%d-%H%M)
 
-one_time_log="${logpath}${curdate}_log.log"
+one_time_log="${logpath}${curdate}_log2_test.log"
 
 if [ ! -d "$exportPath" ]; then
 	mkdir $exportPath
@@ -30,11 +29,10 @@ if [ ! -d "$s3Path" ]; then
 	mkdir $s3Path
 fi
 
-for ((;1;)); do
+for ((i=0;i<1;i++)); do
 	curdate=$(date +%Y%m%d-%H%M)
 	one_time_log="${logpath}${curdate}_log.log"
 	echo -e "Program(${pid}) starts on `date +"%Y-%m-%d %T"`." 2>&1 >> $one_time_log
-	echo -e "Program(${pid}) starts on `date +"%Y-%m-%d %T"`."
 	cd ${path}
 	## get current timestamp
 	curTimestamp=$(date +%s)
@@ -84,7 +82,7 @@ for ((;1;)); do
 		cmd="/bin/rm ${gzipPath}${rawdate}.tgz"
 		echo $cmd 2>&1 >> $one_time_log 
 		$cmd 2>&1 >> $one_time_log 
-		cmd="/bin/mv ${s3Path}${rawdate}.tmp ${s3Path}${rawdate}.tgz"
+		cmd="/bin/mv ${s3Path}${rawdate}.tmp ${s3Path}${rawdate}.tgz1"
 		echo $cmd 2>&1 >> $one_time_log 
 		$cmd 2>&1 >> $one_time_log 
 
@@ -94,13 +92,6 @@ for ((;1;)); do
 		echo -e ${cmd} 2>&1 >> $one_time_log 
 		string=`${cmd}`
 		echo -e ${string} 2>&1 >> $one_time_log 
-		echo -e "${rawdate}.tgz has been backup"
-
-		cmd="sudo rm ${CachePath} -rf"
-		echo $cmd
-		$cmd
 	fi
-	echo -e "Program(${pid}) stops on `date +"%Y-%m-%d %T"`." 2>&1 >> $one_time_log
-	echo -e "Program(${pid}) stops on `date +"%Y-%m-%d %T"`."
-	sleep 60
+	sleep 10
 done

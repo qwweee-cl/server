@@ -31,6 +31,10 @@ gzipPath="/mem/mongo_gzip/"
 exportPath="/mem/mongo_backup/"
 s3Path="/s3mnt/db_backup/raw_data/"
 s3DashboardPath="/s3mnt/db_backup/dashboard_data/"
+
+CachePath="/mem/tmp/s3cache/clcom2-countly/db_backup/raw_data/"
+DashboardCachePath="/mem/tmp/s3cache/clcom2-countly/db_backup/dashboard_data/"
+
 livefile="config.live.js"
 batchfile="config.batch.js"
 srcfile="config.js"
@@ -195,6 +199,9 @@ cmd="/bin/cp $gzipPath$rawdate.tgz $s3Path"
 echo $cmd
 $cmd
 cmd="/bin/rm $gzipPath$rawdate.tgz"
+echo $cmd
+$cmd
+cmd="sudo rm ${CachePath} -rf"
 echo $cmd
 $cmd
 
