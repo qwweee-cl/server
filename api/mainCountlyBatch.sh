@@ -209,8 +209,8 @@ for (( i = 0 ; i < ${#raw_apps[@]} ; i++ )) do
 	## run batch
 	## move zip file to s3
 	if [ ! -d "$s3OEMPath${apps[$i]}" ]; then
-		echo "mkdir $s3Path"
-		mkdir $s3Path
+		echo "mkdir $s3OEMPath${apps[$i]}"
+		mkdir $s3OEMPath${apps[$i]}
 	fi
 	cmd="/bin/cp $gzipPath$OEMrawdate.tgz $s3OEMPath${apps[$i]}"
 	echo $cmd

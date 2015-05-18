@@ -90,7 +90,7 @@ function processSessions(dbs, app, isFinal, appinfo) {
         console.log(ios);
     }
     var appUserId = app[0].app_user_id;
-    if (appinfo.key=="75edfca17dfbe875e63a66633ed6b00e30adcb92") { // Android
+    /*if (appinfo.key=="75edfca17dfbe875e63a66633ed6b00e30adcb92") { // Android
         userCount1++;
         android = appinfo;
         YCPDB.collection('raw_session_e315c111663af26a53e5fe4c82cc1baeecf50599').findOne({'app_user_id': appUserId},
@@ -189,7 +189,8 @@ function processSessions(dbs, app, isFinal, appinfo) {
                     });
                 }
         });
-    } else {
+    } else */
+    {
         process.nextTick(function() {
             var apps = app;
             var final = isFinal;
