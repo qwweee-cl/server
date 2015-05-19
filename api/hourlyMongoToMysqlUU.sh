@@ -1,6 +1,7 @@
 #!/bin/bash
 
 logpath="/usr/local/countly/log/hourly_uu/"
+logpath="/home/ubuntu/countly-test/log/hourly_uu/"
 
 trap 'error_exp'  ERR SIGINT SIGTERM
 function error_exp
@@ -17,7 +18,9 @@ function error_exp
 path="/usr/local/countly/api"
 path="/home/ubuntu/countly-test/api"
 gzipPath="/mnt_other/tmp/hourlyUU_gzip/"
+gzipPath="/mem/tmp/hourlyUU_gzip/"
 exportPath="/mnt_other/tmp/hourlyUU_backup/"
+exportPath="/mem/tmp/hourlyUU_backup/"
 s3Path="/s3mnt/db_backup/UU_backup/hourly_data/"
 curdate=$(date +%Y%m%d)
 mysqldate=$(date +%Y-%m-%d)
