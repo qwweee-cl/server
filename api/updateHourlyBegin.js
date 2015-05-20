@@ -21,7 +21,7 @@ common.db_maintain.collection('backup_finished').find(query ,function(err, res) 
         //print(res);
         var insertData = {};
         insertData.dbname = indbname;
-        insertData.beginTime = tmpMoment.format("YYYY-MM-DD hh:mm");
+        insertData.beginTime = tmpMoment.format("YYYY-MM-DD HH:mm");
 
         dbonoff.open(common.db_maintain);
         common.db_maintain.collection("session_finished").update({dbname: indbname},
