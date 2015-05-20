@@ -3,6 +3,8 @@ var common = require('./utils/common.js'),
     geoip = require('geoip-lite'),
     print = console.log;
 
+print("date:"+(new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')));
+
 function testCommon() {
 	var dbInstance = common.getDBByName("countly_Java");
 

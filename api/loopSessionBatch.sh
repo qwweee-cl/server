@@ -7,7 +7,7 @@ function error_exp
 {
 	#echo -e "Daily BB data import failed. Please check log in elephant1>/home/hadoop/new_script/dashborad_script/logs/log_daily_bb_import.log\nLog scraps: "$(tail -10 ~/new_script/dashborad_script/logs/log_daily_bb_import.log)\
 	#| mail -s "Daily BB data import exception" $dashboard_team
-	echo -e "[hourly]Countly Batch Error Please check log /usr/local/countly/log/loopSessionMain1.log" 
+	echo -e "[hourly]Countly Batch Error Please check log /usr/local/countly/log/loopSessionMain1.log"\
 	$(tail -20 /usr/local/countly/log/loopSessionMain1.log)\
 	| mail -s "[hourly]Main Countly Batch Error Trap(${pid})" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
 	exit 1
@@ -16,6 +16,7 @@ function error_exp
 logpath="/usr/local/countly/log/loopSession/"
 
 path="/usr/local/countly/api"
+path="/home/ubuntu/countly-test/api"
 gzipPath="/mnt/mongodb/tmp/mongo_dashboard_gzip/"
 gzipPath="/mem/mongo_hourly_dashboard_gzip/"
 exportPath="/mnt/mongodb/tmp/mongo_dashboard_backup/"
@@ -28,8 +29,6 @@ indexNum="1"
 
 savedate=$(date +%Y%m%d)
 dashboarddate=${savedate}"_countly"
-
-path="/usr/local/countly/api"
 
 curdate=$(date +%Y%m%d-%H%M)
 

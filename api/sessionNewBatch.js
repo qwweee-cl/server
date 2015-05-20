@@ -292,6 +292,7 @@ function dbClose(dbs) {
 function callRaw() {
     collectionCount--;
     console.log("hi mongo:" + collectionCount);
+    console.log("Start Date: "+(new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')));
     if (collectionCount < 0) //last one is finished
         return;
     var collectionName = collectionNameList[collectionCount];

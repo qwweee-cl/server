@@ -278,6 +278,7 @@ var process = require('process');
             updateCollection(dbs, predefinedMetrics[i].db, appinfos.app_id, dataBag.updateMetrics[predefinedMetrics[i].db], '$inc', '[updateMetrics:'+predefinedMetrics[i].db+']');
         }
         process.emit('hi_mongo');
+        console.log("End Date: "+(new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')));
         console.log('send out hi mongo');
         dataBag.apps = [];
         dataBag.updateSessions = {};

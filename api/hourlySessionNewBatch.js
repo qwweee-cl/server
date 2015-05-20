@@ -131,7 +131,7 @@ fs.readFile(oidFileName, 'utf8', function (err,data) {
         );
     }
 });
-baseTimeOut = 5000;
+baseTimeOut = 30000;
 var cnt=0;
 var repeat_times = 0;
 setInterval(function() {
@@ -384,6 +384,7 @@ function dbClose(dbs) {
 function callRaw() {
     collectionCount--;
     console.log("hi mongo:" + collectionCount);
+    console.log("Start Date: "+(new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')));
     if (collectionCount < 0) //last one is finished
         return;
     var collectionName = collectionNameList[collectionCount];
