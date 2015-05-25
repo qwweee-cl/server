@@ -1,14 +1,14 @@
 #!/bin/bash
 
 logpath="/usr/local/countly/log/hourly_uu/"
-logpath="/home/ubuntu/countly-test/log/hourly_uu/"
+#logpath="/home/ubuntu/countly-test/log/hourly_uu/"
 
 trap 'error_exp'  ERR SIGINT SIGTERM
 function error_exp
 {
-	echo -e "Mongo to Mysql Error Please check log in clad.cyberlink.com>"\
+	echo -e "[Hourly]Mongo to Mysql Error Please check log in clad.cyberlink.com>"\
 	"${logpath}mongoToMysql.log" $(tail -20 ${logpath}mongoToMysql.log)\
-	| mail -s "Mongo to Mysql Error Trap" gary_huang@cyberlink.com,qwweee@gmail.com
+	| mail -s "[Hourly]Mongo to Mysql Error Trap" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
 	exit 0
 }
 
@@ -16,11 +16,11 @@ function error_exp
 ##
 
 path="/usr/local/countly/api"
-path="/home/ubuntu/countly-test/api"
+#path="/home/ubuntu/countly-test/api"
 gzipPath="/mnt_other/tmp/hourlyUU_gzip/"
-gzipPath="/mem/tmp/hourlyUU_gzip/"
+#gzipPath="/mem/tmp/hourlyUU_gzip/"
 exportPath="/mnt_other/tmp/hourlyUU_backup/"
-exportPath="/mem/tmp/hourlyUU_backup/"
+#exportPath="/mem/tmp/hourlyUU_backup/"
 s3Path="/s3mnt/db_backup/UU_backup/hourly_data/"
 curdate=$(date +%Y%m%d)
 mysqldate=$(date +%Y-%m-%d)
@@ -99,5 +99,5 @@ end=$(date +%Y-%m-%d_%H-%M)
 echo $start
 echo $end
 echo "==============================================================="
-echo -e "Mongo to Mysql run from $start to $end\n" $(tail -20 ${logpath}mongoToMysql.log)\
-| mail -s "Claddb [${curdate}] cladtest Mongo to Mysql Finished" gary_huang@cyberlink.com,qwweee@gmail.com
+echo -e "[Hourly]Mongo to Mysql run from $start to $end\n" $(tail -20 ${logpath}mongoToMysql.log)\
+| mail -s "[Hourly]Claddb [${curdate}] cladtest Mongo to Mysql Finished" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
