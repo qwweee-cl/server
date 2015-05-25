@@ -1,27 +1,40 @@
 #!/bin/bash
 
-pid=`cat /tmp/loopSessionBatch2.pid`
+LOCKFILE="/tmp/loopSessionBatch2.pid"
+pid=`cat ${LOCKFILE}`
 
 trap 'error_exp'  ERR SIGINT SIGTERM
 function error_exp
 {
 	#echo -e "Daily BB data import failed. Please check log in elephant1>/home/hadoop/new_script/dashborad_script/logs/log_daily_bb_import.log\nLog scraps: "$(tail -10 ~/new_script/dashborad_script/logs/log_daily_bb_import.log)\
 	#| mail -s "Daily BB data import exception" $dashboard_team
-	echo -e "[hourly]Countly Batch Error Please check log /usr/local/countly/log/loopSessionMain2.log"\
+	echo -e "[hourly]Slave Loop Session Batch Error Please check log /usr/local/countly/log/loopSessionMain2.log"\
 	$(tail -20 /usr/local/countly/log/loopSessionMain2.log)\
-	| mail -s "[hourly]Slave Countly Batch Error Trap(${pid})" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
+	| mail -s "[hourly]Slave Loop Session Batch Error Trap(${pid})" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
+	#rm -f ${LOCKFILE}
 	exit 1
 }
 
+if [ -e ${LOCKFILE} ] ; then
+	echo "already running"
+	echo -e "[hourly]Slave Loop Session Batch already running, please close ${LOCKFILE}"\
+	| mail -s "[hourly]Slave Loop Session Batch Already running" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
+	#rm -f ${LOCKFILE}
+	exit 1
+fi
+
 logpath="/usr/local/countly/log/loopSession/"
 
-path="/usr/local/countly/api"
+## this is for test
 path="/home/ubuntu/countly-test/api"
 gzipPath="/mnt/mongodb/tmp/mongo_dashboard_gzip/"
-gzipPath="/mem/mongo_hourly_dashboard_gzip/"
 exportPath="/mnt/mongodb/tmp/mongo_dashboard_backup/"
-exportPath="/mem/mongo_hourly_dashboard_backup/"
 s3Path="/mnt/mongodb/tmp/s3_data/"
+## this is for test end
+
+path="/usr/local/countly/api"
+gzipPath="/mem/mongo_hourly_dashboard_gzip/"
+exportPath="/mem/mongo_hourly_dashboard_backup/"
 s3Path="/s3mnt/db_backup/hourly_data/dashboard_data/"
 CachePath="/mem/tmp/s3cache/clcom2-countly/db_backup/hourly_data/dashboard_data/"
 batchdb=""
@@ -31,8 +44,19 @@ savedate=$(date +%Y%m%d)
 dashboarddate=${savedate}"_countly"
 
 curdate=$(date +%Y%m%d-%H%M)
+processdate=$(date +%Y%m%d)
 
 one_time_log="${logpath}${curdate}_log.log"
+
+## backup dashboard need
+checkTime=$(date +%H%M)
+checkDate=$(date +%j)
+beforeBackupTime="0500"
+backupTime="0800"
+afterbackupTime="1100"
+sleepTime=10800 # this is for clad2
+currBackup=$(date +%j)
+## backup dashboard need end
 
 if [ ! -d "${exportPath}" ]; then
 	mkdir ${exportPath}
@@ -46,7 +70,29 @@ if [ ! -d "${s3Path}" ]; then
 fi
 
 for ((;1;)); do
+## check backup dashboard time
+	checkTime=$(date +%H%M)
+	checkDate=$(date +%j)
+	if [[ ${checkTime} > ${beforeBackupTime} ]] && [[ ${checkTime} < ${backupTime} ]]; then
+		echo -e "waiting for backup start"
+		sleep 60
+	else
+		if [[ ${currBackup} != ${checkDate} ]] && [[ ${checkTime} > ${backupTime} ]]; then
+			echo -e "[backup]backup start"
+## call backup function and clad2 sleep 3 hours
+			sleep ${sleepTime}
+## call backup function end
+			echo -e "[backup]backup end"
+			currBackup=$(date +%j)
+		else
+			echo -e "do next job, continue process session"
+			sleep 600
+		fi
+	fi
+
+## process session
 	curdate=$(date +%Y%m%d-%H%M)
+	processdate=$(date +%Y%m%d)
 	one_time_log="${logpath}${curdate}_log.log"
 	echo -e "Program(${pid}) starts on `date +"%Y-%m-%d %T"`." 2>&1 >> $one_time_log
 	echo -e "Program(${pid}) starts on `date +"%Y-%m-%d %T"`."
@@ -106,35 +152,15 @@ for ((;1;)); do
 	fi
 	echo -e "Program(${pid}) stops on `date +"%Y-%m-%d %T"`." 2>&1 >> $one_time_log
 	echo -e "Program(${pid}) stops on `date +"%Y-%m-%d %T"`."
+
+## process mongodb to mysql in claddb
+	cmd="ssh ubuntu@claddb /usr/local/countly/api/hourlyMongoToMysqlUU.sh $processdate >> /usr/local/countly/log/mongoToMysql.log &"
+	echo $cmd
+	$cmd
+
+	echo -e $(tail -20 $one_time_log)\
+	| mail -s "[Hourly] Main2 Loop Process Session Summary" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
 	sleep 60
 done
 
 exit 0
-
-cd $exportPath
-
-cmd="mongodump -h ${mongo} -db ${batchdb} -o ${exportPath}${rawdate}"
-echo $cmd 2>&1 >> $one_time_log 
-$cmd 2>&1 >> $one_time_log 
-
-echo $PWD
-cmd="/bin/tar czf ${gzipPath}${rawdate}.tgz ./"
-echo $cmd 2>&1 >> $one_time_log 
-$cmd 2>&1 >> $one_time_log 
-cmd="/bin/rm ./${rawdate} -rf"
-echo $cmd 2>&1 >> $one_time_log 
-$cmd 2>&1 >> $one_time_log 
-
-cmd="/bin/cp ${gzipPath}${rawdate}.tgz ${s3Path}${rawdate}.tmp"
-echo $cmd 2>&1 >> $one_time_log 
-$cmd 2>&1 >> $one_time_log 
-cmd="/bin/rm ${gzipPath}${rawdate}.tgz"
-echo $cmd 2>&1 >> $one_time_log 
-$cmd 2>&1 >> $one_time_log 
-cmd="/bin/mv ${s3Path}${rawdate}.tmp ${s3Path}${rawdate}.tgz"
-echo $cmd 2>&1 >> $one_time_log 
-$cmd 2>&1 >> $one_time_log 
-
-cmd="sudo rm ${CachePath} -rf"
-echo $cmd
-$cmd

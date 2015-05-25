@@ -90,6 +90,9 @@ var common = {},
     dbMaintainName = (countlyConfig.mongodb.hostbatch + ':' + 
         countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_maintain + '?auto_reconnect=true');
 
+    dbMaintainName2 = (countlyConfig.mongodb.hostbatch2 + ':' + 
+        countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_maintain + '?auto_reconnect=true');
+
     dbReportName = (countlyConfig.mongodb.oemhost + ':' + 
         countlyConfig.mongodb.port + '/' + "oem_report" + '?auto_reconnect=true');
 
@@ -124,6 +127,9 @@ var common = {},
 
     common.db_maintain = mongo.db(dbMaintainName, dbOptions);
     common.db_maintain.tag = countlyConfig.mongodb.db_maintain.replace(/system\.|\.\.|\$/g, "");
+
+    common.db_maintain2 = mongo.db(dbMaintainName2, dbOptions);
+    common.db_maintain2.tag = countlyConfig.mongodb.db_maintain.replace(/system\.|\.\.|\$/g, "");
 
     common.config = countlyConfig;
 

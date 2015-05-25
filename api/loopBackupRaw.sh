@@ -1,15 +1,37 @@
 #!/bin/bash
 
-pid=`cat /tmp/loopBackupRaw.pid`
+LOCKFILE="/tmp/loopBackupRaw.pid"
+pid=`cat ${LOCKFILE}`
+
+trap 'error_exp'  ERR SIGINT SIGTERM
+function error_exp
+{
+	echo -e "[hourly]Main Loop Backup Batch error: /usr/local/countly/log/loopBackupMain1.log"\
+	$(tail -20 /usr/local/countly/log/loopBackupMain1.log)\
+	| mail -s "[hourly]Main Loop Backup Batch Error Trap(${pid})" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
+	#rm -f ${LOCKFILE}
+	exit 1
+}
+
+if [ -e ${LOCKFILE} ] ; then
+	echo "already running"
+	echo -e "[hourly]Main Loop Backup Batch already running, please close ${LOCKFILE}"\
+	| mail -s "[hourly]Main Loop Backup Batch Already running" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
+	#rm -f ${LOCKFILE}
+	exit 1
+fi
 
 logpath="/usr/local/countly/log/loopBackup/"
 
-path="/usr/local/countly/api"
+## this is for test
 gzipPath="/mnt/mongodb/tmp/mongo_gzip/"
-gzipPath="/mem/mongo_hourly_gzip/"
 exportPath="/mnt/mongodb/tmp/mongo_backup/"
-exportPath="/mem/mongo_hourly_backup/"
 s3Path="/mnt/mongodb/tmp/s3_data/"
+## this is for test end
+
+path="/usr/local/countly/api"
+gzipPath="/mem/mongo_hourly_gzip/"
+exportPath="/mem/mongo_hourly_backup/"
 s3Path="/s3mnt/db_backup/hourly_data/"
 CachePath="/mem/tmp/s3cache/clcom2-countly/db_backup/hourly_data/"
 mongo="localhost:27017"
