@@ -126,9 +126,9 @@ one_time_log="${logpath}${curdate}_log.log"
 ## backup dashboard need
 checkTime=$(date +%H%M)
 checkDate=$(date +%j)
-beforeBackupTime="0600"
-backupTime="0900"
-afterbackupTime="1200"
+beforeBackupTime="0500"
+backupTime="0800"
+afterbackupTime="1100"
 sleepTime=10800 # this is for clad2
 currBackup=$(date +%j)
 ## backup dashboard need end
