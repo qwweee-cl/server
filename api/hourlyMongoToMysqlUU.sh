@@ -28,7 +28,7 @@ exportPath="/mnt_other/tmp/hourlyUU_backup/"
 s3Path="/s3mnt/db_backup/UU_backup/hourly_data/"
 curdate=$(date +%Y%m%d)
 mysqldate=$(date +%Y-%m-%d)
-dbName="HourlyBcTest"
+dbName="BcTest"
 
 start=$(date +%Y-%m-%d_%H-%M)
 
