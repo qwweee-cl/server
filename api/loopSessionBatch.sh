@@ -15,14 +15,6 @@ function error_exp
 	exit 1
 }
 
-if [ -e ${LOCKFILE} ] ; then
-	echo "already running"
-	echo -e "[hourly]Main Loop Session Batch already running, please close ${LOCKFILE}"\
-	| mail -s "[hourly]Main Loop Session Batch Already running" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
-	#rm -f ${LOCKFILE}
-	exit 1
-fi
-
 function backupDashboard() {
 ## this is for test
 	dashboarddb="countly_test"

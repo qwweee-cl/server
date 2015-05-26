@@ -13,14 +13,6 @@ function error_exp
 	exit 1
 }
 
-if [ -e ${LOCKFILE} ] ; then
-	echo "already running"
-	echo -e "[hourly]Main Loop Backup Batch already running, please close ${LOCKFILE}"\
-	| mail -s "[hourly]Main Loop Backup Batch Already running" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
-	#rm -f ${LOCKFILE}
-	exit 1
-fi
-
 logpath="/usr/local/countly/log/loopBackup/"
 
 ## this is for test

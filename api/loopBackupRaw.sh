@@ -1,6 +1,6 @@
 #!/bin/bash
 
-LOCKFILE="/tmp/loopBackupRaw.pid"
+LOCKFILE="/tmp/loopBackupRaw1.pid"
 pid=`cat ${LOCKFILE}`
 
 trap 'error_exp'  ERR SIGINT SIGTERM
@@ -12,14 +12,6 @@ function error_exp
 	#rm -f ${LOCKFILE}
 	exit 1
 }
-
-if [ -e ${LOCKFILE} ] ; then
-	echo "already running"
-	echo -e "[hourly]Main Loop Backup Batch already running, please close ${LOCKFILE}"\
-	| mail -s "[hourly]Main Loop Backup Batch Already running" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
-	#rm -f ${LOCKFILE}
-	exit 1
-fi
 
 logpath="/usr/local/countly/log/loopBackup/"
 
