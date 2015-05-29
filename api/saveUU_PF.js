@@ -40,7 +40,7 @@ print(date);
 date = nowMoment.toDate();
 print(date);
 
-var beginMoment = nowMoment.add(-8, "months");
+var beginMoment = nowMoment.add(-10, "months");
 var beginYear = beginMoment.format("YYYY");
 var beginMonth = beginMoment.format("M");
 var beginDate = beginMoment.format("D");
@@ -453,6 +453,7 @@ if (saveYearly) {
 		var sunMoment = moment(sunday).add(2, "days");
 		var nextMoment = sunMoment.add(6, "days");
 		var startDate = sunMoment.format("YYYY-MM-DD");
+		startDate = moment(sunday).add(1, "days").format("YYYY-MM-DD");
 		var duration = "W";
 		others = {eventDay: '', duration: '', appName: appName,
               os: os, country: 'ALL', aU: 0, tU: 0,
