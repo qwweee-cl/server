@@ -137,7 +137,7 @@ processArray.sort();
 
 //print(monthArray);
 //print(dayArray);
-print(weekArray);
+//print(weekArray);
 
 var b_coll = db.collection(collectionName);
 var b_coll2 = db.collection(collectionName2);
@@ -458,10 +458,10 @@ if (saveYearly) {
 		others = {eventDay: '', duration: '', appName: appName,
               os: os, country: 'ALL', aU: 0, tU: 0,
               nU: 0, sU: 0};
-
+/*
 		print(weekArray[tmp].year+" w"+weekArray[tmp].week);
 		print(startDate);
-
+*/
 		print(startDate+" "+sunday);
 		if (result[weekArray[tmp].year] &&
 				result[weekArray[tmp].year]["w"+weekArray[tmp].week] &&

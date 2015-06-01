@@ -26,8 +26,8 @@ gzipPath="/mnt_other/tmp/hourlyUU_gzip/"
 exportPath="/mnt_other/tmp/hourlyUU_backup/"
 
 s3Path="/s3mnt/db_backup/UU_backup/hourly_data/"
-curdate=$(date +%Y%m%d)
-mysqldate=$(date +%Y-%m-%d)
+curdate=$(date -d "-7 hours" +%Y%m%d)
+mysqldate=$(date -d "-7 hours" +%Y-%m-%d)
 dbName="BcTest"
 
 start=$(date +%Y-%m-%d_%H-%M)
@@ -70,6 +70,11 @@ cmd="/usr/bin/mysql -u root -pcyberlink#1 -e
 'CALL ${dbName}.countlyIn_compute_totalu_monthly();' >> ${logpath}compute_monthly_all.log"
 echo -e $cmd
 /usr/bin/mysql -u root -pcyberlink#1 -e "CALL ${dbName}.countlyIn_compute_totalu_monthly('"${mysqldate}"');" >> ${logpath}compute_monthly_all.log 2>&1
+
+## run compute weekly new user, session, total user
+cmd="${path}/weekly_compute.sh"
+echo -e $cmd
+${cmd} >> ${logpath}${curdate}_weelky.log
 
 cd $exportPath
 pwd
