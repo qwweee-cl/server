@@ -5,12 +5,13 @@ logpath="/home/ubuntu/countly-test/log/hourly_uu/"
 ## this is for test end
 
 logpath="/usr/local/countly/log/hourly_uu/"
+alllogpath="/usr/local/countly/log/hourly_uu/"
 
 trap 'error_exp'  ERR SIGINT SIGTERM
 function error_exp
 {
 	echo -e "[Hourly]Mongo to Mysql Error Please check log in clad.cyberlink.com>"\
-	"${logpath}mongoToMysql.log" $(tail -20 ${logpath}mongoToMysql.log)\
+	"${alllogpath}mongoToMysql.log" $(tail -20 ${alllogpath}mongoToMysql.log)\
 	| mail -s "[Hourly]Mongo to Mysql Error Trap" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
 	exit 0
 }
@@ -108,5 +109,5 @@ end=$(date +%Y-%m-%d_%H-%M)
 echo $start
 echo $end
 echo "==============================================================="
-echo -e "[Hourly]Mongo to Mysql run from $start to $end\n" $(tail -20 ${logpath}mongoToMysql.log)\
+echo -e "[Hourly]Mongo to Mysql run from $start to $end\n" $(tail -20 ${alllogpath}mongoToMysql.log)\
 | mail -s "[Hourly]Claddb [${curdate}] cladtest Mongo to Mysql Finished" Gary_Huang@PerfectCorp.com,qwweee@gmail.com

@@ -46,7 +46,7 @@ for ((;1;)); do
 
     cmd="mysql -h ${hostName} -u root -pcyberlink#1 -e \"CALL ${dbName}.countlyIn_compute_weekly_new_session('${mysqlDateSave}','${mysqlDateStart}','${mysqlDateEnd}');\""
     echo -e "${cmd}"
-#    mysql -h ${hostName} -u root -pcyberlink#1 -e "CALL ${dbName}.countlyIn_compute_weekly_new_session('${mysqlDateSave}','${mysqlDateStart}','${mysqlDateEnd}');"
+    mysql -h ${hostName} -u root -pcyberlink#1 -e "CALL ${dbName}.countlyIn_compute_weekly_new_session('${mysqlDateSave}','${mysqlDateStart}','${mysqlDateEnd}');"
 
     dateSave=$(date -d "${dateSave}-7 days" +%Y%m%d)
     dateStart=$(date -d "${dateStart}-7 days" +%Y%m%d)
@@ -71,7 +71,7 @@ for ((;1;)); do
 
     cmd="mysql -h ${hostName} -u root -pcyberlink#1 -e \"CALL ${dbName}.countlyIn_compute_totalu_weekly('${mysqlDateSave}','${mysqlDateStart}','${mysqlDateEnd}');\""
     echo -e ${cmd}
-#    mysql -h ${hostName} -u root -pcyberlink#1 -e "CALL ${dbName}.countlyIn_compute_totalu_weekly('${mysqlDateSave}','${mysqlDateStart}','${mysqlDateEnd}');"
+    mysql -h ${hostName} -u root -pcyberlink#1 -e "CALL ${dbName}.countlyIn_compute_totalu_weekly('${mysqlDateSave}','${mysqlDateStart}','${mysqlDateEnd}');"
 
     dateSave=$(date -d "${dateSave}+7 days" +%Y%m%d)
     dateStart=$(date -d "${dateStart}+7 days" +%Y%m%d)
