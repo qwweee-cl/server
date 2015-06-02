@@ -5,7 +5,7 @@ logpath="/home/ubuntu/countly-test/log/hourly_uu/"
 ## this is for test end
 
 logpath="/usr/local/countly/log/hourly_uu/"
-alllogpath="/usr/local/countly/log/hourly_uu/"
+alllogpath="/usr/local/countly/log/"
 
 trap 'error_exp'  ERR SIGINT SIGTERM
 function error_exp
