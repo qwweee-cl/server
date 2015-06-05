@@ -24,6 +24,9 @@ function backupDashboard() {
 	dashboarddb="countly"
 	dashboard="claddb:27017"
 
+	savedate=$(date +%Y%m%d)
+	dashboarddate=${savedate}"_countly"
+
 ## echo backup start time
 	echo -e "Backup Program(${pid}) starts on `date +"%Y-%m-%d %T"`." 2>&1 >> $one_time_log
 	echo -e "Backup Program(${pid}) starts on `date +"%Y-%m-%d %T"`."
