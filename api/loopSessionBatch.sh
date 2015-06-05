@@ -145,6 +145,8 @@ if [ ! -d "${s3DashboardPath}" ]; then
 fi
 
 for ((;1;)); do
+	savedate=$(date +%Y%m%d)
+	dashboarddate=${savedate}"_countly"
 	curdate=$(date +%Y%m%d-%H%M)
 	one_time_log="${logpath}${curdate}_log.log"
 ## check backup dashboard time
