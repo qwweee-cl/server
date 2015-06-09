@@ -43,8 +43,8 @@ one_time_log="${logpath}${curdate}_log.log"
 ## backup dashboard need
 checkTime=$(date +%H%M)
 checkDate=$(date +%j)
-beforeBackupTime="0500"
-backupTime="0800"
+beforeBackupTime="0400"
+backupTime="0900"
 afterbackupTime="1100"
 sleepTime=10800 # this is for clad2
 currBackup=$(date +%j)
@@ -125,7 +125,7 @@ for ((;1;)); do
 		echo -e ${string} 2>&1 >> $one_time_log 
 		echo -e "${batchdb} update [begin] time in session_finished"
 
-		cmd="node hourlySessionNewBatch.js ${batchdb}"
+		cmd="node --max-old-space-size=6144 hourlySessionNewBatch.js ${batchdb}"
 		echo -e ${cmd} 2>&1 >> $one_time_log 
 		${cmd} 2>&1 >> $one_time_log
 		echo -e "process ${batchdb} session finished"
