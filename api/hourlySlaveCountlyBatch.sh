@@ -215,16 +215,16 @@ echo $cmd
 #$cmd >> /usr/local/countly/log/ymkEvent_batch.log 2>&1
 
 ## add index in database
-cd $path
-echo $PWD
-cmd="/usr/bin/node $path/createIndex.js"
-echo $cmd
-$cmd
+#cd $path
+#echo $PWD
+#cmd="/usr/bin/node $path/createIndex.js"
+#echo $cmd
+#$cmd
 ## run batch
 #cmd="/usr/bin/node --max-old-space-size=8192 $path/newBatch.js"
-cmd="/usr/bin/node $path/sessionNewBatch.js"
-echo $cmd
-$cmd
+#cmd="/usr/bin/node $path/sessionNewBatch.js"
+#echo $cmd
+#$cmd
 
 ## run OEM batch
 #cmd="$path/runOEM.sh >> /usr/local/countly/log/oem_batch.log"
