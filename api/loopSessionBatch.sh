@@ -16,6 +16,21 @@ function error_exp
 }
 
 function backupDashboard() {
+	cd $path
+	cmd="${path}/backupDashboardDB.sh"
+	echo $cmd
+	$cmd
+}
+function checkLoopStop() {
+	loopFile="/tmp/loopStopFile"
+	if [ -f "${loopFile}" ]; then
+		echo "${loopFile} exist"
+		echo -e "Loop Session Batch Stop on $(date +%Y%m%d-%H:%M)"\
+		| mail -s "[Hourly] Main Loop Session Batch Stop" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
+		exit 0
+	fi
+}
+function backupDashboard_old() {
 ## this is for test
 	dashboarddb="countly_test"
 	dashboard="cladtest:27017"
@@ -171,7 +186,8 @@ for ((;1;)); do
 			sleep 600
 		fi
 	fi
-
+## check stop file
+	checkLoopStop
 ## process session
 	curdate=$(date +%Y%m%d-%H%M)
 	one_time_log="${logpath}${curdate}_log.log"

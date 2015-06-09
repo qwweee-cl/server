@@ -15,6 +15,16 @@ function error_exp
 	exit 1
 }
 
+function checkLoopStop() {
+	loopFile="/tmp/loopStopFile"
+	if [ -f "${loopFile}" ]; then
+		echo "${loopFile} exist"
+		echo -e "Loop Session Batch Stop on $(date +%Y%m%d-%H:%M)"\
+		| mail -s "[Hourly] Slave Loop Session Batch Stop" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
+		exit 0
+	fi
+}
+
 logpath="/usr/local/countly/log/loopSession/"
 
 ## this is for test
@@ -81,7 +91,8 @@ for ((;1;)); do
 			sleep 600
 		fi
 	fi
-
+## check stop file
+	checkLoopStop
 ## process session
 	curdate=$(date +%Y%m%d-%H%M)
 	processdate=$(date +%Y%m%d)
