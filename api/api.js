@@ -235,6 +235,78 @@ if (cluster.isMaster) {
                 common.returnMessage(params, 200, 'Success');
                 break;
             }
+            case '/i/cl_old':
+            {
+
+                var requests = queryString.requests,
+                    appKey = queryString.app_key;
+
+                if (requests) {
+                    try {
+                        requests = JSON.parse(requests);
+                    } catch (SyntaxError) {
+                        console.log('Parse bulk JSON failed');
+                        console.log(requests);
+                    }
+                } else {
+                    common.returnMessage(params, 400, 'Missing parameter "requests"');
+                    return false;
+                }
+
+                //common.returnMessage(params, 200, 'test Success '+requests[0].app_user_id);
+                //break;
+
+                for (var i = 0; i < requests.length; i++) {
+
+                    if (!requests[i].app_key && !appKey) {
+                        continue;
+                    }
+
+                    var tmpParams = {
+                        'app_user_id':requests[i].app_user_id,
+                        'app_id':'',
+                        'app_cc':'',
+                        'ip_address':requests[i].ip_address,
+                        'user':{
+                            'country':requests[i].country_code || 'Unknown',
+                            'city':requests[i].city || 'Unknown'
+                        },
+                        'qstring':{
+                            'app_key':requests[i].app_key || appKey,
+                            'device_id':requests[i].device_id,
+                            'metrics':requests[i].metrics,
+                            'events':requests[i].events,
+                            'session_duration':requests[i].session_duration,
+                            'begin_session':requests[i].begin_session,
+                            'end_session':requests[i].end_session,
+                            'timestamp':requests[i].timestamp
+                        }
+                    };
+/*
+                    if (!tmpParams.qstring.device_id) {
+                        continue;
+                    } else {
+                        tmpParams.app_user_id = common.crypto.createHash('sha1').update(tmpParams.qstring.app_key + tmpParams.qstring.device_id + "").digest('hex');
+                    }
+*/
+                    if (tmpParams.qstring.metrics) {
+                        if (tmpParams.qstring.metrics["_carrier"]) {
+                            tmpParams.qstring.metrics["_carrier"] = tmpParams.qstring.metrics["_carrier"].replace(/\w\S*/g, function (txt) {
+                                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                            });
+                        }
+
+                        if (tmpParams.qstring.metrics["_os"] && tmpParams.qstring.metrics["_os_version"]) {
+                            tmpParams.qstring.metrics["_os_version"] = tmpParams.qstring.metrics["_os"][0].toLowerCase() + tmpParams.qstring.metrics["_os_version"];
+                        }
+                    }
+
+                    validateAppForWriteAPI(tmpParams);
+                }
+
+                common.returnMessage(params, 200, 'Success');
+                break;
+            }
             case '/i/users':
             {
                 if (params.qstring.args) {

@@ -208,7 +208,7 @@ var usage = {},
             // current begin_session request and mark this user as having an ongoing session
             var lastEndSession = dbAppUser[common.dbUserMap['last_end_session_timestamp']];
 
-            if (lastEndSession && (params.time.nowWithoutTimestamp.unix() - lastEndSession) < 15) {
+            if (lastEndSession && (params.time.nowWithoutTimestamp.unix() - lastEndSession) < 10) {
                 var userProps = {};
                 userProps[common.dbUserMap['has_ongoing_session']] = true;
                 userProps[common.dbUserMap['last_begin_session_timestamp']] = params.time.nowWithoutTimestamp.unix();
