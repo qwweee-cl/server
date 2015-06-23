@@ -173,16 +173,16 @@ $cmd
 ## mongodump -h localhost:27017 -db countly -o ./20141002
 cmd="mongodump -h $mongo -db $batchdb -o $exportPath$rawdate"
 echo $cmd
-$cmd
+#$cmd
 ## zip backup file
 cd $exportPath
 echo $PWD
 cmd="/bin/tar czf $gzipPath$rawdate.tgz ./"
 echo $cmd
-$cmd
+#$cmd
 cmd="/bin/rm ./$rawdate -rf"
 echo $cmd
-$cmd
+#$cmd
 
 ## remove raw data ( move to end )
 ## mongo test --eval "printjson(db.getCollectionNames())"
@@ -197,13 +197,13 @@ if [ ! -d "$s3Path" ]; then
 fi
 cmd="/bin/cp $gzipPath$rawdate.tgz $s3Path"
 echo $cmd
-$cmd
+#$cmd
 cmd="/bin/rm $gzipPath$rawdate.tgz"
 echo $cmd
-$cmd
+#$cmd
 cmd="sudo rm ${CachePath} -rf"
 echo $cmd
-$cmd
+#$cmd
 
 curr=$(date +%Y-%m-%d_%H-%M)
 echo "===== raw data cp to s3 end =>"$curr" ====="
