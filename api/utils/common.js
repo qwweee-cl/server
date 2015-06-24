@@ -200,6 +200,13 @@ var common = {},
                         print(err);
                     }
                 });
+            common.db_maintain.collection("event_finished").update({dbname: old.tag},
+                {$set: insertData}, {'upsert': true}, function(err, res) {
+                    if (err) {
+                        print('event_finished error');
+                        print(err);
+                    }
+                });
             var dbInstance = mongo.db(db_name, dbRawOptions);
             dbInstance.tag = inDBName.replace(/system\.|\.\.|\$/g, "");
             dbInstance.filename = filename;
@@ -235,6 +242,13 @@ var common = {},
                 {$set: insertData}, {'upsert': true}, function(err, res) {
                     if (err) {
                         print('raw_finished error');
+                        print(err);
+                    }
+                });
+            common.db_maintain.collection("event_finished").update({dbname: old.tag},
+                {$set: insertData}, {'upsert': true}, function(err, res) {
+                    if (err) {
+                        print('event_finished error');
                         print(err);
                     }
                 });
