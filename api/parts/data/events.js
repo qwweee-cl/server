@@ -39,7 +39,7 @@ var bag = {};
             common.incrTimeObject(app[i], updateSessions, common.dbMap['events']); 
             eventAddup(bag, app[i], appinfos, uma); //will be computed in old user, that's ok
     	}
-        updateUma(dbs, uma, appinfos);
+        //updateUma(dbs, uma, appinfos);
         //logCurrUserEvents(app, appinfos);
 
     	if (isFinal) {
@@ -72,6 +72,8 @@ var bag = {};
     }
 
     function updateReqSessions(dbs, updateSessions, app_id) {
+        updateCollectionReqSession(dbs, 'sessions', app_id, updateSessions, '$inc');
+/*
         dbs.save.collection('sessions').update({'_id':app_id}, {'$inc':updateSessions},  
     	    {'upsert': true}, function (err, data) {
             	if (err){
@@ -86,7 +88,15 @@ var bag = {};
                 }
             dbonoff.on('raw');
         });
+*/
         process.emit('hi_mongo');
+    }
+
+    function reqSessionsCallback(err, res) {
+        if (err){
+            console.log('[processEvent]user req log error:' + err);  
+        }
+        dbonoff.on('raw');
     }
 
     function eventAddup(bag, params, appinfos,uma) {
@@ -256,25 +266,93 @@ var bag = {};
         }
     }
 
+    function updateCollection(dbs, collName, id, data, op) {
+        var tmp = {};
+        var opSet = {};
+        for (var times in data) {
+            if ((JSON.stringify(tmp).length + (data[times]?JSON.stringify(data[times]).length:0)) >= 10000) {
+                opSet = {};
+                opSet[op] = tmp;
+
+                dbs.save.collection(collName).update({'_id': id}, opSet, {'upsert': true}, eventCallback);
+                //console.log("[yes]"+JSON.stringify(tmp).length);
+                dbs.base.collection(collName).update({'_id': id}, opSet, {'upsert': true}, eventCallback);
+                tmp = {};
+            }
+            tmp[times] = data[times];
+        }
+        opSet = {};
+        if (isEmptyObject(tmp)) {
+            console.log("tmp is Empty");
+        }
+        opSet[op] = tmp;
+
+        dbs.save.collection(collName).update({'_id': id}, opSet, {'upsert': true}, eventCallback);
+        //console.log("[no]"+JSON.stringify(tmp).length);
+        dbs.base.collection(collName).update({'_id': id}, opSet, {'upsert': true}, eventCallback);
+    }
+
+    function updateCollectionReqSession(dbs, collName, id, data, op) {
+        var tmp = {};
+        var opSet = {};
+        for (var times in data) {
+            if ((JSON.stringify(tmp).length + (data[times]?JSON.stringify(data[times]).length:0)) >= 10000) {
+                opSet = {};
+                opSet[op] = tmp;
+
+                dbs.save.collection(collName).update({'_id': id}, opSet, {'upsert': true}, reqSessionsCallback);
+                //console.log("[yes]"+JSON.stringify(tmp).length);
+                dbs.base.collection(collName).update({'_id': id}, opSet, {'upsert': true}, reqSessionsCallback);
+                tmp = {};
+            }
+            tmp[times] = data[times];
+        }
+        opSet = {};
+        if (isEmptyObject(tmp)) {
+            console.log("tmp is Empty");
+        }
+        opSet[op] = tmp;
+
+        dbs.save.collection(collName).update({'_id': id}, opSet, {'upsert': true}, reqSessionsCallback);
+        //console.log("[no]"+JSON.stringify(tmp).length);
+        dbs.base.collection(collName).update({'_id': id}, opSet, {'upsert': true}, reqSessionsCallback);
+    }
 
     function updateEvents(dbs, bag) {
         // update Segmentation_key+App_id collections
         for (var collection in bag.eventCollections) {
             for (var segment in bag.eventCollections[collection]) {
                 if (segment == "no-segment" && bag.eventSegments[collection]) {
+
+                    updateCollection(dbs, collection, segment, 
+                        bag.eventCollections[collection][segment], 
+                        "$inc");
+                    updateCollection(dbs, collection, segment, 
+                        bag.eventSegments[collection], 
+                        "$addToSet");
+/*
                     dbs.save.collection(collection).update({'_id': segment}, 
 			{'$inc': bag.eventCollections[collection][segment], 
 			'$addToSet': bag.eventSegments[collection]}, {'upsert': true}, eventCallback);
+
                     dbs.base.collection(collection).update({'_id': segment}, 
             {'$inc': bag.eventCollections[collection][segment], 
             '$addToSet': bag.eventSegments[collection]}, {'upsert': true}, eventCallback);
+*/
                 } else {
+
+                    updateCollection(dbs, collection, segment, 
+                        bag.eventCollections[collection][segment], 
+                        "$inc");
+/*
                     dbs.save.collection(collection).update({'_id': segment}, 
 			{'$inc': bag.eventCollections[collection][segment]}, 
 			{'upsert': true}, eventCallback);
+
                     dbs.base.collection(collection).update({'_id': segment}, 
             {'$inc': bag.eventCollections[collection][segment]}, 
             {'upsert': true}, eventCallback);
+*/
                 }
             }
         }
