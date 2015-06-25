@@ -208,7 +208,7 @@ b_coll2.findOne({_id:PF_iOS_Oid}, function (err, result) {
 	}
 	getData(result, "iOS", "BOTH");
 });
-
+/*
 b_coll3.findOne({_id:YMK_And_Oid}, function (err, result) {
 	dbCount++;
     if (!result) {
@@ -257,6 +257,7 @@ b_coll3.findOne({_id:PF_iOS_Oid}, function (err, result) {
 	}
 	getALLData(result, "iOS", "BOTH");
 });
+*/
 var cnt=0;
 var repeat_times = 0;
 var wait_cnt = 10;
@@ -400,20 +401,20 @@ function getData(result, os, appName) {
 	var data = {eventDay: '', duration: '', appName: appName,
                   os: os, country: '', aU: 0, tU: 0,
                   nU: 0, sU: 0};
-/*
+
 	var others = {eventDay: '', duration: '', appName: appName,
                   os: os, country: 'ALL', aU: 0, tU: 0,
                   nU: 0, sU: 0};
-*/
+
 if (saveYearly) {
 	for (var tmp in yearArray) {
 		var startDate = yearArray[tmp].year+"-01-01";
 		var duration = "Y";
-/*
+
 		others = {eventDay: '', duration: '', appName: appName,
                   os: os, country: 'ALL', aU: 0, tU: 0,
                   nU: 0, sU: 0};
-*/
+
 /*
 		print(yearArray[tmp].year);
 		print(startDate);
@@ -445,7 +446,7 @@ if (saveYearly) {
 						data.sU = checkNull(result[yearArray[tmp].year][meta[country]]['t']);
 						insertMysql(data);
 					}
-/*
+
 					others.eventDay = startDate;
 					others.duration = duration;
 					others.appName = appName;
@@ -454,7 +455,7 @@ if (saveYearly) {
 					others.tU += 0;
 					others.nU += checkNull(result[yearArray[tmp].year][meta[country]]['n']);
 					others.sU += checkNull(result[yearArray[tmp].year][meta[country]]['t']);
-*/
+
 				}
 			}
 /*
@@ -465,23 +466,23 @@ if (saveYearly) {
 					others.nU+", "+
 					others.sU);
 */
-			//insertMysql(others);
+			insertMysql(others);
 		}
 	}
 }
-/*
+
 	others = {eventDay: '', duration: '', appName: appName,
               os: os, country: 'ALL', aU: 0, tU: 0,
               nU: 0, sU: 0};
-*/
+
 	for (var tmp in monthArray) {
 		var startDate = monthArray[tmp].year+"-"+pad2(monthArray[tmp].month)+"-01";
 		var duration = "M";
-/*
+
 		others = {eventDay: '', duration: '', appName: appName,
               os: os, country: 'ALL', aU: 0, tU: 0,
               nU: 0, sU: 0};
-*/
+
 /*
 		print(monthArray[tmp].year+" "+monthArray[tmp].month);
 		print(startDate);
@@ -514,7 +515,7 @@ if (saveYearly) {
 						data.sU = checkNull(result[monthArray[tmp].year][monthArray[tmp].month][meta[country]]['t']);
 						insertMysql(data);
 					}
-/*
+
 					others.eventDay = startDate;
 					others.duration = duration;
 					others.appName = appName;
@@ -523,7 +524,7 @@ if (saveYearly) {
 					others.tU += 0;
 					others.nU += checkNull(result[monthArray[tmp].year][monthArray[tmp].month][meta[country]]['n']);
 					others.sU += checkNull(result[monthArray[tmp].year][monthArray[tmp].month][meta[country]]['t']);
-*/
+
 				}
 			}
 /*
@@ -534,22 +535,22 @@ if (saveYearly) {
 					others.nU+", "+
 					others.sU);
 */
-			//insertMysql(others);
+			insertMysql(others);
 		}
 	}
-/*
+
 	others = {eventDay: '', duration: '', appName: appName,
               os: os, country: 'ALL', aU: 0, tU: 0,
               nU: 0, sU: 0};
-*/
+
 	for (var tmp in dayArray) {
 		var startDate = dayArray[tmp].year+"-"+pad2(dayArray[tmp].month)+"-"+pad2(dayArray[tmp].day);
 		var duration = "D";
-/*
+
 		others = {eventDay: '', duration: '', appName: appName,
               os: os, country: 'ALL', aU: 0, tU: 0,
               nU: 0, sU: 0};
-*/
+
 /*
 		print(dayArray[tmp].year+" "+dayArray[tmp].month+" "+dayArray[tmp].day);
 		print(startDate);
@@ -585,7 +586,7 @@ if (saveYearly) {
 						data.sU = checkNull(result[dayArray[tmp].year][dayArray[tmp].month][dayArray[tmp].day][meta[country]]['t']);
 						insertMysql(data);
 					}
-/*
+
 					others.eventDay = startDate;
 					others.duration = duration;
 					others.appName = appName;
@@ -594,7 +595,7 @@ if (saveYearly) {
 					others.tU += 0;
 					others.nU += checkNull(result[dayArray[tmp].year][dayArray[tmp].month][dayArray[tmp].day][meta[country]]['n']);
 					others.sU += checkNull(result[dayArray[tmp].year][dayArray[tmp].month][dayArray[tmp].day][meta[country]]['t']);
-*/
+
 				}
 			}
 /*			
@@ -605,14 +606,14 @@ if (saveYearly) {
 					others.nU+", "+
 					others.sU);
 */
-			//insertMysql(others);
+			insertMysql(others);
 		}
 	}
-/*
+
 	others = {eventDay: '', duration: '', appName: appName,
               os: os, country: 'ALL', aU: 0, tU: 0,
               nU: 0, sU: 0};
-*/
+
 	for (var tmp in weekArray) {
 		var tmpObjDate = new Date(weekArray[tmp].year, weekArray[tmp].month-1, weekArray[tmp].day);
 		var sunday = getSunday(tmpObjDate);
@@ -621,11 +622,11 @@ if (saveYearly) {
 		var startDate = sunMoment.format("YYYY-MM-DD");
 		startDate = moment(sunday).add(1, "days").format("YYYY-MM-DD");
 		var duration = "W";
-/*
+
 		others = {eventDay: '', duration: '', appName: appName,
               os: os, country: 'ALL', aU: 0, tU: 0,
               nU: 0, sU: 0};
-*/
+
 /*
 		print(weekArray[tmp].year+" w"+weekArray[tmp].week);
 		print(startDate);
@@ -660,7 +661,7 @@ if (saveYearly) {
 						data.sU = checkNull(result[weekArray[tmp].year]["w"+weekArray[tmp].week][meta[country]]['t']);
 						insertMysql(data);
 					}
-/*
+
 					others.eventDay = startDate;
 					others.duration = duration;
 					others.appName = appName;
@@ -669,7 +670,7 @@ if (saveYearly) {
 					others.tU += 0;
 					others.nU += checkNull(result[weekArray[tmp].year]["w"+weekArray[tmp].week][meta[country]]['n']);
 					others.sU += checkNull(result[weekArray[tmp].year]["w"+weekArray[tmp].week][meta[country]]['t']);
-*/
+
 				}
 			}
 /*
@@ -680,7 +681,7 @@ if (saveYearly) {
 					others.nU+", "+
 					others.sU);
 */
-			//insertMysql(others);
+			insertMysql(others);
 		}
 	}
 }
