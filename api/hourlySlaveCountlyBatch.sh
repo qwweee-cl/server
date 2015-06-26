@@ -295,6 +295,6 @@ echo $start
 echo $end
 echo "==============================================================="
 echo -e "Countly Batch run from $start to $end\n" $(tail -20 /usr/local/countly/log/slave_batch.log)\
-| mail -s "Slave [$curdate]Countly Batch Finished" gary_huang@cyberlink.com,qwweee@gmail.com
+| mail -s "Slave [$curdate]Countly Batch Finished" gary_huang@perfectcorp.com,qwweee@gmail.com
 #sleep 1
 rm -f ${LOCKFILE}
