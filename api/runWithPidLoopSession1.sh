@@ -10,5 +10,5 @@ if [ -e ${LOCKFILE} ] ; then
 	exit 1
 fi
 
-nohup /usr/local/countly/api/loopSessionBatch.sh >> /usr/local/countly/log/loopSessionMain1.log 2>&1 & echo $! > /tmp/loopSessionBatch1.pid
+nohup /usr/local/countly/api/loopSessionBatch.sh >> /usr/local/countly/log/loopSessionMain1.log 2>&1 & echo $! > ${LOCKFILE}
 
