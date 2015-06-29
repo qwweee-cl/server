@@ -146,6 +146,7 @@ checkTime=$(date +%H%M)
 checkDate=$(date +%j)
 beforeBackupTime="0500"
 backupTime="0900"
+backupTime="0700"
 afterbackupTime="1200"
 sleepTime=10800 # this is for clad2
 currBackup=$(date +%j)
