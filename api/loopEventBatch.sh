@@ -34,39 +34,46 @@ function checkLoopStop() {
 function processEvent() {
 	cd ${path}
 
+	cmd='${path}/processEventBatch.sh ${batchdb} ${indexNum} ${path} ${one_time_log}'
+	echo -e ${cmd}
+	${cmd}
+}
+function processEvent_old() {
+	cd ${path}
+
 	## created index
-	cmd="node hourlyCreateIndex.js ${batchdb}"
-	echo -e ${cmd} 2>&1 >> $one_time_log 
+	cmd="node hourlyCreateEventIndex.js ${batchdb}"
+	echo -e ${cmd} 2>&1 >> ${one_time_log}
 	string=`${cmd}`
 	#echo -e ${string}
 	rawdate=${string}"_"${indexNum}
-	echo -e ${rawdate} 2>&1 >> $one_time_log
+	echo -e ${rawdate} 2>&1 >> ${one_time_log}
 
-	cmd="node updateHourlyBegin.js ${batchdb}"
-	echo -e ${cmd} 2>&1 >> $one_time_log 
+	cmd="node updateHourlyBeginEvent.js ${batchdb}"
+	echo -e ${cmd} 2>&1 >> ${one_time_log} 
 	string=`${cmd}`
-	echo -e ${string} 2>&1 >> $one_time_log 
+	echo -e ${string} 2>&1 >> ${one_time_log} 
 	echo -e "${batchdb} update [begin] time in event_finished"
 
-	cmd="node --max-old-space-size=6144 hourlySessionNewBatch.js ${batchdb}"
-	echo -e ${cmd} 2>&1 >> $one_time_log 
-	${cmd} 2>&1 >> $one_time_log
+	cmd="node --max-old-space-size=6144 hourlyEventNewBatch.js ${batchdb}"
+	echo -e ${cmd} 2>&1 >> ${one_time_log} 
+	${cmd} 2>&1 >> ${one_time_log}
 	echo -e "process ${batchdb} event finished"
 
-	cmd="node updateHourlyEnd.js ${batchdb}"
-	echo -e ${cmd} 2>&1 >> $one_time_log 
+	cmd="node updateHourlyEndEvent.js ${batchdb}"
+	echo -e ${cmd} 2>&1 >> ${one_time_log} 
 	string=`${cmd}`
-	echo -e ${string} 2>&1 >> $one_time_log 
+	echo -e ${string} 2>&1 >> ${one_time_log} 
 	echo -e "${batchdb} update [end] time in event_finished"
 
-	cmd="node removeBackupFinished.js ${batchdb}"
-	echo -e ${cmd} 2>&1 >> $one_time_log 
+	cmd="node removeEventFinished.js ${batchdb}"
+	echo -e ${cmd} 2>&1 >> ${one_time_log} 
 	string=`${cmd}`
-	echo -e ${string} 2>&1 >> $one_time_log 
+	echo -e ${string} 2>&1 >> ${one_time_log} 
 	echo -e "${batchdb} remove from backup_finished"
 }
 
-logpath="/usr/local/countly/log/loopSession/"
+logpath="/usr/local/countly/log/loopEvent/"
 
 ## this is for test
 path="/home/ubuntu/countly-test/api"
@@ -86,7 +93,7 @@ indexNum="1"
 savedate=$(date +%Y%m%d)
 dashboarddate=${savedate}"_countly"
 
-curdate=$(date +%Y%m%d-%H%M)
+curdate=$(date +%Y%m%d)
 
 one_time_log="${logpath}${curdate}_log.log"
 
@@ -114,7 +121,7 @@ fi
 for ((;1;)); do
 	savedate=$(date +%Y%m%d)
 	dashboarddate=${savedate}"_countly"
-	curdate=$(date +%Y%m%d-%H%M)
+	curdate=$(date +%Y%m%d)
 	one_time_log="${logpath}${curdate}_log.log"
 ## check backup dashboard time
 	checkTime=$(date +%H%M)
@@ -132,14 +139,14 @@ for ((;1;)); do
 			echo -e "[backup]backup end"
 			currBackup=$(date +%j)
 		else
-			echo -e "do next job, continue process session"
+			echo -e "do next job, continue process event"
 			sleep 600
 		fi
 	fi
 ## check stop file
 	checkLoopStop
-## process session
-	curdate=$(date +%Y%m%d-%H%M)
+## process Event
+	curdate=$(date +%Y%m%d)
 	one_time_log="${logpath}${curdate}_log.log"
 	echo -e "Program(${pid}) starts on `date +"%Y-%m-%d %T"`." 2>&1 >> $one_time_log
 	echo -e "Program(${pid}) starts on `date +"%Y-%m-%d %T"`."
@@ -150,8 +157,8 @@ for ((;1;)); do
 	curTimestamp=$(date -d "-5 minutes" +%s)
 	echo -e ${curTimestamp} 2>&1 >> $one_time_log 
 
-	## get the first backup finished db name
-	cmd="node getBackupFinished.js ${curTimestamp}"
+	## get the first Event finished db name
+	cmd="node getEventFinished.js ${curTimestamp}"
 	echo -e ${cmd} 2>&1 >> $one_time_log 
 	string=`${cmd}`
 	#echo -e ${string}
@@ -170,7 +177,7 @@ for ((;1;)); do
 	echo -e "Program(${pid}) stops on `date +"%Y-%m-%d %T"`."
 
 	echo -e $(tail -20 $one_time_log)\
-	| mail -s "[Hourly] Main1 Loop Process Session Summary" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
+	| mail -s "[Hourly] Main1 Loop Process Event Summary" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
 	sleep 60
 done
 
