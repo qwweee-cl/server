@@ -1,7 +1,7 @@
 var countlyConfig = {
     mongodb: {
         //host: "localhost",
-        host: "54.248.118.203", // dashboard db host
+        host: "172.32.7.5", // dashboard db host
         //hostbatch: "172.31.11.80", // localhost(mongodb) setting batch host
         //hostbatch: "172.31.0.46", // localhost(mongodb) setting batch host
         hostbatch: "localhost", // localhost(mongodb) setting batch host
