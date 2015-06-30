@@ -27,7 +27,7 @@ function checkLoopStop() {
 function processEvent() {
 	cd ${path}
 
-	cmd='${path}/processEventBatch.sh ${batchdb} ${indexNum} ${path} ${one_time_log}'
+	cmd="${path}/processEventBatch.sh ${batchdb} ${indexNum} ${path} ${one_time_log}"
 	echo -e ${cmd}
 	${cmd}
 }
@@ -169,9 +169,9 @@ for ((;1;)); do
 	echo -e "Program(${pid}) stops on `date +"%Y-%m-%d %T"`."
 
 ## process mongodb to mysql in claddb
-	cmd="ssh ubuntu@claddb /usr/local/countly/api/hourlyMongoToMysqlUU.sh $processdate >> /usr/local/countly/log/mongoToMysql.log &"
-	echo $cmd
-	$cmd
+#	cmd="ssh ubuntu@claddb /usr/local/countly/api/hourlyMongoToMysqlUU.sh $processdate >> /usr/local/countly/log/mongoToMysql.log &"
+#	echo $cmd
+#	$cmd
 
 	echo -e $(tail -20 $one_time_log)\
 	| mail -s "[Hourly] Main2 Loop Process Event Summary" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
