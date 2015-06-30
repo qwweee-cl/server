@@ -107,13 +107,15 @@ fs.readFile(oidFileName, 'utf8', function (err,data) {
             }
             for (var i=0; i<collection.length; i++) {
                 if (collection[i].collectionName == 'raw_session_53f554ef847577512100130a') continue;
-/*
-                if (collection[i].collectionName.indexOf("e315c111663af26a53e5fe4c82cc1baeecf50599")>=0 ||
+
+                if (
+                    collection[i].collectionName.indexOf("e315c111663af26a53e5fe4c82cc1baeecf50599")>=0 ||
                     collection[i].collectionName.indexOf("c277de0546df31757ff26a723907bc150add4254")>=0 ||
-                    collection[i].collectionName.indexOf("75edfca17dfbe875e63a66633ed6b00e30adcb92")>=0 ||
-                    collection[i].collectionName.indexOf("9219f32e8de29b826faf44eb9b619788e29041bb")>=0) 
+//                    collection[i].collectionName.indexOf("75edfca17dfbe875e63a66633ed6b00e30adcb92")>=0 ||
+                    collection[i].collectionName.indexOf("9219f32e8de29b826faf44eb9b619788e29041bb")>=0
+                    ) 
                     continue;
-*/
+
                 //if (collection[i].collectionName.indexOf("9219f32e8de29b826faf44eb9b619788e29041bb")>=0 ||
                 //    collection[i].collectionName.indexOf("75edfca17dfbe875e63a66633ed6b00e30adcb92")>=0) {
                     if (collection[i].collectionName.indexOf(common.rawCollection['event'])>=0) {
