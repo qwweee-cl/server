@@ -155,6 +155,11 @@ setInterval(function() {
         var date1 = new Date();
         console.log(date.toString());
         console.log(date1.toString());
+        if (collectionCount != -1) {
+            dbonoff.on('raw');
+            repeat_times = 0;
+            console.log("rawCount : "+dbonoff.getCnt('raw'));
+        }
     }
         if (repeat_times > wait_cnt) {
             dbClose(dbs);
