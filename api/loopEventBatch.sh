@@ -34,7 +34,7 @@ function checkLoopStop() {
 function processEvent() {
 	cd ${path}
 
-	cmd='${path}/processEventBatch.sh ${batchdb} ${indexNum} ${path} ${one_time_log}'
+	cmd="${path}/processEventBatch.sh ${batchdb} ${indexNum} ${path} ${one_time_log}"
 	echo -e ${cmd}
 	${cmd}
 }
