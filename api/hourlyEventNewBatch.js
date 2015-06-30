@@ -177,6 +177,7 @@ function processEvents(dbs, app, isFinal, appinfo) {
         var appinfos = appinfo;
         //console.log('isFinale='+final);
         countlyApi.data.events.processEvents(dbs, apps, final, appinfos);
+        dbonoff.on('raw');
     });
 }
 var userCount1 = 0;
