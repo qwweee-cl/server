@@ -98,7 +98,7 @@ beforeBackupTime="0400"
 backupTime="0900"
 backupTime="1100"
 afterbackupTime="1100"
-sleepTime=10800 # this is for clad2
+sleepTime=7200 # this is for clad2
 currBackup=$(date +%j)
 ## backup dashboard need end
 

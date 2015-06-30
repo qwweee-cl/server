@@ -20,7 +20,7 @@ function backupDashboard() {
 #	cmd="${path}/backupDashboardDB.sh"
 #	echo $cmd
 #	$cmd
-	sleep 10800
+	sleep 7200
 }
 function checkLoopStop() {
 	loopFile="/tmp/loopEventStopFile"
