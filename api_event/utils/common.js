@@ -61,7 +61,7 @@ var common = {},
         dbOptions.database = countlyConfig.mongodb.db || 'countly';
     } else {
         dbName = (countlyConfig.mongodb.host + ':' + 
-            countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db + '?auto_reconnect=true');
+            countlyConfig.mongodb.port2 + '/' + countlyConfig.mongodb.db + '?auto_reconnect=true');
     }
 
     dbLocalRawName = (countlyConfig.mongodb.hostbatch + ':' + 
@@ -338,7 +338,7 @@ var common = {},
         } else {
             //console.log(srNumberName+" there is no oem");
             dbOEMName = (countlyConfig.mongodb.host + ':' + 
-                countlyConfig.mongodb.port + '/countly_' + 
+                countlyConfig.mongodb.port2 + '/countly_' + 
                 srNumberName + '?auto_reconnect=true');
             common.db_oem_dashboard[srNumberName]=mongo.db(dbOEMName, dbOptions);
             oem = common.db_oem_dashboard[srNumberName];
@@ -356,7 +356,7 @@ var common = {},
         } else {
             //console.log(srNumberName+" there is no oem");
             dbOEMName = (countlyConfig.mongodb.host + ':' + 
-                countlyConfig.mongodb.port + '/' + 
+                countlyConfig.mongodb.port2 + '/' + 
                 srNumberName + '?auto_reconnect=true');
             common.db_oem[srNumberName]=mongo.db(dbOEMName, dbOptions);
             oem = common.db_oem[srNumberName];
