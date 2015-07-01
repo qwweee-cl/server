@@ -126,23 +126,8 @@ for ((;1;)); do
 ## check backup dashboard time
 	checkTime=$(date +%H%M)
 	checkDate=$(date +%j)
-	if [[ ${checkTime} > ${beforeBackupTime} ]] && [[ ${checkTime} < ${backupTime} ]]; then
-		echo -e "waiting for backup start"
-		sleep 600
-		continue
-	else
-		if [[ ${currBackup} != ${checkDate} ]] && [[ ${checkTime} > ${backupTime} ]]; then
-			echo -e "[backup]backup start"
-## call backup function
-			backupDashboard
-## call backup function end
-			echo -e "[backup]backup end"
-			currBackup=$(date +%j)
-		else
-			echo -e "do next job, continue process event"
-			sleep 600
-		fi
-	fi
+	echo -e "do next job, continue process event"
+	sleep 60
 ## check stop file
 	checkLoopStop
 ## process Event
