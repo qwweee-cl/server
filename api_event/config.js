@@ -1,17 +1,16 @@
 var countlyConfig = {
     mongodb: {
         //host: "localhost",
-//        host: "54.248.118.203", // dashboard db host
-        host: "localhost", // dashboard db host
+        host: "172.32.7.5", // dashboard db host
         //hostbatch: "172.31.11.80", // localhost(mongodb) setting batch host
         //hostbatch: "172.31.0.46", // localhost(mongodb) setting batch host
         hostbatch: "localhost", // localhost(mongodb) setting batch host
-        hostbatch1: "localhost", // YCP raw data db host
-        hostbatch2: "localhost", // YMK + Others raw data db host
-        oemhost: "localhost", // Only OEM raw data host
-        db: "nodejs",
-        db_raw: "countly_nodejs_raw1",
-        db_batch: "20150301event",
+        hostbatch1: "172.31.11.80", // YCP raw data db host
+        hostbatch2: "172.31.0.46", // YMK + Others raw data db host
+        oemhost: "172.31.11.80", // Only OEM raw data host
+        db: "countly",
+        db_raw: "event_raw1",
+        db_batch: "event_raw0",
         db_ibb: "countly_snow_ibb",
         db_maintain: "maintain_list",
         port: 30000,
@@ -46,7 +45,7 @@ var countlyConfig = {
         session_duration_limit: 3601,
         max_sockets: 10240,
         cl_endsession_ongoing_timeout: 10,
-        cl_wait_time: 40,
+        cl_wait_time: 60,
         cl_is_debug: false,
         data_drop_duration_time: 1,
         /*
