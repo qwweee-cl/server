@@ -164,6 +164,7 @@ b_coll2.findOne({_id:YMK_And_Oid}, function (err, result) {
 	dbCount++;
     if (!result) {
     	print("YMK_And no data");
+	print(err);
     	return;
     }
     getData(result, "And", "YMK");
@@ -172,6 +173,7 @@ b_coll2.findOne({_id:YMK_iOS_Oid}, function (err, result) {
 	dbCount++;
     if (!result) {
     	print("YMK_iOS no data");
+	print(err);
     	return;
     }
     getData(result, "iOS", "YMK");
@@ -180,6 +182,7 @@ b_coll2.findOne({_id:YCP_And_Oid}, function (err, result) {
 	dbCount++;
     if (!result) {
     	print("YCP_And no data");
+	print(err);
     	return;
     }
     getData(result, "And", "YCP");
@@ -188,6 +191,7 @@ b_coll2.findOne({_id:YCP_iOS_Oid}, function (err, result) {
 	dbCount++;
     if (!result) {
     	print("YCP_iOS no data");
+	print(err);
     	return;
     }
     getData(result, "iOS", "YCP");
@@ -196,6 +200,7 @@ b_coll2.findOne({_id:PF_And_Oid}, function (err, result) {
 	dbCount++;
 	if (!result) {
 		print("PF_And no data");
+		print(err);
 		return;
 	}
 	getData(result, "And", "BOTH");
@@ -204,6 +209,7 @@ b_coll2.findOne({_id:PF_iOS_Oid}, function (err, result) {
 	dbCount++;
 	if (!result) {
 		print("PF_iOS no data");
+		print(err);
 		return;
 	}
 	getData(result, "iOS", "BOTH");
