@@ -78,13 +78,13 @@ for ((;1;)); do
 	checkDate=$(date +%j)
 	if [[ ${checkTime} > ${beforeBackupTime} ]] && [[ ${checkTime} < ${backupTime} ]]; then
 		echo -e "waiting for backup start"
-		sleep 60
+		sleep 600
 		continue
 	else
 		if [[ ${currBackup} != ${checkDate} ]] && [[ ${checkTime} > ${backupTime} ]]; then
 			echo -e "[backup]backup start"
 ## call backup function and clad2 sleep 3 hours
-			sleep ${sleepTime}
+#			sleep ${sleepTime}
 ## call backup function end
 			echo -e "[backup]backup end"
 			currBackup=$(date +%j)
