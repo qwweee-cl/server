@@ -6,7 +6,7 @@ trap 'error_exp'  ERR SIGINT SIGTERM
 function error_exp
 {
 	echo -e "MongoDB drop ${fullCurDate} database exception"\
-	| mail -s "[clad] MongoDB drop exception" ${dropMongo}
+	| mail -s "[clad1] MongoDB drop exception" ${dropMongo}
 	exit 0
 }
 
@@ -73,7 +73,7 @@ echo -e ${fileExist}
 
 if [ ${fileExist} = false ]; then
 	echo "do not drop ${fullCurDate} database" >> ${one_time_log}
-	echo -e "MongoDB does not drop ${fullCurDate} database" | mail -s "[clad] MongoDB drop database exception" ${dropMongo}
+	echo -e "MongoDB does not drop ${fullCurDate} database" | mail -s "[clad1] MongoDB drop database exception" ${dropMongo}
 	exit 0
 fi
 
@@ -94,4 +94,4 @@ echo $cmd >> ${one_time_log}
 $cmd >> ${one_time_log}
 
 
-mail -s "[clad] Finish drop database ${fullCurDate}" ${dropMongo} < ${one_time_log}
+mail -s "[clad1] Finish drop database ${fullCurDate}" ${dropMongo} < ${one_time_log}
