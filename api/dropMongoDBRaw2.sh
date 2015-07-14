@@ -1,12 +1,12 @@
 #!/bin/bash
 . /usr/local/countly/api/maillist.sh
 logpath="/usr/local/countly/log/dropDatabase/"
-
+status=0
+string="File Not Exist";
 trap 'error_exp'  ERR SIGINT SIGTERM
 function error_exp
 {
-	echo -e "MongoDB drop ${fullCurDate} database exception"\
-	| mail -s "[clad2] MongoDB drop exception" ${dropMongo}
+	mail -s "[clad2] ${fullCurDate} MongoDB drop database exception (${string})" ${dropMongo} < ${one_time_log}
 	exit 0
 }
 
@@ -68,6 +68,33 @@ if [ ! -f ${s3Four1} ] || [ ! -f ${s3Four2} ]; then
 	echo "${s3Four1} or ${s3Four2} file not exist" >> ${one_time_log}
 	fileExist=false
 fi
+status=1
+string="File Is Zero";
+
+if [ ! -s ${s3One1} ] || [ ! -s ${s3One2} ]; then
+	echo "${s3One1} or ${s3One2} file size is 0" >> ${one_time_log}
+	fileExist=false
+fi
+if [ ! -s ${s3Two1} ] || [ ! -s ${s3Two2} ]; then
+	echo "${s3Two1} or ${s3Two2} file size is 0" >> ${one_time_log}
+	fileExist=false
+fi
+if [ ! -s ${s3Three1} ] || [ ! -s ${s3Three2} ]; then
+	echo "${s3Three1} or ${s3Three2} file size is 0" >> ${one_time_log}
+	fileExist=false
+fi
+if [ ! -s ${s3Four1} ] || [ ! -s ${s3Four2} ]; then
+	echo "${s3Four1} or ${s3Four2} file size is 0" >> ${one_time_log}
+	fileExist=false
+fi
+
+echo -e ${fileExist}
+
+if [ ${fileExist} = false ]; then
+	echo "Not drop ${fullCurDate} database" >> ${one_time_log}
+	mail -s "[clad2] ${fullCurDate} MongoDB drop database exception (${string})" ${dropMongo} < ${one_time_log}
+	exit 0
+fi
 
 sizeOne1=$(du -b "${s3One1}" | cut -f 1)
 sizeOne2=$(du -b "${s3One2}" | cut -f 1)
@@ -78,39 +105,17 @@ sizeThree2=$(du -b "${s3Three2}" | cut -f 1)
 sizeFour1=$(du -b "${s3Four1}" | cut -f 1)
 sizeFour2=$(du -b "${s3Four2}" | cut -f 1)
 
-echo -e ${sizeOne1}
-echo -e ${sizeOne2}
-echo -e ${sizeTwo1}
-echo -e ${sizeTwo2}
-echo -e ${sizeThree1}
-echo -e ${sizeThree2}
-echo -e ${sizeFour1}
-echo -e ${sizeFour2}
+echo -e "${s3One1} : ${sizeOne1}" >> ${one_time_log}
+echo -e "${s3One2} : ${sizeOne2}" >> ${one_time_log}
+echo -e "${s3Two1} : ${sizeTwo1}" >> ${one_time_log}
+echo -e "${s3Two2} : ${sizeTwo2}" >> ${one_time_log}
+echo -e "${s3Three1} : ${sizeThree1}" >> ${one_time_log}
+echo -e "${s3Three2} : ${sizeThree2}" >> ${one_time_log}
+echo -e "${s3Four1} : ${sizeFour1}" >> ${one_time_log}
+echo -e "${s3Four2} : ${sizeFour2}" >> ${one_time_log}
 
-if [ ! -s ${sizeOne1} ] || [ ! -s ${sizeOne2} ]; then
-	echo "${s3One1} or ${s3One2} file size is 0" >> ${one_time_log}
-	fileExist=false
-fi
-if [ ! -s ${sizeTwo1} ] || [ ! -s ${s3Two2} ]; then
-	echo "${s3Two1} or ${s3Two2} file size is 0" >> ${one_time_log}
-	fileExist=false
-fi
-if [ ! -s ${sizeThree1} ] || [ ! -s ${sizeThree2} ]; then
-	echo "${s3Three1} or ${s3Three2} file size is 0" >> ${one_time_log}
-	fileExist=false
-fi
-if [ ! -s ${sizeFour1} ] || [ ! -s ${sizeFour2} ]; then
-	echo "${s3Four1} or ${s3Four2} file size is 0" >> ${one_time_log}
-	fileExist=false
-fi
-
-echo -e ${fileExist}
-
-if [ ${fileExist} = false ]; then
-	echo "do not drop ${fullCurDate} database" >> ${one_time_log}
- 	mail -s "[clad2] MongoDB drop database exception" ${dropMongo} < ${one_time_log}
-	exit 0
-fi
+status=2
+string="Drop DB Exception";
 
 cmd="/usr/bin/mongo ${one} --eval printjson(db.dropDatabase());"
 echo $cmd >> ${one_time_log}
@@ -128,5 +133,7 @@ cmd="/usr/bin/mongo ${four} --eval printjson(db.dropDatabase());"
 echo $cmd >> ${one_time_log}
 $cmd >> ${one_time_log}
 
+status=3
+string="Finish";
 
-mail -s "[clad2] Finish drop database ${fullCurDate}" ${dropMongo} < ${one_time_log}
+mail -s "[clad2] ${fullCurDate} Finish drop database" ${dropMongo} < ${one_time_log}
