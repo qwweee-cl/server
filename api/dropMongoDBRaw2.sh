@@ -52,20 +52,55 @@ echo -e ${s3Four2}
 
 fileExist=true
 
-if [ ! -f ${s3One1} ] && [ ! -f ${s3One2} ]; then
+if [ ! -f ${s3One1} ] || [ ! -f ${s3One2} ]; then
 	echo "${s3One1} or ${s3One2} file not exist" >> ${one_time_log}
 	fileExist=false
 fi
-if [ ! -f ${s3Two1} ] && [ ! -f ${s3Two2} ]; then
+if [ ! -f ${s3Two1} ] || [ ! -f ${s3Two2} ]; then
 	echo "${s3Two1} or ${s3Two2} file not exist" >> ${one_time_log}
 	fileExist=false
 fi
-if [ ! -f ${s3Three1} ] && [ ! -f ${s3Three2} ]; then
+if [ ! -f ${s3Three1} ] || [ ! -f ${s3Three2} ]; then
 	echo "${s3Three1} or ${s3Three2} file not exist" >> ${one_time_log}
 	fileExist=false
 fi
-if [ ! -f ${s3Four1} ] && [ ! -f ${s3Four2} ]; then
+if [ ! -f ${s3Four1} ] || [ ! -f ${s3Four2} ]; then
 	echo "${s3Four1} or ${s3Four2} file not exist" >> ${one_time_log}
+	fileExist=false
+fi
+
+sizeOne1=$(du -b "${s3One1}" | cut -f 1)
+sizeOne2=$(du -b "${s3One2}" | cut -f 1)
+sizeTwo1=$(du -b "${s3Two1}" | cut -f 1)
+sizeTwo2=$(du -b "${s3Two2}" | cut -f 1)
+sizeThree1=$(du -b "${s3Three1}" | cut -f 1)
+sizeThree2=$(du -b "${s3Three2}" | cut -f 1)
+sizeFour1=$(du -b "${s3Four1}" | cut -f 1)
+sizeFour2=$(du -b "${s3Four2}" | cut -f 1)
+
+echo -e ${sizeOne1}
+echo -e ${sizeOne2}
+echo -e ${sizeTwo1}
+echo -e ${sizeTwo2}
+echo -e ${sizeThree1}
+echo -e ${sizeThree2}
+echo -e ${sizeFour1}
+echo -e ${sizeFour2}
+
+if [ ! -s ${sizeOne1} ] || [ ! -s ${sizeOne2} ]; then
+	echo "${s3One1} or ${s3One2} file size is 0" >> ${one_time_log}
+	fileExist=false
+fi
+if [ ! -s ${sizeTwo1} ] || [ ! -s ${s3Two2} ]; then
+	echo "${s3Two1} or ${s3Two2} file size is 0" >> ${one_time_log}
+	fileExist=false
+fi
+if [ ! -s ${sizeThree1} ] || [ ! -s ${sizeThree2} ]; then
+	echo "${s3Three1} or ${s3Three2} file size is 0" >> ${one_time_log}
+	fileExist=false
+fi
+if [ ! -s ${sizeFour1} ] || [ ! -s ${sizeFour2} ]; then
+	echo "${s3Four1} or ${s3Four2} file size is 0" >> ${one_time_log}
 	fileExist=false
 fi
 
