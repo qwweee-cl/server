@@ -39,7 +39,7 @@ s3Three1=${s3Path}${fullCurDate}"_raw_02_1.tgz"
 s3Three2=${s3Path}${fullCurDate}"_raw_02_2.tgz"
 
 s3Four1=${s3Path}${fullCurDate}"_raw_03_1.tgz"
-s3Four2=${s3Path}${fullCurDate}"_raw_04_2.tgz"
+s3Four2=${s3Path}${fullCurDate}"_raw_03_2.tgz"
 
 echo -e ${s3One1}
 echo -e ${s3One2}
@@ -108,7 +108,7 @@ echo -e ${fileExist}
 
 if [ ${fileExist} = false ]; then
 	echo "do not drop ${fullCurDate} database" >> ${one_time_log}
-	echo -e "MongoDB does not drop ${fullCurDate} database" | mail -s "[clad2] MongoDB drop database exception" ${dropMongo}
+ 	mail -s "[clad2] MongoDB drop database exception" ${dropMongo} < ${one_time_log}
 	exit 0
 fi
 

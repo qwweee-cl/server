@@ -39,7 +39,7 @@ s3Three1=${s3Path}${fullCurDate}"_raw_02_1.tgz"
 s3Three2=${s3Path}${fullCurDate}"_raw_02_2.tgz"
 
 s3Four1=${s3Path}${fullCurDate}"_raw_03_1.tgz"
-s3Four2=${s3Path}${fullCurDate}"_raw_04_2.tgz"
+s3Four2=${s3Path}${fullCurDate}"_raw_03_2.tgz"
 
 echo -e ${s3One1}
 echo -e ${s3One2}
@@ -69,11 +69,46 @@ if [ ! -f ${s3Four1} ] && [ ! -f ${s3Four2} ]; then
 	fileExist=false
 fi
 
+sizeOne1=$(du -b "${s3One1}" | cut -f 1)
+sizeOne2=$(du -b "${s3One2}" | cut -f 1)
+sizeTwo1=$(du -b "${s3Two1}" | cut -f 1)
+sizeTwo2=$(du -b "${s3Two2}" | cut -f 1)
+sizeThree1=$(du -b "${s3Three1}" | cut -f 1)
+sizeThree2=$(du -b "${s3Three2}" | cut -f 1)
+sizeFour1=$(du -b "${s3Four1}" | cut -f 1)
+sizeFour2=$(du -b "${s3Four2}" | cut -f 1)
+
+echo -e ${sizeOne1}
+echo -e ${sizeOne2}
+echo -e ${sizeTwo1}
+echo -e ${sizeTwo2}
+echo -e ${sizeThree1}
+echo -e ${sizeThree2}
+echo -e ${sizeFour1}
+echo -e ${sizeFour2}
+
+if [ ! -s ${sizeOne1} ] || [ ! -s ${sizeOne2} ]; then
+	echo "${s3One1} or ${s3One2} file size is 0" >> ${one_time_log}
+	fileExist=false
+fi
+if [ ! -s ${sizeTwo1} ] || [ ! -s ${s3Two2} ]; then
+	echo "${s3Two1} or ${s3Two2} file size is 0" >> ${one_time_log}
+	fileExist=false
+fi
+if [ ! -s ${sizeThree1} ] || [ ! -s ${sizeThree2} ]; then
+	echo "${s3Three1} or ${s3Three2} file size is 0" >> ${one_time_log}
+	fileExist=false
+fi
+if [ ! -s ${sizeFour1} ] || [ ! -s ${sizeFour2} ]; then
+	echo "${s3Four1} or ${s3Four2} file size is 0" >> ${one_time_log}
+	fileExist=false
+fi
+
 echo -e ${fileExist}
 
 if [ ${fileExist} = false ]; then
 	echo "do not drop ${fullCurDate} database" >> ${one_time_log}
-	echo -e "MongoDB does not drop ${fullCurDate} database" | mail -s "[clad1] MongoDB drop database exception" ${dropMongo}
+	mail -s "[clad1] MongoDB drop database exception" ${dropMongo} < ${one_time_log}
 	exit 0
 fi
 
