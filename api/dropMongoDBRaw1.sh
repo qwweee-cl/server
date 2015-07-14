@@ -52,19 +52,19 @@ echo -e ${s3Four2}
 
 fileExist=true
 
-if [ ! -f ${s3One1} ] && [ ! -f ${s3One2} ]; then
+if [ ! -f ${s3One1} ] || [ ! -f ${s3One2} ]; then
 	echo "${s3One1} or ${s3One2} file not exist" >> ${one_time_log}
 	fileExist=false
 fi
-if [ ! -f ${s3Two1} ] && [ ! -f ${s3Two2} ]; then
+if [ ! -f ${s3Two1} ] || [ ! -f ${s3Two2} ]; then
 	echo "${s3Two1} or ${s3Two2} file not exist" >> ${one_time_log}
 	fileExist=false
 fi
-if [ ! -f ${s3Three1} ] && [ ! -f ${s3Three2} ]; then
+if [ ! -f ${s3Three1} ] || [ ! -f ${s3Three2} ]; then
 	echo "${s3Three1} or ${s3Three2} file not exist" >> ${one_time_log}
 	fileExist=false
 fi
-if [ ! -f ${s3Four1} ] && [ ! -f ${s3Four2} ]; then
+if [ ! -f ${s3Four1} ] || [ ! -f ${s3Four2} ]; then
 	echo "${s3Four1} or ${s3Four2} file not exist" >> ${one_time_log}
 	fileExist=false
 fi
