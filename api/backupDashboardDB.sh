@@ -20,6 +20,11 @@ DashboardCachePath="/mem/tmp/s3cache/clcom2-countly/db_backup/hourly_data/dashbo
 batchdb=""
 indexNum="1"
 
+gzipPath="/mem/mongo_hourly_dashboard_gzip/"
+exportPath="/extend/mongo_hourly_dashboard_backup/"
+s3DashboardPath="/s3mnt/db_backup/hourly_data/dashboard_data/"
+DashboardCachePath="/mem/tmp/s3cache/clcom2-countly/db_backup/hourly_data/dashboard_data/"
+
 savedate=$(date +%Y%m%d)
 dashboarddate=${savedate}"_countly"
 
