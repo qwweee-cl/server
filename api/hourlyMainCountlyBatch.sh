@@ -43,6 +43,8 @@ OEMCachePath="/mem/tmp/s3cache/clcom2-countly/db_backup/oem_raw_data/"
 OEMDashboardCachePath="/mem/tmp/s3cache/clcom2-countly/db_backup/oem_dashboard_data/"
 GenericDashboardCachePath="/mem/tmp/s3cache/clcom2-countly/db_backup/generic_dashboard_data/"
 
+exportPath="/extend/mongo_backup/"
+
 livefile="config.live.js"
 batchfile="config.batch.js"
 srcfile="config.js"
