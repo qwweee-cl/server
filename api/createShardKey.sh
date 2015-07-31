@@ -19,6 +19,8 @@ function getCollectionName() {
   echo -e ${dbCollectionName}
 }
 
+date
+
 tomorrow=$(date -d "24 hours" +%m%d)
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 path=${DIR}
@@ -117,3 +119,5 @@ for (( i = 0 ; i < ${#apps_id[@]} ; i++ )) do
 #  echo -e ${event}
 #  cmd=$cmd"sh.shardCollection("records.people",{zipcode:1});"
 done
+
+date
