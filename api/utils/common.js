@@ -93,6 +93,9 @@ var common = {},
     dbMaintainName2 = (countlyConfig.mongodb.hostbatch2 + ':' + 
         countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_maintain + '?auto_reconnect=true');
 
+    shardMaintainName = (countlyConfig.mongodb.hostshard + ':' + 
+        countlyConfig.mongodb.mongos + '/' + countlyConfig.mongodb.db_maintain + '?auto_reconnect=true');
+
     dbReportName = (countlyConfig.mongodb.oemhost + ':' + 
         countlyConfig.mongodb.port + '/' + "oem_report" + '?auto_reconnect=true');
 
@@ -125,11 +128,17 @@ var common = {},
     common.db_hourly2 = null;
     common.db_closes2 = [];
 
+    common.db_hourlyShard = null;
+    common.db_closesShard = [];
+
     common.db_maintain = mongo.db(dbMaintainName, dbOptions);
     common.db_maintain.tag = countlyConfig.mongodb.db_maintain.replace(/system\.|\.\.|\$/g, "");
 
     common.db_maintain2 = mongo.db(dbMaintainName2, dbOptions);
     common.db_maintain2.tag = countlyConfig.mongodb.db_maintain.replace(/system\.|\.\.|\$/g, "");
+
+    common.shard_maintain = mongo.db(shardMaintainName, dbOptions);
+    common.shard_maintain.tag = countlyConfig.mongodb.db_maintain.replace(/system\.|\.\.|\$/g, "");
 
     common.config = countlyConfig;
 
@@ -168,6 +177,102 @@ var common = {},
         }
         // clad2
         return common.getDBByNameClad2(fullName, filename);
+    };
+
+    common.getShardRawDB = function(appKey) {
+        var headName = 'countly_raw',
+            rawdbName = '',
+            currDate,
+            appTimezone = "America/Denver";
+
+        //print("getHourlyRawDB");
+        currDate = new Date();
+        var tmpMoment = momentz(currDate).tz(appTimezone);
+        var fileHeadName = tmpMoment.format("YYYYMMDD");
+        var tailName = tmpMoment.format("MMDD_HH_mm_");
+        tailName = tmpMoment.format("MMDD_");
+        var min = tmpMoment.minutes();
+        min = tmpMoment.hours();
+        var index = parseInt(min/6); // calculate index
+        var fullName = headName + tailName + (pad2(index)).toString();
+        var filename = fileHeadName+"_raw_"+(pad2(index)).toString();
+        fullName = fullName.replace(/system\.|\.\.|\$/g, "");
+
+        // shard
+        return common.getDBByNameShard(fullName, filename);
+    };
+
+    common.getDBByNameShard = function (inDBName, filename) {
+        var db_name = (countlyConfig.mongodb.hostshard + ':' + 
+            countlyConfig.mongodb.mongos + '/' + inDBName + 
+            '?auto_reconnect=true');
+        if (!common.db_hourlyShard) {
+            var dbInstance = mongo.db(db_name, dbRawOptions);
+            dbInstance.tag = inDBName.replace(/system\.|\.\.|\$/g, "");
+            dbInstance.filename = filename;
+            common.db_hourlyShard = dbInstance;
+            return common.db_hourlyShard;
+        }
+        if (common.db_hourlyShard.tag != inDBName) {
+            var old = common.db_hourlyShard;
+            common.db_closesShard.push(old);
+            if (common.db_closesShard.length >= 5) {
+                // remove and close the first obj
+                var beRemoveDB = common.db_closesShard.shift();
+                beRemoveDB.close();
+            }
+            var insertData = {};
+            insertData.dbname = old.tag;
+            insertData.timestamp = Math.floor(Date.now()/1000);
+            insertData.filename = old.filename;
+            common.shard_maintain.collection("raw_finished1").update({dbname: old.tag},
+                {$set: insertData}, {'upsert': true}, function(err, res) {
+                    if (err) {
+                        print('raw_finished1 error');
+                        print(err);
+                    }
+                });
+            common.shard_maintain.collection("event_finished1").update({dbname: old.tag},
+                {$set: insertData}, {'upsert': true}, function(err, res) {
+                    if (err) {
+                        print('event_finished1 error');
+                        print(err);
+                    }
+                });
+            common.shard_maintain.collection("raw_finished2").update({dbname: old.tag},
+                {$set: insertData}, {'upsert': true}, function(err, res) {
+                    if (err) {
+                        print('raw_finished2 error');
+                        print(err);
+                    }
+                });
+            common.shard_maintain.collection("event_finished2").update({dbname: old.tag},
+                {$set: insertData}, {'upsert': true}, function(err, res) {
+                    if (err) {
+                        print('event_finished2 error');
+                        print(err);
+                    }
+                });
+            common.shard_maintain.collection("raw_finished3").update({dbname: old.tag},
+                {$set: insertData}, {'upsert': true}, function(err, res) {
+                    if (err) {
+                        print('raw_finished3 error');
+                        print(err);
+                    }
+                });
+            common.shard_maintain.collection("event_finished3").update({dbname: old.tag},
+                {$set: insertData}, {'upsert': true}, function(err, res) {
+                    if (err) {
+                        print('event_finished3 error');
+                        print(err);
+                    }
+                });
+            var dbInstance = mongo.db(db_name, dbRawOptions);
+            dbInstance.tag = inDBName.replace(/system\.|\.\.|\$/g, "");
+            dbInstance.filename = filename;
+            common.db_hourlyShard = dbInstance;
+        }
+        return common.db_hourlyShard;
     };
 
     common.getDBByNameClad1 = function (inDBName, filename) {
