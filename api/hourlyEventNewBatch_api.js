@@ -102,8 +102,8 @@ fs.readFile(oidFileName, 'utf8', function (err,data) {
             if (!collection.length) {
                 console.log('no data');
                 //dbClose(dbs);
-                //process.exit(1);
-                process.emit('hi_mongo');
+                process.exit(1);
+                //process.emit('hi_mongo');
             }
             for (var i=0; i<collection.length; i++) {
                 if (collection[i].collectionName == 'raw_session_53f554ef847577512100130a') continue;
@@ -327,7 +327,7 @@ function processRaw(dbs, collectionName, processData, sortOrder, appinfo) {
                 if (!res) { //end of collection
                     if (isFirst) { //no data
                         console.log('No data');
-                        return false;
+                        process.emit('hi_mongo');
                     }
                     /*if (collectionName == 'raw_session_54002336f036d1673f003768') {
                         console.log(apps);
