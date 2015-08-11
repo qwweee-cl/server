@@ -312,6 +312,7 @@ function processRaw(dbs, collectionName, processData, sortOrder, appinfo) {
                     if (isFirst) { //no data
                         console.log('No data');
                         process.emit('hi_mongo');
+                        return false;
                     }
                     /*if (collectionName == 'raw_session_54002336f036d1673f003768') {
                         console.log(apps);
