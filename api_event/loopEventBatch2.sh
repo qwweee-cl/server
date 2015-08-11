@@ -10,7 +10,7 @@ function error_exp
 	#| mail -s "Daily BB data import exception" $dashboard_team
 	echo -e "[hourly]Slave Loop Event Batch Error Please check log /usr/local/countly/log/loopEventMain2.log"\
 	$(tail -20 /usr/local/countly/log/loopEventMain2.log)\
-	| mail -s "[hourly]Slave Loop Session Batch Error Trap(${pid})" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
+	| mail -s "[hourly]Slave Loop Event Batch Error Trap(${pid})" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
 	#rm -f ${LOCKFILE}
 	exit 1
 }
