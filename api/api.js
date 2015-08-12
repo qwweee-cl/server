@@ -132,12 +132,14 @@ function insertRawColl(coll, eventp, params) {
                 console.log(err);
             }
         });
+/*
         common.getShardRawDB(eventp.app_key).collection(coll).insert(eventp, function(err, res) {
             if (err) {
                 console.log('DB Shard operation error');
                 console.log(err);
             }
         });
+*/
     }
 }
 
