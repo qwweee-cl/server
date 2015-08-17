@@ -149,6 +149,24 @@ var common = {},
 
     common.crypto = crypto;
 
+    common.getCheckApps = function(callback, dbonoffFuc) {
+        dbonoffFuc.open(common.db);
+        common.db.collection('apps').find().toArray(
+            function(err, data) {
+                if (data) {
+                    callback(data);
+                    /*var str = "";
+                    for (i=0; i<data.length; i++) {
+                        if (data[i]._id == "53f554ef847577512100130a") continue;
+                        str += data[i]._id+", ";
+                    }
+                    print(str);*/
+                } else {
+                }
+                dbonoffFuc.close(common.db);
+        });
+    };
+
     common.getHourlyRawDB = function(appKey) {
         var headName = 'countly_raw',
             rawdbName = '',
