@@ -29,42 +29,68 @@ var shardingUrl=config.mongodb.hostbatch+":30000/admin";
 
 var curBatchDB = common.getDBByName(db_batch);
 
-dbonoff.open(curBatchDB);
-curBatchDB.collections(function(err,collection) {
-    if (!collection.length) {
-        common.db.close();
-	    curBatchDB.close();
-	    print('no data');
-        return;
-    }
-    var eventCmd = '/usr/bin/mongo '+mongoUrl+' --eval "\n';
-    var sessionCmd = '/usr/bin/mongo '+mongoUrl+' --eval "\n';
-    var shardingCmd = '/usr/bin/mongo '+shardingUrl+' --eval "\n';
-    for (var i=0; i<collection.length; i++) {
-        var collectionName = collection[i].collectionName;
-        collectionName = collectionName.replace('"','');
-        collectionName = collectionName.replace('}','');
-        collectionName = collectionName.replace(':','');
-        collectionName = collectionName.replace('{','');
-        if (collectionName.indexOf(common.rawCollection['event'])>=0) {
-            //print("Entering event :"+collectionName);
-            eventCmd += "db."+collectionName+".ensureIndex({app_user_id:1});\n";
-            shardingCmd += "sh.shardCollection('clad_raw00."+collectionName+"', {app_user_id:1});\n";
-        } else if (collectionName.indexOf(common.rawCollection['session'])>=0) {
-            //print("Entering sessions :"+collectionName);
-            sessionCmd += "db."+collectionName+".ensureIndex({app_user_id:1,timestamp:1});\n";
-            shardingCmd += "sh.shardCollection('clad_raw00."+collectionName+"', {app_user_id:1});\n";
+//createIndex();
+common.getCheckApps(createIndex, dbonoff);
+
+function checkDatas(value, datas) {
+    if (datas) {
+        for (var i=0;i<datas.length;i++) {
+            if (datas[i].key == value) {
+                //print(datas[i].key);
+                return true;
+            }
         }
     }
-    eventCmd += '"';
-    sessionCmd += '"';
-    shardingCmd += '"';
-    print(eventCmd);
-    eventEmitter.emit('executeCmd', eventCmd);
-    print(sessionCmd);
-    eventEmitter.emit('executeCmd', sessionCmd);
-    //print(shardingCmd);
-    //eventEmitter.emit('executeCmd', shardingCmd);
+    print(value);
+    return false;
+}
 
-    dbonoff.close(curBatchDB);
-});
+function createIndex(datas) {
+    dbonoff.open(curBatchDB);
+    curBatchDB.collections(function(err,collection) {
+        if (!collection.length) {
+            common.db.close();
+            curBatchDB.close();
+            print('no data');
+            return;
+        }
+        var eventCmd = '/usr/bin/mongo '+mongoUrl+' --eval "\n';
+        var sessionCmd = '/usr/bin/mongo '+mongoUrl+' --eval "\n';
+        var shardingCmd = '/usr/bin/mongo '+shardingUrl+' --eval "\n';
+        for (var i=0; i<collection.length; i++) {
+            var collectionName = collection[i].collectionName;
+            collectionName = collectionName.replace('"','');
+            collectionName = collectionName.replace('}','');
+            collectionName = collectionName.replace(':','');
+            collectionName = collectionName.replace('{','');
+            if (collectionName.indexOf(common.rawCollection['event'])>=0) {
+                var appKey = collectionName.substring(10);
+                if (!checkDatas(appKey, datas)) {
+                    continue;
+                }
+                //print("Entering event :"+collectionName);
+                eventCmd += "db."+collectionName+".ensureIndex({app_user_id:1});\n";
+                shardingCmd += "sh.shardCollection('clad_raw00."+collectionName+"', {app_user_id:1});\n";
+            } else if (collectionName.indexOf(common.rawCollection['session'])>=0) {
+                var appKey = collectionName.substring(12);
+                if (!checkDatas(appKey, datas)) {
+                    continue;
+                }
+                //print("Entering sessions :"+collectionName);
+                sessionCmd += "db."+collectionName+".ensureIndex({app_user_id:1,timestamp:1});\n";
+                shardingCmd += "sh.shardCollection('clad_raw00."+collectionName+"', {app_user_id:1});\n";
+            }
+        }
+        eventCmd += '"';
+        sessionCmd += '"';
+        shardingCmd += '"';
+        print(eventCmd);
+        eventEmitter.emit('executeCmd', eventCmd);
+        print(sessionCmd);
+        eventEmitter.emit('executeCmd', sessionCmd);
+        //print(shardingCmd);
+        //eventEmitter.emit('executeCmd', shardingCmd);
+
+        dbonoff.close(curBatchDB);
+    });
+}

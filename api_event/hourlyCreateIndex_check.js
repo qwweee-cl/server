@@ -29,7 +29,6 @@ var shardingUrl=config.mongodb.hostbatch+":30000/admin";
 
 var curBatchDB = common.getDBByName(db_batch);
 
-
 //createIndex();
 common.getCheckApps(createIndex, dbonoff);
 
@@ -78,8 +77,8 @@ function createIndex(datas) {
                     continue;
                 }
                 //print("Entering sessions :"+collectionName);
-                //sessionCmd += "db."+collectionName+".ensureIndex({app_user_id:1,timestamp:1});\n";
-                //shardingCmd += "sh.shardCollection('clad_raw00."+collectionName+"', {app_user_id:1});\n";
+                sessionCmd += "db."+collectionName+".ensureIndex({app_user_id:1,timestamp:1});\n";
+                shardingCmd += "sh.shardCollection('clad_raw00."+collectionName+"', {app_user_id:1});\n";
             }
         }
         eventCmd += '"';
