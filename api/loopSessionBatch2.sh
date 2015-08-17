@@ -79,6 +79,7 @@ for ((;1;)); do
 	if [[ ${checkTime} > ${beforeBackupTime} ]] && [[ ${checkTime} < ${backupTime} ]]; then
 		echo -e "waiting for backup start"
 		sleep 600
+		checkLoopStop
 		continue
 	else
 		if [[ ${currBackup} != ${checkDate} ]] && [[ ${checkTime} > ${backupTime} ]]; then
