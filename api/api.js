@@ -692,7 +692,7 @@ if (cluster.isMaster) {
                         return false;
                     }
                 }
-
+/*
                 if (params.qstring.events) {
                     try {
                         var jsonData = JSON.parse(params.qstring.events);
@@ -721,7 +721,7 @@ if (cluster.isMaster) {
                         return false;
                     }
                 }
-
+*/
                 validateAppForWriteAPI(params);
                 break;
             }
