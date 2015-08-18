@@ -9,7 +9,7 @@ SEM="iva_chen@cyberlink.com"
 Gary="Gary_Huang@perfectcorp.com"
 CL_adm="iva_chen@cyberlink.com,chris_wu@cyberlink.com,max_li@cyberlink.com"
 Manager="Joe_Yeh@PerfectCorp.com,Hendry_Wu@perfectcorp.com,Jan_Chen@perfectcorp.com,Smith_Lee@perfectcorp.com,Owl_Hsu@perfectcorp.com,Gary_Huang@perfectcorp.com,Elly_Yang@perfectcorp.com"
-AWSM="Gary_Huang@perfectcorp.com,Hendry_Wu@perfectcorp.com,Owl_Hsu@perfectcorp.com"
+AWSM="Gary_Huang@perfectcorp.com,Hendry_Wu@perfectcorp.com,Owl_Hsu@perfectcorp.com,qwweee@gmail.com"
 
 sqoop_import="$admin_mail,$CL_adm"
 dashboard_team="$CL_adm,$admin_mail,"

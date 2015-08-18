@@ -1,12 +1,12 @@
 #!/bin/bash
-
+. /usr/local/countly/api/maillist.sh
 trap 'error_exp'  ERR SIGINT SIGTERM
 function error_exp
 {
 	#echo -e "Daily BB data import failed. Please check log in elephant1>/home/hadoop/new_script/dashborad_script/logs/log_daily_bb_import.log\nLog scraps: "$(tail -10 ~/new_script/dashborad_script/logs/log_daily_bb_import.log)\
 	#| mail -s "Daily BB data import exception" $dashboard_team
 	echo -e "Countly Batch Error Please check log in clad.cyberlink.com>/usr/local/countly/log/slave_batch.log" $(tail -20 /usr/local/countly/log/slave_batch.log)\
-	| mail -s "Slave Countly Batch Error Trap" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
+	| mail -s "Slave Countly Batch Error Trap" ${AWSM}
 	#sleep 1
 	rm -f ${LOCKFILE}
 	exit 1
@@ -16,7 +16,7 @@ LOCKFILE="/tmp/Batchlock.lock"
 if [ -e ${LOCKFILE} ] ; then
 	echo "already running"
 	echo -e "Countly Batch already running, please manual run" $(date +%Y%m%d)\
-	| mail -s "Slave Countly Batch Already running" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
+	| mail -s "Slave Countly Batch Already running" ${AWSM}
 	#sleep 1
 	rm -f ${LOCKFILE}
 	exit 1
@@ -295,6 +295,6 @@ echo $start
 echo $end
 echo "==============================================================="
 echo -e "Countly Batch run from $start to $end\n" $(tail -20 /usr/local/countly/log/slave_batch.log)\
-| mail -s "Slave [$curdate]Countly Batch Finished" gary_huang@perfectcorp.com,qwweee@gmail.com
+| mail -s "Slave [$curdate]Countly Batch Finished" ${AWSM}
 #sleep 1
 rm -f ${LOCKFILE}

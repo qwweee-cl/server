@@ -1,5 +1,5 @@
 #!/bin/bash
-
+. /usr/local/countly/api/maillist.sh
 LOCKFILE="/tmp/loopBackupRaw2.pid"
 pid=`cat ${LOCKFILE}`
 
@@ -8,7 +8,7 @@ function error_exp
 {
 	echo -e "[hourly]Slave Loop Backup error: /usr/local/countly/log/loopBackupMain2.log"\
 	$(tail -20 /usr/local/countly/log/loopBackupMain2.log)\
-	| mail -s "[hourly]Slave Loop Backup Error Trap(${pid})" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
+	| mail -s "[hourly]Slave Loop Backup Error Trap(${pid})" ${AWSM}
 	#rm -f ${LOCKFILE}
 	exit 1
 }

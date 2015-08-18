@@ -1,5 +1,5 @@
 #!/bin/bash
-
+. /usr/local/countly/api/maillist.sh
 LOCKFILE="/tmp/loopBackupRaw1.pid"
 pid=`cat ${LOCKFILE}`
 
@@ -8,7 +8,7 @@ function error_exp
 {
 	echo -e "[hourly]Main Loop Backup Batch error: /usr/local/countly/log/loopBackupMain1.log"\
 	$(tail -20 /usr/local/countly/log/loopBackupMain1.log)\
-	| mail -s "[hourly]Main Loop Backup Batch Error Trap(${pid})" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
+	| mail -s "[hourly]Main Loop Backup Batch Error Trap(${pid})" ${AWSM}
 	#rm -f ${LOCKFILE}
 	exit 1
 }
