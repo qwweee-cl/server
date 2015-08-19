@@ -692,10 +692,11 @@ if (cluster.isMaster) {
                         return false;
                     }
                 }
-/*
+
                 if (params.qstring.events) {
                     try {
                         var jsonData = JSON.parse(params.qstring.events);
+                        /*
                         if (jsonData) {
                             if (jsonData.length == 1 && jsonData[0].key &&
                                 jsonData[0].key == '_UMA_ID') {
@@ -711,6 +712,7 @@ if (cluster.isMaster) {
                                 return true;
                             }
                         }
+                        */
                         params.events = jsonData;
                     } catch (SyntaxError) {
                         var now = new Date();
@@ -721,7 +723,7 @@ if (cluster.isMaster) {
                         return false;
                     }
                 }
-*/
+
                 validateAppForWriteAPI(params);
                 break;
             }
