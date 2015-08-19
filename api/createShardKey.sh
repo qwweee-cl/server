@@ -8,7 +8,7 @@ one_time_log="${logpath}${curdate}_log.log"
 
 function error_exp
 {
-	echo -e "Create ${tomorrow} shard key error:" $(cat ${one_time_log})\
+	echo -e "Create ${tomorrow} shard key error: $(cat ${one_time_log})"\
 	| mail -s "[Test][MongoDB] Create Shard Key Error Trap" ${AWSM}
   echo -e "Create Shard Key Error"
   exit 1
@@ -36,12 +36,12 @@ path=${DIR}
 
 if [ -z "$1" ]
 then
-  echo -e "use tomorrow date" > ${one_time_log}
+  echo -e "use tomorrow date"
 else
   tomorrow=${1}
 fi
 
-echo -e ${path} >> ${one_time_log}
+echo -e ${path} > ${one_time_log}
 
 cd $path
 
