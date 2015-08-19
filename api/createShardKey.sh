@@ -8,6 +8,8 @@ one_time_log="${logpath}${curdate}_log.log"
 
 function error_exp
 {
+  curdate=$(date +%Y%m%d)
+  one_time_log="${logpath}${curdate}_log.log"
 	echo -e "Create ${tomorrow} shard key error: $(cat ${one_time_log})"\
 	| mail -s "[Test][MongoDB] Create Shard Key Error Trap" ${AWSM}
   echo -e "Create Shard Key Error"
@@ -33,6 +35,7 @@ date
 tomorrow=$(date -d "24 hours" +%m%d)
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 path=${DIR}
+path="/usr/local/countly/api"
 
 if [ -z "$1" ]
 then
