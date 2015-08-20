@@ -11,26 +11,27 @@ function error_exp
   curdate=$(date +%Y%m%d)
   one_time_log="${logpath}${curdate}_log.log"
 	echo -e "Create ${tomorrow} shard key error: $(cat ${one_time_log})"\
-	| mail -s "[Test][MongoDB] Create Shard Key Error Trap" ${AWSM}
+	| mail -s "[MongoDB] Create ${tomorrow} Shard Key Error Trap" ${AWSM}
   echo -e "Create Shard Key Error"
   exit 1
 }
 
 function getDBName() {
   dbName="countly_raw"${1}"_"${2}
-  echo -e ${dbName} >> ${one_time_log}
+  echo -e ${dbName}
 }
 
 function getCollectionName() {
   dbCollectionName=${1}"."${2}
-  echo -e ${dbCollectionName} >> ${one_time_log}
+  echo -e ${dbCollectionName}
 }
 
 function sendSummaryMail() {
   echo -e $(cat $one_time_log)\
-  | mail -s "[Test][MongoDB] Create Shard Key Summary" ${AWSM}
+  | mail -s "[MongoDB] Create ${tomorrow} Shard Key Summary" ${AWSM}
 }
 date
+date > ${one_time_log}
 
 tomorrow=$(date -d "24 hours" +%m%d)
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
@@ -44,12 +45,13 @@ else
   tomorrow=${1}
 fi
 
-echo -e ${path} > ${one_time_log}
+echo -e ${path} >> ${one_time_log}
 
 cd $path
 
 cmd="node getAppsKey.js"
 echo -e $cmd >> ${one_time_log}
+echo -e $cmd
 string=`$cmd`
 IFS=', ' read -a apps_id <<< "$string"
 
@@ -60,6 +62,7 @@ dbName0=$(getDBName "${tomorrow}" "00")
 #echo -e ${dbName0}
 cmd="printjson(sh.enableSharding('${dbName0}'));"
 echo -e ${baseCmd}${cmd} >> ${one_time_log}
+echo -e ${baseCmd}${cmd}
 ${baseCmd}${cmd}
 
 dbName1=$(getDBName "${tomorrow}" "01")
@@ -133,3 +136,6 @@ for (( i = 0 ; i < ${#apps_id[@]} ; i++ )) do
 done
 
 date
+date >> ${one_time_log}
+
+sendSummaryMail
