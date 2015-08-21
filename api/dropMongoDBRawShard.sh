@@ -21,14 +21,16 @@ function sendSummaryMail() {
 mongo="localhost:27017"
 s3Path="/s3mnt/db_backup/hourly_data/"
 
-curDate=$(date -d "-3 days" +%m%d)
+fullCurDate=$(date -d "-3 days" +%Y%m%d)
+
 if [ -z "$1" ]
 then
   echo -e "use three days ago"
 else
-  curDate=${1}
+  fullCurDate=${1}
 fi
-fullCurDate=$(date -d "-3 days" +%Y%m%d)
+curDate=$(date -d "-3 days" +%m%d)
+curDate=$(date -d "${fullCurDate}" +%m%d)
 echo -e ${curDate}
 echo -e ${fullCurDate}
 
