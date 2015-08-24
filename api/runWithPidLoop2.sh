@@ -1,11 +1,11 @@
 #!/bin/bash
-
+. /usr/local/countly/api/maillist.sh
 LOCKFILE="/tmp/loopBackupRaw2.pid"
 
 if [ -e ${LOCKFILE} ] ; then
 	echo "already running"
 	echo -e "[hourly]Main Loop Backup Batch already running, please close ${LOCKFILE}"\
-	| mail -s "[hourly]Main Loop Backup Batch Already running" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
+	| mail -s "[hourly]Main Loop Backup Batch Already running" ${AWSM}
 	#rm -f ${LOCKFILE}
 	exit 1
 fi
