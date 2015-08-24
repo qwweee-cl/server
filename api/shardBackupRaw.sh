@@ -1,33 +1,40 @@
 #!/bin/bash
 . /usr/local/countly/api/maillist.sh
 LOCKFILE="/tmp/shardBackupRaw1.pid"
-pid=`cat ${LOCKFILE}`
 trap 'error_exp'  ERR SIGINT SIGTERM
 
 if [ -z "$1" ]
 then
-  echo -e "please add one paramater: 1 = YMK+YCP, 2 = PF"
+  echo -e "please add one paramater: 1 = shard1, 2 = shard2"
   exit 1
 else
   appType=${1}
 fi
 
 if [ "${appType}" == "1" ]; then
-	header="YMK+YCP"
+	header="shard1"
 	LOCKFILE="/tmp/shardBackupRaw1.pid"
-	mainLogFile="/usr/local/countly/log/loopBackupMain1.log"
+	mainLogFile="/usr/local/countly/log/shardBackupMain1.log"
 	mongo="shard1-2:27017"
 	indexNum="1"
-else if [ "${appType}" == "2" ]; then
-	header="PF"
+	pid=`cat ${LOCKFILE}`
+elif [ "${appType}" == "2" ]; then
+	header="shard2"
 	LOCKFILE="/tmp/shardBackupRaw2.pid"
-	mainLogFile="/usr/local/countly/log/loopBackupMain2.log"\
+	mainLogFile="/usr/local/countly/log/shardBackupMain2.log"
 	mongo="shard2-2:27017"
 	indexNum="2"
+	pid=`cat ${LOCKFILE}`
 else
-	echo -e "wrong paramater (1 = YMK+YCP, 2 = PF)"
+	echo -e "wrong paramater (1 = shard1, 2 = shard2)"
 	exit 1
 fi
+echo -e ${header}
+echo -e ${LOCKFILE}
+echo -e ${mainLogFile}
+echo -e ${mongo}
+echo -e ${indexNum}
+echo -e ${pid}
 
 function error_exp
 {
@@ -104,7 +111,7 @@ for ((;1;)); do
 	echo -e ${batchdb} 2>&1 >> $one_time_log 
 
 	# wait for secondary sync
-	sleep 600
+	sleep 601
 
 	## get rawdata file name
 	cmd="node shardGetRawFileName.js ${curTimestamp} ${indexNum}"
