@@ -19,7 +19,7 @@ function sendSummaryMail() {
 }
 
 mongo="localhost:27017"
-s3Path="/s3mnt/db_backup/hourly_data/"
+s3Path="/s3mnt/shard_backup/hourly_data/"
 
 fullCurDate=$(date -d "-3 days" +%Y%m%d)
 
