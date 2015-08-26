@@ -1,6 +1,5 @@
 #!/bin/bash
 . /usr/local/countly/api/maillist.sh
-LOCKFILE="/tmp/shardBackupRaw1.pid"
 trap 'error_exp'  ERR SIGINT SIGTERM
 
 if [ -z "$1" ]
@@ -54,7 +53,7 @@ function checkLoopStop() {
 	fi
 }
 function sendSummaryMail() {
-	echo -e $(tail -20 ${mainLogFile})\
+	echo -e $(tail -20 ${one_time_log})\
 	| mail -s "[Shard]${header} Loop Backup Raw Log Summary" ${AWSM}
 }
 logpath="/usr/local/countly/log/shardBackup/"
