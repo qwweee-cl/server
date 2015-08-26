@@ -96,6 +96,7 @@ gzipPath="/mem/mongo_shard_dashboard_gzip/"
 exportPath="/mem/mongo_shard_dashboard_backup/"
 s3DashboardPath="/s3mnt/shard_backup/dashboard_data/"
 DashboardCachePath="/mem/tmp/s3cache/clcom2-countly/shard_backup/dashboard_data/"
+rawSession="/mem/tmp/RawSession/"
 batchdb=""
 
 savedate=$(date +%Y%m%d)
@@ -125,6 +126,10 @@ fi
 if [ ! -d "${s3DashboardPath}" ]; then
 	echo "mkdir ${s3DashboardPath}"
 	mkdir ${s3DashboardPath}
+fi
+if [ ! -d "${rawSession}" ]; then
+	echo "mkdir ${rawSession}"
+	mkdir ${rawSession}
 fi
 
 for ((;1;)); do
