@@ -1,5 +1,5 @@
 #!/bin/bash
-
+. /usr/local/countly/api/maillist.sh
 LOCKFILE="/tmp/loopEventBatch2.pid"
 pid=`cat ${LOCKFILE}`
 
@@ -10,7 +10,7 @@ function error_exp
 	#| mail -s "Daily BB data import exception" $dashboard_team
 	echo -e "[hourly]Slave Loop Event Batch Error Please check log /usr/local/countly/log/loopEventMain2.log"\
 	$(tail -20 /usr/local/countly/log/loopEventMain2.log)\
-	| mail -s "[hourly]Slave Loop Session Batch Error Trap(${pid})" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
+	| mail -s "[hourly]Slave Loop Event Batch Error Trap(${pid})" ${AWSM}
 	#rm -f ${LOCKFILE}
 	exit 1
 }
@@ -20,7 +20,7 @@ function checkLoopStop() {
 	if [ -f "${loopFile}" ]; then
 		echo "${loopFile} exist"
 		echo -e "Loop Event Batch Stop on $(date +%Y%m%d-%H:%M)"\
-		| mail -s "[Hourly] Slave Loop Event Batch Stop" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
+		| mail -s "[Hourly] Slave Loop Event Batch Stop" ${AWSM}
 		exit 0
 	fi
 }
@@ -159,7 +159,7 @@ for ((;1;)); do
 #	$cmd
 
 	echo -e $(tail -20 $one_time_log)\
-	| mail -s "[Hourly] Main2 Loop Process Event Summary" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
+	| mail -s "[Hourly] Main2 Loop Process Event Summary" ${AWSM}
 	sleep 60
 done
 

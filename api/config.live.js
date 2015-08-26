@@ -4,6 +4,7 @@ var countlyConfig = {
         host: "172.32.7.5", // dashboard db host
         //hostbatch: "172.31.11.80", // localhost(mongodb) setting batch host
         //hostbatch: "172.31.0.46", // localhost(mongodb) setting batch host
+        hostshard: "localhost", // shard host
         hostbatch: "localhost", // localhost(mongodb) setting batch host
         hostbatch1: "172.31.11.80", // YCP raw data db host
         hostbatch2: "172.31.0.46", // YMK + Others raw data db host
@@ -14,6 +15,7 @@ var countlyConfig = {
         db_ibb: "countly_snow_ibb",
         db_maintain: "maintain_list",
         port: 27017,
+        mongos: 28000,
         max_batch_pool_size: 1000,
         max_db_pool_size: 1000,
         max_raw_pool_size: 10000

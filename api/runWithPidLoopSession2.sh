@@ -1,11 +1,11 @@
 #!/bin/bash
-
+. /usr/local/countly/api/maillist.sh
 LOCKFILE="/tmp/loopSessionBatch2.pid"
 
 if [ -e ${LOCKFILE} ] ; then
 	echo "already running"
 	echo -e "[hourly]Slave Loop Session Batch already running, please close ${LOCKFILE}"\
-	| mail -s "[hourly]Slave Loop Session Batch Already running" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
+	| mail -s "[hourly]Slave Loop Session Batch Already running" ${AWSM}
 	#rm -f ${LOCKFILE}
 	exit 1
 fi

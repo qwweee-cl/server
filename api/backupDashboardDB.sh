@@ -1,5 +1,5 @@
 #!/bin/bash
-
+. /usr/local/countly/api/maillist.sh
 LOCKFILE="/tmp/loopSessionBatch1.pid"
 pid=`cat ${LOCKFILE}`
 
@@ -136,5 +136,5 @@ echo -e "Backup Program(${pid}) stops on `date +"%Y-%m-%d %T"`." 2>&1 >> $one_ti
 echo -e "Backup Program(${pid}) stops on `date +"%Y-%m-%d %T"`."
 
 echo -e $(tail -20 $one_time_log)\
-| mail -s "[Hourly] Main1 Loop Backup Dashboard Summary" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
+| mail -s "[Hourly] Main1 Loop Backup Dashboard Summary" ${AWSM}
 exit 0

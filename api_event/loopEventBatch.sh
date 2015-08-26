@@ -1,5 +1,5 @@
 #!/bin/bash
-
+. /usr/local/countly/api/maillist.sh
 LOCKFILE="/tmp/loopEventBatch1.pid"
 pid=`cat ${LOCKFILE}`
 
@@ -10,7 +10,7 @@ function error_exp
 	#| mail -s "Daily BB data import exception" $dashboard_team
 	echo -e "[hourly]Main Loop Event Batch Error Please check log /usr/local/countly/log/loopEventMain1.log"\
 	$(tail -20 /usr/local/countly/log/loopEventMain1.log)\
-	| mail -s "[hourly]Main Loop Event Batch Error Trap(${pid})" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
+	| mail -s "[hourly]Main Loop Event Batch Error Trap(${pid})" ${AWSM}
 	#rm -f ${LOCKFILE}
 	exit 1
 }
@@ -27,7 +27,7 @@ function checkLoopStop() {
 	if [ -f "${loopFile}" ]; then
 		echo "${loopFile} exist"
 		echo -e "Loop Event Batch Stop on $(date +%Y%m%d-%H:%M)"\
-		| mail -s "[Hourly] Main Loop Event Batch Stop" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
+		| mail -s "[Hourly] Main Loop Event Batch Stop" ${AWSM}
 		exit 0
 	fi
 }
@@ -162,7 +162,7 @@ for ((;1;)); do
 	echo -e "Program(${pid}) stops on `date +"%Y-%m-%d %T"`."
 
 	echo -e $(tail -20 $one_time_log)\
-	| mail -s "[Hourly] Main1 Loop Process Event Summary" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
+	| mail -s "[Hourly] Main1 Loop Process Event Summary" ${AWSM}
 	sleep 60
 done
 

@@ -1,31 +1,63 @@
 #!/bin/bash
 . /usr/local/countly/api/maillist.sh
-LOCKFILE="/tmp/loopBackupRaw2.pid"
-pid=`cat ${LOCKFILE}`
-
+LOCKFILE="/tmp/shardBackupRaw1.pid"
 trap 'error_exp'  ERR SIGINT SIGTERM
+
+if [ -z "$1" ]
+then
+  echo -e "please add one paramater: 1 = shard1, 2 = shard2"
+  exit 1
+else
+  appType=${1}
+fi
+
+if [ "${appType}" == "1" ]; then
+	header="shard1"
+	LOCKFILE="/tmp/shardBackupRaw1.pid"
+	mainLogFile="/usr/local/countly/log/shardBackupMain1.log"
+	mongo="shard1-2:27017"
+	indexNum="1"
+	pid=`cat ${LOCKFILE}`
+elif [ "${appType}" == "2" ]; then
+	header="shard2"
+	LOCKFILE="/tmp/shardBackupRaw2.pid"
+	mainLogFile="/usr/local/countly/log/shardBackupMain2.log"
+	mongo="shard2-2:27017"
+	indexNum="2"
+	pid=`cat ${LOCKFILE}`
+else
+	echo -e "wrong paramater (1 = shard1, 2 = shard2)"
+	exit 1
+fi
+echo -e ${header}
+echo -e ${LOCKFILE}
+echo -e ${mainLogFile}
+echo -e ${mongo}
+echo -e ${indexNum}
+echo -e ${pid}
+
 function error_exp
 {
-	echo -e "[hourly]Slave Loop Backup error: /usr/local/countly/log/loopBackupMain2.log"\
-	$(tail -20 /usr/local/countly/log/loopBackupMain2.log)\
-	| mail -s "[hourly]Slave Loop Backup Error Trap(${pid})" ${AWSM}
+	echo -e "[Shard]${header} Loop Backup Batch error: ${mainLogFile}"\
+	$(tail -20 ${mainLogFile})\
+	| mail -s "[Shard]${header} Loop Backup Batch Error Trap(${pid})" ${AWSM}
 	#rm -f ${LOCKFILE}
 	exit 1
 }
 function checkLoopStop() {
-	loopFile="/tmp/loopStopBackupFile"
+	loopFile="/tmp/shardStopBackupFile"
 	if [ -f "${loopFile}" ]; then
 		echo "${loopFile} exist"
-		echo -e "Loop Backup Batch Stop on $(date +%Y%m%d-%H:%M)"\
-		| mail -s "[Hourly] Slave Loop Session Batch Stop" ${AWSM}
+		echo -e "[Shard]${header} Loop Backup Batch Stop on $(date +%Y%m%d-%H:%M)"\
+		| mail -s "[Shard]${header} Loop Backup Batch Stop" ${AWSM}
 		exit 0
 	fi
 }
 function sendSummaryMail() {
-	echo -e $(tail -20 $one_time_log)\
-	| mail -s "[Hourly] Slave Loop Backup Raw Log Summary" ${AWSM}
+	echo -e $(tail -20 ${mainLogFile})\
+	| mail -s "[Shard]${header} Loop Backup Raw Log Summary" ${AWSM}
 }
-logpath="/usr/local/countly/log/loopBackup/"
+logpath="/usr/local/countly/log/shardBackup/"
 
 ## this is for test
 gzipPath="/mnt/mongodb/tmp/mongo_gzip/"
@@ -34,13 +66,13 @@ s3Path="/mnt/mongodb/tmp/s3_data/"
 ## this is for test end
 
 path="/usr/local/countly/api"
-gzipPath="/mem/mongo_hourly_gzip/"
-exportPath="/mem/mongo_hourly_backup/"
-s3Path="/s3mnt/db_backup/hourly_data/"
-CachePath="/mem/tmp/s3cache/clcom2-countly/db_backup/hourly_data/"
-mongo="localhost:27017"
+gzipPath="/mem/mongo_shard_gzip/"
+exportPath="/mem/mongo_shard_backup/"
+s3Path="/s3mnt/shard_backup/hourly_data/"
+CachePath="/mem/tmp/s3cache/clcom2-countly/shard_backup/hourly_data/"
+#mongo="localhost:27017"
 batchdb=""
-indexNum="2"
+#indexNum="1"
 curdate=$(date +%Y%m%d-%H%M)
 
 one_time_log="${logpath}${curdate}_log.log"
@@ -71,15 +103,18 @@ for ((;1;)); do
 	echo -e ${curTimestamp} 2>&1 >> $one_time_log 
 
 	## get the first db name
-	cmd="node getRawFinished.js ${curTimestamp}"
+	cmd="node shardGetRawFinished.js ${curTimestamp} ${indexNum}"
 	echo -e ${cmd} 2>&1 >> $one_time_log 
 	string=`${cmd}`
 	#echo -e ${string}
 	batchdb=${string}
 	echo -e ${batchdb} 2>&1 >> $one_time_log 
 
+	# wait for secondary sync
+	sleep 601
+
 	## get rawdata file name
-	cmd="node getRawFileName.js ${curTimestamp}"
+	cmd="node shardGetRawFileName.js ${curTimestamp} ${indexNum}"
 	echo -e ${cmd} 2>&1 >> $one_time_log 
 	string=`${cmd}`
 	#echo -e ${string}
@@ -118,7 +153,7 @@ for ((;1;)); do
 
 		cd ${path}
 
-		cmd="node removeRawFinished.js ${batchdb}"
+		cmd="node shardRemoveRawFinished.js ${batchdb} ${indexNum}"
 		echo -e ${cmd} 2>&1 >> $one_time_log 
 		string=`${cmd}`
 		echo -e ${string} 2>&1 >> $one_time_log 

@@ -132,6 +132,14 @@ function insertRawColl(coll, eventp, params) {
                 console.log(err);
             }
         });
+
+        common.getShardRawDB(eventp.app_key).collection(coll).insert(eventp, function(err, res) {
+            if (err) {
+                console.log('DB Shard operation error');
+                console.log(err);
+            }
+        });
+
     }
 }
 
@@ -688,6 +696,7 @@ if (cluster.isMaster) {
                 if (params.qstring.events) {
                     try {
                         var jsonData = JSON.parse(params.qstring.events);
+                        /*
                         if (jsonData) {
                             if (jsonData.length == 1 && jsonData[0].key &&
                                 jsonData[0].key == '_UMA_ID') {
@@ -703,6 +712,7 @@ if (cluster.isMaster) {
                                 return true;
                             }
                         }
+                        */
                         params.events = jsonData;
                     } catch (SyntaxError) {
                         var now = new Date();

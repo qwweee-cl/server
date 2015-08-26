@@ -1,5 +1,5 @@
 #!/bin/bash
-
+. /usr/local/countly/api/maillist.sh
 LOCKFILE="/tmp/loopBackupRaw1.pid"
 pid=`cat ${LOCKFILE}`
 
@@ -8,11 +8,23 @@ function error_exp
 {
 	echo -e "[hourly]Main Loop Backup Batch error: /usr/local/countly/log/loopBackupMain1.log"\
 	$(tail -20 /usr/local/countly/log/loopBackupMain1.log)\
-	| mail -s "[hourly]Main Loop Backup Batch Error Trap(${pid})" Gary_Huang@PerfectCorp.com,qwweee@gmail.com
+	| mail -s "[hourly]Main Loop Backup Batch Error Trap(${pid})" ${AWSM}
 	#rm -f ${LOCKFILE}
 	exit 1
 }
-
+function checkLoopStop() {
+	loopFile="/tmp/loopStopBackupFile"
+	if [ -f "${loopFile}" ]; then
+		echo "${loopFile} exist"
+		echo -e "Loop Backup Batch Stop on $(date +%Y%m%d-%H:%M)"\
+		| mail -s "[Hourly] Main Loop Session Batch Stop" ${AWSM}
+		exit 0
+	fi
+}
+function sendSummaryMail() {
+	echo -e $(tail -20 $one_time_log)\
+	| mail -s "[Hourly] Main Loop Backup Raw Log Summary" ${AWSM}
+}
 logpath="/usr/local/countly/log/loopBackup/"
 
 ## this is for test
@@ -47,6 +59,8 @@ fi
 for ((;1;)); do
 	curdate=$(date +%Y%m%d-%H%M)
 	one_time_log="${logpath}${curdate}_log.log"
+	## check stop file
+	checkLoopStop
 	echo -e "Program(${pid}) starts on `date +"%Y-%m-%d %T"`." 2>&1 >> $one_time_log
 	echo -e "Program(${pid}) starts on `date +"%Y-%m-%d %T"`."
 	cd ${path}
@@ -116,5 +130,8 @@ for ((;1;)); do
 	fi
 	echo -e "Program(${pid}) stops on `date +"%Y-%m-%d %T"`." 2>&1 >> $one_time_log
 	echo -e "Program(${pid}) stops on `date +"%Y-%m-%d %T"`."
+	## send summary mail
+	sendSummaryMail
+	
 	sleep 60
 done
