@@ -15,14 +15,14 @@ if [ "${appType}" == "1" ]; then
 	header="YCP+YMK"
 	LOCKFILE="/tmp/shardSessionBatch1.pid"
 	mainLogFile="/usr/local/countly/log/shardSessionMain1.log"
-	mongo="shard1-2:27017"
+	mongo="config1:27017"
 	indexNum="1"
 	pid=`cat ${LOCKFILE}`
 elif [ "${appType}" == "2" ]; then
 	header="PF"
-	LOCKFILE="/tmp/shardSessionBatch1.pid"
+	LOCKFILE="/tmp/shardSessionBatch2.pid"
 	mainLogFile="/usr/local/countly/log/shardSessionMain2.log"
-	mongo="shard2-2:27017"
+	mongo="config1:27017"
 	indexNum="2"
 	pid=`cat ${LOCKFILE}`
 else
@@ -54,7 +54,7 @@ function backupDashboard() {
 	#$cmd
 }
 function checkLoopStop() {
-	loopFile="/tmp/loopStopFile"
+	loopFile="/tmp/shardStopSessionFile"
 	if [ -f "${loopFile}" ]; then
 		echo "${loopFile} exist"
 		echo -e "Loop Session Batch Stop on $(date +%Y%m%d-%H:%M)"\
@@ -140,6 +140,8 @@ for ((;1;)); do
 ## check backup dashboard time
 	checkTime=$(date +%H%M)
 	checkDate=$(date +%j)
+## check stop file
+	checkLoopStop
 	if [[ ${checkTime} > ${beforeBackupTime} ]] && [[ ${checkTime} < ${backupTime} ]]; then
 		echo -e "waiting for backup start"
 		sleep 600
