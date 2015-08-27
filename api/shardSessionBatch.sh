@@ -6,13 +6,13 @@ trap 'error_exp'  ERR SIGINT SIGTERM
 
 if [ -z "$1" ]
 then
-  echo -e "please add one paramater: 1 = YMK+YCP, 2 = PF"
+  echo -e "please add one paramater: 1 = YCP+YMK, 2 = PF"
   exit 1
 else
   appType=${1}
 fi
 if [ "${appType}" == "1" ]; then
-	header="YMK+YCP"
+	header="YCP+YMK"
 	LOCKFILE="/tmp/shardSessionBatch1.pid"
 	mainLogFile="/usr/local/countly/log/shardSessionMain1.log"
 	mongo="shard1-2:27017"
@@ -195,6 +195,11 @@ for ((;1;)); do
 		#echo -e ${cmd} 2>&1 >> $one_time_log 
 		#${cmd} 2>&1 >> $one_time_log
 		#echo -e "process ${batchdb} session finished"
+
+		cmd="python sessionMT_v2.py ${batchdb} ${header}"
+		echo -e ${cmd} 2>&1 >> $one_time_log 
+		${cmd} 2>&1 >> $one_time_log
+		echo -e "process ${batchdb} ${header} session finished"
 
 		cmd="node shardUpdateSessionEnd.js ${batchdb} ${appType}"
 		echo -e ${cmd} 2>&1 >> $one_time_log 
