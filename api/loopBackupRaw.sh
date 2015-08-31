@@ -43,6 +43,10 @@ batchdb=""
 indexNum="1"
 curdate=$(date +%Y%m%d-%H%M)
 
+gzipPath="/mem/mongo_hourly_gzip/"
+exportPath="/extend/mongo_hourly_backup/"
+s3Path="/s3mnt/db_backup/hourly_data/"
+
 one_time_log="${logpath}${curdate}_log.log"
 
 if [ ! -d "$exportPath" ]; then
