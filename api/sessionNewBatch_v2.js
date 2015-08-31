@@ -25,7 +25,7 @@ http.globalAgent.maxSockets = common.config.api.max_sockets || 1024;
 
 var date = new Date();
 console.log(date.toString());
-var begin_date = new Date(date.getFullYear(),date.getMonth(), date.getDate()-360);
+var begin_date = new Date(date.getFullYear(),date.getMonth(), date.getDate()-60);
 var end_date = new Date(date.getFullYear(),date.getMonth(), date.getDate()+1);
 
 //console.log('proc_date = '+begin_date+':'+end_date);
@@ -93,7 +93,7 @@ function processSessions(dbs, app, isFinal, appinfo) {
         console.log(ios);
     }*/
     var appUserId = app[0].app_user_id || null;
-    if (appinfo.key=="75edfca17dfbe875e63a66633ed6b00e30adcb92") { // Android
+/*    if (appinfo.key=="75edfca17dfbe875e63a66633ed6b00e30adcb92") { // Android
         userCount1++;
         android = appinfo;
         YCPDB.collection('raw_session_e315c111663af26a53e5fe4c82cc1baeecf50599').findOne({'app_user_id': appUserId},
@@ -192,7 +192,8 @@ function processSessions(dbs, app, isFinal, appinfo) {
                     });
                 }
         });
-    } else {
+    } else */
+    {
         process.nextTick(function() {
             var apps = app;
             var final = isFinal;

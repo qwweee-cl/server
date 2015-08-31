@@ -84,8 +84,8 @@ def calculateSessions(and_key, ios_key):
     
 LOG_FOLDER = "LogSessionMT"
     
-TOTAL_USER_PART_AND = 3
-TOTAL_USER_PART_IOS = 1
+TOTAL_USER_PART_AND = 6
+TOTAL_USER_PART_IOS = 2
 THREAD_NAME_PREFIX_AND = "_and_thread_"
 THREAD_NAME_PREFIX_IOS = "_ios_thread_"
 

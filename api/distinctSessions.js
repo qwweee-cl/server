@@ -17,7 +17,7 @@ if (!app_key) {
 
 var sortOrder = {app_user_id:1, timestamp:1};
 var date = new Date();
-var begin_date = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 360);
+var begin_date = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 60);
 var end_date = new Date(date.getFullYear(),date.getMonth(), date.getDate()+1);
 
 var bdd = Math.floor(begin_date.getTime()/1000);
