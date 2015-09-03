@@ -3,7 +3,8 @@ var usage = {},
     dbonoff = require('./../../utils/dbonoff.js'),
     geoip = require('geoip-lite'),
     time = require('time')(Date),
-    fs = require('fs');
+    fs = require('fs'),
+    countlyConfig = require('./../config');
 var process = require('process');
 
 (function (usage) {
