@@ -4,7 +4,7 @@ var usage = {},
     geoip = require('geoip-lite'),
     time = require('time')(Date),
     fs = require('fs'),
-    countlyConfig = require('./../config');
+    countlyConfig = require('./../../config');
 var process = require('process');
 
 (function (usage) {
