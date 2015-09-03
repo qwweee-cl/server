@@ -2,7 +2,8 @@ var usage = {},
     common = require('./../../utils/common.js'),
     dbonoff = require('./../../utils/dbonoff.js'),
     geoip = require('geoip-lite'),
-    time = require('time')(Date);
+    time = require('time')(Date),
+    fs = require('fs');
 var process = require('process');
 
 (function (usage) {
@@ -252,6 +253,9 @@ var process = require('process');
 
         updateRangeMeta(dbs, dataBag.countryArray, 'locations', appinfos.app_id);
         updateCollection(dbs, 'locations', appinfos.app_id, dataBag.updateLocations, '$inc', '[updateLocations]');
+
+        var str_date = JSON.stringify(countlyConfig.mongodb.db_batch).substring(1,9);
+        fs.appendFileSync('/usr/local/countly/api/Prediction/'+str_date + '_' + appinfos.app_id + '_Locations.txt', JSON.stringify(dataBag.updateLocations)+'\n');
 /*
         if (appinfos.app_id=='543f37eaa62268c51e16d0c3' || 
             appinfos.app_id=='543f866fa9e5b7ed76000011') {
@@ -277,6 +281,7 @@ var process = require('process');
             updateRangeMeta(dbs, dataBag.MetricMetaSet[predefinedMetrics[i].db], predefinedMetrics[i].db, appinfos.app_id);
             updateCollection(dbs, predefinedMetrics[i].db, appinfos.app_id, dataBag.updateMetrics[predefinedMetrics[i].db], '$inc', '[updateMetrics:'+predefinedMetrics[i].db+']');
         }
+
         process.emit('hi_mongo');
         console.log("End Date: "+(new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')));
         console.log('send out hi mongo');
