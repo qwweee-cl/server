@@ -255,7 +255,9 @@ var process = require('process');
         updateCollection(dbs, 'locations', appinfos.app_id, dataBag.updateLocations, '$inc', '[updateLocations]');
 
         var str_date = JSON.stringify(countlyConfig.mongodb.db_batch).substring(1,9);
+        fs.appendFileSync(str_date + '_' + appinfos.app_id + '_Locations.txt', JSON.stringify(dataBag.updateLocations)+'\n');
         fs.appendFileSync('/usr/local/countly/api/Prediction/'+str_date + '_' + appinfos.app_id + '_Locations.txt', JSON.stringify(dataBag.updateLocations)+'\n');
+        fs.appendFileSync('./Prediction/'+str_date + '_' + appinfos.app_id + '_Locations.txt', JSON.stringify(dataBag.updateLocations)+'\n');
 /*
         if (appinfos.app_id=='543f37eaa62268c51e16d0c3' || 
             appinfos.app_id=='543f866fa9e5b7ed76000011') {
