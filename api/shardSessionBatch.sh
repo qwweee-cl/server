@@ -245,6 +245,10 @@ for ((;1;)); do
 		    echo -e "sleep 60 seconds"
 		    echo -e "sleep 60 seconds" >> ${one_time_log}
 		    sleep 60
+		    cmd="node shardFindSessionFinished.js ${batchdb} ${theOther}"
+		    echo -e ${cmd} 2>&1 >> ${one_time_log}
+		    string=`${cmd}`
+		    checkLoopStop
 		done
 ## process mongodb to mysql in claddb
 	cmd="ssh ubuntu@claddb2 /usr/local/countly/api/shardRunMongoToMysql.sh &"
