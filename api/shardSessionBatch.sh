@@ -55,15 +55,19 @@ function backupDashboard() {
 		## call backup script
 		cmd="${path}/shardBackupDashboardDB.sh"
 		echo ${cmd} 2>&1 >> ${one_time_log}
-		#$cmd
+		$cmd
 	else
 		## check backup finish or not?
 		cmd="node shardFindDashBackup.js ${savedate}"
 		echo -e ${cmd} 2>&1 >> ${one_time_log}
 		string=`${cmd}`
 		while [ "${string}" == "null" ]; do
-		    echo -e "sleep 60 seconds"
+		    echo -e "sleep 60 seconds wait for backup finished"
 		    sleep 60
+		    cmd="node shardFindDashBackup.js ${savedate}"
+			echo -e ${cmd} 2>&1 >> ${one_time_log}
+			string=`${cmd}`
+			checkLoopStop
 		done
 
 		#cmd="${path}/backupDashboardDB.sh"
