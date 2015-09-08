@@ -55,7 +55,7 @@ function backupDashboard() {
 		## call backup script
 		cmd="${path}/shardBackupDashboardDB.sh"
 		echo ${cmd} 2>&1 >> ${one_time_log}
-		$cmd
+#		$cmd
 	else
 		## check backup finish or not?
 #		cmd="node shardFindDashBackup.js ${savedate}"
