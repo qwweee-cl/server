@@ -128,7 +128,7 @@ for ((;1;)); do
 	else
 		cd $exportPath
 
-		cmd="mongodump -h ${mongo} -db ${batchdb} -o ${exportPath}${rawdate}"
+		cmd="mongodump -h ${mongo} -d ${batchdb} -o ${exportPath}${rawdate}"
 		echo $cmd 2>&1 >> $one_time_log 
 		$cmd 2>&1 >> $one_time_log 
 

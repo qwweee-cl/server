@@ -78,6 +78,9 @@ class CLogger:
     def __init__(self, filePath):
         self.filePath = filePath
         self.logger = None
+        self.__lock = threading.Lock()
+        self.__acquire = self.__lock.acquire
+        self.__release = self.__lock.release
         
     def __del__(self):
         self.logger.close()
@@ -86,14 +89,18 @@ class CLogger:
         now = datetime.datetime.now()
         now = now.strftime('%Y-%m-%d %H:%M:%S')
         
+        self.__acquire()
         self.logger = open(self.filePath, 'a')
         self.logger.write(now + " " + message)
         self.logger.close()
+        self.__release()
         
     def log_noD(self, message):
+        self.__acquire()
         self.logger = open(self.filePath, 'a')
         self.logger.write(message)
         self.logger.close()
+        self.__release()
         
 def executeCmd(cmd, log, bConsole=False):
     log("Execute Command: " + " ".join(cmd) + "\n")
