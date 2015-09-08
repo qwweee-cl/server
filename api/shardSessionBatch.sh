@@ -58,17 +58,17 @@ function backupDashboard() {
 		$cmd
 	else
 		## check backup finish or not?
-		cmd="node shardFindDashBackup.js ${savedate}"
-		echo -e ${cmd} 2>&1 >> ${one_time_log}
-		string=`${cmd}`
-		while [ "${string}" == "null" ]; do
-		    echo -e "sleep 60 seconds wait for backup finished"
-		    sleep 60
-		    cmd="node shardFindDashBackup.js ${savedate}"
-			echo -e ${cmd} 2>&1 >> ${one_time_log}
-			string=`${cmd}`
-			checkLoopStop
-		done
+#		cmd="node shardFindDashBackup.js ${savedate}"
+#		echo -e ${cmd} 2>&1 >> ${one_time_log}
+#		string=`${cmd}`
+#		while [ "${string}" == "null" ]; do
+#		    echo -e "sleep 60 seconds wait for backup finished"
+#		    sleep 60
+#		    cmd="node shardFindDashBackup.js ${savedate}"
+#			echo -e ${cmd} 2>&1 >> ${one_time_log}
+#			string=`${cmd}`
+#			checkLoopStop
+#		done
 
 		#cmd="${path}/backupDashboardDB.sh"
 		#echo $cmd
@@ -164,23 +164,23 @@ for ((;1;)); do
 	checkDate=$(date +%j)
 ## check stop file
 	checkLoopStop
-	if [[ ${checkTime} > ${beforeBackupTime} ]] && [[ ${checkTime} < ${backupTime} ]]; then
-		echo -e "waiting for backup start"
-		sleep 600
-		continue
-	else
-		if [[ ${currBackup} != ${checkDate} ]] && [[ ${checkTime} > ${backupTime} ]]; then
-			echo -e "[backup]backup start"
+#	if [[ ${checkTime} > ${beforeBackupTime} ]] && [[ ${checkTime} < ${backupTime} ]]; then
+#		echo -e "waiting for backup start"
+#		sleep 600
+#		continue
+#	else
+#		if [[ ${currBackup} != ${checkDate} ]] && [[ ${checkTime} > ${backupTime} ]]; then
+#			echo -e "[backup]backup start"
 ## call backup function
-			backupDashboard
+#			backupDashboard
 ## call backup function end
-			echo -e "[backup]backup end"
-			currBackup=$(date +%j)
-		else
+#			echo -e "[backup]backup end"
+#			currBackup=$(date +%j)
+#		else
 			echo -e "do next job, continue process session"
 			sleep 601
-		fi
-	fi
+#		fi
+#	fi
 ## check stop file
 	checkLoopStop
 ## process session
@@ -242,18 +242,18 @@ for ((;1;)); do
 
 	if [ "${indexNum}" == "1" ]; then
 ## check backup finish or not?
-		cmd="node shardFindSessionFinished.js ${batchdb} ${theOther}"
-		echo -e ${cmd} 2>&1 >> ${one_time_log}
-		string=`${cmd}`
-		while [ "${string}" == "null" ]; do
-		    echo -e "sleep 60 seconds"
-		    echo -e "sleep 60 seconds" >> ${one_time_log}
-		    sleep 60
-		    cmd="node shardFindSessionFinished.js ${batchdb} ${theOther}"
-		    echo -e ${cmd} 2>&1 >> ${one_time_log}
-		    string=`${cmd}`
-		    checkLoopStop
-		done
+#		cmd="node shardFindSessionFinished.js ${batchdb} ${theOther}"
+#		echo -e ${cmd} 2>&1 >> ${one_time_log}
+#		string=`${cmd}`
+#		while [ "${string}" == "null" ]; do
+#		    echo -e "sleep 60 seconds"
+#		    echo -e "sleep 60 seconds" >> ${one_time_log}
+#		    sleep 60
+#		    cmd="node shardFindSessionFinished.js ${batchdb} ${theOther}"
+#		    echo -e ${cmd} 2>&1 >> ${one_time_log}
+#		    string=`${cmd}`
+#		    checkLoopStop
+#		done
 ## process mongodb to mysql in claddb
 	cmd="ssh ubuntu@claddb2 /usr/local/countly/api/shardRunMongoToMysql.sh &"
 	echo $cmd
