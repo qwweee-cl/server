@@ -2,6 +2,33 @@
 . /usr/local/countly/api/maillist.sh
 trap 'error_exp'  ERR SIGINT SIGTERM
 
+function error_exp
+{
+	echo -e "[Shard]${header} Loop Backup Batch error: ${mainLogFile}"\
+	$(tail -20 ${mainLogFile})\
+	| mail -s "[Shard]${header} Loop Backup Batch Error Trap(${pid})" ${mail_target}
+	#rm -f ${LOCKFILE}
+	exit 1
+}
+function checkLoopStop() {
+	loopFile="/tmp/shardStopBackupFile"
+	if [ -f "${loopFile}" ]; then
+		echo "${loopFile} exist"
+		echo -e "[Shard]${header} Loop Backup Batch Stop on $(date +%Y%m%d-%H:%M)"\
+		| mail -s "[Shard]${header} Loop Backup Batch Stop" ${mail_target}
+		exit 0
+	fi
+}
+function sendSummaryMail() {
+	echo -e $(tail -20 ${one_day_log})\
+	| mail -s "[Shard]${header} ${start_date} ${start_round} Backup Raw Summary" ${mail_target}
+}
+
+function sendWrongMail() {
+	echo -e $(tail -20 ${one_day_log})\
+	| mail -s "[Shard][Wrong][Backup]${header} ${start_date} ${start_round}" ${mail_target}
+}
+
 log_path="/usr/local/countly/log/shardBackup"
 working_dir="/usr/local/countly/api"
 mail_target=${AWSM}
@@ -218,30 +245,3 @@ do
 		checkLoopStop
 	fi
 done
-
-function error_exp
-{
-	echo -e "[Shard]${header} Loop Backup Batch error: ${mainLogFile}"\
-	$(tail -20 ${mainLogFile})\
-	| mail -s "[Shard]${header} Loop Backup Batch Error Trap(${pid})" ${mail_target}
-	#rm -f ${LOCKFILE}
-	exit 1
-}
-function checkLoopStop() {
-	loopFile="/tmp/shardStopBackupFile"
-	if [ -f "${loopFile}" ]; then
-		echo "${loopFile} exist"
-		echo -e "[Shard]${header} Loop Backup Batch Stop on $(date +%Y%m%d-%H:%M)"\
-		| mail -s "[Shard]${header} Loop Backup Batch Stop" ${mail_target}
-		exit 0
-	fi
-}
-function sendSummaryMail() {
-	echo -e $(tail -20 ${one_day_log})\
-	| mail -s "[Shard]${header} ${start_date} ${start_round} Backup Raw Summary" ${mail_target}
-}
-
-function sendWrongMail() {
-	echo -e $(tail -20 ${one_day_log})\
-	| mail -s "[Shard][Wrong][Backup]${header} ${start_date} ${start_round}" ${mail_target}
-}
