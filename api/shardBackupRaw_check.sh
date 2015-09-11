@@ -222,17 +222,23 @@ do
 	fi
 
 	#go next round
-	start_round=$(printf "%02d" $((10#$start_round + 1)))	
+	start_round=$(printf "%02d" $((10#$start_round + 1)))
+        echo -e "do start round ++ (${start_round})"
+        echo -e "do start round ++ (${start_round})" >> $one_day_log
 	if [ $((10#$start_round)) -ge $(($round_num)) ]; then
 		start_round="00"
 		start_date=$(date -d "$start_date 1 days" +%Y%m%d)
 		small_date=$(date -d "${start_date} 1 days" +%m%d)
+                echo -e "do start date ++ (${start_date})"
+                echo -e "do start date ++ (${start_date})" >> $one_day_log
 	fi
 
 	end_time=$(date +%s)
 	next_start_time=$(date -d "$start_date" +%s)
 	next_start_time=$((10#$next_start_time + ((10#$start_round+1) * 10#$interval)))
 	sleep_time=$((10#$next_start_time - 10#$end_time))
+        echo -e "next round: ${start_date} ${start_round} ${small_date}"
+        echo -e "next round: ${start_date} ${start_round} ${small_date}" >> $one_day_log
 
 	#wait for next round
 	if [ $sleep_time -ge 0 ]; then
