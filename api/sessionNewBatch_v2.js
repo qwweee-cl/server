@@ -276,7 +276,7 @@ var handleOneSession = function(records, isFinal) {
         processSessions(dbs, records, isFinal, app_information);
 };
 
-wait_cnt = 20;
+wait_cnt = 40;
 baseTimeOut = 60000;
 var cnt=0;
 var repeat_times = 0;

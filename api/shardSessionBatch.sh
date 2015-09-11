@@ -257,7 +257,7 @@ for ((;1;)); do
 ## process mongodb to mysql in claddb
 	cmd="ssh ubuntu@claddb2 /usr/local/countly/api/shardRunMongoToMysql.sh &"
 	echo $cmd
-#	$cmd
+	$cmd
 	fi
 
 	sendSummaryMail
