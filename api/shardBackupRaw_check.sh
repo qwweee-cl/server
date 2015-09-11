@@ -40,7 +40,6 @@ T="$(date +%s)"
 
 interval=$((6*3600));
 round_num=$(((24*60*60) / 10#$interval))
-rawdata_dir="/s3mnt/db_backup/hourly_data"
 start_date=""
 start_round=""
 start_time=""
@@ -199,7 +198,7 @@ do
 		echo $cmd 2>&1 >> $one_day_log 
 		$cmd 2>&1 >> $one_day_log 
 
-		cd ${path}
+		cd ${working_dir}
 
 		cmd="node shardRemoveRawFinished.js ${batchdb} ${indexNum}"
 		echo -e ${cmd} 2>&1 >> $one_day_log 
