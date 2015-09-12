@@ -228,7 +228,7 @@ do
 	if [ $((10#$start_round)) -ge $(($round_num)) ]; then
 		start_round="00"
 		start_date=$(date -d "$start_date 1 days" +%Y%m%d)
-		small_date=$(date -d "${start_date} 1 days" +%m%d)
+		small_date=$(date -d "${start_date}" +%m%d)
                 echo -e "do start date ++ (${start_date})"
                 echo -e "do start date ++ (${start_date})" >> $one_day_log
 	fi
