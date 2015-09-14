@@ -17,6 +17,7 @@ if [ "${appType}" == "1" ]; then
 	mainLogFile="/usr/local/countly/log/shardSessionMain1.log"
 	mongo="config1:27017"
 	indexNum="1"
+	theOther="2"
 	pid=`cat ${LOCKFILE}`
 elif [ "${appType}" == "2" ]; then
 	header="PF"
@@ -24,6 +25,7 @@ elif [ "${appType}" == "2" ]; then
 	mainLogFile="/usr/local/countly/log/shardSessionMain2.log"
 	mongo="config1:27017"
 	indexNum="2"
+	theOther="1"
 	pid=`cat ${LOCKFILE}`
 else
 	echo -e "wrong paramater (1 = shard1, 2 = shard2)"
@@ -49,9 +51,29 @@ function error_exp
 
 function backupDashboard() {
 	cd $path
-	#cmd="${path}/backupDashboardDB.sh"
-	#echo $cmd
-	#$cmd
+	if [ "${indexNum}" == "1" ]; then
+		## call backup script
+		cmd="${path}/shardBackupDashboardDB.sh"
+		echo ${cmd} 2>&1 >> ${one_time_log}
+#		$cmd
+#	else
+		## check backup finish or not?
+#		cmd="node shardFindDashBackup.js ${savedate}"
+#		echo -e ${cmd} 2>&1 >> ${one_time_log}
+#		string=`${cmd}`
+#		while [ "${string}" == "null" ]; do
+#		    echo -e "sleep 60 seconds wait for backup finished"
+#		    sleep 60
+#		    cmd="node shardFindDashBackup.js ${savedate}"
+#			echo -e ${cmd} 2>&1 >> ${one_time_log}
+#			string=`${cmd}`
+#			checkLoopStop
+#		done
+
+		#cmd="${path}/backupDashboardDB.sh"
+		#echo $cmd
+		#$cmd
+	fi
 }
 function checkLoopStop() {
 	loopFile="/tmp/shardStopSessionFile"
@@ -111,7 +133,7 @@ checkTime=$(date +%H%M)
 checkDate=$(date +%j)
 beforeBackupTime="0500"
 backupTime="0900"
-backupTime="0800"
+backupTime="0900"
 afterbackupTime="1200"
 sleepTime=10800 # this is for clad2
 currBackup=$(date +%j)
@@ -142,23 +164,23 @@ for ((;1;)); do
 	checkDate=$(date +%j)
 ## check stop file
 	checkLoopStop
-	if [[ ${checkTime} > ${beforeBackupTime} ]] && [[ ${checkTime} < ${backupTime} ]]; then
-		echo -e "waiting for backup start"
-		sleep 600
-		continue
-	else
-		if [[ ${currBackup} != ${checkDate} ]] && [[ ${checkTime} > ${backupTime} ]]; then
-			echo -e "[backup]backup start"
+#	if [[ ${checkTime} > ${beforeBackupTime} ]] && [[ ${checkTime} < ${backupTime} ]]; then
+#		echo -e "waiting for backup start"
+#		sleep 600
+#		continue
+#	else
+#		if [[ ${currBackup} != ${checkDate} ]] && [[ ${checkTime} > ${backupTime} ]]; then
+#			echo -e "[backup]backup start"
 ## call backup function
-			backupDashboard
+#			backupDashboard
 ## call backup function end
-			echo -e "[backup]backup end"
-			currBackup=$(date +%j)
-		else
+#			echo -e "[backup]backup end"
+#			currBackup=$(date +%j)
+#		else
 			echo -e "do next job, continue process session"
 			sleep 601
-		fi
-	fi
+#		fi
+#	fi
 ## check stop file
 	checkLoopStop
 ## process session
@@ -217,6 +239,26 @@ for ((;1;)); do
 	fi
 	echo -e "Program(${pid}) stops on `date +"%Y-%m-%d %T"`." 2>&1 >> $one_time_log
 	echo -e "Program(${pid}) stops on `date +"%Y-%m-%d %T"`."
+
+	if [ "${indexNum}" == "1" ]; then
+## check backup finish or not?
+#		cmd="node shardFindSessionFinished.js ${batchdb} ${theOther}"
+#		echo -e ${cmd} 2>&1 >> ${one_time_log}
+#		string=`${cmd}`
+#		while [ "${string}" == "null" ]; do
+#		    echo -e "sleep 60 seconds"
+#		    echo -e "sleep 60 seconds" >> ${one_time_log}
+#		    sleep 60
+#		    cmd="node shardFindSessionFinished.js ${batchdb} ${theOther}"
+#		    echo -e ${cmd} 2>&1 >> ${one_time_log}
+#		    string=`${cmd}`
+#		    checkLoopStop
+#		done
+## process mongodb to mysql in claddb
+	cmd="ssh ubuntu@claddb2 /usr/local/countly/api/shardRunMongoToMysql.sh &"
+	echo $cmd
+	$cmd
+	fi
 
 	sendSummaryMail
 	sleep 60
