@@ -7,7 +7,7 @@ var collectionName = process.argv[4] || null;
 // exit if miss any argument
 if(!db_host || !db_name || !collectionName) {
     console.log("Ensure Index: Invalid Parameters");
-    process.exit(0);
+    process.exit(1);
 }
 
 var dbBatchOptions = {safe: true, maxPoolSize: 1000};
@@ -19,6 +19,7 @@ b_coll.ensureIndex({"app_user_id":1, "timestamp":1}, function(err, nameIndex) {
     if(err) {
         console.log("Ensure Index with error: "+err);
         db.close();
+        process.exit(1);
     }
     console.log("Finish ensure index of collection: " + collectionName + " with index name: " +nameIndex);
     db.close();
