@@ -5,6 +5,7 @@ var common = require('./utils/common.js'),
     events = require('events'),
     config = require('./config.js'),
     eventEmitter = new events.EventEmitter(),
+    error = false,
     print = console.log;
 
 var type1 = ["e315c111663af26a53e5fe4c82cc1baeecf50599",
@@ -19,12 +20,14 @@ function executeCmd(cmd) {
         //print(stdout);
         if (error !== null) {
             print('exec error: ' + error);
+            error = true;
         }
     });
 }
 
 if (process.argv.length != 4) {
     print("no parameter");
+    process.exit(1);
     return false;
 }
 var db_batch = process.argv[2];
@@ -115,5 +118,8 @@ function createIndex(datas) {
         //eventEmitter.emit('executeCmd', shardingCmd);
 
         dbonoff.close(curBatchDB);
+        if (error) {
+            process.exit(1);
+        }
     });
 }

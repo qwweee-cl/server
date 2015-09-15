@@ -6,7 +6,7 @@ function error_exp
 {
 	echo -e "[Shard]${header} Loop Backup Batch error: ${mainLogFile}"\
 	$(tail -20 ${mainLogFile})\
-	| mail -s "[Shard]${header} Loop Backup Batch Error Trap(${pid})" ${mail_target}
+	| mail -s "[Shard]${header} ${start_date} ${start_round} Backup Error(${pid})" ${mail_target}
 	#rm -f ${LOCKFILE}
 	exit 1
 }
@@ -15,7 +15,7 @@ function checkLoopStop() {
 	if [ -f "${loopFile}" ]; then
 		echo "${loopFile} exist"
 		echo -e "[Shard]${header} Loop Backup Batch Stop on $(date +%Y%m%d-%H:%M)"\
-		| mail -s "[Shard]${header} Loop Backup Batch Stop" ${mail_target}
+		| mail -s "[Shard]${header} ${start_date} ${start_round} Backup Batch Stop" ${mail_target}
 		exit 0
 	fi
 }
