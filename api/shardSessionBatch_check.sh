@@ -50,6 +50,7 @@ function checkLoopStop() {
 	fi
 }
 function createIndex() {
+	echo -e "create index is in createShardKey"
 #	cmd="node shardCreateIndex.js ${batchdb} ${appType}"
 #	echo -e ${cmd} 2>&1 >> $one_day_log 
 #	string=`${cmd}`
