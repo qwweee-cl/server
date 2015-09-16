@@ -79,7 +79,7 @@ function sendWrongMail2() {
 	| mail -s "[Shard][Wrong S3][Session]${header} ${start_date} ${start_round}" ${mail_target}
 }
 
-logpath="/usr/local/countly/log/shardSession"
+log_path="/usr/local/countly/log/shardSession"
 working_dir="/usr/local/countly/api"
 mail_target=${AWSM}
 one_day_log="$log_path/log_session_$(date +%Y%m%d).log"
