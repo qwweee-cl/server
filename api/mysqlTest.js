@@ -1,7 +1,7 @@
 var mysql      = require('mysql');
-var host = 'claddb';
-var user = 'ymk';
-var password = 'cyberlinkymk';
+var host = 'emr2';
+var user = 'countly';
+var password = 'countly!@#';
 var connection = mysql.createConnection({
   host     : host,
   user     : user,
