@@ -25,8 +25,10 @@ connection.connect();
 //var sessionType = 1;
 //var session1 = 1;
 //var round1 = "'countly_raw0901_00'";
+var queryString = 'UPDATE status SET session'+sessionType+'='+sessionStatus+', round'+sessionType+'="'+roundValue+'" WHERE id = 1';
+console.log(queryString);
 
-connection.query('UPDATE status SET session'+sessionType+'='+sessionStatus+', round'+sessionType+'='+roundValue+' WHERE id = 1', function(err, rows, fields) {
+connection.query(queryString, function(err, rows, fields) {
   if (err) {
     throw err;
   }
