@@ -245,10 +245,12 @@ do
 ## check process round and s3 files
 		
 		echo -e ${start_date}
+		filedate=$(date -d "${start_date}" +%Y%m%d)
+		echo -e ${filedate}
 		echo -e ${small_date}
 		echo -e ${start_round}
-		s3File1=${s3Path}${start_date}"_raw_${start_round}_1.tgz"
-		s3File2=${s3Path}${start_date}"_raw_${start_round}_2.tgz"
+		s3File1=${s3Path}${filedate}"_raw_${start_round}_1.tgz"
+		s3File2=${s3Path}${filedate}"_raw_${start_round}_2.tgz"
 		fileExist=true
 		echo -e ${s3File1}
 		echo -e ${s3File2}
