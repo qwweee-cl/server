@@ -328,6 +328,26 @@ do
 
 	echo -e "End Time: $(date +%Y-%m-%d,%H:%M:%S)" >> $one_day_log 2>&1
 
+	if [ "${indexNum}" == "1" ]; then
+## check backup finish or not?
+#		cmd="node shardFindSessionFinished.js ${batchdb} ${theOther}"
+#		echo -e ${cmd} 2>&1 >> ${one_time_log}
+#		string=`${cmd}`
+#		while [ "${string}" == "null" ]; do
+#		    echo -e "sleep 60 seconds"
+#		    echo -e "sleep 60 seconds" >> ${one_time_log}
+#		    sleep 60
+#		    cmd="node shardFindSessionFinished.js ${batchdb} ${theOther}"
+#		    echo -e ${cmd} 2>&1 >> ${one_time_log}
+#		    string=`${cmd}`
+#		    checkLoopStop
+#		done
+## process mongodb to mysql in claddb
+	cmd="ssh ubuntu@claddb2 /usr/local/countly/api/shardRunMongoToMysql.sh &"
+	echo $cmd
+	$cmd
+	fi
+
 	## send summary mail
 	sendSummaryMail
 
