@@ -348,6 +348,12 @@ do
 	$cmd
 	fi
 
+	## cp Prediction files to s3
+	cd ${working_dir}
+	cmd="./shardPredictionRename.sh"
+	echo -e ${cmd} 2>&1 >> $one_day_log 
+	${cmd}
+
 	## send summary mail
 	sendSummaryMail
 
@@ -362,6 +368,11 @@ do
 		start_round="00"
 		start_date=$(date -d "$start_date 1 days" +%Y%m%d)
 		small_date=$(date -d "${start_date}" +%m%d)
+		## rm Prediction files
+		cd ${working_dir}
+		cmd="rm *.txt"
+		echo -e ${cmd} 2>&1 >> $one_day_log 
+		${cmd}
 	fi
 
 	end_time=$(date +%s)

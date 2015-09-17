@@ -24,7 +24,7 @@ cd ${working_dir}
 
 for i in *.txt ; do
   echo -e "cp ${i} ${s3PredictionPath}2015${i}" >> ${mainLogFile}
-  mv ${i} ${s3PredictionPath}2015${i}
+  cp ${i} ${s3PredictionPath}2015${i}
 done
 
 sendSummaryMail
