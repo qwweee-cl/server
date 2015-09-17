@@ -104,7 +104,7 @@ if __name__ == '__main__':
     if(not modifyConfigBatchDB(db_name)):
         log("Cannot modify batch db\n")
         logger = None
-        exit(0)
+        exit(1)
     log("Modify batch db okay.\n")
     
     if("ALL" == optApps or "PF" == optApps):

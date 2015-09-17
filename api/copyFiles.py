@@ -65,7 +65,7 @@ if __name__ == '__main__':
     listTargetDateStr = parseTargetDateStrFormSysArgv()
     if 0 == len(listTargetDateStr):
         print "copyFile, no target date, exit"
-        exit(0)
+        exit(1)
     print "copyFile, List of target date string = ", listTargetDateStr
     
     logPath = os.path.join(os.getcwd(), LOG_FOLDER, "copyFiles_"+listTargetDateStr[0])
@@ -78,7 +78,7 @@ if __name__ == '__main__':
     
     if os.path.exists(tmpFolderPath):
         log(("[Err] Temp folder (%s) exists, return\n" % tmpFolderPath))
-        exit(0)
+        exit(1)
     os.mkdir(tmpFolderPath)
     log(("Create temp folder = %s\n" % tmpFolderPath))
     
