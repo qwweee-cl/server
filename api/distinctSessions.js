@@ -40,7 +40,7 @@ var sessions = [];
 var currentFileIdx = 0;
 var userCount = 0;
 
-col.find({_id:{$lt:eid, $gte:bid}}).sort(sortOrder).each(
+col.find({_id:{$lt:eid, $gte:bid}}).setReadPreference(ReadPreference.PRIMARY_PREFERRED).sort(sortOrder).each(
     function(err, res) {
         if(err) {
             print('Distinct Sessions with Error: ' + err);

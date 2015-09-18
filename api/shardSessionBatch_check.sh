@@ -343,9 +343,9 @@ do
 #		    checkLoopStop
 #		done
 ## process mongodb to mysql in claddb
-	cmd="ssh ubuntu@claddb2 /usr/local/countly/api/shardRunMongoToMysql.sh &"
+	cmd="ssh ubuntu@claddb2 /usr/local/countly/api/shardRunMongoToMysql.sh >> /usr/local/countly/log/mongoToMysql.log"
 	echo $cmd
-	$cmd
+	$cmd 2>&1 &
 	fi
 
 	## cp Prediction files to s3
