@@ -32,6 +32,9 @@ mysqlDateSave=$(date -d "${dateSave}" +%Y-%m-%d)
 mysqlDateStart=$(date -d "${dateStart}" +%Y-%m-%d)
 mysqlDateEnd=$(date -d "${dateEnd}" +%Y-%m-%d)
 
+mysqlDateStart=${mysqlDateSave}
+mysqlDateEnd=$(date -d "${mysqlDateSave}+6 days" +%Y%m%d)
+
 for ((;1;)); do
     if [[ ${dateStart} < ${startdate} ]]; then
             break
@@ -40,9 +43,11 @@ for ((;1;)); do
 #    echo -e "sunday: ${dateStart}"
 #    echo -e "saturday: ${dateEnd}"
 
-#    echo -e "mysqlMonday: ${mysqlDateSave}"
-#    echo -e "mysqlSunday: ${mysqlDateStart}"
-#    echo -e "mysqlSaturday: ${mysqlDateEnd}"
+#    echo -e "mysqlSave: ${mysqlDateSave}"
+#    echo -e "mysqlStart: ${mysqlDateStart}"
+#    echo -e "mysqlEnd: ${mysqlDateEnd}"
+    mysqlDateStart=${mysqlDateSave}
+    mysqlDateEnd=$(date -d "${mysqlDateSave}+6 days" +%Y%m%d)
 
     cmd="mysql -h ${hostName} -u root -pcyberlink#1 -e \"CALL ${dbName}.countlyIn_compute_weekly_new_session('${mysqlDateSave}','${mysqlDateStart}','${mysqlDateEnd}');\""
     echo -e "${cmd}"
@@ -55,7 +60,13 @@ for ((;1;)); do
     mysqlDateSave=$(date -d "${dateSave}" +%Y-%m-%d)
     mysqlDateStart=$(date -d "${dateStart}" +%Y-%m-%d)
     mysqlDateEnd=$(date -d "${dateEnd}" +%Y-%m-%d)
+
+    mysqlDateStart=${mysqlDateSave}
+    mysqlDateEnd=$(date -d "${mysqlDateSave}+6 days" +%Y%m%d)
 done
+
+mysqlDateStart=${mysqlDateSave}
+mysqlDateEnd=$(date -d "${mysqlDateSave}+6 days" +%Y%m%d)
 
 for ((;1;)); do
     if [[ ${dateStart} > ${enddate} ]]; then
@@ -68,6 +79,9 @@ for ((;1;)); do
 #    echo -e "mysqlMonday: ${mysqlDateSave}"
 #    echo -e "mysqlSunday: ${mysqlDateStart}"
 #    echo -e "mysqlSaturday: ${mysqlDateEnd}"
+    mysqlDateStart=${mysqlDateSave}
+    mysqlDateEnd=$(date -d "${mysqlDateSave}+6 days" +%Y%m%d)
+
 
     cmd="mysql -h ${hostName} -u root -pcyberlink#1 -e \"CALL ${dbName}.countlyIn_compute_totalu_weekly('${mysqlDateSave}','${mysqlDateStart}','${mysqlDateEnd}');\""
     echo -e ${cmd}
@@ -80,5 +94,9 @@ for ((;1;)); do
     mysqlDateSave=$(date -d "${dateSave}" +%Y-%m-%d)
     mysqlDateStart=$(date -d "${dateStart}" +%Y-%m-%d)
     mysqlDateEnd=$(date -d "${dateEnd}" +%Y-%m-%d)
+
+    mysqlDateStart=${mysqlDateSave}
+    mysqlDateEnd=$(date -d "${mysqlDateSave}+6 days" +%Y%m%d)
+
 done
 
