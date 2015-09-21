@@ -52,7 +52,7 @@ var common = {},
     var dbName;
     var dbOptions = { safe:false, maxPoolSize: countlyConfig.mongodb.max_pool_size || 1000 };
     var dbRawOptions = { safe:false, maxPoolSize: countlyConfig.mongodb.max_raw_pool_size || 1000 };
-    var dbBatchOptions = { safe:false, maxPoolSize: countlyConfig.mongodb.max_batch_pool_size || 1000};
+    var dbBatchOptions = { safe:false, slaveOk:true, maxPoolSize: countlyConfig.mongodb.max_batch_pool_size || 1000};
 
     if (typeof countlyConfig.mongodb === "string") {
         dbName = countlyConfig.mongodb;
@@ -388,7 +388,7 @@ var common = {},
         var db_name = (countlyConfig.mongodb.hostbatch + ':' + 
             countlyConfig.mongodb.port + '/' + inDBName + 
             '?auto_reconnect=true');
-        var dbInstance = mongo.db(db_name, dbBatchOptions);
+        var dbInstance = mongo.db(db_name, dbRawOptions);
         dbInstance.tag = inDBName.replace(/system\.|\.\.|\$/g, "");
         return dbInstance;
     };
@@ -446,7 +446,7 @@ var common = {},
             dbOEMName = (countlyConfig.mongodb.oemhost + ':' + 
                 countlyConfig.mongodb.port + '/oem_' + 
                 srNumberName + raw_name[1] + '?auto_reconnect=true');
-            common.db_oem_batch[srNumberName]=mongo.db(dbOEMName, dbBatchOptions);
+            common.db_oem_batch[srNumberName]=mongo.db(dbOEMName, dbRawOptions);
             oem = common.db_oem_batch[srNumberName];
         }
         oem.tag = "oem_"+srNumberName+raw_name[1];
