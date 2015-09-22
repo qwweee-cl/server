@@ -6,7 +6,7 @@ function error_exp
 {
   echo -e "[Old] Prediction Copy to S3 fail"\
   $(tail -20 ${mainLogFile}) \
-  | mail -s "[Old] Prediction Copy to S3 Error Trap" ${mail_target}
+  | mail -s "[Old][clad${2}] Prediction Copy to S3 Error Trap" ${mail_target}
   echo -e "Copy Prediction files error!"
   exit 1
 }
@@ -14,16 +14,16 @@ function error_exp
 function sendSummaryMail() {
   echo -e "Prediction logs ${mainLogFile} : "\
   $(tail -20 ${mainLogFile}) \
-  | mail -s "[Old] Prediction Copy to S3 Summary" ${AWSM}
+  | mail -s "[Old][clad${2}] Prediction Copy to S3 Summary" ${AWSM}
 }
 
-mainLogFile="/usr/local/countly/log/shardPrediction.log"
+mainLogFile="/usr/local/countly/log/shardPredictionS3.log"
 working_dir="/usr/local/countly/api"
 mail_target=${AWSM}
 s3PredictionPath="/s3mnt/shard_backup/Old/"
 
-if [ -z "$1" ]; then
-  echo "Please execute with date(0101) paramater"
+if [ -z "$1" ] || [ -z "$2" ]; then
+  echo "Please execute with date(0101) and index(1 or 2) paramater"
   exit 0
 fi
 
