@@ -7,7 +7,7 @@ function error_exp
   echo -e "error"
   echo -e "Execute Prediction Error ${mainLogFile} : "\
   $(tail -20 ${mainLogFile}) \
-  | mail -s "[Old][clad${2}] Error Execute Prediction" ${AWSM}
+  | mail -s "[Old][clad${index}] Error Execute Prediction" ${AWSM}
   exit 0
 }
 
@@ -15,16 +15,20 @@ function sendSummaryMail() {
   echo -e "summary"
   echo -e "Execute Prediction logs ${mainLogFile} : "\
   $(tail -20 ${mainLogFile}) \
-  | mail -s "[Old][clad${2}] Execute Prediction on EMR Summary" ${AWSM}
+  | mail -s "[Old][clad${index}] Execute Prediction on EMR Summary" ${AWSM}
 }
 
 mainLogFile="/usr/local/countly/log/shardPredictionBatch.log"
 working_dir="/usr/local/countly/api"
+S3LogFile="/usr/local/countly/log/shardPredictionS3.log"
+EMRLogFile="/usr/local/countly/log/shardPredictionEMR.log"
 
 if [ -z "$1" ] || [ -z "$2" ]; then
   echo "Please execute with dbname and index(1 or 2) paramater"
   exit 0
 fi
+
+index="${2}"
 
 cd ${working_dir}
 string="$1"
@@ -36,13 +40,13 @@ if [[ $string =~ $regular ]]; then
 fi
 
 ## execute copy prediction file to s3
-#cmd="./predictCopy2S3.sh $1 $2"
-#echo -e "${cmd}" >> ${mainLogFile}
-#${cmd} $1 $2
-## execute copy prediction file to emr
-cmd="./predictCopy2emr.sh $1 $2"
+cmd="./predictCopy2S3.sh $1 $2 >> ${S3LogFile}"
 echo -e "${cmd}" >> ${mainLogFile}
-${cmd} $1 $2
+${cmd} $1 $2 >> ${S3LogFile}
+## execute copy prediction file to emr
+cmd="./predictCopy2emr.sh $1 $2 >> ${EMRLogFile}"
+echo -e "${cmd}" >> ${mainLogFile}
+${cmd} $1 $2 >> ${EMRLogFile}
 
 if [ "$2" == "2" ]; then
   echo -e "Execute Prediction Scirpt"
