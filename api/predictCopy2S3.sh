@@ -63,4 +63,4 @@ for i in *.txt ; do
   fi
 done
 
-
+sendSummaryMail

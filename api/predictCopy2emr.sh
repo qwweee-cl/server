@@ -4,9 +4,9 @@ trap 'error_exp'  ERR SIGINT SIGTERM
 
 function error_exp
 {
-  echo -e "[Old] Prediction Copy to S3 fail"\
+  echo -e "[Old] Prediction Copy to EMR fail"\
   $(tail -20 ${mainLogFile}) \
-  | mail -s "[Old] Prediction Copy to S3 Error Trap" ${mail_target}
+  | mail -s "[Old] Prediction Copy to EMR Error Trap" ${mail_target}
   echo -e "Copy Prediction files error!"
   exit 1
 }
@@ -14,7 +14,7 @@ function error_exp
 function sendSummaryMail() {
   echo -e "Prediction logs ${mainLogFile} : "\
   $(tail -20 ${mainLogFile}) \
-  | mail -s "[Old] Prediction Copy to S3 Summary" ${AWSM}
+  | mail -s "[Old] Prediction Copy to EMR Summary" ${AWSM}
 }
 
 mainLogFile="/usr/local/countly/log/shardPrediction.log"
@@ -63,4 +63,4 @@ for i in *.txt ; do
   fi
 done
 
-
+sendSummaryMail
