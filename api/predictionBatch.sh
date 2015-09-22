@@ -35,18 +35,19 @@ string="$1"
 regular="[0-9]{4}"
 if [[ $string =~ $regular ]]; then 
   execDate="2015${BASH_REMATCH[0]}"
+  shortDate="${BASH_REMATCH[0]}"
   echo ${execDate}
   echo ${execDate} >> ${mainLogFile}
 fi
 
 ## execute copy prediction file to s3
-cmd="./predictCopy2S3.sh $1 $2"
+cmd="./predictCopy2S3.sh ${shortDate} $2"
 echo -e "${cmd}" >> ${mainLogFile}
-${cmd} $1 $2
+${cmd} ${shortDate} $2
 ## execute copy prediction file to emr
-cmd="./predictCopy2emr.sh $1 $2"
+cmd="./predictCopy2emr.sh ${shortDate} $2"
 echo -e "${cmd}" >> ${mainLogFile}
-${cmd} $1 $2
+${cmd} ${shortDate} $2
 
 if [ "$2" == "2" ]; then
   echo -e "Execute Prediction Scirpt"
