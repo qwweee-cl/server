@@ -4,13 +4,13 @@ trap 'error_exp'  ERR SIGINT SIGTERM
 
 function error_exp
 {
-  echo -e "[Old] Process Others Script1 fail"\
+  echo -e "[Old] Process Others Script2 fail"\
   $(tail -20 ${mainLogFile}) \
-  | mail -s "[Old][clad${index}] Process Others Script1 Error Trap" ${mail_target}
-  echo -e "Process Others Script1 error!"
+  | mail -s "[Old][clad${index}] Process Others Script2 Error Trap" ${mail_target}
+  echo -e "Process Others Script2 error!"
 }
 
-mainLogFile="/usr/local/countly/log/hourlySessionOthers1.log"
+mainLogFile="/usr/local/countly/log/hourlySessionOthers2.log"
 working_dir="/usr/local/countly/api"
 mail_target=${AWSM}
 
