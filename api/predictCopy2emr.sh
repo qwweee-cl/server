@@ -14,7 +14,7 @@ function error_exp
 function sendSummaryMail() {
   echo -e "Prediction logs ${mainLogFile} : "\
   $(tail -20 ${mainLogFile}) \
-  | mail -s "[Old][clad${index}] Prediction Copy to EMR Summary" ${AWSM}
+  | mail -s "[Old][clad${index}] Prediction Copy to EMR Summary" ${mail_target}
 }
 
 mainLogFile="/usr/local/countly/log/shardPredictionEMR.log"

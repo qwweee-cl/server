@@ -164,6 +164,10 @@ for ((;1;)); do
 	echo $cmd
 	$cmd
 
+	cd ${path}
+	echo -e "Call Others batch script hourlyLoopSessionOthers2.sh ${batchdb} ${indexNum}"
+	./hourlyLoopSessionOthers2.sh ${batchdb} ${indexNum} >> $one_time_log 2>&1
+
 	echo -e $(tail -20 $one_time_log)\
 	| mail -s "[Hourly] Main2 Loop Process Session Summary" ${AWSM}
 	sleep 60

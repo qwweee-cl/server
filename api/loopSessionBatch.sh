@@ -252,6 +252,10 @@ for ((;1;)); do
 	echo -e "Program(${pid}) stops on `date +"%Y-%m-%d %T"`." 2>&1 >> $one_time_log
 	echo -e "Program(${pid}) stops on `date +"%Y-%m-%d %T"`."
 
+	cd ${path}
+	echo -e "Call Others batch script hourlyLoopSessionOthers1.sh ${batchdb} ${indexNum}"
+	./hourlyLoopSessionOthers1.sh ${batchdb} ${indexNum} >> $one_time_log 2>&1
+
 	echo -e $(tail -20 $one_time_log)\
 	| mail -s "[Hourly] Main1 Loop Process Session Summary" ${AWSM}
 	sleep 60

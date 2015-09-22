@@ -7,7 +7,7 @@ function error_exp
   echo -e "error"
   echo -e "Execute Prediction Error ${mainLogFile} : "\
   $(tail -20 ${mainLogFile}) \
-  | mail -s "[Old][clad${index}] Error Execute Prediction" ${AWSM}
+  | mail -s "[Old][clad${index}] Error Execute Prediction" ${mail_target}
   exit 0
 }
 
@@ -15,11 +15,12 @@ function sendSummaryMail() {
   echo -e "summary"
   echo -e "Execute Prediction logs ${mainLogFile} : "\
   $(tail -20 ${mainLogFile}) \
-  | mail -s "[Old][clad${index}] Execute Prediction on EMR Summary" ${AWSM}
+  | mail -s "[Old][clad${index}] Execute Prediction on EMR Summary" ${mail_target}
 }
 
 mainLogFile="/usr/local/countly/log/shardPredictionBatch.log"
 working_dir="/usr/local/countly/api"
+mail_target=${AWSM}
 S3LogFile="/usr/local/countly/log/shardPredictionS3.log"
 EMRLogFile="/usr/local/countly/log/shardPredictionEMR.log"
 
