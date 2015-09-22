@@ -40,13 +40,13 @@ if [[ $string =~ $regular ]]; then
 fi
 
 ## execute copy prediction file to s3
-cmd="./predictCopy2S3.sh $1 $2 >> ${S3LogFile}"
+cmd="./predictCopy2S3.sh $1 $2"
 echo -e "${cmd}" >> ${mainLogFile}
-${cmd} $1 $2 >> ${S3LogFile}
+${cmd} $1 $2
 ## execute copy prediction file to emr
-cmd="./predictCopy2emr.sh $1 $2 >> ${EMRLogFile}"
+cmd="./predictCopy2emr.sh $1 $2"
 echo -e "${cmd}" >> ${mainLogFile}
-${cmd} $1 $2 >> ${EMRLogFile}
+${cmd} $1 $2
 
 if [ "$2" == "2" ]; then
   echo -e "Execute Prediction Scirpt"
