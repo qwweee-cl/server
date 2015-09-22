@@ -6,7 +6,7 @@ function error_exp
 {
   echo -e "error"
   echo -e "Execute Prediction Error ${mainLogFile} : "\
-  $(tail -20 ${mainLogFile})
+  $(tail -20 ${mainLogFile}) \
   | mail -s "[Old] Error Execute Prediction" ${AWSM}
   exit 0
 }
@@ -36,13 +36,13 @@ if [[ $string =~ $regular ]]; then
 fi
 
 ## execute copy prediction file to s3
-#cmd="./predictCopy2S3.sh"
+#cmd="./predictCopy2S3.sh $1"
 #echo -e "${cmd}" >> ${mainLogFile}
-#${cmd}
+#${cmd} $1
 ## execute copy prediction file to emr
-cmd="./predictCopy2emr.sh"
+cmd="./predictCopy2emr.sh $1"
 echo -e "${cmd}" >> ${mainLogFile}
-${cmd}
+${cmd} $1
 
 if [ "$2" == "2" ]; then
   echo -e "Execute Prediction Scirpt"
@@ -52,3 +52,4 @@ if [ "$2" == "2" ]; then
   ${cmd}
 fi
 
+sendSummaryMail
