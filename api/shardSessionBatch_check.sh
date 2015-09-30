@@ -15,29 +15,24 @@ function error_exp
 }
 
 function backupDashboard() {
-	cd $path
 	if [ "${indexNum}" == "1" ]; then
+		cd $working_dir
+		## update backup status 1
+		cmd="node shardUpdateBackupStatus.js 1"
+		echo ${cmd} 2>&1 >> ${one_day_log}
+		$cmd
 		## call backup script
 		cmd="${working_dir}/shardBackupDashboardDB.sh"
 		echo ${cmd} 2>&1 >> ${one_day_log}
-#		$cmd
-#	else
-		## check backup finish or not?
-#		cmd="node shardFindDashBackup.js ${savedate}"
-#		echo -e ${cmd} 2>&1 >> ${one_day_log}
-#		string=`${cmd}`
-#		while [ "${string}" == "null" ]; do
-#		    echo -e "sleep 60 seconds wait for backup finished"
-#		    sleep 60
-#		    cmd="node shardFindDashBackup.js ${savedate}"
-#			echo -e ${cmd} 2>&1 >> ${one_day_log}
-#			string=`${cmd}`
-#			checkLoopStop
-#		done
-
+		$cmd
 		#cmd="${working_dir}/backupDashboardDB.sh"
 		#echo $cmd
 		#$cmd
+
+		## update backup status 0
+		cmd="node shardUpdateBackupStatus.js 0"
+		echo ${cmd} 2>&1 >> ${one_day_log}
+		$cmd
 	fi
 }
 function checkLoopStop() {
@@ -198,6 +193,85 @@ do
 	start_time=$((10#$(date -d "-6 hours" +%H)*3600+10#$(date -d "-6 hours" +%M)*60+10#$(date -d "-6 hours" +%S)))
 	cur_round=$(printf "%02d" $((10#$start_time/10#$interval)))
 	old_data="0"
+
+## for session2 to check backup
+	if [ "${indexNum}" == "2" ]; then
+		echo -e "Session2 to check backup status"
+		echo -e "Session2 to check backup status" >> $one_day_log 2>&1
+		cd $working_dir
+		cmd="node shardGetBackupStatus.js"
+		echo -e ${cmd}
+		echo -e ${cmd} >> $one_day_log 2>&1
+		backupStatus=`${cmd}`
+
+		echo -e "${backupStatus}"
+		while [ "${backupStatus}" == "1" ]
+		do
+			cmd="node shardGetBackupStatus.js"
+			echo -e ${cmd}
+			echo -e ${cmd} >> $one_day_log 2>&1
+			backupStatus=`${cmd}`
+			echo -e "Session2 wait for backup finished (600 seconds)"
+			echo -e "Session2 wait for backup finished (600 seconds)" >> $one_day_log 2>&1
+			sleep 600
+			## check stop file
+			checkLoopStop
+
+			echo -e "backupStatus: ${backupStatus}"
+			echo -e "backupStatus: ${backupStatus}" >> $one_day_log 2>&1
+		done
+		echo -e "do process session script"
+	fi
+
+## for session1 to check session2 process session finished
+	if [ "${indexNum}" == "1" ]; then
+		echo -e "Session1 to check session2 status"
+		echo -e "Session2 to check session2 status" >> $one_day_log 2>&1
+		cd $working_dir
+		if [[ ${currBackup} != ${checkDate} ]] && [[ ${checkTime} > ${backupTime} ]]; then
+			cmd="node shardGetSession1Status.js"
+			echo -e ${cmd}
+			echo -e ${cmd} >> $one_day_log 2>&1
+			session1Status=`${cmd}`
+
+			cmd="node shardGetSession2Status.js"
+			echo -e ${cmd}
+			echo -e ${cmd} >> $one_day_log 2>&1
+			session2Status=`${cmd}`
+
+			echo -e "Session1: ${session1Status}"
+			echo -e "Session2: ${session2Status}"
+			while [ "${session2Status}" == "1" ]
+			do
+				echo -e "do wait for Session2 process finished(60 seconds)"
+				echo -e "do wait for Session2 process finished(60 seconds)" >> $one_day_log 2>&1
+				sleep 60
+
+				cmd="node shardGetSession1Status.js"
+				echo -e ${cmd}
+				echo -e ${cmd} >> $one_day_log 2>&1
+				session1Status=`${cmd}`
+
+				cmd="node shardGetSession2Status.js"
+				echo -e ${cmd}
+				echo -e ${cmd} >> $one_day_log 2>&1
+				session2Status=`${cmd}`
+
+				echo -e "Session1: ${session1Status}"
+				echo -e "Session2: ${session2Status}"
+			done
+
+			echo -e "[backup]backup start"
+## call backup function
+			backupDashboard
+## call backup function end
+			echo -e "[backup]backup end"
+			currBackup=$(date +%j)
+		else
+			echo -e "do next job, continue process session"
+			sleep 601
+		fi
+	fi
 
 #	if [[ ${checkTime} > ${beforeBackupTime} ]] && [[ ${checkTime} < ${backupTime} ]]; then
 #		echo -e "waiting for backup start"

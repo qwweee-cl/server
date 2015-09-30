@@ -75,13 +75,19 @@ echo -e "Backup Program(${pid}) starts on `date +"%Y-%m-%d %T"`."
 
 cd $path
 backupDate=$(date +%Y%m%d-%H%M)
-cmd="node cladBackupStatus.js"
+#cmd="node shardCladBackupStatus.js"
+#echo -e ${cmd}
+#string=`${cmd}`
+cmd="node shardGetSession1Round.js"
 echo -e ${cmd}
 string=`${cmd}`
 #	echo -e ${string}
 cladStatus=$string
 
-cmd="node clad2BackupStatus.js"
+#cmd="node shardClad2BackupStatus.js"
+#echo -e ${cmd}
+#string=`${cmd}`
+cmd="node shardGetSession2Round.js"
 echo -e ${cmd}
 string=`${cmd}`
 #	echo -e ${string}
