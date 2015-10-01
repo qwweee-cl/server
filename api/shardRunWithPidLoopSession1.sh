@@ -10,5 +10,5 @@ if [ -e ${LOCKFILE} ] ; then
 	exit 1
 fi
 
-nohup /usr/local/countly/api/shardSessionBatch.sh 1 >> /usr/local/countly/log/shardSessionMain1.log 2>&1 & echo $! > ${LOCKFILE}
+#nohup /usr/local/countly/api/shardSessionBatch.sh 1 >> /usr/local/countly/log/shardSessionMain1.log 2>&1 & echo $! > ${LOCKFILE}
 
