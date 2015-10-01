@@ -422,11 +422,15 @@ do
 	$cmd 2>&1 &
 	fi
 
-	## cp Prediction files to s3
-	cd ${working_dir}
-	cmd="./shardPredictionRename.sh"
-	echo -e ${cmd} 2>&1 >> $one_day_log 
-	${cmd}
+#	## cp Prediction files to s3
+#	cd ${working_dir}
+#	cmd="./shardPredictionRename.sh"
+#	echo -e ${cmd} 2>&1 >> $one_day_log 
+#	${cmd}
+	## do other scripts
+	cd ${path}
+	echo -e "Call Others batch script shardLoopSessionOthers.sh ${batchdb} ${indexNum}"
+	./shardLoopSessionOthers.sh ${batchdb} ${indexNum} >> $one_time_log 2>&1
 
 	## send summary mail
 	sendSummaryMail
