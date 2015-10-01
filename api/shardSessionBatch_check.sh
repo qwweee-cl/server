@@ -430,7 +430,7 @@ do
 	## do other scripts
 	cd ${path}
 	echo -e "Call Others batch script shardLoopSessionOthers.sh ${batchdb} ${indexNum}"
-	./shardLoopSessionOthers.sh ${batchdb} ${indexNum} >> $one_time_log 2>&1
+	./shardLoopSessionOthers.sh ${batchdb} ${indexNum} >> $one_day_log 2>&1
 
 	## send summary mail
 	sendSummaryMail
