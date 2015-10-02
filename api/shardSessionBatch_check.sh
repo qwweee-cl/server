@@ -428,9 +428,9 @@ do
 #	echo -e ${cmd} 2>&1 >> $one_day_log 
 #	${cmd}
 	## do other scripts
-	cd ${path}
+	cd ${working_dir}
 	echo -e "Call Others batch script shardLoopSessionOthers.sh ${batchdb} ${indexNum}"
-	./shardLoopSessionOthers.sh ${batchdb} ${indexNum} >> "$one_day_log" 2>&1
+	${working_dir}/shardLoopSessionOthers.sh ${batchdb} ${indexNum} >> "$one_day_log" 2>&1
 
 	## send summary mail
 	sendSummaryMail
