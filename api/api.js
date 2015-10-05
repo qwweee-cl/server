@@ -99,6 +99,7 @@ function insertRawColl(coll, eventp, params) {
     }
     if (oem) {
         var oemdb = common.getOEMRawDB(dealNumber);
+        var shardoemdb = common.getShardOEMRawDB(dealNumber);
         if (oemdb) {
             oemdb.collection(coll).insert(eventp, function(err, res) {
                 if (err) {
@@ -110,6 +111,23 @@ function insertRawColl(coll, eventp, params) {
             console.log("can not get OEM database : ("+dealNumber+")");
             oemdb = common.getErrorDB();
             oemdb.collection(coll).insert(eventp, function(err, res) {
+                if (err) {
+                    console.log('DB operation error');
+                    console.log(err);
+                }
+            });
+        }
+        if (shardoemdb) {
+            shardoemdb.collection(coll).insert(eventp, function(err, res) {
+                if (err) {
+                    console.log('DB operation error');
+                    console.log(err);
+                }
+            });
+        } else {
+            console.log("can not get OEM database : ("+dealNumber+")");
+            shardoemdb = common.getErrorDB();
+            shardoemdb.collection(coll).insert(eventp, function(err, res) {
                 if (err) {
                     console.log('DB operation error');
                     console.log(err);
@@ -164,8 +182,8 @@ function insertRawSession(coll,params) {
     insertRawColl(coll, eventp, params);
 }
 
-var listAppKeyToPerfect_And = [appKey.key["YouCam_MakeUp_And"], appKey.key["YouCam_Perfect_And"]],
-    listAppKeyToPerfect_iOS = [appKey.key["YouCam_MakeUp_iOS"], appKey.key["YouCam_Perfect_iOS"]];
+var listAppKeyToPerfect_And = [appKey.key["YouCam_MakeUp_And"], appKey.key["YouCam_Perfect_And"], appKey.key["YouCam_Nail_And"]],
+    listAppKeyToPerfect_iOS = [appKey.key["YouCam_MakeUp_iOS"], appKey.key["YouCam_Perfect_iOS"], appKey.key["YouCam_Nail_iOS"]];
 // Checks app_key from the http request against "apps" collection.
 // This is the first step of every write request to API.
 function validateAppForWriteAPI(params) {

@@ -131,6 +131,9 @@ var common = {},
     common.db_hourlyShard = null;
     common.db_closesShard = [];
 
+    common.db_hourlyShardOEM = null;
+    common.db_closesShardOEM = [];
+
     common.db_maintain = mongo.db(dbMaintainName, dbOptions);
     common.db_maintain.tag = countlyConfig.mongodb.db_maintain.replace(/system\.|\.\.|\$/g, "");
 
@@ -291,6 +294,81 @@ var common = {},
             common.db_hourlyShard = dbInstance;
         }
         return common.db_hourlyShard;
+    };
+
+    common.getShardOEMRawDB = function(appKey) {
+        var headName = 'countly_raw',
+            rawdbName = '',
+            currDate,
+            appTimezone = "America/Denver";
+
+        //print("getHourlyRawDB");
+        currDate = new Date();
+        var tmpMoment = momentz(currDate).tz(appTimezone);
+        var fileHeadName = tmpMoment.format("YYYYMMDD");
+        var tailName = tmpMoment.format("MMDD_HH_mm_");
+        tailName = tmpMoment.format("MMDD_");
+        var min = tmpMoment.minutes();
+        min = tmpMoment.hours();
+        var index = parseInt(min/6); // calculate index
+        var fullName = headName + tailName + (pad2(index)).toString();
+        var filename = fileHeadName+"_raw_"+(pad2(index)).toString();
+        fullName = fullName.replace(/system\.|\.\.|\$/g, "");
+
+        // shard
+        return common.getDBByNameShardOEM(fullName, filename);
+    };
+
+    common.getDBByNameShardOEM = function (inDBName, filename) {
+        var db_name = (countlyConfig.mongodb.hostshard + ':' + 
+            countlyConfig.mongodb.mongos + '/' + inDBName + 
+            '?auto_reconnect=true');
+        if (!common.db_hourlyShardOEM) {
+            var dbInstance = mongo.db(db_name, dbRawOptions);
+            dbInstance.tag = inDBName.replace(/system\.|\.\.|\$/g, "");
+            dbInstance.filename = filename;
+            common.db_hourlyShardOEM = dbInstance;
+            return common.db_hourlyShardOEM;
+        }
+        if (common.db_hourlyShardOEM.tag != inDBName) {
+            var old = common.db_hourlyShardOEM;
+            common.db_closesShardOEM.push(old);
+            if (common.db_closesShardOEM.length >= 5) {
+                // remove and close the first obj
+                var beRemoveDB = common.db_closesShardOEM.shift();
+                beRemoveDB.close();
+            }
+            var insertData = {};
+            insertData.dbname = old.tag;
+            insertData.timestamp = Math.floor(Date.now()/1000);
+            insertData.filename = old.filename;
+            common.shard_maintain.collection("raw_oem_finished1").update({dbname: old.tag},
+                {$set: insertData}, {'upsert': true}, function(err, res) {
+                    if (err) {
+                        print('raw_oem_finished1 error');
+                        print(err);
+                    }
+                });
+            common.shard_maintain.collection("raw_oem_finished2").update({dbname: old.tag},
+                {$set: insertData}, {'upsert': true}, function(err, res) {
+                    if (err) {
+                        print('raw_finished2 error');
+                        print(err);
+                    }
+                });
+            common.shard_maintain.collection("raw_oem_finished3").update({dbname: old.tag},
+                {$set: insertData}, {'upsert': true}, function(err, res) {
+                    if (err) {
+                        print('raw_finished3 error');
+                        print(err);
+                    }
+                });
+            var dbInstance = mongo.db(db_name, dbRawOptions);
+            dbInstance.tag = inDBName.replace(/system\.|\.\.|\$/g, "");
+            dbInstance.filename = filename;
+            common.db_hourlyShardOEM = dbInstance;
+        }
+        return common.db_hourlyShardOEM;
     };
 
     common.getDBByNameClad1 = function (inDBName, filename) {
