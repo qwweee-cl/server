@@ -296,11 +296,15 @@ var common = {},
         return common.db_hourlyShard;
     };
 
-    common.getShardOEMRawDB = function(appKey) {
-        var headName = 'countly_raw',
+    common.getShardOEMRawDB = function(appKey, oemHeadName) {
+        var headName = 'oem_countly_raw',
             rawdbName = '',
             currDate,
             appTimezone = "America/Denver";
+
+        if (oemHeadName) {
+            headName = "oem_"+oemHeadName+"_raw";
+        }
 
         //print("getHourlyRawDB");
         currDate = new Date();

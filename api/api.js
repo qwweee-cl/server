@@ -99,7 +99,7 @@ function insertRawColl(coll, eventp, params) {
     }
     if (oem) {
         var oemdb = common.getOEMRawDB(dealNumber);
-        var shardoemdb = common.getShardOEMRawDB(dealNumber);
+        var shardoemdb = common.getShardOEMRawDB(eventp.app_key, dealNumber);
         if (oemdb) {
             oemdb.collection(coll).insert(eventp, function(err, res) {
                 if (err) {
