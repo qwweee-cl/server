@@ -119,7 +119,7 @@ for ((;1;)); do
 	echo -e ${cmd} 2>&1 >> $one_time_log 
 	string=`${cmd}`
 	#echo -e ${string}
-	rawdate=${string}"_"${indexNum}
+	rawdate=${string}
 	echo -e ${rawdate} 2>&1 >> $one_time_log 
 
 	## check if no data in db
