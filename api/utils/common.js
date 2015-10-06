@@ -316,7 +316,7 @@ var common = {},
         min = tmpMoment.hours();
         var index = parseInt(min/6); // calculate index
         var fullName = headName + tailName + (pad2(index)).toString();
-        var filename = fileHeadName+"_raw_"+(pad2(index)).toString();
+        var filename = fileHeadName+"_"+oemHeadName+"_"+(pad2(index)).toString();
         fullName = fullName.replace(/system\.|\.\.|\$/g, "");
 
         // shard
