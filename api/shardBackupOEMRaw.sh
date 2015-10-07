@@ -100,7 +100,7 @@ for ((;1;)); do
 	## get current timestamp
 	curTimestamp=$(date +%s)
 	echo -e ${curTimestamp} 2>&1 >> $one_time_log 
-	curTimestamp=$(date -d "-5 minutes" +%s)
+	curTimestamp=$(date -d "-6 hours" +%s)
 	echo -e ${curTimestamp} 2>&1 >> $one_time_log 
 
 	## get the first db name
@@ -120,12 +120,13 @@ for ((;1;)); do
 	echo -e ${rawdate} 2>&1 >> $one_time_log 
 
 	# wait for secondary sync
-	#sleep 601
+	echo -e "wait data sync sleep 30 minutes ...." 2>&1 >> $one_time_log 
+	sleep 1801
 
 	## check if no data in db
 	if [ "${batchdb}" == "" ]; then
-		echo -e "no data sleep 10 minutes ...." 2>&1 >> $one_time_log 
-		sleep 600
+		echo -e "no data sleep 30 minutes ...." 2>&1 >> $one_time_log 
+		sleep 1800
 		continue
 	else
 		cd $exportPath
