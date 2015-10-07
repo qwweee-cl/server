@@ -118,5 +118,8 @@ if __name__ == '__main__':
         distinctSessions(aKeys["YouCam_MakeUp_And"], aKeys["YouCam_MakeUp_iOS"], log)
         calculateSessions(aKeys["YouCam_MakeUp_And"], aKeys["YouCam_MakeUp_iOS"])
 
+        distinctSessions(aKeys["YouCam_Nail_And"], aKeys["YouCam_Nail_iOS"], log)
+        calculateSessions(aKeys["YouCam_Nail_And"], aKeys["YouCam_Nail_iOS"])
+
     endTime = time.time()
     log(("**** Finished. Time cost on sessionMT = " + str(endTime-startTime) + " seconds\n"))

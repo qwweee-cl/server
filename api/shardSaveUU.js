@@ -21,8 +21,11 @@ var YCP_And_Oid = new ObjectID("543f37d0a62268c51e16d053");
 var YMK_iOS_Oid = new ObjectID("543f866fa9e5b7ed76000011");
 var YMK_And_Oid = new ObjectID("543f37eaa62268c51e16d0c3");
 
-var PF_iOS_Oid = new ObjectID("5552bf53acdd571e2e00044e");
-var PF_And_Oid = new ObjectID("5551e55cacdd571e2e000443");
+var YCN_iOS_Oid = new ObjectID("55d69ff33b254f9535d6059a");
+var YCN_And_Oid = new ObjectID("55d6a0123b254f9535d6142d");
+
+var PF_iOS_Oid = new ObjectID("5551e55cacdd571e2e000443");
+var PF_And_Oid = new ObjectID("5552bf53acdd571e2e00044e");
 
 var collectionName = "UU_locations";
 var collectionName2 = "locations";
@@ -195,6 +198,24 @@ b_coll2.findOne({_id:YCP_iOS_Oid}, function (err, result) {
     	return;
     }
     getData(result, "iOS", "YCP");
+});
+b_coll2.findOne({_id:YCN_And_Oid}, function (err, result) {
+	dbCount++;
+    if (!result) {
+    	print("YCN_And no data");
+	print(err);
+    	return;
+    }
+    getData(result, "And", "YCN");
+});
+b_coll2.findOne({_id:YCN_iOS_Oid}, function (err, result) {
+	dbCount++;
+    if (!result) {
+    	print("YCN_iOS no data");
+	print(err);
+    	return;
+    }
+    getData(result, "iOS", "YCN");
 });
 b_coll2.findOne({_id:PF_And_Oid}, function (err, result) {
 	dbCount++;
