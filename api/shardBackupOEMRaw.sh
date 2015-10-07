@@ -111,9 +111,6 @@ for ((;1;)); do
 	batchdb=${string}
 	echo -e ${batchdb} 2>&1 >> $one_time_log 
 
-	# wait for secondary sync
-	sleep 601
-
 	## get rawdata file name
 	cmd="node shardGetOEMRawFileName.js ${curTimestamp} ${indexNum}"
 	echo -e ${cmd} 2>&1 >> $one_time_log 
@@ -121,6 +118,9 @@ for ((;1;)); do
 	#echo -e ${string}
 	rawdate=${string}
 	echo -e ${rawdate} 2>&1 >> $one_time_log 
+
+	# wait for secondary sync
+	#sleep 601
 
 	## check if no data in db
 	if [ "${batchdb}" == "" ]; then
