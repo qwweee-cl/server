@@ -402,6 +402,15 @@ var common = {},
         return common.db_hourlyShardOEM;
     };
 
+    common.getDBByNameShardOEM_ = function (inDBName) {
+        var db_name = (countlyConfig.mongodb.hostshard + ':' + 
+            countlyConfig.mongodb.mongos + '/' + inDBName + 
+            '?auto_reconnect=true');
+        var dbInstance = mongo.db(db_name, dbRawOptions);
+        dbInstance.tag = inDBName.replace(/system\.|\.\.|\$/g, "");
+        return dbInstance;
+    };
+
     common.getDBByNameClad1 = function (inDBName, filename) {
         var db_name = (countlyConfig.mongodb.hostbatch1 + ':' + 
             countlyConfig.mongodb.port + '/' + inDBName + 
