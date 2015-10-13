@@ -79,6 +79,7 @@ function processRaw(dbs, collectionName, processData, sortOrder, appinfo) {
         	    if (!res) { //end of collection
             		if (isFirst) { //no data
             		    console.log('No data');
+                        process.emit('hi_mongo');
             		    return false;
             		}
                     /*if (collectionName == 'raw_session_54002336f036d1673f003768') {
@@ -188,6 +189,7 @@ var caseValue = 0;
 if (process.argv.length < 3) {
     console.log('no app key parameter');
     process.exit(0);
+    /*
 } else if (process.argv.length == 5) { //process only one OEM DB
     app_key = process.argv[2];
     oem_app_key = process.argv[3];
@@ -196,6 +198,7 @@ if (process.argv.length < 3) {
     oem_app_key = oem_app_key.replace(/system\.|\.\.|\$/g, "");
     oem_dbname = oem_dbname.replace(/system\.|\.\.|\$/g, "");
     caseValue = 2;
+    */
 } else if (process.argv.length == 4) {
     app_key = process.argv[2];
     oem_dbname = process.argv[3];
@@ -233,6 +236,16 @@ fs.readFile(oidFileName, 'utf8', function (err,data) {
         process.on("hi_mongo", callRaw);
      	//wait_cnt = wait_cnt * 5; // wait 5 times for all logs
         dbs.batch.collections(function(err,collection) {
+            if (err) {
+                console.log(err);
+                dbClose(dbs);
+                process.exit(0);
+            }
+            if (!collection) {
+                console.log('no data');
+                dbClose(dbs);
+                process.exit(0);
+            }
             if (!collection.length) {
             	console.log('no data');
             	dbClose(dbs);
