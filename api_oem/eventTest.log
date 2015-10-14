@@ -1,0 +1,252 @@
+node hourlyCreateEventIndex.js 20150412event
+/usr/bin/mongo localhost:27017/20150412event --eval " db.raw_event_e315c111663af26a53e5fe4c82cc1baeecf50599.ensureIndex({app_user_id:1}); db.raw_event_e4f1ebacd105643ae331ef2f0e909b00694aefd5.ensureIndex({app_user_id:1}); db.raw_event_c277de0546df31757ff26a723907bc150add4254.ensureIndex({app_user_id:1}); db.raw_event_26505e9590f0c036e02bcb4d5f6112798f424baa.ensureIndex({app_user_id:1}); db.raw_event_de5a6b0dd9e24bc33fc4a0615db743f9d2db8190.ensureIndex({app_user_id:1}); db.raw_event_3c0d51e6ebd543345390297e77186287f3cfb43d.ensureIndex({app_user_id:1}); db.raw_event_05c06552cda7756b02d0ea78a15f9f602b9e8b00.ensureIndex({app_user_id:1}); db.raw_event_75edfca17dfbe875e63a66633ed6b00e30adcb92.ensureIndex({app_user_id:1}); db.raw_event_b936dc8fb20effe0d2252509cf2914028d3b60f6.ensureIndex({app_user_id:1}); db.raw_event_d5b24af83418399bb422d387f4f895f32899c374.ensureIndex({app_user_id:1}); db.raw_event_9219f32e8de29b826faf44eb9b619788e29041bb.ensureIndex({app_user_id:1}); " /usr/bin/mongo localhost:27017/20150412event --eval " "_1
+node updateHourlyBeginEvent.js 20150412event
+
+node --max-old-space-size=6144 hourlyEventNewBatch.js 20150412event
+Fri Jun 26 2015 06:34:33 GMT+0000 (UTC)
+raw:countly_nodejs_raw1
+batch:20150412event
+[ 'raw_event_05c06552cda7756b02d0ea78a15f9f602b9e8b00',
+  'raw_event_26505e9590f0c036e02bcb4d5f6112798f424baa',
+  'raw_event_3c0d51e6ebd543345390297e77186287f3cfb43d',
+  'raw_event_75edfca17dfbe875e63a66633ed6b00e30adcb92',
+  'raw_event_9219f32e8de29b826faf44eb9b619788e29041bb',
+  'raw_event_b936dc8fb20effe0d2252509cf2914028d3b60f6',
+  'raw_event_c277de0546df31757ff26a723907bc150add4254',
+  'raw_event_d5b24af83418399bb422d387f4f895f32899c374',
+  'raw_event_de5a6b0dd9e24bc33fc4a0615db743f9d2db8190',
+  'raw_event_e315c111663af26a53e5fe4c82cc1baeecf50599',
+  'raw_event_e4f1ebacd105643ae331ef2f0e909b00694aefd5' ]
+hi mongo:10
+Start Date: 2015-06-26 06:34:33
+raw_event_e4f1ebacd105643ae331ef2f0e909b00694aefd5:bid = 553d7c000000000000000000 eid = 558de7800000000000000000
+No data
+node updateHourlyEndEvent.js 20150412event
+
+node removeEventFinished.js 20150412event
+
+node hourlyCreateEventIndex.js 20150412event
+/usr/bin/mongo localhost:27017/20150412event --eval " db.raw_event_e315c111663af26a53e5fe4c82cc1baeecf50599.ensureIndex({app_user_id:1}); db.raw_event_e4f1ebacd105643ae331ef2f0e909b00694aefd5.ensureIndex({app_user_id:1}); db.raw_event_c277de0546df31757ff26a723907bc150add4254.ensureIndex({app_user_id:1}); db.raw_event_26505e9590f0c036e02bcb4d5f6112798f424baa.ensureIndex({app_user_id:1}); db.raw_event_de5a6b0dd9e24bc33fc4a0615db743f9d2db8190.ensureIndex({app_user_id:1}); db.raw_event_3c0d51e6ebd543345390297e77186287f3cfb43d.ensureIndex({app_user_id:1}); db.raw_event_05c06552cda7756b02d0ea78a15f9f602b9e8b00.ensureIndex({app_user_id:1}); db.raw_event_75edfca17dfbe875e63a66633ed6b00e30adcb92.ensureIndex({app_user_id:1}); db.raw_event_b936dc8fb20effe0d2252509cf2914028d3b60f6.ensureIndex({app_user_id:1}); db.raw_event_d5b24af83418399bb422d387f4f895f32899c374.ensureIndex({app_user_id:1}); db.raw_event_9219f32e8de29b826faf44eb9b619788e29041bb.ensureIndex({app_user_id:1}); " /usr/bin/mongo localhost:27017/20150412event --eval " "_1
+node updateHourlyBeginEvent.js 20150412event
+
+node --max-old-space-size=6144 hourlyEventNewBatch.js 20150412event
+Fri Jun 26 2015 06:42:33 GMT+0000 (UTC)
+raw:countly_nodejs_raw1
+batch:20150412event
+[ 'raw_event_05c06552cda7756b02d0ea78a15f9f602b9e8b00',
+  'raw_event_26505e9590f0c036e02bcb4d5f6112798f424baa',
+  'raw_event_3c0d51e6ebd543345390297e77186287f3cfb43d',
+  'raw_event_75edfca17dfbe875e63a66633ed6b00e30adcb92',
+  'raw_event_9219f32e8de29b826faf44eb9b619788e29041bb',
+  'raw_event_b936dc8fb20effe0d2252509cf2914028d3b60f6',
+  'raw_event_c277de0546df31757ff26a723907bc150add4254',
+  'raw_event_d5b24af83418399bb422d387f4f895f32899c374',
+  'raw_event_de5a6b0dd9e24bc33fc4a0615db743f9d2db8190',
+  'raw_event_e315c111663af26a53e5fe4c82cc1baeecf50599',
+  'raw_event_e4f1ebacd105643ae331ef2f0e909b00694aefd5' ]
+hi mongo:10
+Start Date: 2015-06-26 06:42:33
+raw_event_e4f1ebacd105643ae331ef2f0e909b00694aefd5:bid = 53b1fa000000000000000000 eid = 558de7800000000000000000
+tmp is Empty
+hi mongo:9
+Start Date: 2015-06-26 06:42:35
+raw_event_e315c111663af26a53e5fe4c82cc1baeecf50599:bid = 53b1fa000000000000000000 eid = 558de7800000000000000000
+tmp is Empty
+hi mongo:8
+Start Date: 2015-06-26 12:57:43
+raw_event_de5a6b0dd9e24bc33fc4a0615db743f9d2db8190:bid = 53b1fa000000000000000000 eid = 558de7800000000000000000
+tmp is Empty
+hi mongo:7
+Start Date: 2015-06-26 12:57:56
+raw_event_d5b24af83418399bb422d387f4f895f32899c374:bid = 53b1fa000000000000000000 eid = 558de7800000000000000000
+tmp is Empty
+hi mongo:6
+Start Date: 2015-06-26 12:57:56
+raw_event_c277de0546df31757ff26a723907bc150add4254:bid = 53b1fa000000000000000000 eid = 558de7800000000000000000
+tmp is Empty
+hi mongo:5
+Start Date: 2015-06-26 13:14:18
+raw_event_b936dc8fb20effe0d2252509cf2914028d3b60f6:bid = 53b1fa000000000000000000 eid = 558de7800000000000000000
+tmp is Empty
+hi mongo:4
+Start Date: 2015-06-26 13:14:21
+raw_event_9219f32e8de29b826faf44eb9b619788e29041bb:bid = 53b1fa000000000000000000 eid = 558de7800000000000000000
+tmp is Empty
+hi mongo:3
+Start Date: 2015-06-26 13:31:40
+raw_event_75edfca17dfbe875e63a66633ed6b00e30adcb92:bid = 53b1fa000000000000000000 eid = 558de7800000000000000000
+tmp is Empty
+hi mongo:2
+Start Date: 2015-06-26 18:55:39
+raw_event_3c0d51e6ebd543345390297e77186287f3cfb43d:bid = 53b1fa000000000000000000 eid = 558de7800000000000000000
+tmp is Empty
+hi mongo:1
+Start Date: 2015-06-26 18:55:48
+raw_event_26505e9590f0c036e02bcb4d5f6112798f424baa:bid = 53b1fa000000000000000000 eid = 558de7800000000000000000
+tmp is Empty
+hi mongo:0
+Start Date: 2015-06-26 18:56:19
+raw_event_05c06552cda7756b02d0ea78a15f9f602b9e8b00:bid = 53b1fa000000000000000000 eid = 558de7800000000000000000
+repeat wait = 1
+repeat wait = 2
+repeat wait = 3
+repeat wait = 4
+repeat wait = 5
+repeat wait = 6
+repeat wait = 7
+repeat wait = 8
+repeat wait = 9
+repeat wait = 10
+repeat wait = 11
+tmp is Empty
+hi mongo:-1
+Start Date: 2015-06-26 19:02:34
+repeat wait = 1
+repeat wait = 2
+repeat wait = 3
+repeat wait = 4
+repeat wait = 5
+repeat wait = 6
+repeat wait = 7
+repeat wait = 8
+repeat wait = 9
+repeat wait = 10
+repeat wait = 11
+repeat wait = 12
+repeat wait = 13
+repeat wait = 14
+repeat wait = 15
+repeat wait = 16
+repeat wait = 17
+repeat wait = 18
+repeat wait = 19
+repeat wait = 20
+repeat wait = 21
+repeat wait = 22
+repeat wait = 23
+repeat wait = 24
+repeat wait = 25
+repeat wait = 26
+repeat wait = 27
+repeat wait = 28
+repeat wait = 29
+repeat wait = 30
+repeat wait = 31
+repeat wait = 32
+repeat wait = 33
+repeat wait = 34
+repeat wait = 35
+repeat wait = 36
+repeat wait = 37
+repeat wait = 38
+Fri Jun 26 2015 06:42:33 GMT+0000 (UTC)
+Fri Jun 26 2015 19:21:41 GMT+0000 (UTC)
+repeat wait = 39
+repeat wait = 40
+repeat wait = 41
+node updateHourlyEndEvent.js 20150412event
+
+node removeEventFinished.js 20150412event
+
+node hourlyCreateEventIndex.js 20150301event
+/usr/bin/mongo localhost:27017/20150301event --eval " db.raw_event_e315c111663af26a53e5fe4c82cc1baeecf50599.ensureIndex({app_user_id:1}); db.raw_event_e4f1ebacd105643ae331ef2f0e909b00694aefd5.ensureIndex({app_user_id:1}); db.raw_event_c277de0546df31757ff26a723907bc150add4254.ensureIndex({app_user_id:1}); db.raw_event_26505e9590f0c036e02bcb4d5f6112798f424baa.ensureIndex({app_user_id:1}); db.raw_event_de5a6b0dd9e24bc33fc4a0615db743f9d2db8190.ensureIndex({app_user_id:1}); db.raw_event_3c0d51e6ebd543345390297e77186287f3cfb43d.ensureIndex({app_user_id:1}); db.raw_event_05c06552cda7756b02d0ea78a15f9f602b9e8b00.ensureIndex({app_user_id:1}); db.raw_event_75edfca17dfbe875e63a66633ed6b00e30adcb92.ensureIndex({app_user_id:1}); db.raw_event_b936dc8fb20effe0d2252509cf2914028d3b60f6.ensureIndex({app_user_id:1}); db.raw_event_d5b24af83418399bb422d387f4f895f32899c374.ensureIndex({app_user_id:1}); db.raw_event_9219f32e8de29b826faf44eb9b619788e29041bb.ensureIndex({app_user_id:1}); " /usr/bin/mongo localhost:27017/20150301event --eval " "_1
+node updateHourlyBeginEvent.js 20150301event
+
+node --max-old-space-size=6144 hourlyEventNewBatch.js 20150301event
+Mon Jun 29 2015 03:27:40 GMT+0000 (UTC)
+raw:countly_nodejs_raw1
+batch:20150301event
+[ 'raw_event_05c06552cda7756b02d0ea78a15f9f602b9e8b00',
+  'raw_event_26505e9590f0c036e02bcb4d5f6112798f424baa',
+  'raw_event_3c0d51e6ebd543345390297e77186287f3cfb43d',
+  'raw_event_b936dc8fb20effe0d2252509cf2914028d3b60f6',
+  'raw_event_d5b24af83418399bb422d387f4f895f32899c374',
+  'raw_event_de5a6b0dd9e24bc33fc4a0615db743f9d2db8190',
+  'raw_event_e4f1ebacd105643ae331ef2f0e909b00694aefd5' ]
+hi mongo:6
+Start Date: 2015-06-29 03:27:40
+raw_event_e4f1ebacd105643ae331ef2f0e909b00694aefd5:bid = 53b5ee800000000000000000 eid = 5591dc000000000000000000
+tmp is Empty
+hi mongo:5
+Start Date: 2015-06-29 03:27:42
+raw_event_de5a6b0dd9e24bc33fc4a0615db743f9d2db8190:bid = 53b5ee800000000000000000 eid = 5591dc000000000000000000
+tmp is Empty
+hi mongo:4
+Start Date: 2015-06-29 03:27:49
+raw_event_d5b24af83418399bb422d387f4f895f32899c374:bid = 53b5ee800000000000000000 eid = 5591dc000000000000000000
+tmp is Empty
+hi mongo:3
+Start Date: 2015-06-29 03:27:49
+raw_event_b936dc8fb20effe0d2252509cf2914028d3b60f6:bid = 53b5ee800000000000000000 eid = 5591dc000000000000000000
+tmp is Empty
+hi mongo:2
+Start Date: 2015-06-29 03:27:51
+raw_event_3c0d51e6ebd543345390297e77186287f3cfb43d:bid = 53b5ee800000000000000000 eid = 5591dc000000000000000000
+tmp is Empty
+hi mongo:1
+Start Date: 2015-06-29 03:27:51
+raw_event_26505e9590f0c036e02bcb4d5f6112798f424baa:bid = 53b5ee800000000000000000 eid = 5591dc000000000000000000
+tmp is Empty
+hi mongo:0
+Start Date: 2015-06-29 03:28:20
+raw_event_05c06552cda7756b02d0ea78a15f9f602b9e8b00:bid = 53b5ee800000000000000000 eid = 5591dc000000000000000000
+repeat wait = 1
+repeat wait = 2
+repeat wait = 3
+repeat wait = 4
+repeat wait = 5
+repeat wait = 6
+repeat wait = 7
+repeat wait = 8
+repeat wait = 9
+repeat wait = 10
+tmp is Empty
+hi mongo:-1
+Start Date: 2015-06-29 03:33:44
+repeat wait = 1
+repeat wait = 2
+repeat wait = 3
+repeat wait = 4
+repeat wait = 5
+repeat wait = 6
+repeat wait = 7
+repeat wait = 8
+repeat wait = 9
+repeat wait = 10
+repeat wait = 11
+repeat wait = 12
+repeat wait = 13
+repeat wait = 14
+repeat wait = 15
+repeat wait = 16
+repeat wait = 17
+repeat wait = 18
+repeat wait = 19
+repeat wait = 20
+repeat wait = 21
+repeat wait = 22
+repeat wait = 23
+repeat wait = 24
+repeat wait = 25
+repeat wait = 26
+repeat wait = 27
+repeat wait = 28
+repeat wait = 29
+repeat wait = 30
+repeat wait = 31
+repeat wait = 32
+repeat wait = 33
+repeat wait = 34
+repeat wait = 35
+repeat wait = 36
+repeat wait = 37
+repeat wait = 38
+Mon Jun 29 2015 03:27:40 GMT+0000 (UTC)
+Mon Jun 29 2015 03:53:11 GMT+0000 (UTC)
+repeat wait = 39
+repeat wait = 40
+repeat wait = 41
+node updateHourlyEndEvent.js 20150301event
+
+node removeEventFinished.js 20150301event
+
