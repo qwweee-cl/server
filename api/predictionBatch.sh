@@ -48,13 +48,13 @@ ${cmd} ${shortDate} $2
 ## execute copy prediction file to emr
 cmd="./predictCopy2emr.sh ${shortDate} $2"
 echo -e "${cmd}" >> ${mainLogFile}
-${cmd} ${shortDate} $2
+#${cmd} ${shortDate} $2
 
 if [ "$2" == "2" ]; then
   echo -e "Execute Prediction Scirpt"
   echo -e "Execute Prediction Scirpt" >> ${mainLogFile}
   cmd="ssh ubuntu@emr /home/ubuntu/predict/daily_predict_APP.sh ${execDate} >> /data/owl/predict/log/sshCallPredict.log"
   echo -e "${cmd}" >> ${mainLogFile}
-  ${cmd}
+#  ${cmd}
   sendSummaryMail
 fi
