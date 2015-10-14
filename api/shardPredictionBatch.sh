@@ -50,10 +50,18 @@ cmd="./shardPredictCopy2emr.sh ${shortDate} $2"
 echo -e "${cmd}" >> ${mainLogFile}
 ${cmd} ${shortDate} $2
 
+## execute copy prediction file to emr
+cmd="./shardPredictCopy2emr_host.sh ${shortDate} $2"
+echo -e "${cmd}" >> ${mainLogFile}
+${cmd} ${shortDate} $2
+
 if [ "$2" == "1" ]; then
   echo -e "Execute Prediction Scirpt"
   echo -e "Execute Prediction Scirpt" >> ${mainLogFile}
   cmd="ssh ubuntu@emr2 /home/ubuntu/predict/daily_predict_APP.sh ${execDate} >> /data/owl/predict/log/sshCallPredict.log"
+  echo -e "${cmd}" >> ${mainLogFile}
+  ${cmd}
+  cmd="ssh ubuntu@emr /home/ubuntu/predict/daily_predict_APP.sh ${execDate} >> /data/owl/predict/log/sshCallPredict.log"
   echo -e "${cmd}" >> ${mainLogFile}
   ${cmd}
   sendSummaryMail
