@@ -34,7 +34,7 @@ curDate=$(date -d "${fullCurDate}" +%m%d)
 echo -e ${curDate}
 echo -e ${fullCurDate}
 
-one_time_log="${logpath}${fullCurDate}_log.log"
+one_time_log="${logpath}${fullCurDate}_oem_log.log"
 
 cmd="node getOEMs.js"
 echo -e $cmd
@@ -68,45 +68,45 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 
 	fileExist=true
 
-	if [ ! -f ${s3One1} ] ]; then
+	if [ ! -f "${s3One1}" ] ]; then
 		echo "${s3One1} file not exist" >> ${one_time_log}
 		fileExist=false
 	fi
-	if [ ! -f ${s3Two1} ] ]; then
+	if [ ! -f "${s3Two1}" ] ]; then
 		echo "${s3Two1} file not exist" >> ${one_time_log}
 		fileExist=false
 	fi
-	if [ ! -f ${s3Three1} ] ]; then
+	if [ ! -f "${s3Three1}" ] ]; then
 		echo "${s3Three1} file not exist" >> ${one_time_log}
 		fileExist=false
 	fi
-	if [ ! -f ${s3Four1} ] ]; then
+	if [ ! -f "${s3Four1}" ] ]; then
 		echo "${s3Four1} file not exist" >> ${one_time_log}
 		fileExist=false
 	fi
 	status=1
 	string="File Is Zero";
 
-	if [ ! -s ${s3One1} ] ]; then
+	if [ ! -s "${s3One1}" ] ]; then
 		echo "${s3One1} file size is 0" >> ${one_time_log}
 		fileExist=false
 	fi
-	if [ ! -s ${s3Two1} ] ]; then
+	if [ ! -s "${s3Two1}" ] ]; then
 		echo "${s3Two1} file size is 0" >> ${one_time_log}
 		fileExist=false
 	fi
-	if [ ! -s ${s3Three1} ] ]; then
+	if [ ! -s "${s3Three1}" ] ]; then
 		echo "${s3Three1} file size is 0" >> ${one_time_log}
 		fileExist=false
 	fi
-	if [ ! -s ${s3Four1} ] ]; then
+	if [ ! -s "${s3Four1}" ] ]; then
 		echo "${s3Four1} file size is 0" >> ${one_time_log}
 		fileExist=false
 	fi
 
 	echo -e ${fileExist}
 
-	if [ ${fileExist} = false ]; then
+	if [ "${fileExist}" = false ]; then
 		echo "Not drop ${fullCurDate} database" >> ${one_time_log}
 		sendExceptionMail
 		exit 0
