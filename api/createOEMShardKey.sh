@@ -72,23 +72,23 @@ for (( j = 0 ; j < ${#oems[@]} ; j++ )) do
   echo -e ${baseCmd}${cmd}
   ${baseCmd}${cmd}
 
-  dbName1=$(getDBName "${tomorrow}" "01" "${oems[$j]}")
+#  dbName1=$(getDBName "${tomorrow}" "01" "${oems[$j]}")
   #echo -e ${dbName1}
-  cmd="printjson(sh.enableSharding('${dbName1}'));"
-  echo -e ${baseCmd}${cmd} >> ${one_time_log}
-  ${baseCmd}${cmd}
+#  cmd="printjson(sh.enableSharding('${dbName1}'));"
+#  echo -e ${baseCmd}${cmd} >> ${one_time_log}
+#  ${baseCmd}${cmd}
 
-  dbName2=$(getDBName "${tomorrow}" "02" "${oems[$j]}")
+#  dbName2=$(getDBName "${tomorrow}" "02" "${oems[$j]}")
   #echo -e ${dbName2}
-  cmd="printjson(sh.enableSharding('${dbName2}'));"
-  echo -e ${baseCmd}${cmd} >> ${one_time_log}
-  ${baseCmd}${cmd}
+#  cmd="printjson(sh.enableSharding('${dbName2}'));"
+#  echo -e ${baseCmd}${cmd} >> ${one_time_log}
+#  ${baseCmd}${cmd}
 
-  dbName3=$(getDBName "${tomorrow}" "03" "${oems[$j]}")
+#  dbName3=$(getDBName "${tomorrow}" "03" "${oems[$j]}")
   #echo -e ${dbName3}
-  cmd="printjson(sh.enableSharding('${dbName3}'));"
-  echo -e ${baseCmd}${cmd} >> ${one_time_log}
-  ${baseCmd}${cmd}
+#  cmd="printjson(sh.enableSharding('${dbName3}'));"
+#  echo -e ${baseCmd}${cmd} >> ${one_time_log}
+#  ${baseCmd}${cmd}
 
   for (( i = 0 ; i < ${#apps_id[@]} ; i++ )) do
     cmd=""
@@ -99,20 +99,20 @@ for (( j = 0 ; j < ${#oems[@]} ; j++ )) do
     echo -e ${baseCmd}${cmd} >> ${one_time_log}
     ${baseCmd}${cmd}
 
-    sessionColName1=$(getCollectionName "${dbName1}" "$session")
-    cmd="printjson(sh.shardCollection('${sessionColName1}',{'app_user_id':'hashed'}));"
-    echo -e ${baseCmd}${cmd} >> ${one_time_log}
-    ${baseCmd}${cmd}
+#    sessionColName1=$(getCollectionName "${dbName1}" "$session")
+#    cmd="printjson(sh.shardCollection('${sessionColName1}',{'app_user_id':'hashed'}));"
+#    echo -e ${baseCmd}${cmd} >> ${one_time_log}
+#    ${baseCmd}${cmd}
 
-    sessionColName2=$(getCollectionName "${dbName2}" "$session")
-    cmd="printjson(sh.shardCollection('${sessionColName2}',{'app_user_id':'hashed'}));"
-    echo -e ${baseCmd}${cmd} >> ${one_time_log}
-    ${baseCmd}${cmd}
+#    sessionColName2=$(getCollectionName "${dbName2}" "$session")
+#    cmd="printjson(sh.shardCollection('${sessionColName2}',{'app_user_id':'hashed'}));"
+#    echo -e ${baseCmd}${cmd} >> ${one_time_log}
+#    ${baseCmd}${cmd}
 
-    sessionColName3=$(getCollectionName "${dbName3}" "$session")
-    cmd="printjson(sh.shardCollection('${sessionColName3}',{'app_user_id':'hashed'}));"
-    echo -e ${baseCmd}${cmd} >> ${one_time_log}
-    ${baseCmd}${cmd}
+#    sessionColName3=$(getCollectionName "${dbName3}" "$session")
+#    cmd="printjson(sh.shardCollection('${sessionColName3}',{'app_user_id':'hashed'}));"
+#    echo -e ${baseCmd}${cmd} >> ${one_time_log}
+#    ${baseCmd}${cmd}
 
 
     eventColName0=$(getCollectionName "${dbName0}" "$event")
@@ -120,20 +120,20 @@ for (( j = 0 ; j < ${#oems[@]} ; j++ )) do
     echo -e ${baseCmd}${cmd} >> ${one_time_log}
     ${baseCmd}${cmd}
 
-    eventColName1=$(getCollectionName "${dbName1}" "$event")
-    cmd="printjson(sh.shardCollection('${eventColName1}',{'app_user_id':'hashed'}));"
-    echo -e ${baseCmd}${cmd} >> ${one_time_log}
-    ${baseCmd}${cmd}
+#    eventColName1=$(getCollectionName "${dbName1}" "$event")
+#    cmd="printjson(sh.shardCollection('${eventColName1}',{'app_user_id':'hashed'}));"
+#    echo -e ${baseCmd}${cmd} >> ${one_time_log}
+#    ${baseCmd}${cmd}
 
-    eventColName2=$(getCollectionName "${dbName2}" "$event")
-    cmd="printjson(sh.shardCollection('${eventColName2}',{'app_user_id':'hashed'}));"
-    echo -e ${baseCmd}${cmd} >> ${one_time_log}
-    ${baseCmd}${cmd}
+#    eventColName2=$(getCollectionName "${dbName2}" "$event")
+#    cmd="printjson(sh.shardCollection('${eventColName2}',{'app_user_id':'hashed'}));"
+#    echo -e ${baseCmd}${cmd} >> ${one_time_log}
+#    ${baseCmd}${cmd}
 
-    eventColName3=$(getCollectionName "${dbName3}" "$event")
-    cmd="printjson(sh.shardCollection('${eventColName3}',{'app_user_id':'hashed'}));"
-    echo -e ${baseCmd}${cmd} >> ${one_time_log}
-    ${baseCmd}${cmd}
+#    eventColName3=$(getCollectionName "${dbName3}" "$event")
+#    cmd="printjson(sh.shardCollection('${eventColName3}',{'app_user_id':'hashed'}));"
+#    echo -e ${baseCmd}${cmd} >> ${one_time_log}
+#    ${baseCmd}${cmd}
 
 
   #  echo -e ${session}
@@ -161,59 +161,59 @@ for (( j = 0 ; j < ${#oems[@]} ; j++ )) do
   node ensureIndex.js ${dbHost} ${batchdb} raw_session_895ef49612e79d93c462c6d34abd8949b4c849af
   node ensureIndex.js ${dbHost} ${batchdb} raw_session_ecc26ef108c821f3aadc5e283c512ee68be7d43e
 
-  batchdb="${dbName1}"
-  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_e315c111663af26a53e5fe4c82cc1baeecf50599" >> ${one_time_log}
-  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_c277de0546df31757ff26a723907bc150add4254" >> ${one_time_log}
-  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_75edfca17dfbe875e63a66633ed6b00e30adcb92" >> ${one_time_log}
-  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_9219f32e8de29b826faf44eb9b619788e29041bb" >> ${one_time_log}
-  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_0368eb926b115ecaf41eff9a0536a332ef191417" >> ${one_time_log}
-  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_02ce3171f470b3d638feeaec0b3f06bd27f86a26" >> ${one_time_log}
-  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_895ef49612e79d93c462c6d34abd8949b4c849af" >> ${one_time_log}
-  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_ecc26ef108c821f3aadc5e283c512ee68be7d43e" >> ${one_time_log}
-  node ensureIndex.js ${dbHost} ${batchdb} raw_session_e315c111663af26a53e5fe4c82cc1baeecf50599
-  node ensureIndex.js ${dbHost} ${batchdb} raw_session_c277de0546df31757ff26a723907bc150add4254
-  node ensureIndex.js ${dbHost} ${batchdb} raw_session_75edfca17dfbe875e63a66633ed6b00e30adcb92
-  node ensureIndex.js ${dbHost} ${batchdb} raw_session_9219f32e8de29b826faf44eb9b619788e29041bb
-  node ensureIndex.js ${dbHost} ${batchdb} raw_session_0368eb926b115ecaf41eff9a0536a332ef191417
-  node ensureIndex.js ${dbHost} ${batchdb} raw_session_02ce3171f470b3d638feeaec0b3f06bd27f86a26
-  node ensureIndex.js ${dbHost} ${batchdb} raw_session_895ef49612e79d93c462c6d34abd8949b4c849af
-  node ensureIndex.js ${dbHost} ${batchdb} raw_session_ecc26ef108c821f3aadc5e283c512ee68be7d43e
+#  batchdb="${dbName1}"
+#  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_e315c111663af26a53e5fe4c82cc1baeecf50599" >> ${one_time_log}
+#  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_c277de0546df31757ff26a723907bc150add4254" >> ${one_time_log}
+#  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_75edfca17dfbe875e63a66633ed6b00e30adcb92" >> ${one_time_log}
+#  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_9219f32e8de29b826faf44eb9b619788e29041bb" >> ${one_time_log}
+#  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_0368eb926b115ecaf41eff9a0536a332ef191417" >> ${one_time_log}
+#  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_02ce3171f470b3d638feeaec0b3f06bd27f86a26" >> ${one_time_log}
+#  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_895ef49612e79d93c462c6d34abd8949b4c849af" >> ${one_time_log}
+#  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_ecc26ef108c821f3aadc5e283c512ee68be7d43e" >> ${one_time_log}
+#  node ensureIndex.js ${dbHost} ${batchdb} raw_session_e315c111663af26a53e5fe4c82cc1baeecf50599
+#  node ensureIndex.js ${dbHost} ${batchdb} raw_session_c277de0546df31757ff26a723907bc150add4254
+#  node ensureIndex.js ${dbHost} ${batchdb} raw_session_75edfca17dfbe875e63a66633ed6b00e30adcb92
+#  node ensureIndex.js ${dbHost} ${batchdb} raw_session_9219f32e8de29b826faf44eb9b619788e29041bb
+#  node ensureIndex.js ${dbHost} ${batchdb} raw_session_0368eb926b115ecaf41eff9a0536a332ef191417
+#  node ensureIndex.js ${dbHost} ${batchdb} raw_session_02ce3171f470b3d638feeaec0b3f06bd27f86a26
+#  node ensureIndex.js ${dbHost} ${batchdb} raw_session_895ef49612e79d93c462c6d34abd8949b4c849af
+#  node ensureIndex.js ${dbHost} ${batchdb} raw_session_ecc26ef108c821f3aadc5e283c512ee68be7d43e
 
-  batchdb="${dbName2}"
-  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_e315c111663af26a53e5fe4c82cc1baeecf50599" >> ${one_time_log}
-  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_c277de0546df31757ff26a723907bc150add4254" >> ${one_time_log}
-  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_75edfca17dfbe875e63a66633ed6b00e30adcb92" >> ${one_time_log}
-  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_9219f32e8de29b826faf44eb9b619788e29041bb" >> ${one_time_log}
-  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_0368eb926b115ecaf41eff9a0536a332ef191417" >> ${one_time_log}
-  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_02ce3171f470b3d638feeaec0b3f06bd27f86a26" >> ${one_time_log}
-  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_895ef49612e79d93c462c6d34abd8949b4c849af" >> ${one_time_log}
-  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_ecc26ef108c821f3aadc5e283c512ee68be7d43e" >> ${one_time_log}
-  node ensureIndex.js ${dbHost} ${batchdb} raw_session_e315c111663af26a53e5fe4c82cc1baeecf50599
-  node ensureIndex.js ${dbHost} ${batchdb} raw_session_c277de0546df31757ff26a723907bc150add4254
-  node ensureIndex.js ${dbHost} ${batchdb} raw_session_75edfca17dfbe875e63a66633ed6b00e30adcb92
-  node ensureIndex.js ${dbHost} ${batchdb} raw_session_9219f32e8de29b826faf44eb9b619788e29041bb
-  node ensureIndex.js ${dbHost} ${batchdb} raw_session_0368eb926b115ecaf41eff9a0536a332ef191417
-  node ensureIndex.js ${dbHost} ${batchdb} raw_session_02ce3171f470b3d638feeaec0b3f06bd27f86a26
-  node ensureIndex.js ${dbHost} ${batchdb} raw_session_895ef49612e79d93c462c6d34abd8949b4c849af
-  node ensureIndex.js ${dbHost} ${batchdb} raw_session_ecc26ef108c821f3aadc5e283c512ee68be7d43e
+#  batchdb="${dbName2}"
+#  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_e315c111663af26a53e5fe4c82cc1baeecf50599" >> ${one_time_log}
+#  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_c277de0546df31757ff26a723907bc150add4254" >> ${one_time_log}
+#  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_75edfca17dfbe875e63a66633ed6b00e30adcb92" >> ${one_time_log}
+#  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_9219f32e8de29b826faf44eb9b619788e29041bb" >> ${one_time_log}
+#  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_0368eb926b115ecaf41eff9a0536a332ef191417" >> ${one_time_log}
+#  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_02ce3171f470b3d638feeaec0b3f06bd27f86a26" >> ${one_time_log}
+#  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_895ef49612e79d93c462c6d34abd8949b4c849af" >> ${one_time_log}
+#  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_ecc26ef108c821f3aadc5e283c512ee68be7d43e" >> ${one_time_log}
+#  node ensureIndex.js ${dbHost} ${batchdb} raw_session_e315c111663af26a53e5fe4c82cc1baeecf50599
+#  node ensureIndex.js ${dbHost} ${batchdb} raw_session_c277de0546df31757ff26a723907bc150add4254
+#  node ensureIndex.js ${dbHost} ${batchdb} raw_session_75edfca17dfbe875e63a66633ed6b00e30adcb92
+#  node ensureIndex.js ${dbHost} ${batchdb} raw_session_9219f32e8de29b826faf44eb9b619788e29041bb
+#  node ensureIndex.js ${dbHost} ${batchdb} raw_session_0368eb926b115ecaf41eff9a0536a332ef191417
+#  node ensureIndex.js ${dbHost} ${batchdb} raw_session_02ce3171f470b3d638feeaec0b3f06bd27f86a26
+#  node ensureIndex.js ${dbHost} ${batchdb} raw_session_895ef49612e79d93c462c6d34abd8949b4c849af
+#  node ensureIndex.js ${dbHost} ${batchdb} raw_session_ecc26ef108c821f3aadc5e283c512ee68be7d43e
 
-  batchdb="${dbName3}"
-  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_e315c111663af26a53e5fe4c82cc1baeecf50599" >> ${one_time_log}
-  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_c277de0546df31757ff26a723907bc150add4254" >> ${one_time_log}
-  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_75edfca17dfbe875e63a66633ed6b00e30adcb92" >> ${one_time_log}
-  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_9219f32e8de29b826faf44eb9b619788e29041bb" >> ${one_time_log}
-  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_0368eb926b115ecaf41eff9a0536a332ef191417" >> ${one_time_log}
-  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_02ce3171f470b3d638feeaec0b3f06bd27f86a26" >> ${one_time_log}
-  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_895ef49612e79d93c462c6d34abd8949b4c849af" >> ${one_time_log}
-  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_ecc26ef108c821f3aadc5e283c512ee68be7d43e" >> ${one_time_log}
-  node ensureIndex.js ${dbHost} ${batchdb} raw_session_e315c111663af26a53e5fe4c82cc1baeecf50599
-  node ensureIndex.js ${dbHost} ${batchdb} raw_session_c277de0546df31757ff26a723907bc150add4254
-  node ensureIndex.js ${dbHost} ${batchdb} raw_session_75edfca17dfbe875e63a66633ed6b00e30adcb92
-  node ensureIndex.js ${dbHost} ${batchdb} raw_session_9219f32e8de29b826faf44eb9b619788e29041bb
-  node ensureIndex.js ${dbHost} ${batchdb} raw_session_0368eb926b115ecaf41eff9a0536a332ef191417
-  node ensureIndex.js ${dbHost} ${batchdb} raw_session_02ce3171f470b3d638feeaec0b3f06bd27f86a26
-  node ensureIndex.js ${dbHost} ${batchdb} raw_session_895ef49612e79d93c462c6d34abd8949b4c849af
-  node ensureIndex.js ${dbHost} ${batchdb} raw_session_ecc26ef108c821f3aadc5e283c512ee68be7d43e
+#  batchdb="${dbName3}"
+#  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_e315c111663af26a53e5fe4c82cc1baeecf50599" >> ${one_time_log}
+#  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_c277de0546df31757ff26a723907bc150add4254" >> ${one_time_log}
+#  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_75edfca17dfbe875e63a66633ed6b00e30adcb92" >> ${one_time_log}
+#  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_9219f32e8de29b826faf44eb9b619788e29041bb" >> ${one_time_log}
+#  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_0368eb926b115ecaf41eff9a0536a332ef191417" >> ${one_time_log}
+#  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_02ce3171f470b3d638feeaec0b3f06bd27f86a26" >> ${one_time_log}
+#  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_895ef49612e79d93c462c6d34abd8949b4c849af" >> ${one_time_log}
+#  echo -e "node ensureIndex.js ${dbHost} ${batchdb} raw_session_ecc26ef108c821f3aadc5e283c512ee68be7d43e" >> ${one_time_log}
+#  node ensureIndex.js ${dbHost} ${batchdb} raw_session_e315c111663af26a53e5fe4c82cc1baeecf50599
+#  node ensureIndex.js ${dbHost} ${batchdb} raw_session_c277de0546df31757ff26a723907bc150add4254
+#  node ensureIndex.js ${dbHost} ${batchdb} raw_session_75edfca17dfbe875e63a66633ed6b00e30adcb92
+#  node ensureIndex.js ${dbHost} ${batchdb} raw_session_9219f32e8de29b826faf44eb9b619788e29041bb
+#  node ensureIndex.js ${dbHost} ${batchdb} raw_session_0368eb926b115ecaf41eff9a0536a332ef191417
+#  node ensureIndex.js ${dbHost} ${batchdb} raw_session_02ce3171f470b3d638feeaec0b3f06bd27f86a26
+#  node ensureIndex.js ${dbHost} ${batchdb} raw_session_895ef49612e79d93c462c6d34abd8949b4c849af
+#  node ensureIndex.js ${dbHost} ${batchdb} raw_session_ecc26ef108c821f3aadc5e283c512ee68be7d43e
 done
 
 date
