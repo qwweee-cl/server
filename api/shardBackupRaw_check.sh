@@ -49,6 +49,8 @@ gzipPath="/mem/mongo_shard_gzip/"
 exportPath="/mem/mongo_shard_backup/"
 s3Path="/s3mnt/shard_backup/hourly_data/"
 CachePath="/mem/tmp/s3cache/clcom2-countly/shard_backup/hourly_data/"
+s3FlagPath="/s3mnt/shard_backup/hourly_data_flag/"
+CacheFlagPath="/mem/tmp/s3cache/clcom2-countly/shard_backup/hourly_data_flag/"
 #mongo="localhost:27017"
 batchdb=""
 #indexNum="1"
@@ -179,6 +181,15 @@ do
 		cmd="mongodump -h ${mongo} -d ${batchdb} -o ${exportPath}${rawdate}"
 		echo $cmd 2>&1 >> $one_day_log 
 		$cmd 2>&1 >> $one_day_log 
+
+		## touch flag file to s3FlagPath
+		cmd="/bin/touch ${s3FlagPath}${rawdate}.tag"
+		echo $cmd 2>&1 >> $one_day_log 
+		$cmd 2>&1 >> $one_day_log
+
+		cmd="sudo rm ${CacheFlagPath} -rf"
+		echo $cmd
+		$cmd
 
 		echo $PWD
 		cmd="/bin/tar czf ${gzipPath}${rawdate}.tgz ./"
