@@ -11,7 +11,7 @@ function error_exp
 }
 
 function sendExceptionMail() {
-	mail -s "[Shard OEM ${oemName}] ${fullCurDate} MongoDB drop database exception (${string})" ${dropMongo} < ${one_time_log}
+	mail -s "[Shard OEM ${oemName}] ${fullCurDate} MongoDB drop database exception (${string})" ${Gary} < ${one_time_log}
 }
 
 function sendSummaryMail() {
@@ -109,7 +109,7 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 	if [ "${fileExist}" = false ]; then
 		echo "Not drop ${fullCurDate} database" >> ${one_time_log}
 		sendExceptionMail
-		exit 0
+#		exit 0
 	fi
 
 	sizeOne1=$(du -b "${s3One1}" | cut -f 1)
