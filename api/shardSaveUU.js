@@ -24,8 +24,8 @@ var YMK_And_Oid = new ObjectID("543f37eaa62268c51e16d0c3");
 var YCN_iOS_Oid = new ObjectID("55d69ff33b254f9535d6059a");
 var YCN_And_Oid = new ObjectID("55d6a0123b254f9535d6142d");
 
-var PF_iOS_Oid = new ObjectID("5551e55cacdd571e2e000443");
-var PF_And_Oid = new ObjectID("5552bf53acdd571e2e00044e");
+var PF_iOS_Oid = new ObjectID("5552bf53acdd571e2e00044e");
+var PF_And_Oid = new ObjectID("5551e55cacdd571e2e000443");
 
 var collectionName = "UU_locations";
 var collectionName2 = "locations";
