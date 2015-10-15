@@ -315,6 +315,31 @@ function findAndRemoveKey(array, value) {
     }
 }
 
+function updateOEMTable() {
+    oemCount = 0;
+    oemMaps.length = 0;
+    common.db.collection('oems').find().toArray(function(err, data) {
+        for (var i = 0 ; i < data.length ; i ++) {
+            for (var j=0;j<data[i].sr_no.length;j++) {
+                oemData = {};
+                oemData.deal_no = data[i].deal_no;
+                oemData.start = data[i].start;
+                oemData.end = data[i].end;
+                oemData.sr_no = data[i].sr_no[j];
+                oemMaps[oemCount] = oemData;
+                oemCount++;
+            }
+        }
+        workerEnv["OEMS"] = JSON.stringify(oemMaps);
+        console.log("update oem-length:"+data.length);
+        var now = new Date();
+        var oems = workerEnv["OEMS"];
+        oemMaps = JSON.parse(oems);
+        console.log('update OEM table =========================='+now+'= length:'+oemMaps.length+'=========================');
+        //console.log(oemMaps);
+    });
+}
+
 if (cluster.isMaster) {
     var now = new Date();
     console.log('start api =========================='+now+'==========================');
@@ -351,6 +376,12 @@ if (cluster.isMaster) {
 } else {
     var oems = process.env['OEMS'];
     oemMaps = JSON.parse(oems);
+    var baseTimeOut = 86400000;
+
+    setInterval(function() {
+        /** update workerEnv OEM tables data **/
+        updateOEMTable();
+    }, baseTimeOut);
     //console.log(oemMaps);
 
     http.Server(function (req, res) {
