@@ -53,13 +53,13 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 	echo -e ${three}
 	echo -e ${four}
 
-	s3One1=${s3Path}${fullCurDate}"_${oemName}_raw_00.tgz"
+	s3One1=${s3Path}${fullCurDate}"_${oemName}_00.tgz"
 
-	s3Two1=${s3Path}${fullCurDate}"_${oemName}_raw_01.tgz"
+	s3Two1=${s3Path}${fullCurDate}"_${oemName}_01.tgz"
 
-	s3Three1=${s3Path}${fullCurDate}"_${oemName}_raw_02.tgz"
+	s3Three1=${s3Path}${fullCurDate}"_${oemName}_02.tgz"
 
-	s3Four1=${s3Path}${fullCurDate}"_${oemName}_raw_03.tgz"
+	s3Four1=${s3Path}${fullCurDate}"_${oemName}_03.tgz"
 
 	echo -e ${s3One1}
 	echo -e ${s3Two1}
