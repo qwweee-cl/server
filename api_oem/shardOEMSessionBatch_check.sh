@@ -284,7 +284,7 @@ do
 	checkLoopStop
 ## process session
 	curdate=$(date +%Y%m%d-%H%M)
-	one_day_log="$log_path/log_session_$(date +%Y%m%d).log"
+	one_day_log="$log_path/log_oem_session_$(date +%Y%m%d).log"
 
 	cd ${working_dir}
 
@@ -378,7 +378,7 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 		#${cmd} 2>&1 >> "$one_day_log"
 		#echo -e "process ${batchdb} ${header} session finished"
 
-		cmd="node --max-old-space-size=6144 shardNewBatchByOEM.js ${batchdb}"
+		cmd="node --max-old-space-size=6144 shardNewBatchByOEM.js ${oemName} ${batchdb}"
 		echo -e ${cmd} 2>&1 >> $one_day_log 
 		${cmd} 2>&1 >> $one_day_log
 		echo -e "[${oemName}]process ${batchdb} session finished"
@@ -406,12 +406,12 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 
 	echo -e "End Time: $(date +%Y-%m-%d,%H:%M:%S)" >> "$one_day_log" 2>&1
 
-	if [ "${indexNum}" == "1" ]; then
+#	if [ "${indexNum}" == "1" ]; then
 ## process mongodb to mysql in claddb
 #		cmd="ssh ubuntu@claddb2 /usr/local/countly/api/shardRunMongoToMysql.sh >> /usr/local/countly/log/mongoToMysql.log"
 #		echo $cmd
 #		$cmd 2>&1 &
-	fi
+#	fi
 
 	## do other scripts
 	cd ${working_dir}
@@ -435,9 +435,9 @@ done
 		small_date=$(date -d "${start_date}" +%m%d)
 		## rm Prediction files
 		cd ${working_dir}
-		cmd="rm *.txt"
-		echo -e ${cmd} 2>&1 >> "$one_day_log"
-		${cmd}
+#		cmd="rm *.txt"
+#		echo -e ${cmd} 2>&1 >> "$one_day_log"
+#		${cmd}
 	fi
 
 	end_time=$(date +%s)
