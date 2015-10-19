@@ -31,7 +31,7 @@ dbonoff.open(common.db_maintain);
 common.db_maintain.collection(sessionColName).update({dbname: indbname},
 {$set: insertData}, {'upsert': true}, function(err, res) {
     if (err) {
-        print('session_finished error');
+        print('session_oem_finished error');
         print(err);
     }
     dbonoff.close(common.db_maintain);

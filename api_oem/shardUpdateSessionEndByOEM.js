@@ -12,8 +12,8 @@ if (process.argv.length != 4) {
     return false;
 }
 var indbname = process.argv[2];
-var backupColName = "backup_finished"+process.argv[3];
-var sessionColName = "session_finished"+process.argv[3];
+var backupColName = "backup_oem_finished"+process.argv[3];
+var sessionColName = "session_oem_finished"+process.argv[3];
 query = {dbname: indbname};
 //print(query);
 
@@ -29,13 +29,13 @@ common.db_maintain.collection(backupColName).find(query ,function(err, res) {
         common.db_maintain.collection(sessionColName).update({dbname: indbname},
         {$set: insertData}, {'upsert': true}, function(err, res) {
             if (err) {
-                print('session_finished error');
+                print('session_oem_finished error');
                 print(err);
             }
             dbonoff.close(common.db_maintain);
         });
     } else {
-        print("on backup_finished no db: "+indbname);
+        print("on backup_oem_finished no db: "+indbname);
         process.exit(1);
     }
     if(err) {

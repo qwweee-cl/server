@@ -7,9 +7,9 @@ function error_exp
 {
 	#echo -e "Daily BB data import failed. Please check log in elephant1>/home/hadoop/new_script/dashborad_script/logs/log_daily_bb_import.log\nLog scraps: "$(tail -10 ~/new_script/dashborad_script/logs/log_daily_bb_import.log)\
 	#| mail -s "Daily BB data import exception" $dashboard_team
-	echo -e "[Shard OEM]${header} Loop Session Batch Error Please check log ${mainLogFile}"\
+	echo -e "[Shard OEM]${oemName} Loop Session Batch Error Please check log ${mainLogFile}"\
 	$(tail -20 ${mainLogFile})\
-	| mail -s "[Shard OEM]${header} ${start_date} ${start_round} Session Error Trap(${pid})" ${mail_target}
+	| mail -s "[Shard OEM]${oemName} ${start_date} ${start_round} Session Error Trap(${pid})" ${mail_target}
 	#rm -f ${LOCKFILE}
 	exit 1
 }
@@ -37,7 +37,7 @@ function checkLoopStop() {
 	if [ -f "${loopFile}" ]; then
 		echo "${loopFile} exist"
 		echo -e "Loop Session Batch Stop on $(date +%Y%m%d-%H:%M)"\
-		| mail -s "[Shard OEM]${header} ${start_date} ${start_round} Session Batch Stop" ${mail_target}
+		| mail -s "[Shard OEM]${oemName} ${start_date} ${start_round} Session Batch Stop" ${mail_target}
 		exit 0
 	fi
 }
@@ -51,30 +51,34 @@ function createIndex() {
 #	echo -e ${rawdate} 2>&1 >> $one_day_log
 }
 function getBackupFinished() {
+	oemName="${1}"
 	cmd="node shardGetBackupFinishedByOEM.js ${curTimestamp} ${appType} ${oemName}"
 	echo -e ${cmd} 2>&1 >> "$one_day_log"
 	string=`${cmd}`
-	#echo -e ${string}
+	echo -e ${string}
 	batchdb=${string}
 	echo -e ${batchdb} 2>&1 >> "$one_day_log"
 }
 function sendSummaryMail() {
+	oemName="${1}"
 	echo -e $(tail -20 ${one_day_log})\
-	| mail -s "[Shard OEM]${header} ${start_date} ${start_round} Session Summary" ${mail_target}
+	| mail -s "[Shard OEM]${oemName} ${start_date} ${start_round} Session Summary" ${mail_target}
 }
 function sendWrongMail1() {
+	oemName="${1}"
 	echo -e $(tail -20 ${one_day_log})\
-	| mail -s "[Shard OEM][Wrong DB][Session]${header} ${start_date} ${start_round}" ${mail_target}
+	| mail -s "[Shard OEM][Wrong DB][Session]${oemName} ${start_date} ${start_round}" ${Gary}
 }
 function sendWrongMail2() {
+	oemName="${1}"
 	echo -e $(tail -20 ${one_day_log})\
-	| mail -s "[Shard OEM][Wrong S3][Session]${header} ${start_date} ${start_round}" ${mail_target}
+	| mail -s "[Shard OEM][Wrong S3][Session]${oemName} ${start_date} ${start_round}" ${Gary}
 }
 
 log_path="/usr/local/countly/log/shardOEMSession"
-working_dir="/usr/local/countly/api"
+working_dir="/usr/local/countly/api_oem"
 mail_target=${AWSM}
-one_day_log="$log_path/log_session_$(date +%Y%m%d).log"
+one_day_log="$log_path/log_oem_session_$(date +%Y%m%d).log"
 
 gzipPath="/mem/oem_mongo_shard_dashboard_gzip/"
 exportPath="/mem/oem_mongo_shard_dashboard_backup/"
@@ -101,6 +105,7 @@ cd $working_dir
 T="$(date +%s)"
 
 interval=$((6*3600));
+interval=$((24*3600));
 round_num=$(((24*60*60) / 10#$interval))
 start_date=""
 small_date=""
@@ -174,7 +179,7 @@ fi
 
 while true;
 do
-	one_day_log="$log_path/log_session_$(date +%Y%m%d).log"
+	one_day_log="$log_path/log_oem_session_$(date +%Y%m%d).log"
 
 	savedate=$(date +%Y%m%d)
 	dashboarddate=${savedate}"_countly"
@@ -197,83 +202,83 @@ do
 	old_data="0"
 
 ## for session2 to check backup
-	if [ "${indexNum}" == "2" ]; then
-		echo -e "Session2 to check backup status"
-		echo -e "Session2 to check backup status" >> "$one_day_log" 2>&1
-		cd $working_dir
-		cmd="node shardGetBackupStatus.js"
-		echo -e ${cmd}
-		echo -e ${cmd} >> "$one_day_log" 2>&1
-		backupStatus=`${cmd}`
+#	if [ "${indexNum}" == "2" ]; then
+#		echo -e "Session2 to check backup status"
+#		echo -e "Session2 to check backup status" >> "$one_day_log" 2>&1
+#		cd $working_dir
+#		cmd="node shardGetBackupStatus.js"
+#		echo -e ${cmd}
+#		echo -e ${cmd} >> "$one_day_log" 2>&1
+#		backupStatus=`${cmd}`
 
-		echo -e "${backupStatus}"
-		while [ "${backupStatus}" == "1" ]
-		do
-			cmd="node shardGetBackupStatus.js"
-			echo -e ${cmd}
-			echo -e ${cmd} >> "$one_day_log" 2>&1
-			backupStatus=`${cmd}`
-			echo -e "Session2 wait for backup finished (600 seconds)"
-			echo -e "Session2 wait for backup finished (600 seconds)" >> "$one_day_log" 2>&1
-			sleep 600
+#		echo -e "${backupStatus}"
+#		while [ "${backupStatus}" == "1" ]
+#		do
+#			cmd="node shardGetBackupStatus.js"
+#			echo -e ${cmd}
+#			echo -e ${cmd} >> "$one_day_log" 2>&1
+#			backupStatus=`${cmd}`
+#			echo -e "Session2 wait for backup finished (600 seconds)"
+#			echo -e "Session2 wait for backup finished (600 seconds)" >> "$one_day_log" 2>&1
+#			sleep 600
 			## check stop file
-			checkLoopStop
+#			checkLoopStop
 
-			echo -e "backupStatus: ${backupStatus}"
-			echo -e "backupStatus: ${backupStatus}" >> "$one_day_log" 2>&1
-		done
-		echo -e "do process session script"
-	fi
+#			echo -e "backupStatus: ${backupStatus}"
+#			echo -e "backupStatus: ${backupStatus}" >> "$one_day_log" 2>&1
+#		done
+#		echo -e "do process session script"
+#	fi
 
 ## for session1 to check session2 process session finished
-	if [ "${indexNum}" == "1" ]; then
-		echo -e "Session1 to check session2 status"
-		echo -e "Session2 to check session2 status" >> "$one_day_log" 2>&1
-		cd $working_dir
-		if [[ ${currBackup} != ${checkDate} ]] && [[ ${checkTime} > ${backupTime} ]]; then
-			cmd="node shardGetSession1Status.js"
-			echo -e ${cmd}
-			echo -e ${cmd} >> "$one_day_log" 2>&1
-			session1Status=`${cmd}`
+#	if [ "${indexNum}" == "1" ]; then
+#		echo -e "Session1 to check session2 status"
+#		echo -e "Session2 to check session2 status" >> "$one_day_log" 2>&1
+#		cd $working_dir
+#		if [[ ${currBackup} != ${checkDate} ]] && [[ ${checkTime} > ${backupTime} ]]; then
+#			cmd="node shardGetSession1Status.js"
+#			echo -e ${cmd}
+#			echo -e ${cmd} >> "$one_day_log" 2>&1
+#			session1Status=`${cmd}`
 
-			cmd="node shardGetSession2Status.js"
-			echo -e ${cmd}
-			echo -e ${cmd} >> "$one_day_log" 2>&1
-			session2Status=`${cmd}`
+#			cmd="node shardGetSession2Status.js"
+#			echo -e ${cmd}
+#			echo -e ${cmd} >> "$one_day_log" 2>&1
+#			session2Status=`${cmd}`
 
-			echo -e "Session1: ${session1Status}"
-			echo -e "Session2: ${session2Status}"
-			while [ "${session2Status}" == "1" ]
-			do
-				echo -e "do wait for Session2 process finished(60 seconds)"
-				echo -e "do wait for Session2 process finished(60 seconds)" >> "$one_day_log" 2>&1
-				sleep 60
+#			echo -e "Session1: ${session1Status}"
+#			echo -e "Session2: ${session2Status}"
+#			while [ "${session2Status}" == "1" ]
+#			do
+#				echo -e "do wait for Session2 process finished(60 seconds)"
+#				echo -e "do wait for Session2 process finished(60 seconds)" >> "$one_day_log" 2>&1
+#				sleep 60
 
-				cmd="node shardGetSession1Status.js"
-				echo -e ${cmd}
-				echo -e ${cmd} >> "$one_day_log" 2>&1
-				session1Status=`${cmd}`
+#				cmd="node shardGetSession1Status.js"
+#				echo -e ${cmd}
+#				echo -e ${cmd} >> "$one_day_log" 2>&1
+#				session1Status=`${cmd}`
 
-				cmd="node shardGetSession2Status.js"
-				echo -e ${cmd}
-				echo -e ${cmd} >> "$one_day_log" 2>&1
-				session2Status=`${cmd}`
+#				cmd="node shardGetSession2Status.js"
+#				echo -e ${cmd}
+#				echo -e ${cmd} >> "$one_day_log" 2>&1
+#				session2Status=`${cmd}`
 
-				echo -e "Session1: ${session1Status}"
-				echo -e "Session2: ${session2Status}"
-			done
+#				echo -e "Session1: ${session1Status}"
+#				echo -e "Session2: ${session2Status}"
+#			done
 
-			echo -e "[backup]backup start"
+#			echo -e "[backup]backup start"
 ## call backup function
-			backupDashboard
+#			backupDashboard
 ## call backup function end
-			echo -e "[backup]backup end"
-			currBackup=$(date +%j)
-		else
-			echo -e "do next job, continue process session"
-			sleep 601
-		fi
-	fi
+#			echo -e "[backup]backup end"
+#			currBackup=$(date +%j)
+#		else
+#			echo -e "do next job, continue process session"
+#			sleep 601
+#		fi
+#	fi
 
 ## check stop file
 	checkLoopStop
@@ -292,9 +297,20 @@ do
 	curTimestamp=$(date -d "-5 minutes" +%s)
 	echo -e ${curTimestamp} 2>&1 >> "$one_day_log"
 
-	## get the first backup finished db name
-	getBackupFinished
+## do for to get oem name
 
+cmd="node getOEMs.js"
+echo -e $cmd
+string=`$cmd`
+IFS=', ' read -a apps <<< "$string"
+
+for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
+	oemName="${apps[${i}]}"
+
+	## get the first backup finished db name
+	getBackupFinished ${oemName}
+
+## wait for get finished backup data
 	## check if no data in db
 	if [ "${batchdb}" == "" ]; then
 		echo -e "no data sleep 10 minutes ...." 2>&1 >> "$one_day_log" 
@@ -308,33 +324,31 @@ do
 		echo -e ${filedate}
 		echo -e ${small_date}
 		echo -e ${start_round}
-		s3File1=${s3Path}${filedate}"_raw_${start_round}_1.tgz"
-		s3File2=${s3Path}${filedate}"_raw_${start_round}_2.tgz"
+		s3OEMFile=${s3Path}${filedate}"_${oemName}_${start_round}.tgz"
 		fileExist=true
-		echo -e ${s3File1}
-		echo -e ${s3File2}
+		echo -e ${s3OEMFile}
 
-		if [ "${batchdb}" != "countly_raw${small_date}_${start_round}" ]; then
-			echo -e "${header} could be process session countly_raw${small_date}_${start_round} not ${batchdb}" 2>&1 >> "$one_day_log"
-			sendWrongMail1
+		if [ "${batchdb}" != "oem_${oemName}_raw${small_date}_${start_round}" ]; then
+			echo -e "${oemName} could be process session oem_${oemName}_raw${small_date}_${start_round} not ${batchdb}" 2>&1 >> "$one_day_log"
+			sendWrongMail1 ${oemName}
 			exit 1
 		fi
 
-		if [ ! -f ${s3File1} ] || [ ! -f ${s3File2} ]; then
-			echo "${s3File1} or ${s3File2} file not exist" >> ${one_day_log}
+		if [ ! -f ${s3OEMFile} ]; then
+			echo "${s3OEMFile} file not exist" >> ${one_day_log}
 			fileExist=false
 		fi
 
-		if [ ! -s ${s3File1} ] || [ ! -s ${s3File2} ]; then
-			echo "${s3File1} or ${s3File2} file size is 0" >> ${one_day_log}
+		if [ ! -s ${s3OEMFile} ]; then
+			echo "${s3OEMFile} file size is 0" >> ${one_day_log}
 			fileExist=false
 		fi
 
 		echo -e ${fileExist}
 
 		if [ ${fileExist} = false ]; then
-			echo "${s3File1} and ${s3File2} s3 file not exist" >> ${one_day_log}
-			sendWrongMail2
+			echo "${s3OEMFile} s3 file not exist" >> ${one_day_log}
+			sendWrongMail2 ${oemName}
 			exit 1
 		fi
 
@@ -344,40 +358,45 @@ do
 		#createIndex
 
 		## set session status true
-		cmd="node shardUpdateSessionStatus.js ${appType} 1 ${batchdb}"
+		cmd="node shardUpdateSessionStatusByOEM.js ${oemName} 1 ${batchdb}"
 		echo -e ${cmd} 2>&1 >> "$one_day_log" 
 		${cmd}
 
-		cmd="node shardUpdateSessionBegin.js ${batchdb} ${appType}"
+		cmd="node shardUpdateSessionBeginByOEM.js ${batchdb} ${appType}"
 		echo -e ${cmd} 2>&1 >> "$one_day_log" 
 		string=`${cmd}`
 		echo -e ${string} 2>&1 >> "$one_day_log" 
-		echo -e "${batchdb} update [begin] time in session_finished"
+		echo -e "${batchdb} update [begin] time in session_oem_finished"
 
 		#cmd="node --max-old-space-size=6144 hourlySessionNewBatch.js ${batchdb}"
 		#echo -e ${cmd} 2>&1 >> $one_day_log 
 		#${cmd} 2>&1 >> $one_day_log
 		#echo -e "process ${batchdb} session finished"
 
-		cmd="python sessionMT_v2.py ${batchdb} ${header}"
-		echo -e ${cmd} 2>&1 >> "$one_day_log"
-		${cmd} 2>&1 >> "$one_day_log"
-		echo -e "process ${batchdb} ${header} session finished"
+		#cmd="python sessionMT_v2.py ${batchdb} ${header}"
+		#echo -e ${cmd} 2>&1 >> "$one_day_log"
+		#${cmd} 2>&1 >> "$one_day_log"
+		#echo -e "process ${batchdb} ${header} session finished"
 
-		cmd="node shardUpdateSessionEnd.js ${batchdb} ${appType}"
+		cmd="node --max-old-space-size=6144 shardNewBatchByOEM.js ${batchdb}"
+		echo -e ${cmd} 2>&1 >> $one_day_log 
+		${cmd} 2>&1 >> $one_day_log
+		echo -e "[${oemName}]process ${batchdb} session finished"
+
+		cmd="node shardUpdateSessionEndByOEM.js ${batchdb} ${appType}"
 		echo -e ${cmd} 2>&1 >> "$one_day_log" 
 		string=`${cmd}`
 		echo -e ${string} 2>&1 >> "$one_day_log"
-		echo -e "${batchdb} update [end] time in session_finished"
+		echo -e "${batchdb} update [end] time in session_oem_finished"
 
-		cmd="node shardRemoveBackupFinished.js ${batchdb} ${appType}"
+		cmd="node shardRemoveBackupFinishedByOEM.js ${batchdb} ${appType}"
 		echo -e ${cmd} 2>&1 >> "$one_day_log" 
 		string=`${cmd}`
 		echo -e ${string} 2>&1 >> "$one_day_log"
-		echo -e "${batchdb} remove from backup_finished"
+		echo -e "${batchdb} remove from backup_oem_finished"
 
 		## set session status false
-		cmd="node shardUpdateSessionStatus.js ${appType} 0 ${batchdb}"
+		cmd="node shardUpdateSessionStatusByOEM.js ${oemName} 0 ${batchdb}"
 		echo -e ${cmd} 2>&1 >> "$one_day_log"
 		${cmd}
 
@@ -396,13 +415,14 @@ do
 
 	## do other scripts
 	cd ${working_dir}
-	echo -e "Call Others batch script shardLoopSessionOthers.sh ${batchdb} ${indexNum}"
-	${working_dir}/shardLoopSessionOthers.sh ${batchdb} ${indexNum} >> "$one_day_log" 2>&1
+	echo -e "Call Others batch script shardLoopSessionOthersByOEM.sh ${batchdb} ${indexNum}"
+	${working_dir}/shardLoopSessionOthersByOEM.sh ${batchdb} ${indexNum} >> "$one_day_log" 2>&1
 
 	## send summary mail
-	sendSummaryMail
+	sendSummaryMail ${oemName}
+done
 
-	if [ "$start_round" == "03" ] && [ "$old_data" == "0" ]; then
+	if [ "$start_round" == "00" ] && [ "$old_data" == "0" ]; then
 		echo "Loop end: $(date +%Y-%m-%d)" >> "$one_day_log"
 		#/usr/bin/mail -s "Hourly Computation Summary ($start_date)" $mail_target < $one_day_log
 	fi

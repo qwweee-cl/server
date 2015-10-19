@@ -26,7 +26,7 @@ exportPath="/mnt/mongodb/tmp/mongo_dashboard_backup/"
 s3DashboardPath="/mnt/mongodb/tmp/s3_data/"
 ## this is for test end
 
-path="/usr/local/countly/api"
+path="/usr/local/countly/api_oem"
 gzipPath="/mem/mongo_hourly_dashboard_gzip/"
 exportPath="/mem/mongo_hourly_dashboard_backup/"
 s3DashboardPath="/s3mnt/db_backup/hourly_data/dashboard_data/"
