@@ -29,7 +29,7 @@ then
 else
   fullCurDate=${1}
 fi
-curDate=$(date -d "-3 days" +%m%d)
+curDate=$(date -d "-7 days" +%m%d)
 curDate=$(date -d "${fullCurDate}" +%m%d)
 echo -e ${curDate}
 echo -e ${fullCurDate}
