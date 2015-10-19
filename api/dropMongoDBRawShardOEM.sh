@@ -21,7 +21,7 @@ function sendSummaryMail() {
 mongo="localhost:27017"
 s3Path="/s3mnt/shard_backup/oem_hourly_data/"
 
-fullCurDate=$(date -d "-3 days" +%Y%m%d)
+fullCurDate=$(date -d "-7 days" +%Y%m%d)
 
 if [ -z "$1" ]
 then
