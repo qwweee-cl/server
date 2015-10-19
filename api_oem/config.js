@@ -1,7 +1,6 @@
 var countlyConfig = {
     mongodb: {
         //host: "localhost",
-//        host: "54.248.118.203", // dashboard db host
         host: "claddb2", // dashboard db host
         //hostbatch: "172.31.11.80", // localhost(mongodb) setting batch host
         //hostbatch: "172.31.0.46", // localhost(mongodb) setting batch host
@@ -11,8 +10,8 @@ var countlyConfig = {
         hostbatch2: "localhost", // YMK + Others raw data db host
         oemhost: "localhost", // Only OEM raw data host
         db: "countly_OEM",
-        db_raw: "countly_nodejs_raw1",
-        db_batch: "20150301event",
+        db_raw: "countly_raw1",
+        db_batch: "countly_raw1014_03",
         db_ibb: "countly_snow_ibb",
         db_maintain: "maintain_list",
         port: 27017,
