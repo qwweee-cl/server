@@ -170,6 +170,24 @@ var common = {},
         return common.getDBByNameClad2(fullName, filename);
     };
 
+    common.getCheckApps = function(callback, dbonoffFuc) {
+        dbonoffFuc.open(common.db);
+        common.db.collection('apps').find().toArray(
+            function(err, data) {
+                if (data) {
+                    callback(data);
+                    /*var str = "";
+                    for (i=0; i<data.length; i++) {
+                        if (data[i]._id == "53f554ef847577512100130a") continue;
+                        str += data[i]._id+", ";
+                    }
+                    print(str);*/
+                } else {
+                }
+                dbonoffFuc.close(common.db);
+        });
+    };
+
     common.getDBByNameClad1 = function (inDBName, filename) {
         var db_name = (countlyConfig.mongodb.hostbatch1 + ':' + 
             countlyConfig.mongodb.port + '/' + inDBName + 
