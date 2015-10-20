@@ -18,7 +18,7 @@ common.db_maintain.collection(collectionName).findOne(query, function(err, res) 
     if(res) {
         print(res.dbname);
     } else {
-        print(err);
+//        print(err);
     }
     dbonoff.close(common.db_maintain);
 });

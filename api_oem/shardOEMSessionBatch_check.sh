@@ -314,7 +314,7 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 	## check if no data in db
 	if [ "${batchdb}" == "" ]; then
 		echo -e "no data sleep 10 minutes ...." 2>&1 >> "$one_day_log" 
-		sleep 602
+		sleep 6002
 		continue
 	else
 ## check process round and s3 files
