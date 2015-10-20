@@ -355,6 +355,10 @@ cmd="ssh ubuntu@clad3 /usr/local/countly/api/hourlySlaveCountlyBatch.sh $batchdb
 echo $cmd
 $cmd
 
+cmd="ssh ubuntu@clad4 /usr/local/countly/api/hourlySlaveCountlyBatch.sh $batchdb >> /usr/local/countly/log/slave_batch.log &"
+echo $cmd
+$cmd
+
 ## sudo restart countly-supervisor
 ## backup raw data
 ## mongodump -h localhost:27017 -db countly -o ./20141002
