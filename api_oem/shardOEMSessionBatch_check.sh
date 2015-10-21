@@ -303,6 +303,7 @@ cmd="node getOEMs.js"
 echo -e $cmd
 string=`$cmd`
 IFS=', ' read -a apps <<< "$string"
+dosession=0
 
 for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 	oemName="${apps[${i}]}"
@@ -315,6 +316,7 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 	if [ "${batchdb}" == "" ]; then
 		echo -e "no data sleep 10 minutes ...." 2>&1 >> "$one_day_log" 
 		sleep 6002
+		dosession=0
 		continue
 	else
 ## check process round and s3 files
@@ -420,8 +422,10 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 
 	## send summary mail
 	sendSummaryMail ${oemName}
+	dosession=1
 done
 
+if [ ${dosession} == 1 ]; then
 	if [ "$start_round" == "00" ] && [ "$old_data" == "0" ]; then
 		echo "Loop end: $(date +%Y-%m-%d)" >> "$one_day_log"
 		#/usr/bin/mail -s "Hourly Computation Summary ($start_date)" $mail_target < $one_day_log
@@ -450,4 +454,6 @@ done
 		echo -e "Sleep $sleep_time seconds" >> "$one_day_log"
 		sleep $sleep_time
 	fi
+fi
+
 done
