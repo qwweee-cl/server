@@ -494,6 +494,23 @@ if (saveYearly) {
 					others.sU);
 */
 			insertMysql(others);
+
+			for (var country in countryList) {
+				if (result[yearArray[tmp].year] &&
+					result[yearArray[tmp].year][countryList[country]]) {
+				} else {
+					data.eventDay = startDate;
+					data.duration = duration;
+					data.appName = appName;
+					data.os = os;
+					data.country = countryList[country];
+					data.aU = 0;
+					data.tU = 0;
+					data.nU = 0;
+					data.sU = 0;
+					insertMysql(data);
+				}
+			}
 		}
 	}
 }
@@ -563,6 +580,24 @@ if (saveYearly) {
 					others.sU);
 */
 			insertMysql(others);
+
+			for (var country in countryList) {
+				if (result[monthArray[tmp].year] &&
+					result[monthArray[tmp].year][monthArray[tmp].month] &&
+					result[monthArray[tmp].year][monthArray[tmp].month][countryList[country]]) {
+				} else {
+					data.eventDay = startDate;
+					data.duration = duration;
+					data.appName = appName;
+					data.os = os;
+					data.country = countryList[country];
+					data.aU = 0;
+					data.tU = 0;
+					data.nU = 0;
+					data.sU = 0;
+					insertMysql(data);
+				}
+			}
 		}
 	}
 
@@ -634,6 +669,25 @@ if (saveYearly) {
 					others.sU);
 */
 			insertMysql(others);
+
+			for (var country in countryList) {
+				if (result[dayArray[tmp].year] &&
+					result[dayArray[tmp].year][dayArray[tmp].month] &&
+					result[dayArray[tmp].year][dayArray[tmp].month][dayArray[tmp].day] &&
+					result[dayArray[tmp].year][dayArray[tmp].month][dayArray[tmp].day][countryList[country]]) {
+				} else {
+					data.eventDay = startDate;
+					data.duration = duration;
+					data.appName = appName;
+					data.os = os;
+					data.country = countryList[country];
+					data.aU = 0;
+					data.tU = 0;
+					data.nU = 0;
+					data.sU = 0;
+					insertMysql(data);
+				}
+			}
 		}
 	}
 
@@ -709,6 +763,24 @@ if (saveYearly) {
 					others.sU);
 */
 			insertMysql(others);
+
+			for (var country in countryList) {
+				if (result[weekArray[tmp].year] &&
+					result[weekArray[tmp].year]["w"+weekArray[tmp].week] &&
+					result[weekArray[tmp].year]["w"+weekArray[tmp].week][countryList[country]]) {
+				} else {
+					data.eventDay = startDate;
+					data.duration = duration;
+					data.appName = appName;
+					data.os = os;
+					data.country = countryList[country];
+					data.aU = 0;
+					data.tU = 0;
+					data.nU = 0;
+					data.sU = 0;
+					insertMysql(data);
+				}
+			}
 		}
 	}
 }
@@ -766,7 +838,7 @@ function callSP(sql) {
 function upsetCountlyIn(eventDay, duration, appName, os, country, activeU, newU, session) {
 	print(eventDay+" "+duration+" "+appName+" "+os+" "+
 		country+" "+newU+" "+activeU+" "+session);
-	var sql = "call BcTest.countlyIn_upset_UU('"+eventDay+
+	var sql = "call Test.countlyIn_upset_UU('"+eventDay+
 		"', '"+duration+"', '"+appName+"', '"+os+"', '"+country+"', "+
 		activeU+", "+newU+", "+session+");";
 	//print(sql);
