@@ -18,6 +18,9 @@ function sendSummaryMail() {
 	mail -s "[Shard OEM ${oemName}] ${fullCurDate} Finish drop database" ${dropMongo} < ${one_time_log}
 }
 
+path="/usr/local/countly/api"
+cd ${path}
+
 mongo="localhost:27017"
 s3Path="/s3mnt/shard_backup/oem_hourly_data/"
 
