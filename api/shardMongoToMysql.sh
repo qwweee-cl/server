@@ -27,11 +27,11 @@ gzipPath="/mem/tmp/hourlyUU_gzip/"
 exportPath="/mem/tmp/hourlyUU_backup/"
 
 s3Path="/s3mnt/shard_backup/uu_backup/"
-s3PathFillZero="/s3mnt/shard_backup/uu_backup_file_zero/"
+s3PathFillZero="/s3mnt/shard_backup/uu_backup_fill_zero/"
 curdate=$(date -d "-7 hours" +%Y%m%d)
 mysqldate=$(date -d "-7 hours" +%Y-%m-%d)
 dbName="BcTest"
-dbNameFileZero="Test"
+dbNameFillZero="Test"
 
 start=$(date +%Y-%m-%d_%H-%M)
 
@@ -133,15 +133,15 @@ $cmd >> ${logpath}${curdate}_uu.log 2>&1
 
 ## run compute daily total user
 cmd="/usr/bin/mysql -u root -pcyberlink#1 -e 
-'CALL ${dbNameFileZero}.countlyIn_compute_totalu_daily();' >> ${logpath}compute_daily_all.log"
+'CALL ${dbNameFillZero}.countlyIn_compute_totalu_daily();' >> ${logpath}compute_daily_all.log"
 echo -e $cmd
-/usr/bin/mysql -u root -pcyberlink#1 -e "CALL ${dbNameFileZero}.countlyIn_compute_totalu_daily('"${mysqldate}"');" >> ${logpath}compute_daily_all.log 2>&1
+/usr/bin/mysql -u root -pcyberlink#1 -e "CALL ${dbNameFillZero}.countlyIn_compute_totalu_daily('"${mysqldate}"');" >> ${logpath}compute_daily_all.log 2>&1
 
 ## run compute monthly total user
 cmd="/usr/bin/mysql -u root -pcyberlink#1 -e 
-'CALL ${dbNameFileZero}.countlyIn_compute_totalu_monthly();' >> ${logpath}compute_monthly_all.log"
+'CALL ${dbNameFillZero}.countlyIn_compute_totalu_monthly();' >> ${logpath}compute_monthly_all.log"
 echo -e $cmd
-/usr/bin/mysql -u root -pcyberlink#1 -e "CALL ${dbNameFileZero}.countlyIn_compute_totalu_monthly('"${mysqldate}"');" >> ${logpath}compute_monthly_all.log 2>&1
+/usr/bin/mysql -u root -pcyberlink#1 -e "CALL ${dbNameFillZero}.countlyIn_compute_totalu_monthly('"${mysqldate}"');" >> ${logpath}compute_monthly_all.log 2>&1
 
 ## run compute weekly new user, session, total user
 cmd="${path}/shard_weekly_compute_fill_zero.sh"
@@ -152,9 +152,9 @@ cd $exportPath
 pwd
 ## dump HourlyBcTest database
 cmd="/usr/bin/mysqldump -u root -pcyberlink#1 
-${dbNameFileZero} countlyIn > "${curdate}"_countlyIn_fill_zero.sql"
+${dbNameFillZero} countlyIn > "${curdate}"_countlyIn_fill_zero.sql"
 echo -e $cmd
-/usr/bin/mysqldump -u root -pcyberlink#1 ${dbNameFileZero} countlyIn > ${curdate}_countlyIn_fill_zero.sql
+/usr/bin/mysqldump -u root -pcyberlink#1 ${dbNameFillZero} countlyIn > ${curdate}_countlyIn_fill_zero.sql
 
 ## tar dump data that HourlyBcTest databse
 cmd="tar czvf ${gzipPath}"${curdate}"_countlyIn_fill_zero.tgz "${curdate}"_countlyIn_fill_zero.sql"
