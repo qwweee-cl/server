@@ -493,9 +493,8 @@ if (saveYearly) {
 					others.nU+", "+
 					others.sU);
 */
-			insertMysql(others);
-
 		}
+		insertMysql(others);
 
 		for (var country in countryList) {
 			if (result[yearArray[tmp].year] &&
@@ -580,9 +579,8 @@ if (saveYearly) {
 					others.nU+", "+
 					others.sU);
 */
-			insertMysql(others);
-
 		}
+		insertMysql(others);
 
 		for (var country in countryList) {
 			if (result[monthArray[tmp].year] &&
@@ -670,9 +668,8 @@ if (saveYearly) {
 					others.nU+", "+
 					others.sU);
 */
-			insertMysql(others);
-
 		}
+		insertMysql(others);
 
 		for (var country in countryList) {
 			if (result[dayArray[tmp].year] &&
@@ -765,8 +762,8 @@ if (saveYearly) {
 					others.nU+", "+
 					others.sU);
 */
-			insertMysql(others);
 		}
+		insertMysql(others);
 
 		for (var country in countryList) {
 			if (result[weekArray[tmp].year] &&
