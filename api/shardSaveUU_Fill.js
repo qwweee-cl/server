@@ -494,6 +494,10 @@ if (saveYearly) {
 					others.sU);
 */
 		}
+		others.eventDay = startDate;
+		others.duration = duration;
+		others.appName = appName;
+		others.os = os;
 		insertMysql(others);
 
 		for (var country in countryList) {
@@ -580,6 +584,10 @@ if (saveYearly) {
 					others.sU);
 */
 		}
+		others.eventDay = startDate;
+		others.duration = duration;
+		others.appName = appName;
+		others.os = os;
 		insertMysql(others);
 
 		for (var country in countryList) {
@@ -669,6 +677,10 @@ if (saveYearly) {
 					others.sU);
 */
 		}
+		others.eventDay = startDate;
+		others.duration = duration;
+		others.appName = appName;
+		others.os = os;
 		insertMysql(others);
 
 		for (var country in countryList) {
@@ -763,6 +775,10 @@ if (saveYearly) {
 					others.sU);
 */
 		}
+		others.eventDay = startDate;
+		others.duration = duration;
+		others.appName = appName;
+		others.os = os;
 		insertMysql(others);
 
 		for (var country in countryList) {
