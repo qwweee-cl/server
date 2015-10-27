@@ -16,5 +16,5 @@ then
   exit 1
 fi
 
-nohup /usr/local/countly/api_oem/shardOEMSessionBatch_check.sh 1 $2 $3 >> /usr/local/countly/log/shardBackupOEMMain1.log 2>&1 & echo $! > ${LOCKFILE}
+nohup /usr/local/countly/api_oem/shardOEMSessionBatch_check.sh 1 $2 $3 >> /usr/local/countly/log/shardSessionOEMMain1.log 2>&1 & echo $! > ${LOCKFILE}
 
