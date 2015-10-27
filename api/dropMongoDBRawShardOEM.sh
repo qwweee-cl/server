@@ -47,27 +47,12 @@ IFS=', ' read -a apps <<< "$string"
 for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 	oemName="${apps[${i}]}"
 	one=${mongo}"/oem_${oemName}_raw"${curDate}"_00"
-	two=${mongo}"/oem_${oemName}_raw"${curDate}"_01"
-	three=${mongo}"/oem_${oemName}_raw"${curDate}"_02"
-	four=${mongo}"/oem_${oemName}_raw"${curDate}"_03"
 
 	echo -e ${one}
-	echo -e ${two}
-	echo -e ${three}
-	echo -e ${four}
 
 	s3One1=${s3Path}${fullCurDate}"_${oemName}_00.tgz"
 
-	s3Two1=${s3Path}${fullCurDate}"_${oemName}_01.tgz"
-
-	s3Three1=${s3Path}${fullCurDate}"_${oemName}_02.tgz"
-
-	s3Four1=${s3Path}${fullCurDate}"_${oemName}_03.tgz"
-
 	echo -e ${s3One1}
-	echo -e ${s3Two1}
-	echo -e ${s3Three1}
-	echo -e ${s3Four1}
 
 	fileExist=true
 
@@ -75,35 +60,11 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 		echo "${s3One1} file not exist" >> ${one_time_log}
 		fileExist=false
 	fi
-	if [ ! -f "${s3Two1}" ]; then
-		echo "${s3Two1} file not exist" >> ${one_time_log}
-		fileExist=false
-	fi
-	if [ ! -f "${s3Three1}" ]; then
-		echo "${s3Three1} file not exist" >> ${one_time_log}
-		fileExist=false
-	fi
-	if [ ! -f "${s3Four1}" ]; then
-		echo "${s3Four1} file not exist" >> ${one_time_log}
-		fileExist=false
-	fi
 	status=1
 	string="File Is Zero";
 
 	if [ ! -s "${s3One1}" ]; then
 		echo "${s3One1} file size is 0" >> ${one_time_log}
-		fileExist=false
-	fi
-	if [ ! -s "${s3Two1}" ]; then
-		echo "${s3Two1} file size is 0" >> ${one_time_log}
-		fileExist=false
-	fi
-	if [ ! -s "${s3Three1}" ]; then
-		echo "${s3Three1} file size is 0" >> ${one_time_log}
-		fileExist=false
-	fi
-	if [ ! -s "${s3Four1}" ]; then
-		echo "${s3Four1} file size is 0" >> ${one_time_log}
 		fileExist=false
 	fi
 
@@ -116,31 +77,13 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 	fi
 
 	sizeOne1=$(du -b "${s3One1}" | cut -f 1)
-	sizeTwo1=$(du -b "${s3Two1}" | cut -f 1)
-	sizeThree1=$(du -b "${s3Three1}" | cut -f 1)
-	sizeFour1=$(du -b "${s3Four1}" | cut -f 1)
 
 	echo -e "${s3One1} : ${sizeOne1}" >> ${one_time_log}
-	echo -e "${s3Two1} : ${sizeTwo1}" >> ${one_time_log}
-	echo -e "${s3Three1} : ${sizeThree1}" >> ${one_time_log}
-	echo -e "${s3Four1} : ${sizeFour1}" >> ${one_time_log}
 
 	status=2
 	string="Drop DB Exception";
 
 	cmd="/usr/bin/mongo ${one} --eval printjson(db.dropDatabase());"
-	echo $cmd >> ${one_time_log}
-	$cmd >> ${one_time_log}
-
-	cmd="/usr/bin/mongo ${two} --eval printjson(db.dropDatabase());"
-	echo $cmd >> ${one_time_log}
-	$cmd >> ${one_time_log}
-
-	cmd="/usr/bin/mongo ${three} --eval printjson(db.dropDatabase());"
-	echo $cmd >> ${one_time_log}
-	$cmd >> ${one_time_log}
-
-	cmd="/usr/bin/mongo ${four} --eval printjson(db.dropDatabase());"
 	echo $cmd >> ${one_time_log}
 	$cmd >> ${one_time_log}
 
