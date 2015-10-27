@@ -127,7 +127,7 @@ fi
 if [ "${appType}" == "1" ]; then
   header="OEM"
   LOCKFILE="/tmp/shardSessionBatchOEM.pid"
-  mainLogFile="/usr/local/countly/log/shardBackupOEMMain1.log"
+  mainLogFile="/usr/local/countly/log/shardSessionOEMMain1.log"
   mongo="config1:27017"
   indexNum="1"
   theOther="2"
@@ -135,7 +135,7 @@ if [ "${appType}" == "1" ]; then
 elif [ "${appType}" == "2" ]; then
   header="OEM"
   LOCKFILE="/tmp/shardSessionBatchOEM.pid"
-  mainLogFile="/usr/local/countly/log/shardBackupOEMMain1.log"
+  mainLogFile="/usr/local/countly/log/shardSessionOEMMain1.log"
   mongo="config1:27017"
   indexNum="2"
   theOther="1"
