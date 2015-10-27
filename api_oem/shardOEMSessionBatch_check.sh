@@ -147,7 +147,7 @@ fi
 
 header="OEM"
 LOCKFILE="/tmp/shardSessionBatchOEM.pid"
-mainLogFile="/usr/local/countly/log/shardOEMSessionMainOEM.log"
+mainLogFile="/usr/local/countly/log/shardSessionOEMMain1.log"
 mongo="config2:27017"
 indexNum="1"
 theOther="2"
