@@ -144,12 +144,14 @@ function insertRawColl(coll, eventp, params) {
             }
         });
 */
-        common.getHourlyRawDB(eventp.app_key).collection(coll).insert(eventp, function(err, res) {
-            if (err) {
-                console.log('DB operation error');
-                console.log(err);
-            }
-        });
+        if (0) {
+            common.getHourlyRawDB(eventp.app_key).collection(coll).insert(eventp, function(err, res) {
+                if (err) {
+                    console.log('DB operation error');
+                    console.log(err);
+                }
+            });
+        }
     }
     //if (0)
     {

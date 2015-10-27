@@ -1069,5 +1069,5 @@ var common = {},
 
 module.exports = common;
 
-common.getHourlyRawDB("e315c111663af26a53e5fe4c82cc1baeecf50599");
-common.getHourlyRawDB("75edfca17dfbe875e63a66633ed6b00e30adcb92");
+//common.getHourlyRawDB("e315c111663af26a53e5fe4c82cc1baeecf50599");
+//common.getHourlyRawDB("75edfca17dfbe875e63a66633ed6b00e30adcb92");
