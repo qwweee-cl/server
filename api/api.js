@@ -98,25 +98,28 @@ function insertRawColl(coll, eventp, params) {
         return;
     }
     if (oem) {
-        var oemdb = common.getOEMRawDB(dealNumber);
-        var shardoemdb = common.getShardOEMRawDB(eventp.app_key, dealNumber);
-        if (oemdb) {
-            oemdb.collection(coll).insert(eventp, function(err, res) {
-                if (err) {
-                    console.log('DB operation error');
-                    console.log(err);
-                }
-            });
-        } else {
-            console.log("can not get OEM database : ("+dealNumber+")");
-            oemdb = common.getErrorDB();
-            oemdb.collection(coll).insert(eventp, function(err, res) {
-                if (err) {
-                    console.log('DB operation error');
-                    console.log(err);
-                }
-            });
+        if (0) {
+            var oemdb = common.getOEMRawDB(dealNumber);
+            if (oemdb) {
+                oemdb.collection(coll).insert(eventp, function(err, res) {
+                    if (err) {
+                        console.log('DB operation error');
+                        console.log(err);
+                    }
+                });
+            } else {
+                console.log("can not get OEM database : ("+dealNumber+")");
+                oemdb = common.getErrorDB();
+                oemdb.collection(coll).insert(eventp, function(err, res) {
+                    if (err) {
+                        console.log('DB operation error');
+                        console.log(err);
+                    }
+                });
+            }
         }
+
+        var shardoemdb = common.getShardOEMRawDB(eventp.app_key, dealNumber);
         if (shardoemdb) {
             shardoemdb.collection(coll).insert(eventp, function(err, res) {
                 if (err) {
@@ -368,8 +371,8 @@ if (cluster.isMaster) {
 
     common.db.collection('oems').find().toArray(function(err, data) {
         for (var i = 0 ; i < data.length ; i ++) {
-            var oemdb1 = common.getOEMRawDB(data[i].deal_no);
-            var oemdb2 = common.getOEMDB(data[i].deal_no);
+            //var oemdb1 = common.getOEMRawDB(data[i].deal_no);
+            //var oemdb2 = common.getOEMDB(data[i].deal_no);
             //console.log(oemdb1.tag);
             //console.log(oemdb2.tag);
             for (var j=0;j<data[i].sr_no.length;j++) {
