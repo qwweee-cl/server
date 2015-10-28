@@ -68,6 +68,18 @@ for i in *.txt ; do
     echo -e "scp ${i} emr:/data/owl/predict/data/2015${i}" >> ${mainLogFile}
     scp ${i} emr:/data/owl/predict/data/2015${i}
   fi
+  regex="$1_55d69ff33b254f9535d6059a"
+  if [[ "$i" =~ $regex ]]
+  then
+    echo -e "scp ${i} emr:/data/owl/predict/data/2015${i}" >> ${mainLogFile}
+    scp ${i} emr2:/data/owl/predict/data/2015${i}
+  fi
+  regex="$1_55d6a0123b254f9535d6142d"
+  if [[ "$i" =~ $regex ]]
+  then
+    echo -e "scp ${i} emr:/data/owl/predict/data/2015${i}" >> ${mainLogFile}
+    scp ${i} emr2:/data/owl/predict/data/2015${i}
+  fi
 done
 
 sendSummaryMail
