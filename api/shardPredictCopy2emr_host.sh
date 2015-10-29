@@ -72,13 +72,13 @@ for i in *.txt ; do
   if [[ "$i" =~ $regex ]]
   then
     echo -e "scp ${i} emr:/data/owl/predict/data/2015${i}" >> ${mainLogFile}
-    scp ${i} emr2:/data/owl/predict/data/2015${i}
+    scp ${i} emr:/data/owl/predict/data/2015${i}
   fi
   regex="$1_55d6a0123b254f9535d6142d"
   if [[ "$i" =~ $regex ]]
   then
     echo -e "scp ${i} emr:/data/owl/predict/data/2015${i}" >> ${mainLogFile}
-    scp ${i} emr2:/data/owl/predict/data/2015${i}
+    scp ${i} emr:/data/owl/predict/data/2015${i}
   fi
 done
 
