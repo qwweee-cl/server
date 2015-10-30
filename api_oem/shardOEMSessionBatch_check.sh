@@ -94,7 +94,7 @@ checkTime=$(date +%H%M)
 checkDate=$(date +%j)
 beforeBackupTime="0500"
 backupTime="0900"
-backupTime="0900"
+backupTime="1000"
 afterbackupTime="1200"
 sleepTime=10800 # this is for clad2
 currBackup=$(date +%j)
@@ -231,11 +231,11 @@ do
 #	fi
 
 ## for session1 to check session2 process session finished
-#	if [ "${indexNum}" == "1" ]; then
+	if [ "${indexNum}" == "1" ]; then
 #		echo -e "Session1 to check session2 status"
 #		echo -e "Session2 to check session2 status" >> "$one_day_log" 2>&1
-#		cd $working_dir
-#		if [[ ${currBackup} != ${checkDate} ]] && [[ ${checkTime} > ${backupTime} ]]; then
+		cd $working_dir
+		if [[ ${currBackup} != ${checkDate} ]] && [[ ${checkTime} > ${backupTime} ]]; then
 #			cmd="node shardGetSession1Status.js"
 #			echo -e ${cmd}
 #			echo -e ${cmd} >> "$one_day_log" 2>&1
@@ -268,17 +268,17 @@ do
 #				echo -e "Session2: ${session2Status}"
 #			done
 
-#			echo -e "[backup]backup start"
+			echo -e "[backup]backup start"
 ## call backup function
-#			backupDashboard
+			backupDashboard
 ## call backup function end
-#			echo -e "[backup]backup end"
-#			currBackup=$(date +%j)
-#		else
-#			echo -e "do next job, continue process session"
-#			sleep 601
-#		fi
-#	fi
+			echo -e "[backup]backup end"
+			currBackup=$(date +%j)
+		else
+			echo -e "do next job, continue process session"
+			sleep 61
+		fi
+	fi
 
 ## check stop file
 	checkLoopStop
