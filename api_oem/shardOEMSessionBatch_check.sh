@@ -74,6 +74,11 @@ function sendWrongMail2() {
 	echo -e $(tail -20 ${one_day_log})\
 	| mail -s "[Shard OEM][Wrong S3][Session]${oemName} ${start_date} ${start_round}" ${Gary}
 }
+function sendWrongMail3() {
+	oemName="${1}"
+	echo -e $(tail -20 ${one_day_log})\
+	| mail -s "[Shard OEM][next OEMs round][Session]${oemName} ${start_date} ${start_round}" ${Gary}
+}
 
 log_path="/usr/local/countly/log/shardOEMSession"
 working_dir="/usr/local/countly/api_oem"
@@ -432,12 +437,14 @@ done
 	if [ ${dosession} == ${totaloems} ]; then
 		echo -e "next oems round(1)"
 		echo -e "next oems round(1)" >> "$one_day_log"
+		sendWrongMail3 ${oemName}
 		break
 	fi
 	apps=("${processArray[@]}")
 	if [ ${#apps[@]} == "0" ]; then
 		echo -e "next oems round(2)"
 		echo -e "next oems round(2)" >> "$one_day_log"
+		sendWrongMail3 ${oemName}
 		break;
 	fi
 done
