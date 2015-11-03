@@ -209,6 +209,9 @@ var process = require('process');
 
 
     function updateRangeMeta(dbs, ranges, coll, id) {
+        if (coll == "devices") {
+            return;
+        }
         dbs.save.collection(coll).update({'_id': id}, {'$addToSet': ranges}, {'upsert': true}, dbCallback);
         dbs.base.collection(coll).update({'_id': id}, {'$addToSet': ranges}, {'upsert': true}, dbCallback); 
     }
@@ -223,6 +226,9 @@ var process = require('process');
     }
 
     function updateCollection(dbs, collName, id, data, op, errHeader) {
+        if (collName == "devices") {
+            return;
+        }
         var tmp = {};
         var opSet = {};
         for (var times in data) {
