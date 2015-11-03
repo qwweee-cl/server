@@ -314,6 +314,10 @@ processArray=()
 processIndex=0
 
 while(true) do
+	curTimestamp=$(date +%s)
+	echo -e ${curTimestamp} 2>&1 >> "$one_day_log" 
+	curTimestamp=$(date -d "-5 minutes" +%s)
+	echo -e ${curTimestamp} 2>&1 >> "$one_day_log"
 for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 	oemName="${apps[${i}]}"
 
