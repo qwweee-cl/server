@@ -24,7 +24,7 @@ cd ${path}
 mongo="localhost:27017"
 s3Path="/s3mnt/shard_backup/oem_hourly_data/"
 
-fullCurDate=$(date -d "-3 days" +%Y%m%d)
+fullCurDate=$(date -d "-5 days" +%Y%m%d)
 
 if [ -z "$1" ]
 then
@@ -32,7 +32,7 @@ then
 else
   fullCurDate=${1}
 fi
-curDate=$(date -d "-3 days" +%m%d)
+curDate=$(date -d "-5 days" +%m%d)
 curDate=$(date -d "${fullCurDate}" +%m%d)
 echo -e ${curDate}
 echo -e ${fullCurDate}
