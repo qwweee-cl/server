@@ -325,10 +325,13 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 	getBackupFinished ${oemName}
 
 ## wait for get finished backup data
+	if [ "${oemName}" == "Tencent" ]; then
+		continue
+	fi
 	## check if no data in db
 	if [ "${batchdb}" == "" ]; then
 		echo -e "no data sleep 10 minutes ...." 2>&1 >> "$one_day_log" 
-		sleep 6002
+		sleep 602
 		processArray[${processIndex}]=${oemName}
 		processIndex=$(($processIndex+1))
 		continue
