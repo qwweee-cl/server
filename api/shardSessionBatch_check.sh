@@ -198,6 +198,7 @@ do
 	if [ "${indexNum}" == "2" ]; then
 		echo -e "Session2 to check backup status"
 		echo -e "Session2 to check backup status" >> "$one_day_log" 2>&1
+		sleep 605
 		cd $working_dir
 		cmd="node shardGetBackupStatus.js"
 		echo -e ${cmd}
