@@ -326,6 +326,7 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 
 ## wait for get finished backup data
 	if [ "${oemName}" == "Tencent" ]; then
+		dosession=$(($dosession+1))
 		continue
 	fi
 	## check if no data in db
