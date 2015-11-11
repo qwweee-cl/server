@@ -1,6 +1,6 @@
 #!/bin/bash
 
-startdate='20140701'
+startdate='20140601'
 enddate=$(date -d "-7 hours" +%Y%m%d)
 dbName='Test'
 hostName='localhost'
