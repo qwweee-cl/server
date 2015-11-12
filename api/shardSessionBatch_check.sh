@@ -88,6 +88,9 @@ batchdb=""
 
 s3Path="/s3mnt/shard_backup/hourly_data/"
 
+cmds3DashboardPath="/s3mnt/shard_backup/dashboard_data/"
+cmds3Path="s3://clcom2-countly/shard_backup/hourly_data/"
+
 ## backup dashboard need
 checkTime=$(date +%H%M)
 checkDate=$(date +%j)
@@ -318,7 +321,7 @@ do
 		continue
 	else
 ## check process round and s3 files
-		
+		sleep 603
 		echo -e ${start_date}
 		filedate=$(date -d "${start_date}" +%Y%m%d)
 		echo -e ${filedate}
@@ -326,6 +329,8 @@ do
 		echo -e ${start_round}
 		s3File1=${s3Path}${filedate}"_raw_${start_round}_1.tgz"
 		s3File2=${s3Path}${filedate}"_raw_${start_round}_2.tgz"
+		cmds3File1=${cmds3Path}${filedate}"_raw_${start_round}_1.tgz"
+		cmds3File2=${cmds3Path}${filedate}"_raw_${start_round}_2.tgz"
 		fileExist=true
 		echo -e ${s3File1}
 		echo -e ${s3File2}
@@ -336,12 +341,29 @@ do
 			exit 1
 		fi
 
-		if [ ! -f ${s3File1} ] || [ ! -f ${s3File2} ]; then
+		existFile1=`aws s3 ls ${cmds3File1} | wc -l`
+		existFile2=`aws s3 ls ${cmds3File2} | wc -l`
+
+		duFile1=`aws s3 ls ${cmds3File1} | awk '{ print $3 }'`
+		duFile2=`aws s3 ls ${cmds3File2} | awk '{ print $3 }'`
+
+#		if [ ! -f ${s3File1} ] || [ ! -f ${s3File2} ]; then
+#			echo "${s3File1} or ${s3File2} file not exist" >> ${one_day_log}
+#			fileExist=false
+#		fi
+
+#		if [ ! -s ${s3File1} ] || [ ! -s ${s3File2} ]; then
+#			echo "${s3File1} or ${s3File2} file size is 0" >> ${one_day_log}
+#			fileExist=false
+#		fi
+
+
+		if [ ${existFile1} == "0" ] || [ ${existFile2} == "0" ]; then
 			echo "${s3File1} or ${s3File2} file not exist" >> ${one_day_log}
 			fileExist=false
 		fi
 
-		if [ ! -s ${s3File1} ] || [ ! -s ${s3File2} ]; then
+		if [ -z ${duFile1} ] || [ -z ${duFile2} ]; then
 			echo "${s3File1} or ${s3File2} file size is 0" >> ${one_day_log}
 			fileExist=false
 		fi
