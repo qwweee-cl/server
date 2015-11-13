@@ -67,6 +67,12 @@ cmd="/usr/bin/node --max-old-space-size=4096 shardSaveUU.js"
 echo -e $cmd
 $cmd >> ${logpath}${curdate}_uu.log 2>&1
 
+## run clean YCN before 1027
+cmd="/usr/bin/mysql -u root -pcyberlink#1 -e 
+'CALL ${dbName}.zero_1027_YCN();' >> ${logpath}compute_YCN_1027.log"
+echo -e $cmd
+/usr/bin/mysql -u root -pcyberlink#1 -e "CALL ${dbName}.zero_1027_YCN();" >> ${logpath}compute_YCN_1027.log 2>&1
+
 ## run compute daily total user
 cmd="/usr/bin/mysql -u root -pcyberlink#1 -e 
 'CALL ${dbName}.countlyIn_compute_totalu_daily();' >> ${logpath}compute_daily_all.log"
@@ -130,6 +136,12 @@ pwd
 cmd="/usr/bin/node --max-old-space-size=4096 shardSaveUU_Fill.js"
 echo -e $cmd
 $cmd >> ${logpath}${curdate}_uu.log 2>&1
+
+## run clean YCN before 1027
+cmd="/usr/bin/mysql -u root -pcyberlink#1 -e 
+'CALL ${dbName}.zero_1027_YCN();' >> ${logpath}compute_YCN_1027.log"
+echo -e $cmd
+/usr/bin/mysql -u root -pcyberlink#1 -e "CALL ${dbName}.zero_1027_YCN();" >> ${logpath}compute_YCN_1027.log 2>&1
 
 ## run compute daily total user
 cmd="/usr/bin/mysql -u root -pcyberlink#1 -e 
