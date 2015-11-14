@@ -139,9 +139,9 @@ $cmd >> ${logpath}${curdate}_uu.log 2>&1
 
 ## run clean YCN before 1027
 cmd="/usr/bin/mysql -u root -pcyberlink#1 -e 
-'CALL ${dbName}.zero_1027_YCN();' >> ${logpath}compute_YCN_1027.log"
+'CALL ${dbNameFillZero}.zero_1027_YCN();' >> ${logpath}compute_YCN_1027.log"
 echo -e $cmd
-/usr/bin/mysql -u root -pcyberlink#1 -e "CALL ${dbName}.zero_1027_YCN();" >> ${logpath}compute_YCN_1027.log 2>&1
+/usr/bin/mysql -u root -pcyberlink#1 -e "CALL ${dbNameFillZero}.zero_1027_YCN();" >> ${logpath}compute_YCN_1027.log 2>&1
 
 ## run compute daily total user
 cmd="/usr/bin/mysql -u root -pcyberlink#1 -e 
