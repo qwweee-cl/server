@@ -400,7 +400,7 @@ if (cluster.isMaster) {
 } else {
     var oems = process.env['OEMS'];
     oemMaps = JSON.parse(oems);
-    var baseTimeOut = 86400000;
+    var baseTimeOut = 3600000;
 
     setInterval(function() {
         /** update workerEnv OEM tables data **/
