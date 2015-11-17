@@ -28,7 +28,7 @@ connection.connect();
 //var oemName = 1;
 //var session1 = 1;
 //var round1 = "'countly_raw0901_00'";
-var queryString = 'UPDATE oem_status SET '+oemName+'='+sessionStatus+', '+sessionType+'="'+roundValue+'" WHERE id = 1';
+var queryString = 'UPDATE oem_status SET `'+oemName+'`='+sessionStatus+', '+sessionType+'="'+roundValue+'" WHERE id = 1';
 console.log(queryString);
 
 connection.query(queryString, function(err, rows, fields) {
