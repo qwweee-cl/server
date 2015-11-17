@@ -346,6 +346,10 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 		dosession=$(($dosession+1))
 		continue
 	fi
+	if [ "${oemName}" == "PPAndroid" ]; then
+		dosession=$(($dosession+1))
+		continue
+	fi
 	## check if no data in db
 	if [ "${batchdb}" == "" ]; then
 		echo -e "no data sleep 10 minutes ...." 2>&1 >> "$one_day_log" 
