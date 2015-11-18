@@ -12,7 +12,7 @@ fi
 
 if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]
 then
-  echo -e "please add one paramater: (1 = shard1, 2 = shard2) (start date:2015-01-01) (start round:0~3)"
+  echo -e "please add one paramater: (1 = shard1, 2 = shard2) (start date:20150101) (start round:0~3)"
   exit 1
 fi
 

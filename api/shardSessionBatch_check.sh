@@ -322,6 +322,19 @@ do
 		continue
 	else
 ## check process round and s3 files
+		cmd="node shardGetSessionDateRound.js"
+		echo -e ${cmd} 2>&1 >> "$one_day_log"
+		string=`${cmd}`
+		#echo -e ${string}
+		dateRound=${string}
+		echo -e ${dateRound} 2>&1 >> "$one_day_log"
+
+		if [ "${dateRound}" != "${start_date}_${start_round}" ]; then
+			echo -e "no data sleep 10 minutes ...." 2>&1 >> "$one_day_log" 
+			sleep 605
+			continue
+		fi
+		
 		sleep 603
 		echo -e ${start_date}
 		filedate=$(date -d "${start_date}" +%Y%m%d)

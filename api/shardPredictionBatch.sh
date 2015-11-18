@@ -8,7 +8,7 @@ function error_exp
   echo -e "Execute Prediction Error ${mainLogFile} : "\
   $(tail -20 ${mainLogFile}) \
   | mail -s "[Shard][session${index}] Error Execute Prediction" ${mail_target}
-  exit 0
+  exit 1
 }
 
 function sendSummaryMail() {
@@ -78,5 +78,12 @@ if [ "$2" == "1" ]; then
   echo -e "${cmd}" >> ${mainLogFile}
   ${cmd}
   echo "Prediction end emr_test: $(date +%Y-%m-%d)" >> "$mainLogFile"
+
+  echo "Update Prediction finished Flag to MySQL" >> "$mainLogFile"
+  cd ${working_dir}
+  cmd="node shardUpdateSessionDateRound.js ${start_date}_${start_round}"
+  echo -e "${cmd}" >> ${mainLogFile}
+  ${cmd}
+
   sendSummaryMail
 fi

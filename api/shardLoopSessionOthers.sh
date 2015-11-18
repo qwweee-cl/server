@@ -8,10 +8,11 @@ function error_exp
   $(tail -20 ${mainLogFile}) \
   | mail -s "[Shard][session${index}] Process Others Script${index} Error Trap" ${mail_target}
   echo -e "Process Others Script${index} error!"
+  exit 1
 }
 
 if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ] || [ -z "$4" ]; then
-  echo "Please execute with dbname, index(1 or 2), start_date(YYMMDD), start_round(00~03) paramater"
+  echo "Please execute with dbname, index(1 or 2), start_date(20150101), start_round(00~03) paramater"
   exit 0
 fi
 
