@@ -28,7 +28,7 @@ if [ -z "$1" ] || [ -z "$2" ]; then
   echo "Please execute with dbname and index(1 or 2) paramater"
   exit 0
 fi
-echo "Prediction start: $(date +%Y-%m-%d)" > "$mainLogFile"
+echo "Prediction start: $(date +%Y-%m-%d)" >> "$mainLogFile"
 
 index="${2}"
 
@@ -77,15 +77,15 @@ if [ "$2" == "1" ]; then
 
   echo -e "Execute Prediction Scirpt"
   echo -e "Execute Prediction Scirpt" >> ${mainLogFile}
-  echo "Prediction start emr_host: $(date +%Y-%m-%d)" > "$mainLogFile"
+  echo "Prediction start emr_host: $(date +%Y-%m-%d)" >> "$mainLogFile"
   cmd="ssh ubuntu@emr2 /home/ubuntu/predict/daily_predict_APP.sh ${execDate} >> /data/owl/predict/log/sshCallPredict.log"
   echo -e "${cmd}" >> ${mainLogFile}
   ${cmd}
-  echo "Prediction end emr_host: $(date +%Y-%m-%d)" > "$mainLogFile"
-  echo "Prediction start emr_test: $(date +%Y-%m-%d)" > "$mainLogFile"
+  echo "Prediction end emr_host: $(date +%Y-%m-%d)" >> "$mainLogFile"
+  echo "Prediction start emr_test: $(date +%Y-%m-%d)" >> "$mainLogFile"
   cmd="ssh ubuntu@emr /home/ubuntu/predict/daily_predict_APP.sh ${execDate} >> /data/owl/predict/log/sshCallPredict.log"
   echo -e "${cmd}" >> ${mainLogFile}
   ${cmd}
-  echo "Prediction end emr_test: $(date +%Y-%m-%d)" > "$mainLogFile"
+  echo "Prediction end emr_test: $(date +%Y-%m-%d)" >> "$mainLogFile"
   sendSummaryMail
 fi
