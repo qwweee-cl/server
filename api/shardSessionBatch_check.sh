@@ -116,11 +116,12 @@ end_time=""
 
 if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]
 then
-  echo -e "please add one paramater: (1 = shard1, 2 = shard2) (start date:2015-01-01) (start round:0~3)"
+  echo -e "please add one paramater: (1 = shard1, 2 = shard2) (start date:20150101) (start round:0~3)"
   exit 1
 else
   appType=${1}
-  start_date=$(date -d "$2" +%Y-%m-%d)
+  start_date=$(date -d "$2" +%Y%m%d)
+#  start_date=$(date -d "${start_date}" +%Y%m%d)
   small_date=$(date -d "${start_date}" +%m%d)
   start_round=$(printf "%02d" $3)	
 fi
@@ -425,7 +426,7 @@ do
 
 	echo -e "End Time: $(date +%Y-%m-%d,%H:%M:%S)" >> "$one_day_log" 2>&1
 
-	if [ "${indexNum}" == "1" ]; then
+#	if [ "${indexNum}" == "1" ]; then
 ## check backup finish or not?
 #		cmd="node shardFindSessionFinished.js ${batchdb} ${theOther}"
 #		echo -e ${cmd} 2>&1 >> ${one_time_log}
@@ -439,11 +440,11 @@ do
 #		    string=`${cmd}`
 #		    checkLoopStop
 #		done
-## process mongodb to mysql in claddb
-	cmd="ssh ubuntu@claddb2 /usr/local/countly/api/shardRunMongoToMysql.sh >> /usr/local/countly/log/mongoToMysql.log"
-	echo $cmd
-	$cmd 2>&1
-	fi
+### process mongodb to mysql in claddb
+#	cmd="ssh ubuntu@claddb2 /usr/local/countly/api/shardRunMongoToMysql.sh ${start_date} ${start_round} >> /usr/local/countly/log/mongoToMysql.log"
+#	echo $cmd
+#	$cmd 2>&1
+#	fi
 
 #	## cp Prediction files to s3
 #	cd ${working_dir}
@@ -452,8 +453,8 @@ do
 #	${cmd}
 	## do other scripts
 	cd ${working_dir}
-	echo -e "Call Others batch script shardLoopSessionOthers.sh ${batchdb} ${indexNum}"
-	${working_dir}/shardLoopSessionOthers.sh ${batchdb} ${indexNum} >> "$one_day_log" 2>&1
+	echo -e "Call Others batch script shardLoopSessionOthers.sh ${batchdb} ${indexNum} ${start_date} ${start_round}"
+	${working_dir}/shardLoopSessionOthers.sh ${batchdb} ${indexNum} ${start_date} ${start_round} >> "$one_day_log" 2>&1
 
 	## send summary mail
 	sendSummaryMail

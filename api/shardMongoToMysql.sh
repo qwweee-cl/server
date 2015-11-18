@@ -58,7 +58,14 @@ else
 	curdate=$1
 	mysqldate=$(date -d "${1}" +%Y-%m-%d)
 fi
-echo ${curdate}
+
+if [ -z "$2" ]; then
+    echo "shardMongoToMysqlUU No argument supplied"
+else
+	start_round="$2"
+fi
+
+echo -e "process ${curdate} ${start_round}"
 
 cd ${path}
 pwd
@@ -90,32 +97,33 @@ cmd="${path}/shard_weekly_compute.sh"
 echo -e $cmd
 ${cmd} >> ${logpath}${curdate}_weelky.log
 
-#cd $exportPath
-#pwd
-### dump HourlyBcTest database
-#cmd="/usr/bin/mysqldump -u root -pcyberlink#1 ${dbName} countlyIn > "${curdate}"_countlyIn.sql"
-#echo -e $cmd
-#/usr/bin/mysqldump -u root -pcyberlink#1 ${dbName} countlyIn > ${curdate}_countlyIn.sql
+cd $exportPath
+pwd
+## dump HourlyBcTest database
+cmd="/usr/bin/mysqldump -u root -pcyberlink#1 
+${dbName} countlyIn > "${curdate}"_countlyIn.sql"
+echo -e $cmd
+/usr/bin/mysqldump -u root -pcyberlink#1 ${dbName} countlyIn > ${curdate}_countlyIn.sql
 
-### tar dump data that HourlyBcTest databse
-#cmd="tar czvf ${gzipPath}"${curdate}"_countlyIn.tgz "${curdate}"_countlyIn.sql"
-#echo -e $cmd
-#$cmd
+## tar dump data that HourlyBcTest databse
+cmd="tar czvf ${gzipPath}"${curdate}"_countlyIn.tgz "${curdate}"_countlyIn.sql"
+echo -e $cmd
+$cmd
 
-### rm dump data
-#cmd="rm "${curdate}"_countlyIn.sql"
-#echo -e $cmd
-#$cmd
+## rm dump data
+cmd="rm "${curdate}"_countlyIn.sql"
+echo -e $cmd
+$cmd
 
-### backup tar file to S3
-#cmd="cp ${gzipPath}"${curdate}"_countlyIn.tgz ${s3Path}"
-#echo -e $cmd
-#$cmd
+## backup tar file to S3
+cmd="cp ${gzipPath}"${curdate}"_countlyIn.tgz ${s3Path}"
+echo -e $cmd
+$cmd
 
-### rm tar file
-#cmd="rm ${gzipPath}"${curdate}"_countlyIn.tgz"
-#echo -e $cmd
-#$cmd
+## rm tar file
+cmd="rm ${gzipPath}"${curdate}"_countlyIn.tgz"
+echo -e $cmd
+$cmd
 
 end=$(date +%Y-%m-%d_%H-%M)
 echo $start
@@ -159,32 +167,33 @@ cmd="${path}/shard_weekly_compute_fill_zero.sh"
 echo -e $cmd
 ${cmd} >> ${logpath}${curdate}_weelky.log
 
-#cd $exportPath
-#pwd
-### dump HourlyBcTest database
-#cmd="/usr/bin/mysqldump -u root -pcyberlink#1 ${dbNameFillZero} countlyIn > "${curdate}"_countlyIn_fill_zero.sql"
-#echo -e $cmd
-#/usr/bin/mysqldump -u root -pcyberlink#1 ${dbNameFillZero} countlyIn > ${curdate}_countlyIn_fill_zero.sql
+cd $exportPath
+pwd
+## dump HourlyBcTest database
+cmd="/usr/bin/mysqldump -u root -pcyberlink#1 
+${dbNameFillZero} countlyIn > "${curdate}"_countlyIn_fill_zero.sql"
+echo -e $cmd
+/usr/bin/mysqldump -u root -pcyberlink#1 ${dbNameFillZero} countlyIn > ${curdate}_countlyIn_fill_zero.sql
 
-### tar dump data that HourlyBcTest databse
-#cmd="tar czvf ${gzipPath}"${curdate}"_countlyIn_fill_zero.tgz "${curdate}"_countlyIn_fill_zero.sql"
-#echo -e $cmd
-#$cmd
+## tar dump data that HourlyBcTest databse
+cmd="tar czvf ${gzipPath}"${curdate}"_countlyIn_fill_zero.tgz "${curdate}"_countlyIn_fill_zero.sql"
+echo -e $cmd
+$cmd
 
-### rm dump data
-#cmd="rm "${curdate}"_countlyIn_fill_zero.sql"
-#echo -e $cmd
-#$cmd
+## rm dump data
+cmd="rm "${curdate}"_countlyIn_fill_zero.sql"
+echo -e $cmd
+$cmd
 
-### backup tar file to S3
-#cmd="cp ${gzipPath}"${curdate}"_countlyIn_fill_zero.tgz ${s3PathFillZero}"
-#echo -e $cmd
-#$cmd
+## backup tar file to S3
+cmd="cp ${gzipPath}"${curdate}"_countlyIn_fill_zero.tgz ${s3PathFillZero}"
+echo -e $cmd
+$cmd
 
-### rm tar file
-#cmd="rm ${gzipPath}"${curdate}"_countlyIn_fill_zero.tgz"
-#echo -e $cmd
-#$cmd
+## rm tar file
+cmd="rm ${gzipPath}"${curdate}"_countlyIn_fill_zero.tgz"
+echo -e $cmd
+$cmd
 
 end=$(date +%Y-%m-%d_%H-%M)
 echo $start
