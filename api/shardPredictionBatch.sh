@@ -63,17 +63,17 @@ if [ "$2" == "1" ]; then
   echo -e "session1: ${session1Status}, session2: ${session2Status}"
   echo -e "session1: ${session1Status}, session2: ${session2Status}" >> ${mainLogFile}
 
-  while [ "${session1Status}" != "0" ] || [ "${session2Status}" != "0" ]; do
-    echo -e "wait for session1 and session2 finished"
-    echo -e "wait for session1 and session2 finished" >> ${mainLogFile}
-    sleep 61
-    cd ${working_dir}
-    session1Status=`node shardGetSession1Status.js`
-    session2Status=`node shardGetSession2Status.js`
-
-    echo -e "session1: ${session1Status}, session2: ${session2Status}"
-    echo -e "session1: ${session1Status}, session2: ${session2Status}" >> ${mainLogFile}
-  done
+#  while [ "${session1Status}" != "0" ] || [ "${session2Status}" != "0" ]; do
+#    echo -e "wait for session1 and session2 finished"
+#    echo -e "wait for session1 and session2 finished" >> ${mainLogFile}
+#    sleep 61
+#    cd ${working_dir}
+#    session1Status=`node shardGetSession1Status.js`
+#    session2Status=`node shardGetSession2Status.js`
+#
+#    echo -e "session1: ${session1Status}, session2: ${session2Status}"
+#    echo -e "session1: ${session1Status}, session2: ${session2Status}" >> ${mainLogFile}
+#  done
 
   echo -e "Execute Prediction Scirpt"
   echo -e "Execute Prediction Scirpt" >> ${mainLogFile}
