@@ -326,26 +326,26 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 	getBackupFinished ${oemName}
 
 ## wait for get finished backup data
-	if [ "${oemName}" == "Tencent" ]; then
-		dosession=$(($dosession+1))
-		continue
-	fi
-	if [ "${oemName}" == "360" ]; then
-		dosession=$(($dosession+1))
-		continue
-	fi
-	if [ "${oemName}" == "Huawei" ]; then
-		dosession=$(($dosession+1))
-		continue
-	fi
+#	if [ "${oemName}" == "Tencent" ]; then
+#		dosession=$(($dosession+1))
+#		continue
+#	fi
+#	if [ "${oemName}" == "360" ]; then
+#		dosession=$(($dosession+1))
+#		continue
+#	fi
+#	if [ "${oemName}" == "Huawei" ]; then
+#		dosession=$(($dosession+1))
+#		continue
+#	fi
 	if [ "${oemName}" == "XiaoMi" ]; then
 		dosession=$(($dosession+1))
 		continue
 	fi
-	if [ "${oemName}" == "BaiduStore" ]; then
-		dosession=$(($dosession+1))
-		continue
-	fi
+#	if [ "${oemName}" == "BaiduStore" ]; then
+#		dosession=$(($dosession+1))
+#		continue
+#	fi
 	if [ "${oemName}" == "PPAndroid" ]; then
 		dosession=$(($dosession+1))
 		continue
