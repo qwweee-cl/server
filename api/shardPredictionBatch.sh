@@ -58,7 +58,34 @@ cmd="./shardPredictCopy2emr_host.sh ${shortDate} $2"
 echo -e "${cmd}" >> ${mainLogFile}
 ${cmd} ${shortDate} $2
 
+if [ "$2" == "2" ]; then
+  echo -e "update prediction status (session2) ${start_date}_${start_round}"
+  echo -e "update prediction status (session2) ${start_date}_${start_round}" 2>&1 >> "$one_day_log"
+  cmd="node shardUpdateSessionPrediction.js 2 ${start_date}_${start_round}"
+  echo ${cmd} 2>&1 >> ${one_day_log}
+  $cmd
+fi
+
 if [ "$2" == "1" ]; then
+  while true;
+  do
+    cmd="node shardGetSession2Prediction.js"
+    echo -e ${cmd} 2>&1 >> "$one_day_log"
+    string=`${cmd}`
+    #echo -e ${string}
+    session2Prediction=${string}
+    echo -e "${session2Prediction} : ${start_date}_${start_round}" 2>&1 >> "$one_day_log"
+
+    if [ "${session2Prediction}" != "${start_date}_${start_round}" ]; then
+      echo -e "no data sleep 1 minutes ...." 2>&1 >> "$one_day_log" 
+      sleep 65
+      continue
+    else
+      echo -e "${start_date}_${start_round} finished, do next" 2>&1 >> "$one_day_log"
+      break
+    fi
+  done
+
   cd ${working_dir}
 ### process mongodb to mysql in claddb
   cmd="ssh ubuntu@claddb2 /usr/local/countly/api/shardRunMongoToMysql.sh ${start_date} ${start_round} >> /usr/local/countly/log/mongoToMysql.log"
