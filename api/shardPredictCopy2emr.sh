@@ -17,7 +17,7 @@ function sendSummaryMail() {
   | mail -s "[Shard][session${index}] Prediction Copy to EMR Summary" ${mail_target}
 }
 
-mainLogFile="/usr/local/countly/log/shardPredictionEMR.log"
+mainLogFile="/usr/local/countly/log/shardPredictionEMR2.log"
 working_dir="/usr/local/countly/api"
 mail_target=${AWSM}
 s3PredictionPath="/s3mnt/shard_backup/Prediction/"
