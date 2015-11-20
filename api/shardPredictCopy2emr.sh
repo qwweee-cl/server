@@ -4,9 +4,9 @@ trap 'error_exp'  ERR SIGINT SIGTERM
 
 function error_exp
 {
-  echo -e "[Shard][session${index}] Prediction Copy to EMR fail"\
+  echo -e "[Shard to emr-test][session${index}] Prediction Copy to EMR fail"\
   $(tail -20 ${mainLogFile}) \
-  | mail -s "[Shard][session${index}] Prediction Copy to EMR Error Trap" ${mail_target}
+  | mail -s "[Shard to emr-test][session${index}] Prediction Copy to EMR Error Trap" ${mail_target}
   echo -e "Copy Prediction files error!"
   exit 1
 }
@@ -14,7 +14,7 @@ function error_exp
 function sendSummaryMail() {
   echo -e "Prediction logs ${mainLogFile} : "\
   $(tail -20 ${mainLogFile}) \
-  | mail -s "[Shard][session${index}] Prediction Copy to EMR Summary" ${mail_target}
+  | mail -s "[Shard to emr-test][session${index}] Prediction Copy to EMR Summary" ${mail_target}
 }
 
 mainLogFile="/usr/local/countly/log/shardPredictionEMR2.log"
