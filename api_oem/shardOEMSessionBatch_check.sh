@@ -338,10 +338,10 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 #		dosession=$(($dosession+1))
 #		continue
 #	fi
-	if [ "${oemName}" == "XiaoMi" ]; then
-		dosession=$(($dosession+1))
-		continue
-	fi
+#	if [ "${oemName}" == "XiaoMi" ]; then
+#		dosession=$(($dosession+1))
+#		continue
+#	fi
 #	if [ "${oemName}" == "BaiduStore" ]; then
 #		dosession=$(($dosession+1))
 #		continue
