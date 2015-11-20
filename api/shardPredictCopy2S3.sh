@@ -22,12 +22,21 @@ working_dir="/usr/local/countly/api"
 mail_target=${AWSM}
 s3PredictionPath="/s3mnt/shard_backup/Prediction/"
 
-if [ -z "$1" ] || [ -z "$2" ]; then
-  echo "Please execute with date(0101) and index(1 or 2) paramater"
+if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ] || [ -z "$4" ]; then
+  echo "Please execute with date(0101) and index(1 or 2), start_date(20151111), start_round(00~03) paramater"
   exit 0
 fi
 
 index="${2}"
+start_date="${3}"
+start_round="${4}"
+
+s3DateRoundPredictionPath="${s3PredictionPath}${start_date}_${start_round}"
+echo -e "${s3DateRoundPredictionPath}"
+
+if [ ! -d "${s3DateRoundPredictionPath}" ]; then
+  mkdir ${s3DateRoundPredictionPath}
+fi
 
 cd ${working_dir}
 

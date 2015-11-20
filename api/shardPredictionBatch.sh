@@ -45,9 +45,9 @@ if [[ $string =~ $regular ]]; then
 fi
 
 ## execute copy prediction file to s3
-cmd="./shardPredictCopy2S3.sh ${shortDate} $2"
+cmd="./shardPredictCopy2S3.sh ${shortDate} $2 ${start_date} ${start_round}"
 echo -e "${cmd}" >> ${mainLogFile}
-${cmd} ${shortDate} $2
+${cmd} ${shortDate} $2 ${start_date} ${start_round}
 ## execute copy prediction file to emr2
 cmd="./shardPredictCopy2emr.sh ${shortDate} $2"
 echo -e "${cmd}" >> ${mainLogFile}
