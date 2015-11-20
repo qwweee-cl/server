@@ -60,9 +60,9 @@ ${cmd} ${shortDate} $2
 
 if [ "$2" == "2" ]; then
   echo -e "update prediction status (session2) ${start_date}_${start_round}"
-  echo -e "update prediction status (session2) ${start_date}_${start_round}" 2>&1 >> "$one_day_log"
+  echo -e "update prediction status (session2) ${start_date}_${start_round}" 2>&1 >> "$mainLogFile"
   cmd="node shardUpdateSessionPrediction.js 2 ${start_date}_${start_round}"
-  echo ${cmd} 2>&1 >> ${one_day_log}
+  echo ${cmd} 2>&1 >> ${mainLogFile}
   $cmd
 fi
 
@@ -70,18 +70,18 @@ if [ "$2" == "1" ]; then
   while true;
   do
     cmd="node shardGetSession2Prediction.js"
-    echo -e ${cmd} 2>&1 >> "$one_day_log"
+    echo -e ${cmd} 2>&1 >> "$mainLogFile"
     string=`${cmd}`
     #echo -e ${string}
     session2Prediction=${string}
-    echo -e "${session2Prediction} : ${start_date}_${start_round}" 2>&1 >> "$one_day_log"
+    echo -e "${session2Prediction} : ${start_date}_${start_round}" 2>&1 >> "$mainLogFile"
 
     if [ "${session2Prediction}" != "${start_date}_${start_round}" ]; then
-      echo -e "no data sleep 1 minutes ...." 2>&1 >> "$one_day_log" 
+      echo -e "no data sleep 1 minutes ...." 2>&1 >> "$mainLogFile" 
       sleep 65
       continue
     else
-      echo -e "${start_date}_${start_round} finished, do next" 2>&1 >> "$one_day_log"
+      echo -e "${start_date}_${start_round} finished, do next" 2>&1 >> "$mainLogFile"
       break
     fi
   done
