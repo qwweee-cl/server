@@ -95,7 +95,7 @@ if [ "$2" == "1" ]; then
   echo -e "Execute Prediction Scirpt"
   echo -e "Execute Prediction Scirpt" >> ${mainLogFile}
   echo "Prediction start emr_host: $(date '+%Y-%m-%d %H:%M')" >> "$mainLogFile"
-  cmd="ssh ubuntu@emr /home/ubuntu/predict/daily_predict_APP.sh ${start_date} >> /data/owl/predict/log/sshCallPredict.log"
+  cmd="ssh ubuntu@emr /home/ubuntu/predict/daily_predict_APP.sh ${start_date} ${start_round} >> /data/owl/predict/log/sshCallPredict.log"
   echo -e "${cmd}" >> ${mainLogFile}
   ${cmd}
   echo "Prediction end emr_host: $(date '+%Y-%m-%d %H:%M')" >> "$mainLogFile"
