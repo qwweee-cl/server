@@ -20,16 +20,16 @@ function backupDashboard() {
 		## update backup status 1
 		cmd="node shardUpdateBackupStatusByOEM.js 1"
 		echo ${cmd} 2>&1 >> ${one_day_log}
-#		$cmd
+		$cmd
 		## call backup script
 		cmd="${working_dir}/shardBackupDashboardDBByOEM.sh"
 		echo ${cmd} 2>&1 >> ${one_day_log}
-#		$cmd
+		$cmd
 
 		## update backup status 0
 		cmd="node shardUpdateBackupStatusByOEM.js 0"
 		echo ${cmd} 2>&1 >> ${one_day_log}
-#		$cmd
+		$cmd
 	fi
 }
 function checkLoopStop() {
