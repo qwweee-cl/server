@@ -122,15 +122,23 @@ def countSession(and_key, ios_key):
 S_OK = 0
 E_FAIL = 1
 class CDistinctSessionWorker(threading.Thread):
-    def __init__(self, cmd):
+    def __init__(self, app_key, file_name, skip_num, limit_num):
         threading.Thread.__init__(self)
-        self.cmd = cmd
+        self.limit_num = limit_num
+        self.cmd = ['node', 'distinctSessions.js', app_key, file_name, str(skip_num), str(limit_num)]
         self.__nError = S_OK
         self.__dictSummary = {"Sessions":0, "Users":0}
         self.__logSummary = ""
         self.__logError = ""
 
     def run(self):
+        self.execute_cmd()
+        # check session number got < 1% limit difference
+        if abs(int(self.__dictSummary["Sessions"]) - self.limit_num) > self.limit_num * 0.01:
+            time.sleep(5)
+            self.execute_cmd()
+
+    def execute_cmd(self):
         print "Execute Command: " + " ".join(self.cmd) + "\n"
         p = subprocess.Popen(self.cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         
@@ -176,9 +184,10 @@ def generateDistinctSessionWorker(app_key, nTotalSessions, filePrefix, filePostf
         #print "Index = %d, Skip = %d, Limit = %d" % (i, nSkipNumber, nLimitNumber)
         sFileName = getFileName(filePrefix, i, filePostfix)
         #print "File name = " + sFileName
-        listCmd = ['node', 'distinctSessions.js', app_key, sFileName, str(nSkipNumber), str(nLimitNumber)]
+        #listCmd = ['node', 'distinctSessions.js', app_key, sFileName, str(nSkipNumber), str(nLimitNumber)]
         #print "Command = ", listCmd
-        worker = CDistinctSessionWorker(listCmd)
+        #worker = CDistinctSessionWorker(listCmd)
+        worker = CDistinctSessionWorker(app_key, sFileName, nSkipNumber, nLimitNumber)
         arySessionWorker.append(worker)
     return arySessionWorker
     
