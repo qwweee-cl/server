@@ -356,6 +356,10 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 		sleep 602
 		processArray[${processIndex}]=${oemName}
 		processIndex=$(($processIndex+1))
+		curTimestamp=$(date +%s)
+		echo -e ${curTimestamp} 2>&1 >> "$one_day_log"
+		curTimestamp=$(date -d "-5 minutes" +%s)
+		echo -e ${curTimestamp} 2>&1 >> "$one_day_log"
 		continue
 	else
 ## check process round and s3 files
@@ -463,6 +467,8 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 	sendSummaryMail ${oemName}
 	dosession=$(($dosession+1))
 done
+	echo -e "array : ${processArray[@]}"
+	echo -e "${dosession} : ${totaloems}"
 	if [ ${dosession} == ${totaloems} ]; then
 		echo -e "next oems round(1)"
 		echo -e "next oems round(1)" >> "$one_day_log"
