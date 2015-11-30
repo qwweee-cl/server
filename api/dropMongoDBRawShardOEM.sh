@@ -74,10 +74,15 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 
 	duFile1=`aws s3 ls ${s3One1} | awk '{ print $3 }'`
 
-	if [ ! -s "${s3One1}" ]; then
+	if [ -z ${duFile1} ]; then
 		echo "${s3One1} file size is 0" >> ${one_time_log}
 		fileExist=false
 	fi
+
+#	if [ ! -s "${s3One1}" ]; then
+#		echo "${s3One1} file size is 0" >> ${one_time_log}
+#		fileExist=false
+#	fi
 
 	echo -e ${fileExist}
 
