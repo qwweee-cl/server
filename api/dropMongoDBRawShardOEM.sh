@@ -92,7 +92,7 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 #		exit 0
 	fi
 
-	sizeOne1=$(du -b "${s3One1}" | cut -f 1)
+	sizeOne1=${duFile1}
 
 	echo -e "${s3One1} : ${sizeOne1}" >> ${one_time_log}
 
