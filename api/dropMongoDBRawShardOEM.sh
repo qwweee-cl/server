@@ -23,6 +23,7 @@ cd ${path}
 
 mongo="localhost:27017"
 s3Path="/s3mnt/shard_backup/oem_hourly_data/"
+cmds3Path="s3://clcom2-countly/shard_backup/oem_hourly_data/"
 
 fullCurDate=$(date -d "-5 days" +%Y%m%d)
 
@@ -51,17 +52,27 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 	echo -e ${one}
 
 	s3One1=${s3Path}${fullCurDate}"_${oemName}_00.tgz"
+	s3One1=${cmds3Path}${fullCurDate}"_${oemName}_00.tgz"
 
 	echo -e ${s3One1}
 
+	existFile1=`aws s3 ls ${s3One1} | wc -l`
+
 	fileExist=true
 
-	if [ ! -f "${s3One1}" ]; then
+	if [ ${existFile1} == "0" ]; then
 		echo "${s3One1} file not exist" >> ${one_time_log}
 		fileExist=false
 	fi
+
+#	if [ ! -f "${s3One1}" ]; then
+#		echo "${s3One1} file not exist" >> ${one_time_log}
+#		fileExist=false
+#	fi
 	status=1
 	string="File Is Zero";
+
+	duFile1=`aws s3 ls ${s3One1} | awk '{ print $3 }'`
 
 	if [ ! -s "${s3One1}" ]; then
 		echo "${s3One1} file size is 0" >> ${one_time_log}
