@@ -927,10 +927,10 @@ var common = {},
 
         var tmpMoment = momentz(currDate).tz(appTimezone);
         var weekofyear = tmpMoment.format("W");
-        var tmpYOW = tmpMoment.format("YYYY");
-        if (tmpMoment.month() == 11 && tmpMoment.week() == 1) {
-            tmpYOW = (tmpMoment.year()+1).toString();
-        }
+        var tmpYOW = tmpMoment.format("GGGG");
+//        if (tmpMoment.month() == 11 && tmpMoment.week() == 1) {
+//            tmpYOW = (tmpMoment.year()+1).toString();
+//        }
         //var withoutMoment = momentz(currDateWithoutTimestamp).tz(appTimezone);
 
 /*
