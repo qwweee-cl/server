@@ -926,7 +926,7 @@ var common = {},
         //currDateWithoutTimestamp.setTimezone(appTimezone);
 
         var tmpMoment = momentz(currDate).tz(appTimezone);
-        var weekofyear = tmpMoment.format("w");
+        var weekofyear = tmpMoment.format("W");
         var tmpYOW = tmpMoment.format("YYYY");
         if (tmpMoment.month() == 11 && tmpMoment.week() == 1) {
             tmpYOW = (tmpMoment.year()+1).toString();
@@ -948,7 +948,7 @@ var common = {},
             monthly: tmpMoment.format("YYYY.M"),
             daily: tmpMoment.format("YYYY.M.D"),
             hourly: tmpMoment.format("YYYY.M.D.H"),
-            weekly: tmpMoment.format("w"),
+            weekly: tmpMoment.format("W"),
             yofw: tmpYOW
         };
     };

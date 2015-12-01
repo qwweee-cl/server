@@ -39,7 +39,7 @@ var nowMoment = momentz(date).tz(timeZone);
 var nowYear = nowMoment.format("YYYY");
 var nowMonth = nowMoment.format("M");
 var nowDate = nowMoment.format("D");
-var nowWeekOfYear = nowMoment.format("w");
+var nowWeekOfYear = nowMoment.format("W");
 print(date);
 date = nowMoment.toDate();
 print(date);
@@ -48,7 +48,7 @@ var beginMoment = nowMoment.add(-7, "months");
 var beginYear = beginMoment.format("YYYY");
 var beginMonth = beginMoment.format("M");
 var beginDate = beginMoment.format("D");
-var beginWeekOfYear = beginMoment.format("w");
+var beginWeekOfYear = beginMoment.format("W");
 var oldDate = new Date(beginYear, beginMonth-1, beginDate);
 print(oldDate);
 /*
@@ -86,7 +86,7 @@ while(!tmpMoment.isAfter(date)) {
 	var tmpYear = tmpMoment.format("YYYY");
 	var tmpMonth = tmpMoment.format("M");
 	var tmpDate = tmpMoment.format("D");
-	var tmpWeekOfYear = tmpMoment.format("w");
+	var tmpWeekOfYear = tmpMoment.format("W");
 	var tmpObj = {year: tmpYear, month: tmpMonth, day: tmpDate, week: tmpWeekOfYear};
 	print(tmpObj);
 	/*

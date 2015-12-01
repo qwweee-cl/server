@@ -22,10 +22,10 @@ echo -e "$diffDays"
 dateSave=${monday}
 echo -e ${monday}
 
-sunday=$(date -d "${monday}-1 days" +%Y%m%d)
+sunday=$(date -d "${monday}-0 days" +%Y%m%d)
 dateStart=${sunday}
 
-saturday=$(date -d "${monday}+5 days" +%Y%m%d)
+saturday=$(date -d "${monday}+6 days" +%Y%m%d)
 dateEnd=${saturday}
 
 mysqlDateSave=$(date -d "${dateSave}" +%Y-%m-%d)
