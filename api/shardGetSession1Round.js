@@ -2,7 +2,7 @@ var mysql      = require('mysql');
 var host = 'emr2';
 var user = 'countly';
 var password = 'countly!@#';
-var database = 'session_status';
+var database = 'test_session_status';
 var connection = mysql.createConnection({
   host     : host,
   user     : user,
