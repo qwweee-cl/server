@@ -9,7 +9,8 @@ function sendSummaryMail() {
 }
 
 logpath="/usr/local/countly/log/shardSession/"
-
+sendSummaryMail
+exit 0
 ## this is for test
 path="/home/ubuntu/countly-test/api"
 gzipPath="/mnt/mongodb/tmp/mongo_dashboard_gzip/"

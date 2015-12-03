@@ -14,7 +14,7 @@ connection.connect();
 
 //var backupStatus = 1;
 
-connection.query('select round1 from status', function(err, rows, fields) {
+connection.query('select round3 from status', function(err, rows, fields) {
   if (err) {
     throw err;
   }

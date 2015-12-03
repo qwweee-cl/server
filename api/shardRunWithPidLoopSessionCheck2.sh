@@ -16,5 +16,5 @@ then
   exit 1
 fi
 
-nohup /usr/local/countly/api/shardSessionBatch_check.sh 2 $2 $3 >> /usr/local/countly/log/shardSessionMain2.log 2>&1 & echo $! > ${LOCKFILE}
+nohup /usr/local/countly/api/shardSessionBatch_check.sh 4 $2 $3 >> /usr/local/countly/log/shardSessionMain2.log 2>&1 & echo $! > ${LOCKFILE}
 

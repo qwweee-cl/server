@@ -14,7 +14,7 @@ connection.connect();
 
 //var backupStatus = 1;
 
-connection.query('select session1 from status', function(err, rows, fields) {
+connection.query('select session3 from status', function(err, rows, fields) {
   if (err) {
     throw err;
   }

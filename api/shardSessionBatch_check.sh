@@ -9,13 +9,13 @@ function error_exp
 	#| mail -s "Daily BB data import exception" $dashboard_team
 	echo -e "[Shard]${header} Loop Session Batch Error Please check log ${mainLogFile}"\
 	$(tail -20 ${mainLogFile})\
-	| mail -s "[Shard]${header} ${start_date} ${start_round} Session Error Trap(${pid})" ${mail_target}
+	| mail -s "[ShardTest]${header} ${start_date} ${start_round} Session Error Trap(${pid})" ${mail_target}
 	#rm -f ${LOCKFILE}
 	exit 1
 }
 
 function backupDashboard() {
-	if [ "${indexNum}" == "1" ]; then
+	if [ "${indexNum}" == "3" ]; then
 		cd $working_dir
 		## update backup status 1
 		cmd="node shardUpdateBackupStatus.js 1"
@@ -24,7 +24,7 @@ function backupDashboard() {
 		## call backup script
 		cmd="${working_dir}/shardBackupDashboardDB.sh"
 		echo ${cmd} 2>&1 >> ${one_day_log}
-		$cmd
+		#$cmd
 		#cmd="${working_dir}/backupDashboardDB.sh"
 		#echo $cmd
 		#$cmd
@@ -40,7 +40,7 @@ function checkLoopStop() {
 	if [ -f "${loopFile}" ]; then
 		echo "${loopFile} exist"
 		echo -e "Loop Session Batch Stop on $(date +%Y%m%d-%H:%M)"\
-		| mail -s "[Shard]${header} ${start_date} ${start_round} Session Batch Stop" ${mail_target}
+		| mail -s "[ShardTest]${header} ${start_date} ${start_round} Session Batch Stop" ${mail_target}
 		exit 0
 	fi
 }
@@ -63,15 +63,15 @@ function getBackupFinished() {
 }
 function sendSummaryMail() {
 	echo -e $(tail -20 ${one_day_log})\
-	| mail -s "[Shard]${header} ${start_date} ${start_round} Session Summary" ${mail_target}
+	| mail -s "[ShardTest]${header} ${start_date} ${start_round} Session Summary" ${mail_target}
 }
 function sendWrongMail1() {
 	echo -e $(tail -20 ${one_day_log})\
-	| mail -s "[Shard][Wrong DB][Session]${header} ${start_date} ${start_round}" ${mail_target}
+	| mail -s "[ShardTest][Wrong DB][Session]${header} ${start_date} ${start_round}" ${mail_target}
 }
 function sendWrongMail2() {
 	echo -e $(tail -20 ${one_day_log})\
-	| mail -s "[Shard][Wrong S3][Session]${header} ${start_date} ${start_round}" ${mail_target}
+	| mail -s "[ShardTest][Wrong S3][Session]${header} ${start_date} ${start_round}" ${mail_target}
 }
 
 log_path="/usr/local/countly/log/shardSession"
@@ -126,20 +126,20 @@ else
   start_round=$(printf "%02d" $3)	
 fi
 
-if [ "${appType}" == "1" ]; then
+if [ "${appType}" == "3" ]; then
   header="YCP+YMK"
   LOCKFILE="/tmp/shardSessionBatch1.pid"
   mainLogFile="/usr/local/countly/log/shardSessionMain1.log"
   mongo="config1:27017"
-  indexNum="1"
+  indexNum="3"
   theOther="2"
   pid=`cat ${LOCKFILE}`
-elif [ "${appType}" == "2" ]; then
+elif [ "${appType}" == "4" ]; then
   header="PF"
   LOCKFILE="/tmp/shardSessionBatch2.pid"
   mainLogFile="/usr/local/countly/log/shardSessionMain2.log"
   mongo="config1:27017"
-  indexNum="2"
+  indexNum="4"
   theOther="1"
   pid=`cat ${LOCKFILE}`
 else
@@ -199,7 +199,7 @@ do
 	old_data="0"
 
 ## for session2 to check backup
-	if [ "${indexNum}" == "2" ]; then
+	if [ "${indexNum}" == "4" ]; then
 		echo -e "Session2 to check backup status"
 		echo -e "Session2 to check backup status" >> "$one_day_log" 2>&1
 		sleep 605
@@ -229,7 +229,7 @@ do
 	fi
 
 ## for session1 to check session2 process session finished
-	if [ "${indexNum}" == "1" ]; then
+	if [ "${indexNum}" == "3" ]; then
 		echo -e "Session1 to check session2 status"
 		echo -e "Session2 to check session2 status" >> "$one_day_log" 2>&1
 		cd $working_dir
@@ -426,31 +426,6 @@ do
 
 	echo -e "End Time: $(date +%Y-%m-%d,%H:%M:%S)" >> "$one_day_log" 2>&1
 
-#	if [ "${indexNum}" == "1" ]; then
-## check backup finish or not?
-#		cmd="node shardFindSessionFinished.js ${batchdb} ${theOther}"
-#		echo -e ${cmd} 2>&1 >> ${one_time_log}
-#		string=`${cmd}`
-#		while [ "${string}" == "null" ]; do
-#		    echo -e "sleep 60 seconds"
-#		    echo -e "sleep 60 seconds" >> ${one_time_log}
-#		    sleep 60
-#		    cmd="node shardFindSessionFinished.js ${batchdb} ${theOther}"
-#		    echo -e ${cmd} 2>&1 >> ${one_time_log}
-#		    string=`${cmd}`
-#		    checkLoopStop
-#		done
-### process mongodb to mysql in claddb
-#	cmd="ssh ubuntu@claddb2 /usr/local/countly/api/shardRunMongoToMysql.sh ${start_date} ${start_round} >> /usr/local/countly/log/mongoToMysql.log"
-#	echo $cmd
-#	$cmd 2>&1
-#	fi
-
-#	## cp Prediction files to s3
-#	cd ${working_dir}
-#	cmd="./shardPredictionRename.sh"
-#	echo -e ${cmd} 2>&1 >> $one_day_log 
-#	${cmd}
 	## do other scripts
 	cd ${working_dir}
 	echo -e "Call Others batch script shardLoopSessionOthers.sh ${batchdb} ${indexNum} ${start_date} ${start_round}"
