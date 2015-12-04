@@ -259,7 +259,7 @@ if __name__ == '__main__':
         bPrepareReady = prepareDistinctSession(aKeys["Perfect_And"], aKeys["Perfect_iOS"], log)
         if not bPrepareReady: raiseExceptionAndExit(log)
         calculateSessions(aKeys["Perfect_And"], aKeys["Perfect_iOS"])
-        
+
         bPrepareReady = prepareDistinctSession(aKeys["BeautyCircle_And"], aKeys["BeautyCircle_iOS"], log)
         if not bPrepareReady: raiseExceptionAndExit(log)
         calculateSessions(aKeys["BeautyCircle_And"], aKeys["BeautyCircle_iOS"])
@@ -269,13 +269,13 @@ if __name__ == '__main__':
         if not bPrepareReady: raiseExceptionAndExit(log)
         calculateSessions(aKeys["YouCam_Perfect_And"], aKeys["YouCam_Perfect_iOS"])
         
-        bPrepareReady = prepareDistinctSession(aKeys["YouCam_MakeUp_And"], aKeys["YouCam_MakeUp_iOS"], log)
-        if not bPrepareReady: raiseExceptionAndExit(log)
-        calculateSessions(aKeys["YouCam_MakeUp_And"], aKeys["YouCam_MakeUp_iOS"])
-
         bPrepareReady = prepareDistinctSession(aKeys["YouCam_Nail_And"], aKeys["YouCam_Nail_iOS"], log)
         if not bPrepareReady: raiseExceptionAndExit(log)
         calculateSessions(aKeys["YouCam_Nail_And"], aKeys["YouCam_Nail_iOS"])
+
+        bPrepareReady = prepareDistinctSession(aKeys["YouCam_MakeUp_And"], aKeys["YouCam_MakeUp_iOS"], log)
+        if not bPrepareReady: raiseExceptionAndExit(log)
+        calculateSessions(aKeys["YouCam_MakeUp_And"], aKeys["YouCam_MakeUp_iOS"])
 
     endTime = time.time()
     log(("**** Finished. Time cost on sessionMT = " + str(endTime-startTime) + " seconds\n"))
