@@ -195,6 +195,9 @@ def prepareDistinctSession(and_key, ios_key, log):
     nAndSessionCnt, nIOSSessionCnt = countSession(and_key, ios_key)
     print "%d sessions for And %s\n%d sessions for iOS %s" % (nAndSessionCnt, and_key, nIOSSessionCnt, ios_key)
     log(("Session Count: %d for Android, %d for iOS." % (nAndSessionCnt, nIOSSessionCnt)))
+
+    TOTAL_USER_PART_AND = 12 if (nAndSessionCnt + nIOSSessionCnt > 150000) else 1
+    TOTAL_USER_PART_IOS = 2 if (nAndSessionCnt + nIOSSessionCnt > 150000) else 1
     
     aryAllSessionWorker = []
     if and_key: aryAllSessionWorker += generateDistinctSessionWorker(and_key, nAndSessionCnt, "_sessions_and_", ".txt", TOTAL_USER_PART_AND)
