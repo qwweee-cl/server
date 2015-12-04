@@ -283,6 +283,10 @@ if (app_key == "895ef49612e79d93c462c6d34abd8949b4c849af" ||
     app_key == "7cd568771523a0621abff9ae3f95daf3a8694392") {
     wait_cnt = 10;
 }
+if (app_key == "0368eb926b115ecaf41eff9a0536a332ef191417" ||
+    app_key == "02ce3171f470b3d638feeaec0b3f06bd27f86a26") {
+    wait_cnt = 60;
+}
 baseTimeOut = 60000;
 var cnt=0;
 var repeat_times = 0;
