@@ -196,6 +196,8 @@ def prepareDistinctSession(and_key, ios_key, log):
     print "%d sessions for And %s\n%d sessions for iOS %s" % (nAndSessionCnt, and_key, nIOSSessionCnt, ios_key)
     log(("Session Count: %d for Android, %d for iOS." % (nAndSessionCnt, nIOSSessionCnt)))
 
+    global TOTAL_USER_PART_AND
+    global TOTAL_USER_PART_IOS
     TOTAL_USER_PART_AND = 12 if (nAndSessionCnt + nIOSSessionCnt > 150000) else 1
     TOTAL_USER_PART_IOS = 2 if (nAndSessionCnt + nIOSSessionCnt > 150000) else 1
     
