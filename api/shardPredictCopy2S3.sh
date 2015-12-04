@@ -97,6 +97,20 @@ for i in *.txt ; do
     echo -e "cp ${i} ${s3DateRoundPredictionPath}/2015${i}" >> ${mainLogFile}
     cp ${i} ${s3DateRoundPredictionPath}/2015${i}
   fi
+  regex="$1_5631c5e92acfaf9818001bb1"
+  if [[ "$i" =~ $regex ]]
+  then
+#    echo -e "cp ${i} ${s3PredictionPath}2015${i}" >> ${mainLogFile}
+    echo -e "cp ${i} ${s3DateRoundPredictionPath}/2015${i}" >> ${mainLogFile}
+    cp ${i} ${s3DateRoundPredictionPath}/2015${i}
+  fi
+  regex="$1_5631c60a2acfaf9818001bb2"
+  if [[ "$i" =~ $regex ]]
+  then
+#    echo -e "cp ${i} ${s3PredictionPath}2015${i}" >> ${mainLogFile}
+    echo -e "cp ${i} ${s3DateRoundPredictionPath}/2015${i}" >> ${mainLogFile}
+    cp ${i} ${s3DateRoundPredictionPath}/2015${i}
+  fi
 done
 
 sendSummaryMail
