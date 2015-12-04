@@ -276,6 +276,13 @@ var handleOneSession = function(records, isFinal) {
         processSessions(dbs, records, isFinal, app_information);
 };
 
+if (app_key == "895ef49612e79d93c462c6d34abd8949b4c849af" ||
+    app_key == "ecc26ef108c821f3aadc5e283c512ee68be7d43e" ||
+    app_key == "488fea5101de4a8226718db0611c2ff2daeca06a" ||
+    app_key == "7cd568771523a0621abff9ae3f95daf3a8694392") {
+    wait_cnt = 10;
+}
+
 wait_cnt = 40;
 baseTimeOut = 60000;
 var cnt=0;

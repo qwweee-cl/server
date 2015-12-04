@@ -259,6 +259,10 @@ if __name__ == '__main__':
         bPrepareReady = prepareDistinctSession(aKeys["Perfect_And"], aKeys["Perfect_iOS"], log)
         if not bPrepareReady: raiseExceptionAndExit(log)
         calculateSessions(aKeys["Perfect_And"], aKeys["Perfect_iOS"])
+        
+        bPrepareReady = prepareDistinctSession(aKeys["BeautyCircle_And"], aKeys["BeautyCircle_iOS"], log)
+        if not bPrepareReady: raiseExceptionAndExit(log)
+        calculateSessions(aKeys["BeautyCircle_And"], aKeys["BeautyCircle_iOS"])
 
     if("ALL" == optApps or "YCP+YMK" == optApps):
         bPrepareReady = prepareDistinctSession(aKeys["YouCam_Perfect_And"], aKeys["YouCam_Perfect_iOS"], log)
