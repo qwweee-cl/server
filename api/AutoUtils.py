@@ -21,6 +21,8 @@ app_keys = {"Perfect_And"       : "0368eb926b115ecaf41eff9a0536a332ef191417",
             #"YCP_SourceNext"    : "fe11705e8bc9807c01424ace2dfb1576dca52581",
             "YouCam_Nail_iOS"   : "ecc26ef108c821f3aadc5e283c512ee68be7d43e",
             "YouCam_Nail_And"   : "895ef49612e79d93c462c6d34abd8949b4c849af",
+            "BeautyCircle_And"  : "488fea5101de4a8226718db0611c2ff2daeca06a",
+            "BeautyCircle_iOS"  : "7cd568771523a0621abff9ae3f95daf3a8694392",
             }
 
 col_names = {"Perfect_And"       : "raw_session_0368eb926b115ecaf41eff9a0536a332ef191417",
@@ -42,6 +44,8 @@ col_names = {"Perfect_And"       : "raw_session_0368eb926b115ecaf41eff9a0536a332
              #"YCP_SourceNext"    : "raw_session_fe11705e8bc9807c01424ace2dfb1576dca52581",
              "YouCam_Nail_iOS"    : "raw_session_ecc26ef108c821f3aadc5e283c512ee68be7d43e",
              "YouCam_Nail_And"    : "raw_session_895ef49612e79d93c462c6d34abd8949b4c849af",
+             "BeautyCircle_And"   : "raw_session_488fea5101de4a8226718db0611c2ff2daeca06a",
+             "BeautyCircle_iOS"   : "raw_session_7cd568771523a0621abff9ae3f95daf3a8694392",
              }
 
 DB_URL = "localhost"
