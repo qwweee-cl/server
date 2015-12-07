@@ -97,6 +97,12 @@ cmd="${path}/shard_weekly_compute.sh"
 echo -e $cmd
 ${cmd} >> ${logpath}${curdate}_weelky.log
 
+## run weeklyProcess to fix 20151129 weekly value
+cmd="/usr/bin/mysql -u root -pcyberlink#1 -e 
+'CALL ${dbName}.weeklyProcess();' >> ${logpath}weeklyProcess.log"
+echo -e $cmd
+/usr/bin/mysql -u root -pcyberlink#1 -e "CALL ${dbName}.weeklyProcess();" >> ${logpath}weeklyProcess.log 2>&1
+
 cd $exportPath
 pwd
 ## dump HourlyBcTest database
@@ -166,6 +172,12 @@ echo -e $cmd
 cmd="${path}/shard_weekly_compute_fill_zero.sh"
 echo -e $cmd
 ${cmd} >> ${logpath}${curdate}_weelky.log
+
+## run weeklyProcess to fix 20151129 weekly value
+cmd="/usr/bin/mysql -u root -pcyberlink#1 -e 
+'CALL ${dbNameFillZero}.weeklyProcess();' >> ${logpath}weeklyProcess.log"
+echo -e $cmd
+/usr/bin/mysql -u root -pcyberlink#1 -e "CALL ${dbNameFillZero}.weeklyProcess();" >> ${logpath}weeklyProcess.log 2>&1
 
 cd $exportPath
 pwd
