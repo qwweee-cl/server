@@ -27,6 +27,9 @@ var YCN_And_Oid = new ObjectID("55d69ff33b254f9535d6059a");
 var PF_iOS_Oid = new ObjectID("5552bf53acdd571e2e00044e");
 var PF_And_Oid = new ObjectID("5551e55cacdd571e2e000443");
 
+var BC_iOS_Oid = new ObjectID("5631c5e92acfaf9818001bb1");
+var BC_And_Oid = new ObjectID("5631c60a2acfaf9818001bb2");
+
 var collectionName = "UU_locations";
 var collectionName2 = "locations";
 var collectionName3 = "sessions";
@@ -216,6 +219,24 @@ b_coll2.findOne({_id:YCN_iOS_Oid}, function (err, result) {
     	return;
     }
     getData(result, "iOS", "YCN");
+});
+b_coll2.findOne({_id:BC_And_Oid}, function (err, result) {
+	dbCount++;
+	if (!result) {
+		print("BC_And no data");
+		print(err);
+		return;
+	}
+	getData(result, "And", "BC");
+});
+b_coll2.findOne({_id:BC_iOS_Oid}, function (err, result) {
+	dbCount++;
+	if (!result) {
+		print("BC_iOS no data");
+		print(err);
+		return;
+    }
+    getData(result, "iOS", "BC");
 });
 b_coll2.findOne({_id:PF_And_Oid}, function (err, result) {
 	dbCount++;
