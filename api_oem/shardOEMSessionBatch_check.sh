@@ -311,6 +311,7 @@ IFS=', ' read -a apps <<< "$string"
 totaloems=${#apps[@]}
 dosession=0
 processArray=()
+unset processArray
 processIndex=0
 
 while(true) do
