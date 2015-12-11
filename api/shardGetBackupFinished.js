@@ -8,7 +8,10 @@ if (process.argv.length == 4) {
     //print(process.argv[2]);
     var inTime = parseInt(process.argv[2]);
     query = {timestamp: {$lte: inTime}};
-    var collectionName = 'backup_finished'+process.argv[3];
+    var index = parseInt(process.argv[3], 10);
+    index %= 2;
+    index = (index==0)?2:index;
+    var collectionName = 'backup_finished_test'+index;
 }
 
 dbonoff.open(common.db_maintain);
