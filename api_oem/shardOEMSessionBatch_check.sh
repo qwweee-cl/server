@@ -316,6 +316,64 @@ processIndex=0
 
 while(true) do
 	checkLoopStop
+
+	savedate=$(date +%Y%m%d)
+	dashboarddate=${savedate}"_countly"
+	curdate=$(date +%Y%m%d-%H%M)
+## check backup dashboard time
+	checkTime=$(date +%H%M)
+	checkDate=$(date +%j)
+## for session1 to check session2 process session finished
+	if [ "${indexNum}" == "1" ]; then
+#		echo -e "Session1 to check session2 status"
+#		echo -e "Session2 to check session2 status" >> "$one_day_log" 2>&1
+		cd $working_dir
+		if [[ ${currBackup} != ${checkDate} ]] && [[ ${checkTime} > ${backupTime} ]]; then
+#			cmd="node shardGetSession1Status.js"
+#			echo -e ${cmd}
+#			echo -e ${cmd} >> "$one_day_log" 2>&1
+#			session1Status=`${cmd}`
+
+#			cmd="node shardGetSession2Status.js"
+#			echo -e ${cmd}
+#			echo -e ${cmd} >> "$one_day_log" 2>&1
+#			session2Status=`${cmd}`
+
+#			echo -e "Session1: ${session1Status}"
+#			echo -e "Session2: ${session2Status}"
+#			while [ "${session2Status}" == "1" ]
+#			do
+#				echo -e "do wait for Session2 process finished(60 seconds)"
+#				echo -e "do wait for Session2 process finished(60 seconds)" >> "$one_day_log" 2>&1
+#				sleep 60
+
+#				cmd="node shardGetSession1Status.js"
+#				echo -e ${cmd}
+#				echo -e ${cmd} >> "$one_day_log" 2>&1
+#				session1Status=`${cmd}`
+
+#				cmd="node shardGetSession2Status.js"
+#				echo -e ${cmd}
+#				echo -e ${cmd} >> "$one_day_log" 2>&1
+#				session2Status=`${cmd}`
+
+#				echo -e "Session1: ${session1Status}"
+#				echo -e "Session2: ${session2Status}"
+#			done
+
+			echo -e "[backup]backup start"
+## call backup function
+			backupDashboard
+## call backup function end
+			echo -e "[backup]backup end"
+			currBackup=$(date +%j)
+		else
+			echo -e "do next job, continue process session"
+			sleep 61
+		fi
+	fi
+## oem dashboard backup finished
+
 	curTimestamp=$(date +%s)
 	echo -e ${curTimestamp} 2>&1 >> "$one_day_log" 
 	curTimestamp=$(date -d "-5 minutes" +%s)
