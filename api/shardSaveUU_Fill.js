@@ -43,6 +43,7 @@ var nowYear = nowMoment.format("YYYY");
 var nowMonth = nowMoment.format("M");
 var nowDate = nowMoment.format("D");
 var nowWeekOfYear = nowMoment.format("W");
+var nowWoY = tmpMoment.format("GGGG");
 print(date);
 date = nowMoment.toDate();
 print(date);
@@ -52,6 +53,7 @@ var beginYear = beginMoment.format("YYYY");
 var beginMonth = beginMoment.format("M");
 var beginDate = beginMoment.format("D");
 var beginWeekOfYear = beginMoment.format("W");
+var beginWoY = tmpMoment.format("GGGG");
 var oldDate = new Date(beginYear, beginMonth-1, beginDate);
 print(oldDate);
 /*
@@ -90,7 +92,8 @@ while(!tmpMoment.isAfter(date)) {
 	var tmpMonth = tmpMoment.format("M");
 	var tmpDate = tmpMoment.format("D");
 	var tmpWeekOfYear = tmpMoment.format("W");
-	var tmpObj = {year: tmpYear, month: tmpMonth, day: tmpDate, week: tmpWeekOfYear};
+	var tmpWoY = tmpMoment.format("GGGG");
+	var tmpObj = {year: tmpYear, month: tmpMonth, day: tmpDate, week: tmpWeekOfYear, WoY: tmpWoY};
 	print(tmpObj);
 	/*
 	print(tmpYear);
@@ -108,7 +111,7 @@ while(!tmpMoment.isAfter(date)) {
 		fetchFields[tmpYear+".n"] = 1;
 		*/
 	}
-	str = tmpYear+".w"+tmpWeekOfYear;
+	str = tmpWoY+".w"+tmpWeekOfYear;
 	if (processArray.indexOf(str) == -1) {
 		processArray.push(str);
 		weekArray.push(tmpObj);
@@ -421,25 +424,25 @@ function getALLData(result, os, appName) {
               nU: 0, sU: 0};
 
 	for (var tmp in weekArray) {
-		var tmpObjDate = new Date(weekArray[tmp].year, weekArray[tmp].month-1, weekArray[tmp].day);
+		var tmpObjDate = new Date(weekArray[tmp].WoY, weekArray[tmp].month-1, weekArray[tmp].day);
 		var sunday = getSunday(tmpObjDate);
 		var sunMoment = moment(sunday).add(2, "days");
 		var nextMoment = sunMoment.add(6, "days");
 		var startDate = sunMoment.format("YYYY-MM-DD");
 		startDate = moment(sunday).add(1, "days").format("YYYY-MM-DD");
 		var duration = "W";
-		if (result[weekArray[tmp].year] &&
-			result[weekArray[tmp].year]["w"+weekArray[tmp].week] &&
-			result[weekArray[tmp].year]["w"+weekArray[tmp].week]) {
+		if (result[weekArray[tmp].WoY] &&
+			result[weekArray[tmp].WoY]["w"+weekArray[tmp].week] &&
+			result[weekArray[tmp].WoY]["w"+weekArray[tmp].week]) {
 			//print(result[weekArray[tmp].year]);
 			all.eventDay = startDate;
 			all.duration = duration;
 			all.appName = appName;
 			all.os = os;
-			all.aU = checkNull(result[weekArray[tmp].year]["w"+weekArray[tmp].week]['u']);
+			all.aU = checkNull(result[weekArray[tmp].WoY]["w"+weekArray[tmp].week]['u']);
 			all.tU = 0;
-			all.nU = checkNull(result[weekArray[tmp].year]["w"+weekArray[tmp].week]['n']);
-			all.sU = checkNull(result[weekArray[tmp].year]["w"+weekArray[tmp].week]['t']);
+			all.nU = checkNull(result[weekArray[tmp].WoY]["w"+weekArray[tmp].week]['n']);
+			all.sU = checkNull(result[weekArray[tmp].WoY]["w"+weekArray[tmp].week]['t']);
 			insertMysql(all);
 		}
 	}
@@ -729,7 +732,7 @@ if (saveYearly) {
               nU: 0, sU: 0};
 
 	for (var tmp in weekArray) {
-		var tmpObjDate = new Date(weekArray[tmp].year, weekArray[tmp].month-1, weekArray[tmp].day);
+		var tmpObjDate = new Date(weekArray[tmp].WoY, weekArray[tmp].month-1, weekArray[tmp].day);
 		var sunday = getSunday(tmpObjDate);
 		var sunMoment = moment(sunday).add(2, "days");
 		var nextMoment = sunMoment.add(6, "days");
@@ -746,14 +749,14 @@ if (saveYearly) {
 		print(startDate);
 */
 		print(startDate+" "+sunday);
-		if (result[weekArray[tmp].year] &&
-				result[weekArray[tmp].year]["w"+weekArray[tmp].week] &&
-				result[weekArray[tmp].year]["w"+weekArray[tmp].week]) {
+		if (result[weekArray[tmp].WoY] &&
+				result[weekArray[tmp].WoY]["w"+weekArray[tmp].week] &&
+				result[weekArray[tmp].WoY]["w"+weekArray[tmp].week]) {
 			for (var country in meta) {
 				//print(meta[country]);
-				if (result[weekArray[tmp].year] &&
-					result[weekArray[tmp].year]["w"+weekArray[tmp].week] &&
-					result[weekArray[tmp].year]["w"+weekArray[tmp].week][meta[country]]) {
+				if (result[weekArray[tmp].WoY] &&
+					result[weekArray[tmp].WoY]["w"+weekArray[tmp].week] &&
+					result[weekArray[tmp].WoY]["w"+weekArray[tmp].week][meta[country]]) {
 					//print(meta[country]+":");
 					//print(result[weekArray[tmp].year]["w"+weekArray[tmp].week][meta[country]]);
 					if (countryList.indexOf(meta[country])>=0) {
@@ -769,10 +772,10 @@ if (saveYearly) {
 						data.appName = appName;
 						data.os = os;
 						data.country = meta[country];
-						data.aU = checkNull(result[weekArray[tmp].year]["w"+weekArray[tmp].week][meta[country]]['u']);
+						data.aU = checkNull(result[weekArray[tmp].WoY]["w"+weekArray[tmp].week][meta[country]]['u']);
 						data.tU = 0;
-						data.nU = checkNull(result[weekArray[tmp].year]["w"+weekArray[tmp].week][meta[country]]['n']);
-						data.sU = checkNull(result[weekArray[tmp].year]["w"+weekArray[tmp].week][meta[country]]['t']);
+						data.nU = checkNull(result[weekArray[tmp].WoY]["w"+weekArray[tmp].week][meta[country]]['n']);
+						data.sU = checkNull(result[weekArray[tmp].WoY]["w"+weekArray[tmp].week][meta[country]]['t']);
 						insertMysql(data);
 					}
 
@@ -780,10 +783,10 @@ if (saveYearly) {
 					others.duration = duration;
 					others.appName = appName;
 					others.os = os;
-					others.aU += checkNull(result[weekArray[tmp].year]["w"+weekArray[tmp].week][meta[country]]['u']);
+					others.aU += checkNull(result[weekArray[tmp].WoY]["w"+weekArray[tmp].week][meta[country]]['u']);
 					others.tU += 0;
-					others.nU += checkNull(result[weekArray[tmp].year]["w"+weekArray[tmp].week][meta[country]]['n']);
-					others.sU += checkNull(result[weekArray[tmp].year]["w"+weekArray[tmp].week][meta[country]]['t']);
+					others.nU += checkNull(result[weekArray[tmp].WoY]["w"+weekArray[tmp].week][meta[country]]['n']);
+					others.sU += checkNull(result[weekArray[tmp].WoY]["w"+weekArray[tmp].week][meta[country]]['t']);
 
 				}
 			}
@@ -803,9 +806,9 @@ if (saveYearly) {
 		insertMysql(others);
 
 		for (var country in countryList) {
-			if (result[weekArray[tmp].year] &&
-				result[weekArray[tmp].year]["w"+weekArray[tmp].week] &&
-				result[weekArray[tmp].year]["w"+weekArray[tmp].week][countryList[country]]) {
+			if (result[weekArray[tmp].WoY] &&
+				result[weekArray[tmp].WoY]["w"+weekArray[tmp].week] &&
+				result[weekArray[tmp].WoY]["w"+weekArray[tmp].week][countryList[country]]) {
 			} else {
 				data.eventDay = startDate;
 				data.duration = duration;
