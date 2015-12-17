@@ -43,7 +43,7 @@ var nowYear = nowMoment.format("YYYY");
 var nowMonth = nowMoment.format("M");
 var nowDate = nowMoment.format("D");
 var nowWeekOfYear = nowMoment.format("W");
-var nowWoY = tmpMoment.format("GGGG");
+var nowWoY = nowMoment.format("GGGG");
 print(date);
 date = nowMoment.toDate();
 print(date);
@@ -53,7 +53,7 @@ var beginYear = beginMoment.format("YYYY");
 var beginMonth = beginMoment.format("M");
 var beginDate = beginMoment.format("D");
 var beginWeekOfYear = beginMoment.format("W");
-var beginWoY = tmpMoment.format("GGGG");
+var beginWoY = nowMoment.format("GGGG");
 var oldDate = new Date(beginYear, beginMonth-1, beginDate);
 print(oldDate);
 /*
