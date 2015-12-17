@@ -15,20 +15,20 @@ var intRegex = /^\d+$/;
 var timeZone = "America/Denver";
 var db = common.db;
 
-var YCP_iOS_Oid = new ObjectID("543f8693a9e5b7ed76000012");
 var YCP_And_Oid = new ObjectID("543f37d0a62268c51e16d053");
+var YCP_iOS_Oid = new ObjectID("543f8693a9e5b7ed76000012");
 
-var YMK_iOS_Oid = new ObjectID("543f866fa9e5b7ed76000011");
 var YMK_And_Oid = new ObjectID("543f37eaa62268c51e16d0c3");
+var YMK_iOS_Oid = new ObjectID("543f866fa9e5b7ed76000011");
 
-var YCN_iOS_Oid = new ObjectID("55d6a0123b254f9535d6142d");
 var YCN_And_Oid = new ObjectID("55d69ff33b254f9535d6059a");
+var YCN_iOS_Oid = new ObjectID("55d6a0123b254f9535d6142d");
 
-var PF_iOS_Oid = new ObjectID("5552bf53acdd571e2e00044e");
 var PF_And_Oid = new ObjectID("5551e55cacdd571e2e000443");
+var PF_iOS_Oid = new ObjectID("5552bf53acdd571e2e00044e");
 
-var BC_iOS_Oid = new ObjectID("5631c5e92acfaf9818001bb1");
-var BC_And_Oid = new ObjectID("5631c60a2acfaf9818001bb2");
+var BC_And_Oid = new ObjectID("5631c5e92acfaf9818001bb1");
+var BC_iOS_Oid = new ObjectID("5631c60a2acfaf9818001bb2");
 
 var collectionName = "UU_locations";
 var collectionName2 = "locations";
