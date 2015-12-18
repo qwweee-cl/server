@@ -213,4 +213,8 @@ node ensureIndex.js ${dbHost} ${batchdb} raw_session_ecc26ef108c821f3aadc5e283c5
 date
 date >> ${one_time_log}
 
+## check shards collections finished or not?
+cd $path
+./checkCollections.sh >> ${one_time_log}
+
 sendSummaryMail
