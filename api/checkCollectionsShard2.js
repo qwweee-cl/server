@@ -53,12 +53,16 @@ db.collections(function(err,collection) {
 	}
 	var isNotExist = false;
 	for (var i=0; i<collection.length; i++) {
-		for (var j=0;j<appKey.length;j++) {
-			if (collection[i].collectionName.indexOf(appKey[j])>=0) {
+		for (var j=0;j<app.length;j++) {
+			if (collection[i].collectionName.indexOf(app[j])>=0) {
+				for (var k=0;k<appKey.length;k++) {
+					if (collection[i].collectionName.indexOf(appKey[k])>=0) {
 //print("session: "+collection[i].collectionName);
-			}else {
-				print(collection[i].collectionName);
-				isNotExist = true;
+					} else {
+						print(collection[i].collectionName);
+						isNotExist = true;
+					}
+				}
 			}
 		}
 	}
