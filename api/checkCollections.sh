@@ -57,38 +57,38 @@ dbName3=$(getDBName "${tomorrow}" "03")
 
 cmd="node checkCollectionsShard1.js ${dbName0}"
 echo -e "${cmd}"
-echo -e "${cmd}" >> ${one_time_log}
+#echo -e "${cmd}" >> ${one_time_log}
 ${cmd} 2>&1 >> $one_time_log
 cmd="node checkCollectionsShard2.js ${dbName0}"
 echo -e "${cmd}"
-echo -e "${cmd}" >> ${one_time_log}
+#echo -e "${cmd}" >> ${one_time_log}
 ${cmd} 2>&1 >> $one_time_log
 
 cmd="node checkCollectionsShard1.js ${dbName1}"
 echo -e "${cmd}"
-echo -e "${cmd}" >> ${one_time_log}
+#echo -e "${cmd}" >> ${one_time_log}
 ${cmd} 2>&1 >> $one_time_log
 cmd="node checkCollectionsShard2.js ${dbName1}"
 echo -e "${cmd}"
-echo -e "${cmd}" >> ${one_time_log}
+#echo -e "${cmd}" >> ${one_time_log}
 ${cmd} 2>&1 >> $one_time_log
 
 cmd="node checkCollectionsShard1.js ${dbName2}"
 echo -e "${cmd}"
-echo -e "${cmd}" >> ${one_time_log}
+#echo -e "${cmd}" >> ${one_time_log}
 ${cmd} 2>&1 >> $one_time_log
 cmd="node checkCollectionsShard2.js ${dbName2}"
 echo -e "${cmd}"
-echo -e "${cmd}" >> ${one_time_log}
+#echo -e "${cmd}" >> ${one_time_log}
 ${cmd} 2>&1 >> $one_time_log
 
 cmd="node checkCollectionsShard1.js ${dbName3}"
 echo -e "${cmd}"
-echo -e "${cmd}" >> ${one_time_log}
+#echo -e "${cmd}" >> ${one_time_log}
 ${cmd} 2>&1 >> $one_time_log
 cmd="node checkCollectionsShard2.js ${dbName3}"
 echo -e "${cmd}"
-echo -e "${cmd}" >> ${one_time_log}
+#echo -e "${cmd}" >> ${one_time_log}
 ${cmd} 2>&1 >> $one_time_log
 
 if [ $error -eq 0 ]; then

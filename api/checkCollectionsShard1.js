@@ -50,7 +50,7 @@ db.collections(function(err,collection) {
 
 	for (var i=0;i<appKey.length;i++) {
 		if (srcArray.indexOf(appKey[i])==-1) {
-			print(appKey[i]);
+			print(dbName+"."+appKey[i]);
 			isNotExist = true;
 		}
 	}
