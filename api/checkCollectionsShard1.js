@@ -32,6 +32,7 @@ db.collections(function(err,collection) {
 		db.close();
 		process.exit(0);
 	}
+	var isNotExist = false;
 	for (var i=0; i<collection.length; i++) {
 		for (var j=0;j<appKey.length;j++) {
 			if (collection[i].collectionName.indexOf(appKey[j])>=0) {
@@ -41,9 +42,13 @@ db.collections(function(err,collection) {
 //print("event: "+collection[i].collectionName);
 				} else {
 					print(collection[i].collectionName);
+					isNotExist = true;
 				}
 			}
 		}
 	}
-	db.close();
+	if (isNotExist) {
+		db.close();
+		process.exit(1);
+	}
 });
