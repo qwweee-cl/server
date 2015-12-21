@@ -385,10 +385,10 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 	getBackupFinished ${oemName}
 
 ## wait for get finished backup data
-	if [ "${oemName}" == "WanDouJia" ]; then
-		dosession=$(($dosession+1))
-		continue
-	fi
+#	if [ "${oemName}" == "WanDouJia" ]; then
+#		dosession=$(($dosession+1))
+#		continue
+#	fi
 #	if [ "${oemName}" == "Tencent" ]; then
 #		dosession=$(($dosession+1))
 #		continue
