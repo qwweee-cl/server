@@ -22,14 +22,15 @@ working_dir="/usr/local/countly/api"
 mail_target=${AWSM}
 s3PredictionPath="/s3mnt/shard_backup/Prediction/"
 
-if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ] || [ -z "$4" ]; then
-  echo "Please execute with date(0101) and index(1 or 2), start_date(20151111), start_round(00~03) paramater"
+if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ] || [ -z "$4" ] || [ -z "$5" ]; then
+  echo "Please execute with date(0101) and index(1 or 2), start_date(20151111), start_round(00~03), start_year(2015) paramater"
   exit 0
 fi
 
 index="${2}"
 start_date="${3}"
 start_round="${4}"
+start_year="${5}"
 
 s3DateRoundPredictionPath="${s3PredictionPath}${start_date}_${start_round}_${index}"
 echo -e "${s3DateRoundPredictionPath}"
@@ -44,72 +45,72 @@ for i in *.txt ; do
   regex="$1_543f37d0a62268c51e16d053"
   if [[ "$i" =~ $regex ]]
   then
-#    echo -e "cp ${i} ${s3PredictionPath}2015${i}" >> ${mainLogFile}
-    echo -e "cp ${i} ${s3DateRoundPredictionPath}/2015${i}" >> ${mainLogFile}
-    cp ${i} ${s3DateRoundPredictionPath}/2015${i}
+#    echo -e "cp ${i} ${s3PredictionPath}${start_year}${i}" >> ${mainLogFile}
+    echo -e "cp ${i} ${s3DateRoundPredictionPath}/${start_year}${i}" >> ${mainLogFile}
+    cp ${i} ${s3DateRoundPredictionPath}/${start_year}${i}
   fi
   regex="$1_543f8693a9e5b7ed76000012"
   if [[ "$i" =~ $regex ]]
   then
-#    echo -e "cp ${i} ${s3PredictionPath}2015${i}" >> ${mainLogFile}
-    echo -e "cp ${i} ${s3DateRoundPredictionPath}/2015${i}" >> ${mainLogFile}
-    cp ${i} ${s3DateRoundPredictionPath}/2015${i}
+#    echo -e "cp ${i} ${s3PredictionPath}${start_year}${i}" >> ${mainLogFile}
+    echo -e "cp ${i} ${s3DateRoundPredictionPath}/${start_year}${i}" >> ${mainLogFile}
+    cp ${i} ${s3DateRoundPredictionPath}/${start_year}${i}
   fi
   regex="$1_543f37eaa62268c51e16d0c3"
   if [[ "$i" =~ $regex ]]
   then
-#    echo -e "cp ${i} ${s3PredictionPath}2015${i}" >> ${mainLogFile}
-    echo -e "cp ${i} ${s3DateRoundPredictionPath}/2015${i}" >> ${mainLogFile}
-    cp ${i} ${s3DateRoundPredictionPath}/2015${i}
+#    echo -e "cp ${i} ${s3PredictionPath}${start_year}${i}" >> ${mainLogFile}
+    echo -e "cp ${i} ${s3DateRoundPredictionPath}/${start_year}${i}" >> ${mainLogFile}
+    cp ${i} ${s3DateRoundPredictionPath}/${start_year}${i}
   fi
   regex="$1_543f866fa9e5b7ed76000011"
   if [[ "$i" =~ $regex ]]
   then
-#    echo -e "cp ${i} ${s3PredictionPath}2015${i}" >> ${mainLogFile}
-    echo -e "cp ${i} ${s3DateRoundPredictionPath}/2015${i}" >> ${mainLogFile}
-    cp ${i} ${s3DateRoundPredictionPath}/2015${i}
+#    echo -e "cp ${i} ${s3PredictionPath}${start_year}${i}" >> ${mainLogFile}
+    echo -e "cp ${i} ${s3DateRoundPredictionPath}/${start_year}${i}" >> ${mainLogFile}
+    cp ${i} ${s3DateRoundPredictionPath}/${start_year}${i}
   fi
   regex="$1_5551e55cacdd571e2e000443"
   if [[ "$i" =~ $regex ]]
   then
-#    echo -e "cp ${i} ${s3PredictionPath}2015${i}" >> ${mainLogFile}
-    echo -e "cp ${i} ${s3DateRoundPredictionPath}/2015${i}" >> ${mainLogFile}
-    cp ${i} ${s3DateRoundPredictionPath}/2015${i}
+#    echo -e "cp ${i} ${s3PredictionPath}${start_year}${i}" >> ${mainLogFile}
+    echo -e "cp ${i} ${s3DateRoundPredictionPath}/${start_year}${i}" >> ${mainLogFile}
+    cp ${i} ${s3DateRoundPredictionPath}/${start_year}${i}
   fi
   regex="$1_5552bf53acdd571e2e00044e"
   if [[ "$i" =~ $regex ]]
   then
-#    echo -e "cp ${i} ${s3PredictionPath}2015${i}" >> ${mainLogFile}
-    echo -e "cp ${i} ${s3DateRoundPredictionPath}/2015${i}" >> ${mainLogFile}
-    cp ${i} ${s3DateRoundPredictionPath}/2015${i}
+#    echo -e "cp ${i} ${s3PredictionPath}${start_year}${i}" >> ${mainLogFile}
+    echo -e "cp ${i} ${s3DateRoundPredictionPath}/${start_year}${i}" >> ${mainLogFile}
+    cp ${i} ${s3DateRoundPredictionPath}/${start_year}${i}
   fi
   regex="$1_55d69ff33b254f9535d6059a"
   if [[ "$i" =~ $regex ]]
   then
-#    echo -e "cp ${i} ${s3PredictionPath}2015${i}" >> ${mainLogFile}
-    echo -e "cp ${i} ${s3DateRoundPredictionPath}/2015${i}" >> ${mainLogFile}
-    cp ${i} ${s3DateRoundPredictionPath}/2015${i}
+#    echo -e "cp ${i} ${s3PredictionPath}${start_year}${i}" >> ${mainLogFile}
+    echo -e "cp ${i} ${s3DateRoundPredictionPath}/${start_year}${i}" >> ${mainLogFile}
+    cp ${i} ${s3DateRoundPredictionPath}/${start_year}${i}
   fi
   regex="$1_55d6a0123b254f9535d6142d"
   if [[ "$i" =~ $regex ]]
   then
-#    echo -e "cp ${i} ${s3PredictionPath}2015${i}" >> ${mainLogFile}
-    echo -e "cp ${i} ${s3DateRoundPredictionPath}/2015${i}" >> ${mainLogFile}
-    cp ${i} ${s3DateRoundPredictionPath}/2015${i}
+#    echo -e "cp ${i} ${s3PredictionPath}${start_year}${i}" >> ${mainLogFile}
+    echo -e "cp ${i} ${s3DateRoundPredictionPath}/${start_year}${i}" >> ${mainLogFile}
+    cp ${i} ${s3DateRoundPredictionPath}/${start_year}${i}
   fi
   regex="$1_5631c5e92acfaf9818001bb1"
   if [[ "$i" =~ $regex ]]
   then
-#    echo -e "cp ${i} ${s3PredictionPath}2015${i}" >> ${mainLogFile}
-    echo -e "cp ${i} ${s3DateRoundPredictionPath}/2015${i}" >> ${mainLogFile}
-    cp ${i} ${s3DateRoundPredictionPath}/2015${i}
+#    echo -e "cp ${i} ${s3PredictionPath}${start_year}${i}" >> ${mainLogFile}
+    echo -e "cp ${i} ${s3DateRoundPredictionPath}/${start_year}${i}" >> ${mainLogFile}
+    cp ${i} ${s3DateRoundPredictionPath}/${start_year}${i}
   fi
   regex="$1_5631c60a2acfaf9818001bb2"
   if [[ "$i" =~ $regex ]]
   then
-#    echo -e "cp ${i} ${s3PredictionPath}2015${i}" >> ${mainLogFile}
-    echo -e "cp ${i} ${s3DateRoundPredictionPath}/2015${i}" >> ${mainLogFile}
-    cp ${i} ${s3DateRoundPredictionPath}/2015${i}
+#    echo -e "cp ${i} ${s3PredictionPath}${start_year}${i}" >> ${mainLogFile}
+    echo -e "cp ${i} ${s3DateRoundPredictionPath}/${start_year}${i}" >> ${mainLogFile}
+    cp ${i} ${s3DateRoundPredictionPath}/${start_year}${i}
   fi
 done
 
