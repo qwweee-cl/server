@@ -261,26 +261,29 @@ if __name__ == '__main__':
     log("Modify batch db okay.\n")
     
     if("ALL" == optApps or "PF" == optApps):
+        # PF
+        time.sleep(600)
         bPrepareReady = prepareDistinctSession(aKeys["Perfect_And"], aKeys["Perfect_iOS"], log)
         if not bPrepareReady: raiseExceptionAndExit(log)
         calculateSessions(aKeys["Perfect_And"], aKeys["Perfect_iOS"])
-
+        # BCS
         bPrepareReady = prepareDistinctSession(aKeys["BeautyCircle_And"], aKeys["BeautyCircle_iOS"], log)
         if not bPrepareReady: raiseExceptionAndExit(log)
         calculateSessions(aKeys["BeautyCircle_And"], aKeys["BeautyCircle_iOS"])
 
     if("ALL" == optApps or "YCP+YMK" == optApps):
+        # YMK
+        bPrepareReady = prepareDistinctSession(aKeys["YouCam_MakeUp_And"], aKeys["YouCam_MakeUp_iOS"], log)
+        if not bPrepareReady: raiseExceptionAndExit(log)
+        calculateSessions(aKeys["YouCam_MakeUp_And"], aKeys["YouCam_MakeUp_iOS"])
+        # YCN
+        bPrepareReady = prepareDistinctSession(aKeys["YouCam_Nail_And"], aKeys["YouCam_Nail_iOS"], log)
+        if not bPrepareReady: raiseExceptionAndExit(log)
+        calculateSessions(aKeys["YouCam_Nail_And"], aKeys["YouCam_Nail_iOS"])
+        # YCP
         bPrepareReady = prepareDistinctSession(aKeys["YouCam_Perfect_And"], aKeys["YouCam_Perfect_iOS"], log)
         if not bPrepareReady: raiseExceptionAndExit(log)
         calculateSessions(aKeys["YouCam_Perfect_And"], aKeys["YouCam_Perfect_iOS"])
         
-        bPrepareReady = prepareDistinctSession(aKeys["YouCam_Nail_And"], aKeys["YouCam_Nail_iOS"], log)
-        if not bPrepareReady: raiseExceptionAndExit(log)
-        calculateSessions(aKeys["YouCam_Nail_And"], aKeys["YouCam_Nail_iOS"])
-
-        bPrepareReady = prepareDistinctSession(aKeys["YouCam_MakeUp_And"], aKeys["YouCam_MakeUp_iOS"], log)
-        if not bPrepareReady: raiseExceptionAndExit(log)
-        calculateSessions(aKeys["YouCam_MakeUp_And"], aKeys["YouCam_MakeUp_iOS"])
-
     endTime = time.time()
     log(("**** Finished. Time cost on sessionMT = " + str(endTime-startTime) + " seconds\n"))
