@@ -212,7 +212,7 @@ var process = require('process');
         if (coll == "devices") {
             return;
         }
-        dbs.save.collection(coll).update({'_id': id}, {'$addToSet': ranges}, {'upsert': true}, dbCallback);
+        //dbs.save.collection(coll).update({'_id': id}, {'$addToSet': ranges}, {'upsert': true}, dbCallback);
         dbs.base.collection(coll).update({'_id': id}, {'$addToSet': ranges}, {'upsert': true}, dbCallback); 
     }
 
@@ -235,7 +235,7 @@ var process = require('process');
             if ((JSON.stringify(tmp).length + (data[times]?JSON.stringify(data[times]).length:0)) >= 10000) {
                 opSet = {};
                 opSet[op] = tmp;
-                dbs.save.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback);
+                //dbs.save.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback);
                 //console.log("[yes]"+JSON.stringify(tmp).length);
                 dbs.base.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback);
                 tmp = {};
@@ -247,7 +247,7 @@ var process = require('process');
             console.log("tmp is Empty");
         }
     	opSet[op] = tmp;
-        dbs.save.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback);
+        //dbs.save.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback);
         //console.log("[no]"+JSON.stringify(tmp).length);
         dbs.base.collection(collName).update({'_id': id}, opSet, {'upsert': true}, dbCallback);
     }
