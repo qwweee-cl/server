@@ -262,7 +262,7 @@ if __name__ == '__main__':
     
     if("ALL" == optApps or "PF" == optApps):
         # PF
-        time.sleep(600)
+        time.sleep(1200)
         bPrepareReady = prepareDistinctSession(aKeys["Perfect_And"], aKeys["Perfect_iOS"], log)
         if not bPrepareReady: raiseExceptionAndExit(log)
         calculateSessions(aKeys["Perfect_And"], aKeys["Perfect_iOS"])
