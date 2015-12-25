@@ -33,6 +33,7 @@ echo "Prediction start: $(date +%Y-%m-%d)" >> "$mainLogFile"
 index="${2}"
 start_date="${3}"
 start_round="${4}"
+start_year="${start_date:0:4}"
 
 cd ${working_dir}
 string="$1"
@@ -45,13 +46,13 @@ if [[ $string =~ $regular ]]; then
 fi
 
 ## execute copy prediction file to s3
-cmd="./shardPredictCopy2S3.sh ${shortDate} $2 ${start_date} ${start_round}"
+cmd="./shardPredictCopy2S3.sh ${shortDate} $2 ${start_date} ${start_round} ${start_year}"
 echo -e "${cmd}" >> ${mainLogFile}
-${cmd} ${shortDate} $2 ${start_date} ${start_round}
+${cmd}
 ## execute copy prediction file to emr2
-cmd="./shardPredictCopy2emr.sh ${shortDate} $2"
+cmd="./shardPredictCopy2emr.sh ${shortDate} ${index} ${start_year}"
 echo -e "${cmd}" >> ${mainLogFile}
-${cmd} ${shortDate} $2
+${cmd}
 
 ## execute copy prediction file to emr
 #cmd="./shardPredictCopy2emr_host.sh ${shortDate} $2"

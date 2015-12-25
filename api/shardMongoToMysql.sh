@@ -125,6 +125,12 @@ echo -e "process ${curdate} ${start_round}"
 #echo -e $cmd
 #$cmd
 
+## run weeklyProcess to fix 20151129 weekly value
+#cmd="/usr/bin/mysql -u root -pcyberlink#1 -e 
+#'CALL ${dbName}.weeklyProcess();' >> ${logpath}weeklyProcess.log"
+#echo -e $cmd
+#/usr/bin/mysql -u root -pcyberlink#1 -e "CALL ${dbName}.weeklyProcess();" >> ${logpath}weeklyProcess.log 2>&1
+
 #end=$(date +%Y-%m-%d_%H-%M)
 #echo $start
 #echo $end
@@ -194,6 +200,12 @@ $cmd
 cmd="rm ${gzipPath}"${curdate}"_countlyIn_fill_zero.tgz"
 echo -e $cmd
 $cmd
+
+## run weeklyProcess to fix 20151129 weekly value
+cmd="/usr/bin/mysql -u root -pcyberlink#1 -e 
+'CALL ${dbNameFillZero}.weeklyProcess();' >> ${logpath}weeklyProcess.log"
+echo -e $cmd
+/usr/bin/mysql -u root -pcyberlink#1 -e "CALL ${dbNameFillZero}.weeklyProcess();" >> ${logpath}weeklyProcess.log 2>&1
 
 end=$(date +%Y-%m-%d_%H-%M)
 echo $start

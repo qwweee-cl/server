@@ -195,6 +195,11 @@ def prepareDistinctSession(and_key, ios_key, log):
     nAndSessionCnt, nIOSSessionCnt = countSession(and_key, ios_key)
     print "%d sessions for And %s\n%d sessions for iOS %s" % (nAndSessionCnt, and_key, nIOSSessionCnt, ios_key)
     log(("Session Count: %d for Android, %d for iOS." % (nAndSessionCnt, nIOSSessionCnt)))
+
+    global TOTAL_USER_PART_AND
+    global TOTAL_USER_PART_IOS
+    TOTAL_USER_PART_AND = 12 if (nAndSessionCnt + nIOSSessionCnt > 150000) else 1
+    TOTAL_USER_PART_IOS = 2 if (nAndSessionCnt + nIOSSessionCnt > 150000) else 1
     
     aryAllSessionWorker = []
     if and_key: aryAllSessionWorker += generateDistinctSessionWorker(and_key, nAndSessionCnt, "_sessions_and_", ".txt", TOTAL_USER_PART_AND)
@@ -265,22 +270,29 @@ if __name__ == '__main__':
     log("Modify batch db okay.\n")
     
     if("ALL" == optApps or "PF" == optApps):
+        # PF
+        time.sleep(600)
         bPrepareReady = prepareDistinctSession(aKeys["Perfect_And"], aKeys["Perfect_iOS"], log)
         if not bPrepareReady: raiseExceptionAndExit(log)
-        calculateSessions(aKeys["Perfect_And"], aKeys["Perfect_iOS"], timeStamp)
+        calculateSessions(aKeys["Perfect_And"], aKeys["Perfect_iOS"])
+        # BCS
+        bPrepareReady = prepareDistinctSession(aKeys["BeautyCircle_And"], aKeys["BeautyCircle_iOS"], log)
+        if not bPrepareReady: raiseExceptionAndExit(log)
+        calculateSessions(aKeys["BeautyCircle_And"], aKeys["BeautyCircle_iOS"])
 
     if("ALL" == optApps or "YCP+YMK" == optApps):
-        bPrepareReady = prepareDistinctSession(aKeys["YouCam_Perfect_And"], aKeys["YouCam_Perfect_iOS"], log)
-        if not bPrepareReady: raiseExceptionAndExit(log)
-        calculateSessions(aKeys["YouCam_Perfect_And"], aKeys["YouCam_Perfect_iOS"], timeStamp)
-        
+        # YMK
         bPrepareReady = prepareDistinctSession(aKeys["YouCam_MakeUp_And"], aKeys["YouCam_MakeUp_iOS"], log)
         if not bPrepareReady: raiseExceptionAndExit(log)
-        calculateSessions(aKeys["YouCam_MakeUp_And"], aKeys["YouCam_MakeUp_iOS"], timeStamp)
-
+        calculateSessions(aKeys["YouCam_MakeUp_And"], aKeys["YouCam_MakeUp_iOS"])
+        # YCN
         bPrepareReady = prepareDistinctSession(aKeys["YouCam_Nail_And"], aKeys["YouCam_Nail_iOS"], log)
         if not bPrepareReady: raiseExceptionAndExit(log)
-        calculateSessions(aKeys["YouCam_Nail_And"], aKeys["YouCam_Nail_iOS"], timeStamp)
-
+        calculateSessions(aKeys["YouCam_Nail_And"], aKeys["YouCam_Nail_iOS"])
+        # YCP
+        bPrepareReady = prepareDistinctSession(aKeys["YouCam_Perfect_And"], aKeys["YouCam_Perfect_iOS"], log)
+        if not bPrepareReady: raiseExceptionAndExit(log)
+        calculateSessions(aKeys["YouCam_Perfect_And"], aKeys["YouCam_Perfect_iOS"])
+        
     endTime = time.time()
     log(("**** Finished. Time cost on sessionMT = " + str(endTime-startTime) + " seconds\n"))
