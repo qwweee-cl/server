@@ -9,7 +9,7 @@ var bag = {};
     bag.eventArray = [];           
 
 (function (events) {
-    events.processEvents = function(dbs, app, isFinal, appinfo) {
+    events.processEvents = function(dbs, app, isFinal, appinfo, futureTimestamp) {
         var updateSessions = {};
         var uma = {}; 
         var appinfos = {};
@@ -34,10 +34,10 @@ var bag = {};
                 continue;
             }
 
-            app[i].time = common.initTimeObj(appinfos.appTimezone, app[i].timestamp, app[i].tz);
+            app[i].time = common.initTimeObj_v2(appinfos.appTimezone, app[i].timestamp, app[i].tz, futureTimestamp);
             //update requests count
             common.incrTimeObject(app[i], updateSessions, common.dbMap['events']); 
-            eventAddup(bag, app[i], appinfos, uma); //will be computed in old user, that's ok
+            eventAddup(bag, app[i], appinfos, uma, futureTimestamp); //will be computed in old user, that's ok
     	}
         //updateUma(dbs, uma, appinfos);
         //logCurrUserEvents(app, appinfos);
@@ -99,7 +99,7 @@ var bag = {};
         dbonoff.on('raw');
     }
 
-    function eventAddup(bag, params, appinfos,uma) {
+    function eventAddup(bag, params, appinfos, uma, futureTimestamp) {
         var tmpEventObj = {},
             tmpEventColl = {},
             shortCollectionName = "",
@@ -152,7 +152,7 @@ var bag = {};
 
             // If present use timestamp inside each event while recording
             if (params.events[i].timestamp) {
-                params.time = common.initTimeObj(appinfos.appTimezone, params.events[i].timestamp, params.events[i].tz);
+                params.time = common.initTimeObj_v2(appinfos.appTimezone, params.events[i].timestamp, params.events[i].tz, futureTimestamp);
             }
 
             common.arrayAddUniq(bag.eventArray, shortCollectionName);

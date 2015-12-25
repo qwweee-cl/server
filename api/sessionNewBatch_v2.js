@@ -198,7 +198,7 @@ function processSessions(dbs, app, isFinal, appinfo) {
             var apps = app;
             var final = isFinal;
             var appinfos = appinfo;
-            countlyApi.data.usage.processSession(dbs, apps, final, appinfos, true);
+            countlyApi.data.usage.processSession(dbs, apps, final, appinfos, true, futureTimestamp);
             dbonoff.on('raw');
         });
     }
@@ -218,6 +218,8 @@ function dbClose(dbs) {
 
 var app_key = process.argv[2] || 'all';
 var file_user_id = process.argv[3] || null;
+var futureTimestamp = process.argv[4] || require('time')(Date).time();
+console.log(futureTimestamp);
 
 process.setMaxListeners(0);
 

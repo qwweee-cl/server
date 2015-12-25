@@ -953,6 +953,61 @@ var common = {},
         };
     };
 
+    // Adjusts the time to current app's configured timezone appTimezone and returns a time object.
+    common.initTimeObj_v2 = function (appTimezone, reqTimestamp, reqTZ, futureTimestamp) {
+        var currTimestamp,
+            currDate,
+            currDateWithoutTimestamp = new Date();
+        appTimezone = "America/Denver";
+
+        var futureUnixTime = parseInt(futureTimestamp, 10);
+
+        // Check if the timestamp parameter exists in the request and is a 10 digit integer
+        if (reqTimestamp && (reqTimestamp + "").length === 10 && common.isNumber(reqTimestamp)) {
+            // If the received timestamp is greater than current time use the current time as timestamp
+            currTimestamp = (reqTimestamp > futureUnixTime) ? futureUnixTime : parseInt(reqTimestamp, 10);
+            currDate = new Date(currTimestamp * 1000);
+        } else {
+            currTimestamp = time.time(); // UTC
+            currDate = new Date(futureUnixTime * 1000);
+        }
+
+    try {
+            currDate.setTimezone(appTimezone);
+    } catch (err) {
+        console.log('[appTimezone]:'+appTimezone+']');
+        console.log(err);
+    }
+        //currDateWithoutTimestamp.setTimezone(appTimezone);
+
+        var tmpMoment = momentz(currDate).tz(appTimezone);
+        var weekofyear = tmpMoment.format("W");
+        var tmpYOW = tmpMoment.format("GGGG");
+//        if (tmpMoment.month() == 11 && tmpMoment.week() == 1) {
+//            tmpYOW = (tmpMoment.year()+1).toString();
+//        }
+        //var withoutMoment = momentz(currDateWithoutTimestamp).tz(appTimezone);
+
+/*
+        var TZ = tzFormat(reqTZ, reqTimestamp);
+        if (0 && !empty(TZ)) {
+            tmpMoment = tmpMoment.zone(TZ);
+            //withoutMoment = withoutMoment.zone(TZ);
+            //console.log("timezone:"+reqTZ+" "+TZ);
+        } else {
+            tmpMoment = momentz(currDate).tz(appTimezone);
+        }
+*/
+        return {
+            yearly: tmpMoment.format("YYYY"),
+            monthly: tmpMoment.format("YYYY.M"),
+            daily: tmpMoment.format("YYYY.M.D"),
+            hourly: tmpMoment.format("YYYY.M.D.H"),
+            weekly: tmpMoment.format("W"),
+            yofw: tmpYOW
+        };
+    };
+
     // Returns an extended Date object that has setTimezone function
     common.getDate = function (timestamp, timezone) {
         var tmpDate = (timestamp)? new Date(timestamp * 1000) : new Date();

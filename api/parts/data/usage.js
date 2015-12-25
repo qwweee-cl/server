@@ -45,7 +45,7 @@ var process = require('process');
     dataBag.cityArray['meta.cities']['$each'] = [];
 
     //query user data and execute processUserSession
-    usage.processSession = function (dbs, app, isFinal, appinfo, isUU) {
+    usage.processSession = function (dbs, app, isFinal, appinfo, isUU, futureTimestamp) {
         //console.log(app[0].device_id);
         var appinfos = {};
         //if (appinfo) console.log(appinfo);
@@ -90,7 +90,7 @@ var process = require('process');
                 var info = appinfos;
                 //console.log('process Session');
 
-                processUserSession(dbs, dataBag, dbAppUser, isFinal, info, isUU);
+                processUserSession(dbs, dataBag, dbAppUser, isFinal, info, isUU, futureTimestamp);
         });
     }
 
@@ -472,7 +472,7 @@ var process = require('process');
         //console.log("cpUniqueUser: %j",uniqueUser.updateUsers);
     }
 
-    function processUserSession(dbs, dataBag, dbAppUser, isFinal, appinfos, isUU) {
+    function processUserSession(dbs, dataBag, dbAppUser, isFinal, appinfos, isUU, futureTimestamp) {
         var apps = dataBag.apps;
         var sessionObj = [];
         var last_end_session_timestamp = 0;
@@ -489,7 +489,7 @@ var process = require('process');
         if (dbAppUser) { //set sessionObj[0] = dbAppUser to compute on-going session
 	    //console.log('dbAppUser=%j', dbAppUser);
             dbAppUser.acc_duration = parseInt(dbAppUser[common.dbUserMap['session_duration']]);
-            dbAppUser.time = common.initTimeObj(dbAppUser.appTimezone, dbAppUser.timestamp, dbAppUser.tz);
+            dbAppUser.time = common.initTimeObj_v2(dbAppUser.appTimezone, dbAppUser.timestamp, dbAppUser.tz, futureTimestamp);
             sessionObj[0] = common.clone(dbAppUser);
             last_end_session_timestamp = dbAppUser[common.dbUserMap['last_end_session_timestamp']];
             last_end_session_timestamp_loyalty = dbAppUser[common.dbUserMap['last_end_session_timestamp']];
@@ -541,7 +541,7 @@ var process = require('process');
                 continue;
             }
 
-            apps[i].time = common.initTimeObj(appinfos.appTimezone, apps[i].timestamp, apps[i].tz);
+            apps[i].time = common.initTimeObj_v2(appinfos.appTimezone, apps[i].timestamp, apps[i].tz, futureTimestamp);
 
             //set event(request) count for every request
             common.incrTimeObject(apps[i], dataBag.updateSessions, common.dbMap['events']); 
