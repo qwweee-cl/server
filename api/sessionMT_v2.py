@@ -47,7 +47,7 @@ def distinctSessions(and_key, ios_key, log):
     log(("**** Time cost on Distinct Sessions = " + str(endTime-startTime) + " seconds\n"))
     
 #### main function to calculate sessions
-def calculateSessions(and_key, ios_key):
+def calculateSessions(and_key, ios_key, timeStamp):
     listLogPath = []
     listCmds = []
     if and_key:
@@ -55,14 +55,14 @@ def calculateSessions(and_key, ios_key):
             logPath = os.path.join(os.getcwd(), LOG_FOLDER, db_name + THREAD_NAME_PREFIX_AND + str(i))
             listLogPath.append(logPath)
             fileName = getFileName('_sessions_and_', i, ".txt")
-            listCmds.append(['node', 'sessionNewBatch_v2.js', and_key, fileName])
+            listCmds.append(['node', 'sessionNewBatch_v2.js', and_key, fileName, timeStamp])
     
     if ios_key:
         for i in xrange(0, TOTAL_USER_PART_IOS):
             logPath = os.path.join(os.getcwd(), LOG_FOLDER, db_name + THREAD_NAME_PREFIX_IOS + str(i))
             listLogPath.append(logPath)
             fileName = getFileName('_sessions_ios_', i, ".txt")
-            listCmds.append(['node', 'sessionNewBatch_v2.js', ios_key, fileName])
+            listCmds.append(['node', 'sessionNewBatch_v2.js', ios_key, fileName, timeStamp])
         
     exeMultiCmdsDiffLog(listCmds, listLogPath, False)
     
@@ -239,8 +239,17 @@ THREAD_NAME_PREFIX_IOS = "_ios_thread_"
 
 if __name__ == '__main__':
     # get db name from argument
-    db_name = None if 0 == len(sys.argv) else sys.argv[1]
-    optApps = "ALL" if 2 > len(sys.argv) else sys.argv[2] # YCP+YMK, PF, ALL(default)
+    if len(sys.argv) < 4:
+        print "[ERR] Invalid Parameters!"
+        print "[ERR] Need: dbName, appRun, timeStamp"
+        print "[ERR]   EX: python sessionMT_v2.py countly_raw1223_00 PF 1451034041"
+        print "[ERR] To get timestamp, use: date -d '2015-12-12' +%s"
+        raise ValueError('Invalid Parameters!')
+        exit(1)
+
+    db_name = sys.argv[1]
+    optApps = sys.argv[2] # YCP+YMK, PF, ALL(default)
+    timeStamp = sys.argv[3]
     
     logPath = os.path.join(os.getcwd(), LOG_FOLDER, "sessionMT_"+db_name)
     logger = utils.CLogger(logPath)
@@ -258,20 +267,20 @@ if __name__ == '__main__':
     if("ALL" == optApps or "PF" == optApps):
         bPrepareReady = prepareDistinctSession(aKeys["Perfect_And"], aKeys["Perfect_iOS"], log)
         if not bPrepareReady: raiseExceptionAndExit(log)
-        calculateSessions(aKeys["Perfect_And"], aKeys["Perfect_iOS"])
+        calculateSessions(aKeys["Perfect_And"], aKeys["Perfect_iOS"], timeStamp)
 
     if("ALL" == optApps or "YCP+YMK" == optApps):
         bPrepareReady = prepareDistinctSession(aKeys["YouCam_Perfect_And"], aKeys["YouCam_Perfect_iOS"], log)
         if not bPrepareReady: raiseExceptionAndExit(log)
-        calculateSessions(aKeys["YouCam_Perfect_And"], aKeys["YouCam_Perfect_iOS"])
+        calculateSessions(aKeys["YouCam_Perfect_And"], aKeys["YouCam_Perfect_iOS"], timeStamp)
         
         bPrepareReady = prepareDistinctSession(aKeys["YouCam_MakeUp_And"], aKeys["YouCam_MakeUp_iOS"], log)
         if not bPrepareReady: raiseExceptionAndExit(log)
-        calculateSessions(aKeys["YouCam_MakeUp_And"], aKeys["YouCam_MakeUp_iOS"])
+        calculateSessions(aKeys["YouCam_MakeUp_And"], aKeys["YouCam_MakeUp_iOS"], timeStamp)
 
         bPrepareReady = prepareDistinctSession(aKeys["YouCam_Nail_And"], aKeys["YouCam_Nail_iOS"], log)
         if not bPrepareReady: raiseExceptionAndExit(log)
-        calculateSessions(aKeys["YouCam_Nail_And"], aKeys["YouCam_Nail_iOS"])
+        calculateSessions(aKeys["YouCam_Nail_And"], aKeys["YouCam_Nail_iOS"], timeStamp)
 
     endTime = time.time()
     log(("**** Finished. Time cost on sessionMT = " + str(endTime-startTime) + " seconds\n"))
