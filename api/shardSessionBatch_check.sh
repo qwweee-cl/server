@@ -61,6 +61,14 @@ function getBackupFinished() {
 	batchdb=${string}
 	echo -e ${batchdb} 2>&1 >> "$one_day_log"
 }
+function getFutureTimestamp() {
+	cmd="node transferRound.js ${start_date} ${start_round}"
+	echo -e ${cmd} 2>&1 >> "$one_day_log"
+	string=`${cmd}`
+	#echo -e ${string}
+	futureTimestamp=${string}
+	echo -e ${batchdb} 2>&1 >> "$one_day_log"
+}
 function sendSummaryMail() {
 	echo -e $(tail -20 ${one_day_log})\
 	| mail -s "[Shard]${header} ${start_date} ${start_round} Session Summary" ${mail_target}
@@ -85,6 +93,7 @@ s3DashboardPath="/s3mnt/shard_backup/dashboard_data/"
 DashboardCachePath="/mem/tmp/s3cache/clcom2-countly/shard_backup/dashboard_data/"
 rawSession="/mem/tmp/RawSession/"
 batchdb=""
+futureTimestamp=$(date +%s)
 
 s3Path="/s3mnt/shard_backup/hourly_data/"
 
@@ -312,6 +321,7 @@ do
 	curTimestamp=$(date -d "-5 minutes" +%s)
 	echo -e ${curTimestamp} 2>&1 >> "$one_day_log"
 
+
 	## get the first backup finished db name
 	getBackupFinished
 
@@ -396,9 +406,13 @@ do
 		#cmd="node --max-old-space-size=6144 hourlySessionNewBatch.js ${batchdb}"
 		#echo -e ${cmd} 2>&1 >> $one_day_log 
 		#${cmd} 2>&1 >> $one_day_log
-		#echo -e "process ${batchdb} session finished"
+		#echo -e "process ${batchdb} session finished".
+## reget future timestamp
+		futureTimestamp=$(date +%s)
+## get Future Timestamp (start_date & start_round)
+		getFutureTimestamp
 
-		cmd="python sessionMT_v2.py ${batchdb} ${header}"
+		cmd="python sessionMT_v2.py ${batchdb} ${header} ${futureTimestamp}"
 		echo -e ${cmd} 2>&1 >> "$one_day_log"
 		${cmd} 2>&1 >> "$one_day_log"
 		echo -e "process ${batchdb} ${header} session finished"
