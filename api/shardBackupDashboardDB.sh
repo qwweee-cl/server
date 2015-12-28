@@ -28,6 +28,7 @@ indexNum="1"
 gzipPath="/mem/mongo_hourly_dashboard_gzip/"
 exportPath="/data/mongo_hourly_dashboard_backup/"
 s3DashboardPath="/s3mnt/shard_backup/dashboard_data/"
+cmds3DashboardPath="s3://clcom2-countly/shard_backup/dashboard_data/"
 DashboardCachePath="/mem/tmp/s3cache/clcom2-countly/shard_backup/dashboard_data/"
 
 savedate=$(date +%Y%m%d)
@@ -53,10 +54,10 @@ fi
 if [ ! -d "${gzipPath}" ]; then
 	mkdir ${gzipPath}
 fi
-if [ ! -d "${s3DashboardPath}" ]; then
-	echo "mkdir ${s3DashboardPath}"
-	mkdir ${s3DashboardPath}
-fi
+#if [ ! -d "${s3DashboardPath}" ]; then
+#	echo "mkdir ${s3DashboardPath}"
+#	mkdir ${s3DashboardPath}
+#fi
 
 ## this is for test
 dashboarddb="countly_test"
@@ -114,30 +115,40 @@ cd $exportPath
 cmd="mongodump -h $dashboard -db $dashboarddb -o $exportPath$dashboarddate"
 echo $cmd
 $cmd
-## zip backup file
-cd $exportPath
-echo $PWD
-cmd="/bin/tar czf $gzipPath$dashboarddate.tgz ./"
-echo $cmd
-$cmd
-cmd="/bin/rm ./$dashboarddate -rf"
-echo $cmd
-$cmd
-## move dashboard zip file to s3
-if [ ! -d "$s3DashboardPath" ]; then
-echo "mkdir $s3DashboardPath"
-mkdir $s3DashboardPath
-fi
-cmd="/bin/cp $gzipPath$dashboarddate.tgz $s3DashboardPath"
-echo $cmd
-$cmd
-cmd="/bin/rm $gzipPath$dashboarddate.tgz"
-echo $cmd
-$cmd
+## new zip and copy to s3 script
+cd $path
+cmd="./shardBackupDashboardDBZip.sh ${dashboarddate}"
+echo -e ${cmd}
+echo -e ${cmd} >> $one_time_log
+${cmd} & 
 
-cmd="sudo rm ${DashboardCachePath} -rf"
-echo $cmd
-$cmd
+## zip backup file
+#cd $exportPath
+#echo $PWD
+#cmd="/bin/tar czf $gzipPath$dashboarddate.tgz ./"
+#echo $cmd
+#$cmd
+#cmd="/bin/rm ./$dashboarddate -rf"
+#echo $cmd
+#$cmd
+## move dashboard zip file to s3
+#if [ ! -d "$s3DashboardPath" ]; then
+#echo "mkdir $s3DashboardPath"
+#mkdir $s3DashboardPath
+#fi
+#cmd="/bin/cp $gzipPath$dashboarddate.tgz $s3DashboardPath"
+#echo $cmd
+#$cmd
+#cmd="aws s3 cp $gzipPath$dashboarddate.tgz $cmds3DashboardPath"
+#echo $cmd
+#$cmd
+#cmd="/bin/rm $gzipPath$dashboarddate.tgz"
+#echo $cmd
+#$cmd
+
+#cmd="sudo rm ${DashboardCachePath} -rf"
+#echo $cmd
+#$cmd
 
 ## save dashboard backup end
 cd $path
