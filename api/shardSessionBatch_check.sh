@@ -67,7 +67,13 @@ function getFutureTimestamp() {
 	string=`${cmd}`
 	#echo -e ${string}
 	futureTimestamp=${string}
-	echo -e ${batchdb} 2>&1 >> "$one_day_log"
+	echo -e ${futureTimestamp} 2>&1 >> "$one_day_log"
+}
+function restoreDataFromS3ToLocal() {
+	cd ${working_dir}
+	cmd="./shardToLocalMongodb.sh ${start_date} ${start_round} ${batchdb} ${indexNum}"
+	echo -e ${cmd} 2>&1 >> "$one_day_log"
+	${cmd} 2>&1 >> "$one_day_log"
 }
 function sendSummaryMail() {
 	echo -e $(tail -20 ${one_day_log})\
@@ -411,6 +417,8 @@ do
 		futureTimestamp=$(date +%s)
 ## get Future Timestamp (start_date & start_round)
 		getFutureTimestamp
+
+		restoreDataFromS3ToLocal
 
 		cmd="python sessionMT_v2.py ${batchdb} ${header} ${futureTimestamp}"
 		echo -e ${cmd} 2>&1 >> "$one_day_log"
