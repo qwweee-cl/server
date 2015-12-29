@@ -134,14 +134,14 @@ var common = {},
     common.db_hourlyShardOEM = null;
     common.db_closesShardOEM = [];
 
-    common.db_maintain = mongo.db(dbMaintainName, dbOptions);
-    common.db_maintain.tag = countlyConfig.mongodb.db_maintain.replace(/system\.|\.\.|\$/g, "");
-
-    common.db_maintain2 = mongo.db(dbMaintainName2, dbOptions);
-    common.db_maintain2.tag = countlyConfig.mongodb.db_maintain.replace(/system\.|\.\.|\$/g, "");
-
     common.shard_maintain = mongo.db(shardMaintainName, dbOptions);
     common.shard_maintain.tag = countlyConfig.mongodb.db_maintain.replace(/system\.|\.\.|\$/g, "");
+
+    common.db_maintain = common.shard_maintain;
+    common.db_maintain.tag = countlyConfig.mongodb.db_maintain.replace(/system\.|\.\.|\$/g, "");
+
+    common.db_maintain2 = common.shard_maintain;
+    common.db_maintain2.tag = countlyConfig.mongodb.db_maintain.replace(/system\.|\.\.|\$/g, "");
 
     common.config = countlyConfig;
 
