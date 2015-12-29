@@ -32,7 +32,7 @@ fi
 
 cd ${working_dir}
 ## drop current processed local mongodb
-baseCmd="/usr/bin/mongo --eval "
+baseCmd="/usr/bin/mongo ${dbName} --eval "
 cmd="printjson(db.dropDatabase());"
 echo -e "${baseCmd}${cmd} 2>&1 " 2>&1 >> ${one_day_log}
 ${baseCmd}${cmd} 2>&1 >> ${one_day_log}
