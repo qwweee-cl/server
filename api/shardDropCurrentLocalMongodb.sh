@@ -20,11 +20,14 @@ working_dir="/usr/local/countly/api"
 mail_target=${AWSM}
 one_day_log="$log_path/log_drop_$(date +%Y%m%d).log"
 
-if [ -z "$1" ]; then
-  echo -e "please add one paramater: dbName(countly_raw1212_00)"
+if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ] || [ -z "$4" ]; then
+  echo -e "please add one paramater: dbName(countly_raw1212_00) index (1 or 2) date(20151212) round(00~03)"
   exit 1
 else
   dbName="${1}"
+  indexNum="${2}"
+  startDate="${3}"
+  startRound="${4}"
 fi
 
 cd ${working_dir}

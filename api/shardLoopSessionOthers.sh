@@ -35,6 +35,6 @@ ${cmd} 2>&1 >> ${mainLogFile}
 
 cd ${working_dir}
 ## drop current processed local mongodb
-cmd="./shardDropCurrentLocalMongodb.sh ${dbname}"
+cmd="./shardDropCurrentLocalMongodb.sh ${dbname} ${index} ${start_date} ${start_round}"
 echo -e "${cmd}" 2>&1 >> ${mainLogFile}
 ${cmd} 2>&1 >> ${mainLogFile}
