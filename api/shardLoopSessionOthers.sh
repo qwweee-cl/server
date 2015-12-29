@@ -30,5 +30,11 @@ echo -e "after session${index} finished process session to do"
 cd ${working_dir}
 ## execute prediction script
 cmd="./shardPredictionBatch.sh ${dbname} ${index} ${start_date} ${start_round}"
-echo -e "${cmd} 2>&1 >> ${mainLogFile}"
+echo -e "${cmd}" 2>&1 >> ${mainLogFile}
+${cmd} 2>&1 >> ${mainLogFile}
+
+cd ${working_dir}
+## drop current processed local mongodb
+cmd="./shardDropCurrentLocalMongodb.sh ${dbname}"
+echo -e "${cmd}" 2>&1 >> ${mainLogFile}
 ${cmd} 2>&1 >> ${mainLogFile}
