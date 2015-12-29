@@ -211,7 +211,7 @@ def prepareDistinctSession(and_key, ios_key, log):
     for worker in aryAllSessionWorker: worker.join()
     for worker in aryAllSessionWorker:
         #print worker.getSummaryLog()
-        log(worker.getSummaryLog())
+        log(worker.getSummaryLog()+"\n")
     
     nAccuAndSessions, nAccuIOSSessions = 0, 0
     nAccuAndUsers, nAccuIOSUsers = 0, 0
@@ -295,4 +295,4 @@ if __name__ == '__main__':
         calculateSessions(aKeys["YouCam_Perfect_And"], aKeys["YouCam_Perfect_iOS"], timeStamp)
         
     endTime = time.time()
-    log(("**** Finished. Time cost on sessionMT = " + str(endTime-startTime) + " seconds\n"))
+    log(("**** Finished. Time cost on sessionMT = " + str(endTime-startTime) + " seconds\n\n"))
