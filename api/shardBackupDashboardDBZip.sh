@@ -31,7 +31,7 @@ s3DashboardPath="/s3mnt/shard_backup/dashboard_data/"
 cmds3DashboardPath="s3://clcom2-countly/shard_backup/dashboard_data/"
 DashboardCachePath="/mem/tmp/s3cache/clcom2-countly/shard_backup/dashboard_data/"
 
-cmds3DashboardPath="s3://clcom2-countly/test/dashboard_data/"
+#cmds3DashboardPath="s3://clcom2-countly/test/dashboard_data/"
 
 savedate=$(date +%Y%m%d)
 dashboarddate=${savedate}"_countly"
