@@ -278,7 +278,7 @@ var handleOneSession = function(records, isFinal) {
         processSessions(dbs, records, isFinal, app_information);
 };
 
-wait_cnt = 40;
+wait_cnt = 60;
 // YCN & BCS wait time
 if (app_key == "895ef49612e79d93c462c6d34abd8949b4c849af" ||
     app_key == "ecc26ef108c821f3aadc5e283c512ee68be7d43e" ||
