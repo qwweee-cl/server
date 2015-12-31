@@ -278,22 +278,32 @@ var handleOneSession = function(records, isFinal) {
         processSessions(dbs, records, isFinal, app_information);
 };
 
-wait_cnt = 60;
+wait_cnt = 40;
 // YCN & BCS wait time
 if (app_key == "895ef49612e79d93c462c6d34abd8949b4c849af" ||
     app_key == "ecc26ef108c821f3aadc5e283c512ee68be7d43e" ||
     app_key == "488fea5101de4a8226718db0611c2ff2daeca06a" ||
     app_key == "7cd568771523a0621abff9ae3f95daf3a8694392") {
-    wait_cnt = 10;
+    wait_cnt = 20;
+}
+// YCN & BCS wait time
+if (app_key == "895ef49612e79d93c462c6d34abd8949b4c849af" ||
+    app_key == "ecc26ef108c821f3aadc5e283c512ee68be7d43e") {
+    wait_cnt = 40;
 }
 // PF wait time
 if (app_key == "0368eb926b115ecaf41eff9a0536a332ef191417" ||
     app_key == "02ce3171f470b3d638feeaec0b3f06bd27f86a26") {
-    wait_cnt = 75;
+    wait_cnt = 80;
 }
 // YMK wait time
 if (app_key == "75edfca17dfbe875e63a66633ed6b00e30adcb92" ||
     app_key == "9219f32e8de29b826faf44eb9b619788e29041bb") {
+    wait_cnt = 70;
+}
+// YCP wait time
+if (app_key == "e315c111663af26a53e5fe4c82cc1baeecf50599" ||
+    app_key == "c277de0546df31757ff26a723907bc150add4254") {
     wait_cnt = 60;
 }
 
