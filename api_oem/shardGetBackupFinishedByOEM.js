@@ -10,7 +10,7 @@ if (process.argv.length != 5) {
 }
 var inTime = parseInt(process.argv[2]);
 var collectionName = 'backup_oem_finished'+process.argv[3];
-var oemName = "_"+process.argv[4]+"_";
+var oemName = "_"+process.argv[4]+"_raw";
 //query = {$and: [{timestamp: {$lte: inTime}}, {dbname: {$regex: oemName}}]};
 query = {$and: [{dbname: {$regex: oemName}}]};
 
