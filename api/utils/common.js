@@ -150,7 +150,6 @@ var common = {},
     common.shard_maintain.tag = countlyConfig.mongodb.db_maintain.replace(/system\.|\.\.|\$/g, "");
 
     common.newshard_maintain = null;
-    common.newshard_maintain.tag = "";
 
     common.config = countlyConfig;
 
