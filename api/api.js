@@ -165,7 +165,7 @@ function insertRawColl(coll, eventp, params) {
             }
         });
     }
-    if (0)
+    //if (0)
     {
         common.getNewShardRawDB(eventp.app_key).collection(coll).insert(eventp, function(err, res) {
             if (err) {
