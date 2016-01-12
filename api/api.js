@@ -165,6 +165,15 @@ function insertRawColl(coll, eventp, params) {
             }
         });
     }
+    if (0)
+    {
+        common.getNewShardRawDB(eventp.app_key).collection(coll).insert(eventp, function(err, res) {
+            if (err) {
+                console.log('DB Shard operation error');
+                console.log(err);
+            }
+        });
+    }
 }
 
 function insertRawEvent(coll,params) {
