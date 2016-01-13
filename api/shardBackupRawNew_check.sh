@@ -57,8 +57,8 @@ CacheFlagPath="/mem/tmp/s3cache/clcom2-countly/shard_backup/hourly_data_flag/"
 s3FlagPath="/s3mnt/test_backup/hourly_data_flag/"
 cmds3FlagPath="s3://clcom2-countly/test_backup/hourly_data_flag/"
 
-#s3Path="/s3mnt/test_backup/hourly_data/"
-#cmds3Path="s3://clcom2-countly/test_backup/hourly_data/"
+s3Path="/s3mnt/test_backup/hourly_data/"
+cmds3Path="s3://clcom2-countly/test_backup/hourly_data/"
 
 #mongo="localhost:27017"
 batchdb=""
