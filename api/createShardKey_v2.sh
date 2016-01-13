@@ -231,6 +231,6 @@ date >> ${one_time_log}
 
 ## check shards collections finished or not?
 cd $path
-./checkCollections_v2.sh >> ${one_time_log}
+./checkCollections_v2.sh ${tomorrow} >> ${one_time_log}
 
 sendSummaryMail
