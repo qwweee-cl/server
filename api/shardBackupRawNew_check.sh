@@ -80,14 +80,14 @@ if [ "${appType}" == "1" ]; then
 	header="shard1"
 	LOCKFILE="/tmp/shardBackupRaw1.pid"
 	mainLogFile="/usr/local/countly/log/shardBackupMain1.log"
-	mongo="localhost:27017"
+	mongo="localhost:30000"
 	indexNum="1"
 	pid=`cat ${LOCKFILE}`
 elif [ "${appType}" == "2" ]; then
 	header="shard2"
 	LOCKFILE="/tmp/shardBackupRaw2.pid"
 	mainLogFile="/usr/local/countly/log/shardBackupMain2.log"
-	mongo="localhost:27017"
+	mongo="localhost:30000"
 	indexNum="2"
 	pid=`cat ${LOCKFILE}`
 else
