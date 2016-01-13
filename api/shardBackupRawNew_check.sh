@@ -48,6 +48,7 @@ end_time=""
 gzipPath="/mem/mongo_shard_gzip/"
 exportPath="/mem/mongo_shard_backup/"
 s3Path="/s3mnt/shard_backup/hourly_data/"
+cmds3Path="s3://clcom2-countly/shard_backup/hourly_data/"
 CachePath="/mem/tmp/s3cache/clcom2-countly/shard_backup/hourly_data/"
 s3FlagPath="/s3mnt/shard_backup/hourly_data_flag/"
 cmds3FlagPath="s3://clcom2-countly/shard_backup/hourly_data_flag/"
@@ -55,6 +56,9 @@ CacheFlagPath="/mem/tmp/s3cache/clcom2-countly/shard_backup/hourly_data_flag/"
 
 s3FlagPath="/s3mnt/test_backup/hourly_data_flag/"
 cmds3FlagPath="s3://clcom2-countly/test_backup/hourly_data_flag/"
+
+#s3Path="/s3mnt/test_backup/hourly_data/"
+#cmds3Path="s3://clcom2-countly/test_backup/hourly_data/"
 
 #mongo="localhost:27017"
 batchdb=""
@@ -222,13 +226,10 @@ do
 		echo $cmd 2>&1 >> $one_day_log 
 		$cmd 2>&1 >> $one_day_log 
 
-		cmd="/bin/cp ${gzipPath}${rawdate}.tgz ${s3Path}${rawdate}.tmp"
+		cmd="aws mv ${gzipPath}${rawdate}.tgz ${cmds3Path}${rawdate}.tmp"
 		echo $cmd 2>&1 >> $one_day_log 
 		$cmd 2>&1 >> $one_day_log 
-		cmd="/bin/rm ${gzipPath}${rawdate}.tgz"
-		echo $cmd 2>&1 >> $one_day_log 
-		$cmd 2>&1 >> $one_day_log 
-		cmd="/bin/mv ${s3Path}${rawdate}.tmp ${s3Path}${rawdate}.tgz"
+		cmd="aws mv ${cmds3Path}${rawdate}.tmp ${cmds3Path}${rawdate}.tgz"
 		echo $cmd 2>&1 >> $one_day_log 
 		$cmd 2>&1 >> $one_day_log 
 
