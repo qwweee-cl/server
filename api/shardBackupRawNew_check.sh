@@ -50,6 +50,7 @@ exportPath="/mem/mongo_shard_backup/"
 s3Path="/s3mnt/shard_backup/hourly_data/"
 CachePath="/mem/tmp/s3cache/clcom2-countly/shard_backup/hourly_data/"
 s3FlagPath="/s3mnt/shard_backup/hourly_data_flag/"
+cmds3FlagPath="s3://clcom2-countly/shard_backup/hourly_data_flag/"
 CacheFlagPath="/mem/tmp/s3cache/clcom2-countly/shard_backup/hourly_data_flag/"
 #mongo="localhost:27017"
 batchdb=""
@@ -190,18 +191,24 @@ do
 		$cmd 2>&1 >> $one_day_log 
 
 		## touch 1 flag file to s3FlagPath
-		cmd="/bin/touch ${s3FlagPath}${rawdate1}.tag"
+		cmd="/bin/touch /tmp/${rawdate1}.tag"
 		echo $cmd 2>&1 >> $one_day_log 
 		$cmd 2>&1 >> $one_day_log
 
-		## touch 2 flag file to s3FlagPath
-		cmd="/bin/touch ${s3FlagPath}${rawdate2}.tag"
+		## move flag file to s3 by awscli
+		cmd="aws s3 mv /tmp/${rawdate1}.tag ${cmds3FlagPath}"
 		echo $cmd 2>&1 >> $one_day_log 
 		$cmd 2>&1 >> $one_day_log
 
-		cmd="sudo rm ${CacheFlagPath} -rf"
-		echo $cmd
-		$cmd
+		## touch 1 flag file to s3FlagPath
+		cmd="/bin/touch /tmp/${rawdate2}.tag"
+		echo $cmd 2>&1 >> $one_day_log 
+		$cmd 2>&1 >> $one_day_log
+
+		## move flag file to s3 by awscli
+		cmd="aws s3 mv /tmp/${rawdate2}.tag ${cmds3FlagPath}"
+		echo $cmd 2>&1 >> $one_day_log 
+		$cmd 2>&1 >> $one_day_log
 
 		echo $PWD
 		cmd="/bin/tar czf ${gzipPath}${rawdate}.tgz ./"
