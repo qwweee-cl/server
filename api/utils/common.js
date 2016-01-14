@@ -178,14 +178,19 @@ var common = {},
         });
     };
 
-    common.getHourlyRawDB = function(appKey) {
+    common.getHourlyRawDB = function(appKey, inCurrDate) {
         var headName = 'countly_raw',
             rawdbName = '',
             currDate,
             appTimezone = "America/Denver";
 
         //print("getHourlyRawDB");
-        currDate = new Date();
+        if (inCurrDate) {
+            currDate = inCurrDate;
+        } else {
+            currDate = new Date();
+        }
+        
         var tmpMoment = momentz(currDate).tz(appTimezone);
         var fileHeadName = tmpMoment.format("YYYYMMDD");
         var tailName = tmpMoment.format("MMDD_HH_mm_");
@@ -208,14 +213,19 @@ var common = {},
         return common.getDBByNameClad2(fullName, filename);
     };
 
-    common.getShardRawDB = function(appKey) {
+    common.getShardRawDB = function(appKey, inCurrDate) {
         var headName = 'countly_raw',
             rawdbName = '',
             currDate,
             appTimezone = "America/Denver";
 
         //print("getHourlyRawDB");
-        currDate = new Date();
+        if (inCurrDate) {
+            currDate = inCurrDate;
+        } else {
+            currDate = new Date();
+        }
+        
         var tmpMoment = momentz(currDate).tz(appTimezone);
         var fileHeadName = tmpMoment.format("YYYYMMDD");
         var tailName = tmpMoment.format("MMDD_HH_mm_");
@@ -304,14 +314,19 @@ var common = {},
         return common.db_hourlyShard;
     };
 
-    common.getNewShardRawDB = function(appKey) {
+    common.getNewShardRawDB = function(appKey, inCurrDate) {
         var headName = 'countly_raw',
             rawdbName = '',
             currDate,
             appTimezone = "America/Denver";
 
         //print("getHourlyRawDB");
-        currDate = new Date();
+        if (inCurrDate) {
+            currDate = inCurrDate;
+        } else {
+            currDate = new Date();
+        }
+
         var tmpMoment = momentz(currDate).tz(appTimezone);
         var fileHeadName = tmpMoment.format("YYYYMMDD");
         var tailName = tmpMoment.format("MMDD_HH_mm_");
@@ -404,7 +419,7 @@ var common = {},
         return common.db_hourlyNewShard;
     };
 
-    common.getShardOEMRawDB = function(appKey, oemHeadName) {
+    common.getShardOEMRawDB = function(appKey, oemHeadName, inCurrDate) {
         var headName = 'oem_countly_raw',
             rawdbName = '',
             currDate,
@@ -415,7 +430,12 @@ var common = {},
         }
 
         //print("getHourlyRawDB");
-        currDate = new Date();
+        if (inCurrDate) {
+            currDate = inCurrDate;
+        } else {
+            currDate = new Date();
+        }
+
         var tmpMoment = momentz(currDate).tz(appTimezone);
         var fileHeadName = tmpMoment.format("YYYYMMDD");
         var tailName = tmpMoment.format("MMDD_HH_mm_");
