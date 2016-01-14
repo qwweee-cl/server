@@ -179,10 +179,6 @@ fi
 if [ ! -d "${gzipPath}" ]; then
 	mkdir ${gzipPath}
 fi
-if [ ! -d "${s3DashboardPath}" ]; then
-	echo "mkdir ${s3DashboardPath}"
-	mkdir ${s3DashboardPath}
-fi
 if [ ! -d "${rawSession}" ]; then
 	echo "mkdir ${rawSession}"
 	mkdir ${rawSession}
