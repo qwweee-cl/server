@@ -35,6 +35,7 @@ function logDbError(err, res) {
 function insertRawColl(coll, eventp, params) {
     var dealNumber = "";
     var oem = false;
+    var currDate = new Date();
     //console.log('insert collection name:'+coll);
     eventp.app_key = params.qstring.app_key;
     //eventp.app_id = params.app_id;
@@ -44,7 +45,7 @@ function insertRawColl(coll, eventp, params) {
     eventp.device_id = params.qstring.device_id;
     eventp.timestamp = params.qstring.timestamp;
     if (eventp.timestamp < 0) {
-        eventp.timestamp = (new Date() / 1000 | 0);
+        eventp.timestamp = (currDate / 1000 | 0);
     }
     eventp.tz = params.qstring.tz;
     eventp.ip_address = params.ip_address;
@@ -119,7 +120,7 @@ function insertRawColl(coll, eventp, params) {
             }
         }
 
-        var shardoemdb = common.getShardOEMRawDB(eventp.app_key, dealNumber);
+        var shardoemdb = common.getShardOEMRawDB(eventp.app_key, dealNumber, currDate);
         if (shardoemdb) {
             shardoemdb.collection(coll).insert(eventp, function(err, res) {
                 if (err) {
@@ -158,7 +159,7 @@ function insertRawColl(coll, eventp, params) {
     }
     //if (0)
     {
-        common.getShardRawDB(eventp.app_key).collection(coll).insert(eventp, function(err, res) {
+        common.getShardRawDB(eventp.app_key, currDate).collection(coll).insert(eventp, function(err, res) {
             if (err) {
                 console.log('DB Shard operation error');
                 console.log(err);
@@ -167,7 +168,7 @@ function insertRawColl(coll, eventp, params) {
     }
     //if (0)
     {
-        common.getNewShardRawDB(eventp.app_key).collection(coll).insert(eventp, function(err, res) {
+        common.getNewShardRawDB(eventp.app_key, currDate).collection(coll).insert(eventp, function(err, res) {
             if (err) {
                 console.log('DB Shard operation error');
                 console.log(err);
