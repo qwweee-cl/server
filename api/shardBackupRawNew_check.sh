@@ -82,7 +82,7 @@ if [ "${appType}" == "1" ]; then
 	LOCKFILE="/tmp/shardBackupRaw${indexNum}.pid"
 	mainLogFile="/usr/local/countly/log/shardBackupMain${indexNum}.log"
 #	mongo="localhost:30000"
-	mongo="172.31.7.142:27017"
+	mongo="rs${indexNum}/172.31.11.111,172.31.7.141,172.31.7.142"
 	pid=`cat ${LOCKFILE}`
 elif [ "${appType}" == "2" ]; then
 	header="shard2"
@@ -90,7 +90,7 @@ elif [ "${appType}" == "2" ]; then
 	LOCKFILE="/tmp/shardBackupRaw${indexNum}.pid"
 	mainLogFile="/usr/local/countly/log/shardBackupMain${indexNum}.log"
 #	mongo="localhost:30000"
-	mongo="172.31.7.144:27017"
+	mongo="rs${indexNum}/172.31.11.112,172.31.7.143,172.31.7.144"
 	pid=`cat ${LOCKFILE}`
 elif [ "${appType}" == "3" ]; then
 	header="shard3"
@@ -98,7 +98,7 @@ elif [ "${appType}" == "3" ]; then
 	LOCKFILE="/tmp/shardBackupRaw${indexNum}.pid"
 	mainLogFile="/usr/local/countly/log/shardBackupMain${indexNum}.log"
 #	mongo="localhost:30000"
-	mongo="172.31.7.146:27017"
+	mongo="rs${indexNum}/172.31.11.113,172.31.7.145,172.31.7.146"
 	pid=`cat ${LOCKFILE}`
 else
 	echo -e "wrong paramater (1 = shard1, 2 = shard2)"
@@ -107,6 +107,7 @@ fi
 
 gzipPath="/mem/mongo_shard_gzip_${indexNum}/"
 exportPath="/mem/mongo_shard_backup_${indexNum}/"
+one_day_log="$log_path/new${indexNum}_log_rawBackup_$(date +%Y%m%d).log"
 
 echo -e ${header}
 echo -e ${LOCKFILE}
@@ -124,7 +125,7 @@ fi
 
 while true;
 do
-	one_day_log="$log_path/new_log_rawBackup_$(date +%Y%m%d).log"
+	one_day_log="$log_path/new${indexNum}_log_rawBackup_$(date +%Y%m%d).log"
 
 	curdate=$(date +%Y%m%d-%H%M)
 
