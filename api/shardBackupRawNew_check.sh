@@ -78,22 +78,36 @@ fi
 
 if [ "${appType}" == "1" ]; then
 	header="shard1"
-	LOCKFILE="/tmp/shardBackupRaw1.pid"
-	mainLogFile="/usr/local/countly/log/shardBackupMain1.log"
-	mongo="localhost:30000"
 	indexNum="1"
+	LOCKFILE="/tmp/shardBackupRaw${indexNum}.pid"
+	mainLogFile="/usr/local/countly/log/shardBackupMain${indexNum}.log"
+#	mongo="localhost:30000"
+	mongo="172.31.7.142:27017"
 	pid=`cat ${LOCKFILE}`
 elif [ "${appType}" == "2" ]; then
 	header="shard2"
-	LOCKFILE="/tmp/shardBackupRaw2.pid"
-	mainLogFile="/usr/local/countly/log/shardBackupMain2.log"
-	mongo="localhost:30000"
 	indexNum="2"
+	LOCKFILE="/tmp/shardBackupRaw${indexNum}.pid"
+	mainLogFile="/usr/local/countly/log/shardBackupMain${indexNum}.log"
+#	mongo="localhost:30000"
+	mongo="172.31.7.144:27017"
+	pid=`cat ${LOCKFILE}`
+elif [ "${appType}" == "3" ]; then
+	header="shard3"
+	indexNum="3"
+	LOCKFILE="/tmp/shardBackupRaw${indexNum}.pid"
+	mainLogFile="/usr/local/countly/log/shardBackupMain${indexNum}.log"
+#	mongo="localhost:30000"
+	mongo="172.31.7.146:27017"
 	pid=`cat ${LOCKFILE}`
 else
 	echo -e "wrong paramater (1 = shard1, 2 = shard2)"
 	exit 1
 fi
+
+gzipPath="/mem/mongo_shard_gzip_${indexNum}/"
+exportPath="/mem/mongo_shard_backup_${indexNum}/"
+
 echo -e ${header}
 echo -e ${LOCKFILE}
 echo -e ${mainLogFile}
@@ -153,12 +167,6 @@ do
 	rawdate=${string}"_"${indexNum}
 	echo -e ${rawdate} 2>&1 >> $one_day_log 
 
-	rawdate1=${string}"_1"
-	echo -e ${rawdate1} 2>&1 >> $one_day_log 
-
-	rawdate2=${string}"_2"
-	echo -e ${rawdate2} 2>&1 >> $one_day_log 
-
 
 	## check if no data in db
 	if [ "${batchdb}" == "" ]; then
@@ -194,24 +202,24 @@ do
 		$cmd 2>&1 >> $one_day_log 
 
 		## touch 1 flag file to s3FlagPath
-		cmd="/bin/touch /tmp/${rawdate1}.tag"
+		cmd="/bin/touch /tmp/${rawdate}.tag"
 		echo $cmd 2>&1 >> $one_day_log 
 		$cmd 2>&1 >> $one_day_log
 
 		## move flag file to s3 by awscli
-		cmd="aws s3 mv /tmp/${rawdate1}.tag ${cmds3FlagPath}"
+		cmd="aws s3 mv /tmp/${rawdate}.tag ${cmds3FlagPath}"
 		echo $cmd 2>&1 >> $one_day_log 
 		$cmd 2>&1 >> $one_day_log
 
 		## touch 1 flag file to s3FlagPath
-		cmd="/bin/touch /tmp/${rawdate2}.tag"
-		echo $cmd 2>&1 >> $one_day_log 
-		$cmd 2>&1 >> $one_day_log
+#		cmd="/bin/touch /tmp/${rawdate2}.tag"
+#		echo $cmd 2>&1 >> $one_day_log 
+#		$cmd 2>&1 >> $one_day_log
 
 		## move flag file to s3 by awscli
-		cmd="aws s3 mv /tmp/${rawdate2}.tag ${cmds3FlagPath}"
-		echo $cmd 2>&1 >> $one_day_log 
-		$cmd 2>&1 >> $one_day_log
+#		cmd="aws s3 mv /tmp/${rawdate2}.tag ${cmds3FlagPath}"
+#		echo $cmd 2>&1 >> $one_day_log 
+#		$cmd 2>&1 >> $one_day_log
 
 		echo $PWD
 		cmd="/bin/tar czf ${gzipPath}${rawdate}.tgz ./"
@@ -230,17 +238,17 @@ do
 
 		cd ${working_dir}
 
-		cmd="node shardRemoveRawFinished.js ${batchdb} 1"
+		cmd="node shardRemoveRawFinished.js ${batchdb} ${indexNum}"
 		echo -e ${cmd} 2>&1 >> $one_day_log 
 		string=`${cmd}`
 		echo -e ${string} 2>&1 >> $one_day_log 
 		echo -e "${rawdate}.tgz has been backup"
 
-		cmd="node shardRemoveRawFinished.js ${batchdb} 2"
-		echo -e ${cmd} 2>&1 >> $one_day_log 
-		string=`${cmd}`
-		echo -e ${string} 2>&1 >> $one_day_log 
-		echo -e "${rawdate}.tgz has been backup"
+#		cmd="node shardRemoveRawFinished.js ${batchdb} 2"
+#		echo -e ${cmd} 2>&1 >> $one_day_log 
+#		string=`${cmd}`
+#		echo -e ${string} 2>&1 >> $one_day_log 
+#		echo -e "${rawdate}.tgz has been backup"
 
 		cmd="sudo rm ${CachePath} -rf"
 		echo $cmd
