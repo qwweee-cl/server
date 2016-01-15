@@ -6,7 +6,7 @@ function error_exp
 {
 	echo -e "[ShardNew]${header} Loop Backup Batch error: ${mainLogFile}"\
 	$(tail -20 ${mainLogFile})\
-	| mail -s "[ShardNew]${header} ${start_date} ${start_round} Backup Error(${pid})" ${mail_target}
+	| mail -s "[Wrong][ShardNew]${header} ${start_date} ${start_round} Backup Error(${pid})" ${mail_target}
 	#rm -f ${LOCKFILE}
 	exit 1
 }
@@ -26,7 +26,7 @@ function sendSummaryMail() {
 
 function sendWrongMail() {
 	echo -e $(tail -20 ${one_day_log})\
-	| mail -s "[ShardNew][Wrong][Backup]${header} ${start_date} ${start_round}" ${mail_target}
+	| mail -s "[Wrong][ShardNew][Wrong][Backup]${header} ${start_date} ${start_round}" ${mail_target}
 }
 
 log_path="/usr/local/countly/log/shardBackup"
