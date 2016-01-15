@@ -48,11 +48,11 @@ fi
 ## execute copy prediction file to s3
 cmd="./shardPredictCopy2S3.sh ${shortDate} $2 ${start_date} ${start_round} ${start_year}"
 echo -e "${cmd}" >> ${mainLogFile}
-${cmd}
+#${cmd}
 ## execute copy prediction file to emr2
 cmd="./shardPredictCopy2emr.sh ${shortDate} ${index} ${start_year}"
 echo -e "${cmd}" >> ${mainLogFile}
-${cmd}
+#${cmd}
 
 ## execute copy prediction file to emr
 #cmd="./shardPredictCopy2emr_host.sh ${shortDate} $2"
@@ -91,7 +91,7 @@ if [ "$2" == "1" ]; then
 ### process mongodb to mysql in claddb
   cmd="ssh ubuntu@claddb2 /usr/local/countly/api/shardRunMongoToMysql.sh ${start_date} ${start_round} >> /usr/local/countly/log/mongoToMysql.log"
   echo $cmd
-  $cmd 2>&1
+#  $cmd 2>&1
 
   echo -e "Execute Prediction Scirpt"
   echo -e "Execute Prediction Scirpt" >> ${mainLogFile}
@@ -104,7 +104,7 @@ if [ "$2" == "1" ]; then
   echo "Prediction start emr_test: $(date '+%Y-%m-%d %H:%M')" >> "$mainLogFile"
   cmd="ssh ubuntu@emr2 /home/ubuntu/predict/daily_predict_APP.sh ${start_date} ${start_round} >> /data/owl/predict/log/sshCallPredict.log"
   echo -e "${cmd}" >> ${mainLogFile}
-  ${cmd}
+#  ${cmd}
   echo "Prediction end emr_test: $(date '+%Y-%m-%d %H:%M')" >> "$mainLogFile"
 
   echo "Update Prediction finished Flag to MySQL" >> "$mainLogFile"
