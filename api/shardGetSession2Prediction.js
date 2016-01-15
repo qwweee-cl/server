@@ -14,7 +14,7 @@ connection.connect();
 
 //var backupStatus = 1;
 
-connection.query('select date4 from status', function(err, rows, fields) {
+connection.query('select date2 from status', function(err, rows, fields) {
   if (err) {
     throw err;
   }

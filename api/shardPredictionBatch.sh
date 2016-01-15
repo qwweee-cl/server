@@ -39,7 +39,7 @@ cd ${working_dir}
 string="$1"
 regular="[0-9]{4}"
 if [[ $string =~ $regular ]]; then 
-  execDate="2015${BASH_REMATCH[0]}"
+  execDate="2016${BASH_REMATCH[0]}"
   shortDate="${BASH_REMATCH[0]}"
   echo ${execDate}
   echo ${execDate} >> ${mainLogFile}
