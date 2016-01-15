@@ -8,7 +8,8 @@ if (process.argv.length != 4) {
 	return false;
 }
 var indbname = process.argv[2];
-var collectionName = 'raw_finished_test'+process.argv[3];
+var collectionName = 'raw_finished'+process.argv[3];
+var collectionNameTest = 'raw_finished_test'+process.argv[3];
 var backupColName = "backup_finished"+process.argv[3];
 var backupColNameTest = "backup_finished_test"+process.argv[3];
 query = {dbname: indbname};
@@ -21,6 +22,16 @@ common.db_maintain.collection(collectionName).remove(query ,function(err, res) {
     }
     if(err) {
     	print(err);
+    }
+    dbonoff.close(common.db_maintain);
+});
+
+common.db_maintain.collection(collectionNameTest).remove(query ,function(err, res) {
+    if(res) {
+        print(res);
+    }
+    if(err) {
+        print(err);
     }
     dbonoff.close(common.db_maintain);
 });
