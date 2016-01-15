@@ -8,7 +8,7 @@ if (process.argv.length != 4) {
 	return false;
 }
 var indbname = process.argv[2];
-var collectionName = 'raw_finished'+process.argv[3];
+var collectionName = 'raw_finished_test'+process.argv[3];
 var backupColName = "backup_finished"+process.argv[3];
 var backupColNameTest = "backup_finished_test"+process.argv[3];
 query = {dbname: indbname};
