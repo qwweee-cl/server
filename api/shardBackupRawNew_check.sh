@@ -53,10 +53,10 @@ CachePath="/mem/tmp/s3cache/clcom2-countly/shard_backup/hourly_data/"
 s3FlagPath="/s3mnt/shard_backup/hourly_data_flag/"
 cmds3FlagPath="s3://clcom2-countly/shard_backup/hourly_data_flag/"
 CacheFlagPath="/mem/tmp/s3cache/clcom2-countly/shard_backup/hourly_data_flag/"
-
+### session-test
 s3FlagPath="/s3mnt/test_backup/hourly_data_flag/"
 cmds3FlagPath="s3://clcom2-countly/test_backup/hourly_data_flag/"
-
+### session-test
 s3Path="/s3mnt/test_backup/hourly_data/"
 cmds3Path="s3://clcom2-countly/test_backup/hourly_data/"
 

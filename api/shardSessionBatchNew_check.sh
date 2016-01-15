@@ -9,7 +9,7 @@ function error_exp
 	#| mail -s "Daily BB data import exception" $dashboard_team
 	echo -e "[ShardNew]${header} Loop Session Batch Error Please check log ${mainLogFile}"\
 	$(tail -20 ${mainLogFile})\
-	| mail -s "[ShardNew]${header} ${start_date} ${start_round} Session Error Trap(${pid})" ${mail_target}
+	| mail -s "[ShardNew][Wrong]${header} ${start_date} ${start_round} Session Error Trap(${pid})" ${mail_target}
 	#rm -f ${LOCKFILE}
 	exit 1
 }
@@ -105,7 +105,7 @@ s3Path="/s3mnt/shard_backup/hourly_data/"
 
 cmds3DashboardPath="/s3mnt/shard_backup/dashboard_data/"
 cmds3Path="s3://clcom2-countly/shard_backup/hourly_data/"
-
+###### session-test
 s3Path="/s3mnt/test_backup/hourly_data/"
 cmds3DashboardPath="/s3mnt/test_backup/dashboard_data/"
 cmds3Path="s3://clcom2-countly/test_backup/hourly_data/"
