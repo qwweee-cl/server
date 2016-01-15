@@ -24,7 +24,7 @@ function backupDashboard() {
 		## call backup script
 		cmd="${working_dir}/shardBackupDashboardDB.sh"
 		echo ${cmd} 2>&1 >> ${one_day_log}
-		$cmd
+#		$cmd
 		#cmd="${working_dir}/backupDashboardDB.sh"
 		#echo $cmd
 		#$cmd
@@ -105,6 +105,10 @@ s3Path="/s3mnt/shard_backup/hourly_data/"
 
 cmds3DashboardPath="/s3mnt/shard_backup/dashboard_data/"
 cmds3Path="s3://clcom2-countly/shard_backup/hourly_data/"
+
+s3Path="/s3mnt/test_backup/hourly_data/"
+cmds3DashboardPath="/s3mnt/test_backup/dashboard_data/"
+cmds3Path="s3://clcom2-countly/test_backup/hourly_data/"
 
 ## backup dashboard need
 checkTime=$(date +%H%M)
@@ -342,11 +346,14 @@ do
 		echo -e ${start_round}
 		s3File1=${s3Path}${filedate}"_raw_${start_round}_1.tgz"
 		s3File2=${s3Path}${filedate}"_raw_${start_round}_2.tgz"
+		s3File3=${s3Path}${filedate}"_raw_${start_round}_3.tgz"
 		cmds3File1=${cmds3Path}${filedate}"_raw_${start_round}_1.tgz"
 		cmds3File2=${cmds3Path}${filedate}"_raw_${start_round}_2.tgz"
+		cmds3File3=${cmds3Path}${filedate}"_raw_${start_round}_3.tgz"
 		fileExist=true
 		echo -e ${s3File1}
 		echo -e ${s3File2}
+		echo -e ${s3File3}
 
 		if [ "${batchdb}" != "countly_raw${small_date}_${start_round}" ]; then
 			echo -e "${header} could be process session countly_raw${small_date}_${start_round} not ${batchdb}" 2>&1 >> "$one_day_log"
@@ -355,24 +362,28 @@ do
 		fi
 
 		existFile1=`aws s3 ls ${cmds3File1} | wc -l`
+		existFile2=`aws s3 ls ${cmds3File2} | wc -l`
+		existFile3=`aws s3 ls ${cmds3File3} | wc -l`
 
 		duFile1=`aws s3 ls ${cmds3File1} | awk '{ print $3 }'`
+		duFile2=`aws s3 ls ${cmds3File2} | awk '{ print $3 }'`
+		duFile3=`aws s3 ls ${cmds3File3} | awk '{ print $3 }'`
 
 
-		if [ ${existFile1} == "0" ]; then
-			echo "${s3File1} file not exist" >> ${one_day_log}
+		if [ ${existFile1} == "0" ] || [ ${existFile2} == "0" ] || [ ${existFile3} == "0" ]; then
+			echo "${s3File1} or ${s3File2} or ${s3File3} file not exist" >> ${one_day_log}
 			fileExist=false
 		fi
 
-		if [ -z ${duFile1} ]; then
-			echo "${s3File1} file size is 0" >> ${one_day_log}
+		if [ -z ${duFile1} ] || [ -z ${duFile2} ] || [ -z ${duFile3} ]; then
+			echo "${s3File1} or ${s3File2} or ${s3File3} file size is 0" >> ${one_day_log}
 			fileExist=false
 		fi
 
 		echo -e ${fileExist}
 
 		if [ ${fileExist} = false ]; then
-			echo "${s3File1} s3 file not exist" >> ${one_day_log}
+			echo "${s3File1} or ${s3File2} or ${s3File3} s3 file not exist" >> ${one_day_log}
 			sendWrongMail2
 			exit 1
 		fi
