@@ -230,10 +230,10 @@ do
 		echo $cmd 2>&1 >> $one_day_log 
 		$cmd 2>&1 >> $one_day_log 
 
-		cmd="aws mv ${gzipPath}${rawdate}.tgz ${cmds3Path}${rawdate}.tmp"
+		cmd="aws s3 mv ${gzipPath}${rawdate}.tgz ${cmds3Path}${rawdate}.tmp"
 		echo $cmd 2>&1 >> $one_day_log 
 		$cmd 2>&1 >> $one_day_log 
-		cmd="aws mv ${cmds3Path}${rawdate}.tmp ${cmds3Path}${rawdate}.tgz"
+		cmd="aws s3 mv ${cmds3Path}${rawdate}.tmp ${cmds3Path}${rawdate}.tgz"
 		echo $cmd 2>&1 >> $one_day_log 
 		$cmd 2>&1 >> $one_day_log 
 
