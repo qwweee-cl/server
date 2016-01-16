@@ -26,16 +26,6 @@ common.db_maintain.collection(collectionName).remove(query ,function(err, res) {
     dbonoff.close(common.db_maintain);
 });
 
-common.db_maintain.collection(collectionNameTest).remove(query ,function(err, res) {
-    if(res) {
-        print(res);
-    }
-    if(err) {
-        print(err);
-    }
-    dbonoff.close(common.db_maintain);
-});
-
 var insertData = {};
 insertData.dbname = indbname;
 insertData.timestamp = Math.floor(Date.now()/1000);
