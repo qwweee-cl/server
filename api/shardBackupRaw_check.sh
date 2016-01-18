@@ -104,10 +104,10 @@ fi
 if [ ! -d "$gzipPath" ]; then
 	mkdir $gzipPath
 fi
-if [ ! -d "$s3Path" ]; then
-	echo "mkdir $s3Path"
-	mkdir $s3Path
-fi
+#if [ ! -d "$s3Path" ]; then
+#	echo "mkdir $s3Path"
+#	mkdir $s3Path
+#fi
 
 
 while true;
