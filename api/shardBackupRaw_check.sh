@@ -11,7 +11,7 @@ function error_exp
 	exit 1
 }
 function checkLoopStop() {
-	loopFile="/tmp/shardStopBackupFile"
+	loopFile="/tmp/shardStopBackupFileOld"
 	if [ -f "${loopFile}" ]; then
 		echo "${loopFile} exist"
 		echo -e "[Shard]${header} Loop Backup Batch Stop on $(date +%Y%m%d-%H:%M)"\
@@ -152,7 +152,7 @@ do
 	echo -e ${cmd} 2>&1 >> $one_day_log 
 	string=`${cmd}`
 	#echo -e ${string}
-	rawdate=${string}"_"${indexNum}
+	rawdate=${string}"_"${indexNum}"_test"
 	echo -e ${rawdate} 2>&1 >> $one_day_log 
 
 	## check if no data in db
