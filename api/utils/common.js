@@ -477,6 +477,10 @@ var common = {},
             insertData.dbname = old.tag;
             insertData.timestamp = Math.floor(Date.now()/1000);
             insertData.filename = old.filename;
+            if (common.newshard_maintain == null) {
+                common.newshard_maintain = mongo.db(newshardMaintainName, dbOptions);
+                common.newshard_maintain.tag = countlyConfig.mongodb.db_maintain.replace(/system\.|\.\.|\$/g, "");
+            }
             common.newshard_maintain.collection("raw_oem_finished1").update({dbname: old.tag},
                 {$set: insertData}, {'upsert': true}, function(err, res) {
                     if (err) {
