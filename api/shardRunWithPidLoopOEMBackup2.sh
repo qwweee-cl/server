@@ -12,5 +12,5 @@ fi
 
 sudo chown ubuntu:ubuntu /mem -R
 
-nohup /usr/local/countly/api/shardBackupOEMRaw.sh 2 >> /usr/local/countly/log/shardBackupOEMMain2.log 2>&1 & echo $! > ${LOCKFILE}
+nohup /usr/local/countly/api_oem/shardBackupOEMRaw.sh 2 >> /usr/local/countly/log/shardBackupOEMMain2.log 2>&1 & echo $! > ${LOCKFILE}
 
