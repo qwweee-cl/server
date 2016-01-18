@@ -79,7 +79,7 @@ fi
 if [ "${appType}" == "1" ]; then
 	header="shard1"
 	indexNum="1"
-	LOCKFILE="/tmp/shardBackupRaw${indexNum}.pid"
+	LOCKFILE="/tmp/shardNewBackupRaw${indexNum}.pid"
 	mainLogFile="/usr/local/countly/log/shardBackupMain${indexNum}.log"
 #	mongo="localhost:30000"
 	mongo="rs${indexNum}/172.31.11.111,172.31.7.141,172.31.7.142"
@@ -87,7 +87,7 @@ if [ "${appType}" == "1" ]; then
 elif [ "${appType}" == "2" ]; then
 	header="shard2"
 	indexNum="2"
-	LOCKFILE="/tmp/shardBackupRaw${indexNum}.pid"
+	LOCKFILE="/tmp/shardNewBackupRaw${indexNum}.pid"
 	mainLogFile="/usr/local/countly/log/shardBackupMain${indexNum}.log"
 #	mongo="localhost:30000"
 	mongo="rs${indexNum}/172.31.11.112,172.31.7.143,172.31.7.144"
@@ -95,7 +95,7 @@ elif [ "${appType}" == "2" ]; then
 elif [ "${appType}" == "3" ]; then
 	header="shard3"
 	indexNum="3"
-	LOCKFILE="/tmp/shardBackupRaw${indexNum}.pid"
+	LOCKFILE="/tmp/shardNewBackupRaw${indexNum}.pid"
 	mainLogFile="/usr/local/countly/log/shardBackupMain${indexNum}.log"
 #	mongo="localhost:30000"
 	mongo="rs${indexNum}/172.31.11.113,172.31.7.145,172.31.7.146"

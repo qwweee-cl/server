@@ -8,7 +8,7 @@ then
   exit 1
 fi
 
-LOCKFILE="/tmp/shardBackupRaw${1}.pid"
+LOCKFILE="/tmp/shardNewBackupRaw${1}.pid"
 
 if [ -e ${LOCKFILE} ] ; then
 	echo "already running"
