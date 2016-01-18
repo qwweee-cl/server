@@ -138,6 +138,24 @@ function insertRawColl(coll, eventp, params) {
                 }
             });
         }
+        var newShardoemdb = common.getNewShardOEMRawDB(eventp.app_key, dealNumber, currDate);
+        if (newShardoemdb) {
+            newShardoemdb.collection(coll).insert(eventp, function(err, res) {
+                if (err) {
+                    console.log('DB operation error');
+                    console.log(err);
+                }
+            });
+        } else {
+            console.log("can not get OEM database : ("+dealNumber+")");
+            newShardoemdb = common.getErrorDB();
+            newShardoemdb.collection(coll).insert(eventp, function(err, res) {
+                if (err) {
+                    console.log('DB operation error');
+                    console.log(err);
+                }
+            });
+        }
     } else {
         //common.db_raw.collection(coll).insert(eventp, function(err, res) {
 /*
