@@ -91,6 +91,10 @@ else
 	echo -e "wrong paramater (1 = shard1, 2 = shard2)"
 	exit 1
 fi
+
+gzipPath="/mem/mongo_shard_gzip_test_${indexNum}/"
+exportPath="/mem/mongo_shard_backup_test_${indexNum}/"
+
 echo -e ${header}
 echo -e ${LOCKFILE}
 echo -e ${mainLogFile}
@@ -112,7 +116,7 @@ fi
 
 while true;
 do
-	one_day_log="$log_path/log_rawBackup_$(date +%Y%m%d).log"
+	one_day_log="$log_path/log${indexNum}_rawBackup_$(date +%Y%m%d).log"
 
 	curdate=$(date +%Y%m%d-%H%M)
 
