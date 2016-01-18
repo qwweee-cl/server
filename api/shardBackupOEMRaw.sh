@@ -66,7 +66,7 @@ exportPath="/mnt/mongodb/tmp/mongo_backup/"
 s3Path="/mnt/mongodb/tmp/s3_data/"
 ## this is for test end
 
-path="/usr/local/countly/api"
+path="/usr/local/countly/api_api"
 gzipPath="/mem/mongo_oem_shard_gzip/"
 exportPath="/mem/mongo_oem_shard_backup/"
 s3Path="/s3mnt/shard_backup/oem_hourly_data/"
