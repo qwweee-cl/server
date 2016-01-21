@@ -29,7 +29,7 @@ else
 	exit 1
 fi
 
-mongo="localhost:27017"
+mongo="localhost:30000"
 echo -e ${header}
 echo -e ${LOCKFILE}
 echo -e ${mainLogFile}
