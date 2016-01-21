@@ -25,7 +25,7 @@ mongo="localhost:27017"
 s3Path="/s3mnt/shard_backup/hourly_data/"
 cmds3DashboardPath="/s3mnt/shard_backup/dashboard_data/"
 cmds3Path="s3://clcom2-countly/shard_backup/hourly_data/"
-cmds3Path="s3://clcom2-countly/test_backup/hourly_data/"
+#cmds3Path="s3://clcom2-countly/test_backup/hourly_data/"
 
 fullCurDate=$(date -d "-3 days" +%Y%m%d)
 
