@@ -149,8 +149,7 @@ var common = {},
     common.db_maintain2 = mongo.db(dbMaintainName2, dbOptions);
     common.db_maintain2.tag = countlyConfig.mongodb.db_maintain.replace(/system\.|\.\.|\$/g, "");
 
-    common.shard_maintain = mongo.db(shardMaintainName, dbOptions);
-    common.shard_maintain.tag = countlyConfig.mongodb.db_maintain.replace(/system\.|\.\.|\$/g, "");
+    common.shard_maintain = null;
 
     common.newshard_maintain = null;
 
@@ -267,6 +266,10 @@ var common = {},
             insertData.dbname = old.tag;
             insertData.timestamp = Math.floor(Date.now()/1000);
             insertData.filename = old.filename;
+            if (common.shard_maintain == null) {
+                common.shard_maintain = mongo.db(shardMaintainName, dbOptions);
+                common.shard_maintain.tag = countlyConfig.mongodb.db_maintain.replace(/system\.|\.\.|\$/g, "");
+            }
             common.shard_maintain.collection("raw_finished1").update({dbname: old.tag},
                 {$set: insertData}, {'upsert': true}, function(err, res) {
                     if (err) {
@@ -565,6 +568,10 @@ var common = {},
             insertData.dbname = old.tag;
             insertData.timestamp = Math.floor(Date.now()/1000);
             insertData.filename = old.filename;
+            if (common.shard_maintain == null) {
+                common.shard_maintain = mongo.db(shardMaintainName, dbOptions);
+                common.shard_maintain.tag = countlyConfig.mongodb.db_maintain.replace(/system\.|\.\.|\$/g, "");
+            }
             common.shard_maintain.collection("raw_oem_finished1").update({dbname: old.tag},
                 {$set: insertData}, {'upsert': true}, function(err, res) {
                     if (err) {

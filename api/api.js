@@ -119,24 +119,25 @@ function insertRawColl(coll, eventp, params) {
                 });
             }
         }
-
-        var shardoemdb = common.getShardOEMRawDB(eventp.app_key, dealNumber, currDate);
-        if (shardoemdb) {
-            shardoemdb.collection(coll).insert(eventp, function(err, res) {
-                if (err) {
-                    console.log('DB operation error');
-                    console.log(err);
-                }
-            });
-        } else {
-            console.log("can not get OEM database : ("+dealNumber+")");
-            shardoemdb = common.getErrorDB();
-            shardoemdb.collection(coll).insert(eventp, function(err, res) {
-                if (err) {
-                    console.log('DB operation error');
-                    console.log(err);
-                }
-            });
+        if (0) {
+            var shardoemdb = common.getShardOEMRawDB(eventp.app_key, dealNumber, currDate);
+            if (shardoemdb) {
+                shardoemdb.collection(coll).insert(eventp, function(err, res) {
+                    if (err) {
+                        console.log('DB operation error');
+                        console.log(err);
+                    }
+                });
+            } else {
+                console.log("can not get OEM database : ("+dealNumber+")");
+                shardoemdb = common.getErrorDB();
+                shardoemdb.collection(coll).insert(eventp, function(err, res) {
+                    if (err) {
+                        console.log('DB operation error');
+                        console.log(err);
+                    }
+                });
+            }
         }
         var newShardoemdb = common.getNewShardOEMRawDB(eventp.app_key, dealNumber, currDate);
         if (newShardoemdb) {
@@ -175,7 +176,7 @@ function insertRawColl(coll, eventp, params) {
             });
         }
     }
-    //if (0)
+    if (0)
     {
         common.getShardRawDB(eventp.app_key, currDate).collection(coll).insert(eventp, function(err, res) {
             if (err) {
