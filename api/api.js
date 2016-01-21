@@ -5,6 +5,7 @@ var http = require('http'),
     common = require('./utils/common.js'),
     exec = require('child_process').exec,
     jsonQuery = require('json-query'),
+	moment = require('moment-timezone'),
     workerEnv = {},
     oemMaps = [],
     oemCount = 0,
@@ -22,6 +23,123 @@ var http = require('http'),
     appKey = require('./appKey.js');
 
 http.globalAgent.maxSockets = common.config.api.max_sockets || 1024;
+
+var appMap = {
+//			"Perfect_And"       : "0368eb926b115ecaf41eff9a0536a332ef191417" : {appName: "PF", appOS: "And"}, // Perfect_And
+//			"Perfect_iOS"       : "02ce3171f470b3d638feeaec0b3f06bd27f86a26" : {appName: "PF", appOS: "iOS"}, // Perfect_iOS
+			"d10ca4b26d3022735f3c403fd3c91271eb3054b0" : {appName: "YCP", appOS: "And"}, // Test
+			"9219f32e8de29b826faf44eb9b619788e29041bb" : {appName: "YMK", appOS: "iOS"}, // YouCam_MakeUp_iOS
+			"75edfca17dfbe875e63a66633ed6b00e30adcb92" : {appName: "YMK", appOS: "And"}, // YouCam_MakeUp_And
+			"c277de0546df31757ff26a723907bc150add4254" : {appName: "YCP", appOS: "iOS"}, // YouCam_Perfect_iOS
+			"e315c111663af26a53e5fe4c82cc1baeecf50599" : {appName: "YCP", appOS: "And"}, // YouCam_Perfect_And
+			"895ef49612e79d93c462c6d34abd8949b4c849af" : {appName: "YCN", appOS: "And"}, // YouCam_Nail_And
+			"ecc26ef108c821f3aadc5e283c512ee68be7d43e" : {appName: "YCN", appOS: "iOS"}, // YouCam_Nail_iOS
+			"488fea5101de4a8226718db0611c2ff2daeca06a" : {appName: "BCS", appOS: "And"}, // BeautyCircle_And
+			"7cd568771523a0621abff9ae3f95daf3a8694392" : {appName: "BCS", appOS: "iOS"} // BeautyCircle_iOS
+};
+	
+function sendKafkaRest(data, key) {
+	//console.log(JSON.stringify(data));
+	var eventMap = "";
+	if (data.events) {	
+		if (data.app_key) {
+			var isMatched = false;
+			for (var key in appMap) {
+				if (data.app_key.indexOf(key) >= 0) {
+					eventMap += appMap[key].appName + "\t"; // F_APP_NAME
+					eventMap += appMap[key].appOS + "\t"; // F_OS
+					isMatched = true;
+					break;
+				}
+			}
+			if (!isMatched) {
+				eventMap += "" + "\t"; // F_APP_NAME
+				eventMap += "" + "\t"; // F_OS
+			}
+		} else {
+			eventMap += "" + "\t"; // F_APP_NAME
+			eventMap += "" + "\t"; // F_OS
+		}
+		
+		eventMap += (data.id ? data.id : "NULL") + "\t"; // F_ID
+		eventMap += (data.app_key ? data.app_key : "") + "\t";
+		eventMap += (data.app_user_id ? data.app_user_id : "") + "\t";
+		eventMap += (data.device_id ? data.device_id : "") + "\t";
+		eventMap += (data.ip_address ? data.ip_address : "") + "\t";
+		//var time = moment.tz(data.timestamp * 1000, "America/Denver").format("HH:mm:ss");
+		//var day = moment.tz(data.timestamp * 1000, "America/Denver").format("YYYY-MM-DD");
+		eventMap += (data.timestamp ? moment.tz(data.timestamp * 1000, "America/Denver").format("YYYY-MM-DD") : "") + "\t"; // F_TIMESTAMP_DAY
+		eventMap += (data.timestamp ? moment.tz(data.timestamp * 1000, "America/Denver").format("HH:mm:ss") : "") + "\t"; // F_TIMESTAMP_TIME
+		eventMap += (data.country ? data.country : "") + "\t";
+		//console.log(eventMap);
+		
+		if (!data.metrics) {
+			//console.log("mo metrics");
+			//console.log(JSON.stringify(data));
+			return;
+		}
+		eventMap += (data.metrics._carrier ? data.metrics._carrier : "") + "\t";
+		eventMap += (data.metrics._device ? data.metrics._device : "") + "\t";
+		eventMap += (data.metrics._os_version ? data.metrics._os_version : "") + "\t";
+		eventMap += (data.metrics._locale ? data.metrics._locale : "") + "\t";
+		eventMap += (data.metrics._app_version ? data.metrics._app_version : "") + "\t";
+		eventMap += (data.metrics._resolution ? data.metrics._resolution : "") + "\t";
+		eventMap += (data.metrics._os ? data.metrics._os : "") + "\t";
+		
+		if (data.vendor) {
+			var len = Object.keys(data.vendor).length;
+			var vender = "";
+			var c = 0;
+			for (var key in data.vendor) {
+				c++;
+				vender += key + ":" + data.vendor[key];
+				if (c < len) {
+					vender += ",";
+				}
+			}
+			eventMap += vender + "\t";
+		} else {
+			eventMap += "" + "\t";
+		}
+		
+		if (data.events) {
+			for(var i in data.events) {
+				var x = "";
+				x += (data.events[i].key ? data.events[i].key : "") + "\t";
+				x += (data.events[i].sum != "undefined" ? data.events[i].sum : "") + "\t";
+				x += (data.events[i].count != "undefined" ? data.events[i].count : "") + "\t";
+				x += (data.events[i].timestamp ? moment.tz(data.events[i].timestamp * 1000, "America/Denver").format("YYYY-MM-DD") : "") + "\t";		// E_TIMESTAMP_DAY
+				x += (data.events[i].timestamp ? moment.tz(data.events[i].timestamp * 1000, "America/Denver").format("HH:mm:ss") : "") + "\t";		// E_TIMESTAMP_TIME
+		//		console.log(x);
+				if (data.events[i].segmentation) {
+					var len = Object.keys(data.events[i].segmentation).length;
+					var segment = "";
+					var c = 0;
+					for (var key in data.events[i].segmentation) {
+						c++;
+						segment += key + "#" + data.events[i].segmentation[key];
+						if (c < len) {
+							segment += ",";
+						}
+					}
+				}
+				//console.log(x + segment);
+				var send = eventMap + x + segment;
+				//console.log("[normal] send to kafka " + send);
+				common.kafka.topic("topic_webservice_normal").produce(send, function(err, res){
+					//console.log("res: " + JSON.stringify(res));
+					if (err) {
+						console.log("ERROR: " + err);
+					}
+				});
+			}
+		}
+	} else {
+		//console.log("no events");
+	}
+
+  //common.kafka.topic("elly").produce(JSON.stringify(data));
+}
 
 function logDbError(err, res) {
     if (err) {
@@ -194,6 +312,8 @@ function insertRawColl(coll, eventp, params) {
             }
         });
     }
+	
+	sendKafkaRest(eventp,eventp.app_key);
 }
 
 function insertRawEvent(coll,params) {
