@@ -8,7 +8,8 @@ var common = {},
     geoip = require('geoip-lite'),
     countlyConfig = require('./../config'),
     print = console.log,
-    mapAppKey = require('./../appKey.js');;
+    mapAppKey = require('./../appKey.js'),
+	KafkaRest = require('kafka-rest');
 
 (function (common) {
 
@@ -151,6 +152,8 @@ var common = {},
     common.momentz = momentz;
 
     common.crypto = crypto;
+	
+	common.kafka = new KafkaRest({ 'url': 'http://localhost:8082' });
 
     common.getCheckApps = function(callback, dbonoffFuc) {
         dbonoffFuc.open(common.db);
