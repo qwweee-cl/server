@@ -101,7 +101,7 @@ function getNodeTopicName(header, appkey) {
 }
 
 function sendKafka(data, key, isSession) {
-    var topicName = getTopicName((isSession ? "Session" : "Event"), key);
+    var topicName = getNodeTopicName((isSession ? "Session" : "Event"), key);
     randomCnt = ((randomCnt++)%partitionNum);
     if (cando) {
         //console.log(JSON.stringify(data));
