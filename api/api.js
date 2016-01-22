@@ -313,7 +313,7 @@ function insertRawColl(coll, eventp, params) {
         });
     }
 	
-	sendKafkaRest(eventp,eventp.app_key);
+	//sendKafkaRest(eventp,eventp.app_key);
 }
 
 function insertRawEvent(coll,params) {
