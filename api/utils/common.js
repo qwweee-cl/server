@@ -163,7 +163,7 @@ var common = {},
 
     common.crypto = crypto;
 	
-	common.kafka = new KafkaRest({ 'url': 'http://localhost:8082' });
+	//common.kafka = new KafkaRest({ 'url': 'http://localhost:8082' });
 
     common.getCheckApps = function(callback, dbonoffFuc) {
         dbonoffFuc.open(common.db);
