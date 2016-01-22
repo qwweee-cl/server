@@ -24,6 +24,44 @@ var http = require('http'),
 
 http.globalAgent.maxSockets = common.config.api.max_sockets || 1024;
 
+//////////////////////////////////
+var kafka = require('kafka-node');
+var Producer = kafka.Producer;//kafka.HighLevelProducer;//kafka.Producer;
+var Client = kafka.Client;
+
+var zkList = '172.31.27.186:2181,172.31.27.187:2181,172.31.27.188:2181';  // bootstrap.servers
+var client = new Client(zkList);
+var argv = require('optimist').argv;
+var kafka_topic = argv.topic || 'topic_test_nodejs_json';
+//var p = argv.p || 0; // default is 0
+//var a = argv.a || 0; // no compress
+var producer = new Producer(client, { requireAcks: 1});
+var partitionNum = 6;
+var randomCnt = -1;
+var cando = false;
+//var isProducerReady = false;
+
+var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 'Node_Event_YCN_And', 'Node_Event_YCN_iOS', 'Node_Event_YCP_And', 'Node_Event_YCP_iOS', 'Node_Event_YMK_And', 'Node_Event_YMK_iOS',
+                 'Node_Session_BCS_And', 'Node_Session_BCS_iOS', 'Node_Session_OtherApp', 'Node_Session_YCN_And', 'Node_Session_YCN_iOS', 'Node_Session_YCP_And', 'Node_Session_YCP_iOS', 'Node_Session_YMK_And', 'Node_Session_YMK_iOS'];
+//var topicListTest = ['test1', 'test2', 'test3', 'test4', 'test5', 'test6'];
+                 
+producer.on('ready', function () {
+    isProducerReady = true;
+    producer.createTopics(['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 'Node_Event_YCN_And', 'Node_Event_YCN_iOS', 'Node_Event_YCP_And', 'Node_Event_YCP_iOS', 'Node_Event_YMK_And', 'Node_Event_YMK_iOS',
+                 'Node_Session_BCS_And', 'Node_Session_BCS_iOS', 'Node_Session_OtherApp', 'Node_Session_YCN_And', 'Node_Session_YCN_iOS', 'Node_Session_YCP_And', 'Node_Session_YCP_iOS', 'Node_Session_YMK_And', 'Node_Session_YMK_iOS'], false, function (err, data) {
+        console.log("createTopic: " + data);
+        if (err) {
+            console.log("ERROR: " + err);
+        }
+        cando = true;
+    });
+});
+
+producer.on('error', function (err) {
+    console.log('producer error', err);
+});
+//////////////////////////////////
+
 var appMap = {
 //			"Perfect_And"       : "0368eb926b115ecaf41eff9a0536a332ef191417" : {appName: "PF", appOS: "And"}, // Perfect_And
 //			"Perfect_iOS"       : "02ce3171f470b3d638feeaec0b3f06bd27f86a26" : {appName: "PF", appOS: "iOS"}, // Perfect_iOS
@@ -48,6 +86,36 @@ function getTopicName(header, appkey) {
     }
     topicName = header+"_OtherApp";
     return topicName;
+}
+
+function getNodeTopicName(header, appkey) {
+    var topicName = "";
+    for (var key in appMap) {
+        if (appkey.indexOf(key) >= 0) {
+            topicName = "Node_" + header+"_"+appMap[key].appName+"_"+appMap[key].appOS;
+            return topicName;
+        }
+    }
+    topicName = "Node_" + header+"_OtherApp";
+    return topicName;
+}
+
+function sendKafka(data, key, isSession) {
+    var topicName = getTopicName((isSession ? "Session" : "Event"), key);
+    randomCnt = ((randomCnt++)%partitionNum);
+    if (cando) {
+        //console.log(JSON.stringify(data));
+        producer.send([
+            { topic: topicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
+        ], function (err, result) {
+            if (err) {
+                console.log("ERROR: " + err);
+                console.log("result: " + JSON.stringify(result));
+                //producer.close();
+                //client.close();
+            }                   
+        });
+    }
 }
 
 function sendKafkaRest(data, key, isSession) {
@@ -334,6 +402,7 @@ function insertRawColl(coll, eventp, params, isSession) {
     }
 	
 	//sendKafkaRest(eventp, eventp.app_key, isSession);
+    //sendKafka(eventp, eventp.app_key, isSession);
 }
 
 function insertRawEvent(coll,params) {
