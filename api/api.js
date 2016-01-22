@@ -51,7 +51,7 @@ function getTopicName(header, appkey) {
 }
 
 function sendKafkaRest(data, key, isSession) {
-    var topicName = getTopicName(key, (isSession?"Session":"Event"));
+    var topicName = getTopicName((isSession?"Session":"Event"), key);
     common.kafka.topic(topicName).produce(JSON.stringify(data), function(err, res){
         //console.log("res: " + JSON.stringify(res));
         if (err) {
