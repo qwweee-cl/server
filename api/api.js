@@ -848,6 +848,7 @@ if (cluster.isMaster) {
                 if (!params.qstring.app_key || !params.qstring.device_id) {
                     var now = new Date();
                     console.log('Missing parameter "app_key" or "device_id"'+'=========='+now+'==========');
+                    console.log("IP: "+params.ip_address);
                     console.log(params.qstring);
                     common.returnMessage(params, 200, 'Success');
                     console.log("Send 200 Success");
