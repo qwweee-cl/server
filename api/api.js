@@ -27,7 +27,7 @@ http.globalAgent.maxSockets = common.config.api.max_sockets || 1024;
 var appMap = {
 //			"Perfect_And"       : "0368eb926b115ecaf41eff9a0536a332ef191417" : {appName: "PF", appOS: "And"}, // Perfect_And
 //			"Perfect_iOS"       : "02ce3171f470b3d638feeaec0b3f06bd27f86a26" : {appName: "PF", appOS: "iOS"}, // Perfect_iOS
-			"d10ca4b26d3022735f3c403fd3c91271eb3054b0" : {appName: "YCP", appOS: "And"}, // Test
+			"d10ca4b26d3022735f3c403fd3c91271eb3054b0" : {appName: "Test", appOS: "And"}, // Test
 			"9219f32e8de29b826faf44eb9b619788e29041bb" : {appName: "YMK", appOS: "iOS"}, // YouCam_MakeUp_iOS
 			"75edfca17dfbe875e63a66633ed6b00e30adcb92" : {appName: "YMK", appOS: "And"}, // YouCam_MakeUp_And
 			"c277de0546df31757ff26a723907bc150add4254" : {appName: "YCP", appOS: "iOS"}, // YouCam_Perfect_iOS
@@ -37,8 +37,28 @@ var appMap = {
 			"488fea5101de4a8226718db0611c2ff2daeca06a" : {appName: "BCS", appOS: "And"}, // BeautyCircle_And
 			"7cd568771523a0621abff9ae3f95daf3a8694392" : {appName: "BCS", appOS: "iOS"} // BeautyCircle_iOS
 };
-	
-function sendKafkaRest(data, key) {
+
+function getTopicName(header, appkey) {
+    var topicName = "";
+    for (var key in appMap) {
+        if (appkey.indexOf(key) >= 0) {
+            topicName = header+"_"+appMap[key].appName+"_"+appMap[key].appOS;
+            return topicName;
+        }
+    }
+    topicName = header+"_OtherApp";
+    return topicName;
+}
+
+function sendKafkaRest(data, key, isSession) {
+    var topicName = getTopicName(key, (isSession?"Session":"Event"));
+    common.kafka.topic(topicName).produce(JSON.stringify(data), function(err, res){
+        //console.log("res: " + JSON.stringify(res));
+        if (err) {
+            console.log("ERROR: " + err);
+        }
+    });
+    return;
 	//console.log(JSON.stringify(data));
 	var eventMap = "";
 	if (data.events) {	
@@ -150,7 +170,7 @@ function logDbError(err, res) {
     }
 }
 
-function insertRawColl(coll, eventp, params) {
+function insertRawColl(coll, eventp, params, isSession) {
     var dealNumber = "";
     var oem = false;
     var currDate = new Date();
@@ -313,7 +333,7 @@ function insertRawColl(coll, eventp, params) {
         });
     }
 	
-	//sendKafkaRest(eventp,eventp.app_key);
+	//sendKafkaRest(eventp, eventp.app_key, isSession);
 }
 
 function insertRawEvent(coll,params) {
@@ -322,7 +342,7 @@ function insertRawEvent(coll,params) {
         eventp.metrics = params.qstring.metrics;
     }
     eventp.events = params.events;
-    insertRawColl(coll, eventp, params);
+    insertRawColl(coll, eventp, params, 0);
 }
 
 function insertRawSession(coll,params) {
@@ -333,7 +353,7 @@ function insertRawSession(coll,params) {
     eventp.begin_session = params.qstring.begin_session;
     eventp.end_session = params.qstring.end_session;        
     eventp.session_duration = params.qstring.session_duration;
-    insertRawColl(coll, eventp, params);
+    insertRawColl(coll, eventp, params, 1);
 }
 
 var listAppKeyToPerfect_And = [appKey.key["YouCam_MakeUp_And"], appKey.key["YouCam_Perfect_And"], appKey.key["YouCam_Nail_And"], appKey.key["BeautyCircle_And"]],
