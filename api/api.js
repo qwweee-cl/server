@@ -102,7 +102,7 @@ function getNodeTopicName(header, appkey) {
 
 function sendKafka(data, key, isSession) {
     var topicName = getNodeTopicName((isSession ? "Session" : "Event"), key);
-    randomCnt = ((randomCnt++)%partitionNum);
+    randomCnt = ((++randomCnt)%partitionNum);
     if (cando) {
         //console.log(JSON.stringify(data));
         producer.send([
@@ -402,7 +402,7 @@ function insertRawColl(coll, eventp, params, isSession) {
     }
 	
 	//sendKafkaRest(eventp, eventp.app_key, isSession);
-    //sendKafka(eventp, eventp.app_key, isSession);
+    sendKafka(eventp, eventp.app_key, isSession);
 }
 
 function insertRawEvent(coll,params) {
