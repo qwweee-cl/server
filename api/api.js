@@ -400,9 +400,10 @@ function insertRawColl(coll, eventp, params, isSession) {
             }
         });
     }
-	
-	//sendKafkaRest(eventp, eventp.app_key, isSession);
-    sendKafka(eventp, eventp.app_key, isSession);
+    if (eventp.app_key != appKey.key["Perfect_And"]) {
+        //sendKafkaRest(eventp, eventp.app_key, isSession);
+        sendKafka(eventp, eventp.app_key, isSession);
+    }
 }
 
 function insertRawEvent(coll,params) {
