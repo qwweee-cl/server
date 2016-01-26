@@ -89,10 +89,10 @@ var common = {},
         countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_ibb + '?auto_reconnect=true');
 
     dbMaintainName = (countlyConfig.mongodb.hostbatch + ':' + 
-        countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_maintain + '?auto_reconnect=true');
+        countlyConfig.mongodb.mongos + '/' + countlyConfig.mongodb.db_maintain + '?auto_reconnect=true');
 
     dbMaintainName2 = (countlyConfig.mongodb.hostbatch2 + ':' + 
-        countlyConfig.mongodb.port + '/' + countlyConfig.mongodb.db_maintain + '?auto_reconnect=true');
+        countlyConfig.mongodb.mongos + '/' + countlyConfig.mongodb.db_maintain + '?auto_reconnect=true');
 
     shardMaintainName = (countlyConfig.mongodb.hostshard + ':' + 
         countlyConfig.mongodb.mongos + '/' + countlyConfig.mongodb.db_maintain + '?auto_reconnect=true');

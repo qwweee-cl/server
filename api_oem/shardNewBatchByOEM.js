@@ -214,7 +214,7 @@ if (isDebug) {
 
 var collectionCount = 0;
 var collectionNameList = [];
-var baseTimeOut = 60000;
+var baseTimeOut = 20000;
 
 fs.readFile(oidFileName, 'utf8', function (err,data) {
     if (!err && data.length>=24) {
@@ -225,7 +225,7 @@ fs.readFile(oidFileName, 'utf8', function (err,data) {
     	    eid = new ObjectID(data.substr(25,24));
     	}
     }
-    var wait_cnt = 15;
+    var wait_cnt = 30;
     if (caseValue == 1) {
         console.log("process oem all apps");
         dbs.batch = common.getDBByNameShardOEM_(oem_dbname); // batch raw log
