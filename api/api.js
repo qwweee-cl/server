@@ -257,6 +257,12 @@ function insertRawColl(coll, eventp, params, isSession) {
     eventp.ip_address = params.ip_address;
     eventp.dbtimestamp = Math.round(currDate/1000);
     common.computeGeoInfo(eventp);
+    if (params.qstring.new_user) {
+        eventp.new_user = params.qstring.new_user;
+    }
+    if (params.qstring.qmwd_active_user) {
+        eventp.qmwd_active_user = params.qstring.qmwd_active_user;
+    }
     if (params.qstring.vendor_info) {
         //console.log(JSON.stringify(params.qstring.vendor_info, null, 2));
         eventp.vendor = params.qstring.vendor_info;
