@@ -37,6 +37,7 @@ var producer = new Producer(client, { requireAcks: 1});
 var partitionNum = 6;
 var randomCnt = -1;
 var cando = false;
+var YCP_And_count = 0;
 //var isProducerReady = false;
 
 var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 'Node_Event_YCN_And', 'Node_Event_YCN_iOS', 'Node_Event_YCP_And', 'Node_Event_YCP_iOS', 'Node_Event_YMK_And', 'Node_Event_YMK_iOS',
@@ -100,6 +101,14 @@ function getNodeTopicName(header, appkey) {
 
 function sendKafka(data, key, isSession) {
     var topicName = getNodeTopicName((isSession ? "Session" : "Event"), key);
+    var start = 1454064900;
+    var end = 1454065200;
+    if (key == "e315c111663af26a53e5fe4c82cc1baeecf50599") {
+        if(start < data.dbtimestamp && data.dbtimestamp < end) {
+            YCP_And_count++;
+            console.log(YCP_And_count);
+        }
+    }
     randomCnt = ((++randomCnt)%partitionNum);
     if (cando) {
         //console.log(JSON.stringify(data));
