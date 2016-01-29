@@ -311,6 +311,12 @@ function insertRawColl(coll, eventp, params, isSession) {
         console.log('Null device_id: '+eventp.ip_address+' app key: '+eventp.app_key);
         return;
     }
+
+    if (eventp.app_key != appKey.key["Perfect_And"]) {
+        //sendKafkaRest(eventp, eventp.app_key, isSession);
+        sendKafka(eventp, eventp.app_key, isSession);
+    }
+    
     if (oem) {
         if (0) {
             var oemdb = common.getOEMRawDB(dealNumber);
@@ -406,10 +412,6 @@ function insertRawColl(coll, eventp, params, isSession) {
                 console.log(err);
             }
         });
-    }
-    if (eventp.app_key != appKey.key["Perfect_And"]) {
-        //sendKafkaRest(eventp, eventp.app_key, isSession);
-        sendKafka(eventp, eventp.app_key, isSession);
     }
 }
 
