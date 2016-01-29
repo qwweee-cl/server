@@ -37,8 +37,8 @@ var producer = new Producer(client, { requireAcks: 1});
 var partitionNum = 6;
 var randomCnt = -1;
 var cando = false;
-var YCP_And_count = 0;
-var workerID;
+//var YCP_And_count = 0;
+//var workerID;
 //var isProducerReady = false;
 
 var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 'Node_Event_YCN_And', 'Node_Event_YCN_iOS', 'Node_Event_YCP_And', 'Node_Event_YCP_iOS', 'Node_Event_YMK_And', 'Node_Event_YMK_iOS',
@@ -102,6 +102,7 @@ function getNodeTopicName(header, appkey) {
 
 function sendKafka(data, key, isSession) {
     var topicName = getNodeTopicName((isSession ? "Session" : "Event"), key);
+    /*
     var start = 1454065800;
     var end = 1454066100;
     if (key == "e315c111663af26a53e5fe4c82cc1baeecf50599") {
@@ -110,6 +111,7 @@ function sendKafka(data, key, isSession) {
             console.log(workerID+": "+YCP_And_count);
         }
     }
+    */
     randomCnt = ((++randomCnt)%partitionNum);
     if (cando) {
         //console.log(JSON.stringify(data));
@@ -645,7 +647,7 @@ if (cluster.isMaster) {
         console.log("oem-length:"+data.length);
 
         for (var i = 0; i < workerCount; i++) {
-            workerEnv["workerID"] = i;
+            //workerEnv["workerID"] = i;
             cluster.fork(workerEnv);
         }
     });
@@ -656,7 +658,7 @@ if (cluster.isMaster) {
 
 } else {
     var oems = process.env['OEMS'];
-    workerID = process.env['WorkerID'];
+    //workerID = process.env['WorkerID'];
     oemMaps = JSON.parse(oems);
     var baseTimeOut = 3600000;
 
