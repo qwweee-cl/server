@@ -31,8 +31,6 @@ var Client = kafka.Client;
 
 var zkList = '172.31.27.186:2181,172.31.27.187:2181,172.31.27.188:2181';  // bootstrap.servers
 var client = new Client(zkList);
-var argv = require('optimist').argv;
-var kafka_topic = argv.topic || 'topic_test_nodejs_json';
 //var p = argv.p || 0; // default is 0
 //var a = argv.a || 0; // no compress
 var producer = new Producer(client, { requireAcks: 1});
