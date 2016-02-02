@@ -312,6 +312,13 @@ function insertRawColl(coll, eventp, params, isSession) {
         console.log('Null device_id: '+eventp.ip_address+' app key: '+eventp.app_key);
         return;
     }
+    if (eventp.app_key.length != 40) {
+        console.log(eventp.app_key);
+        console.log(eventp.ip_address);
+        console.log(eventp.country);
+        common.returnMessage(params, 200, 'Success');
+        return;
+    }
 
     if (eventp.app_key != appKey.key["Perfect_And"]) {
         //sendKafkaRest(eventp, eventp.app_key, isSession);
