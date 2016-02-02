@@ -653,6 +653,7 @@ if (cluster.isMaster) {
     });
 
     cluster.on('exit', function(worker) {
+        console.log("cluster refork!!!!!!!!");
         cluster.fork(workerEnv);
     });
 
