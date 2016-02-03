@@ -104,16 +104,6 @@ function getNodeTopicName(header, appkey) {
 
 function sendKafka(data, key, isSession) {
     var topicName = getNodeTopicName((isSession ? "Session" : "Event"), key);
-    /*
-    var start = 1454065800;
-    var end = 1454066100;
-    if (key == "e315c111663af26a53e5fe4c82cc1baeecf50599") {
-        if(start < data.dbtimestamp && data.dbtimestamp < end) {
-            YCP_And_count++;
-            console.log(workerID+": "+YCP_And_count);
-        }
-    }
-    */
     randomCnt = ((++randomCnt)%partitionNum);
     if (cando) {
         //console.log(JSON.stringify(data));
@@ -324,6 +314,7 @@ function insertRawColl(coll, eventp, params, isSession) {
         return;
     }
     if (eventp.app_key.length != 40) {
+        console.log("app_key length too long (!=40)");
         console.log(eventp.app_key);
         console.log(eventp.ip_address);
         console.log(eventp.country);
