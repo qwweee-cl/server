@@ -315,9 +315,9 @@ function insertRawColl(coll, eventp, params, isSession) {
     }
     if (eventp.app_key.length != 40) {
         console.log("app_key length too long (!=40)");
-        console.log(eventp.app_key);
         console.log(eventp.ip_address);
         console.log(eventp.country);
+        console.log(eventp.app_key);
         common.returnMessage(params, 200, 'Success');
         return;
     }
@@ -325,9 +325,9 @@ function insertRawColl(coll, eventp, params, isSession) {
     var appkey = eventp.app_key;
     var checkAppKey = jsonQuery(['[key=?]',appkey], {data: appKeyMaps}).value;
     if (!checkAppKey) {
-        console.log(eventp.app_key+" not in appKeyMaps!!!!!");
         console.log(eventp.ip_address);
         console.log(eventp.country);
+        console.log(eventp.app_key+" not in appKeyMaps!!!!!");
         common.returnMessage(params, 200, 'Success');
         return;
     }
