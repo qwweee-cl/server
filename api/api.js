@@ -8,7 +8,9 @@ var http = require('http'),
 	moment = require('moment-timezone'),
     workerEnv = {},
     oemMaps = [],
+    appKeyMaps = [],
     oemCount = 0,
+    appKeyCount = 0,
     countlyApi = {
         data:{
             usage:require('./parts/data/usage.js'),
@@ -320,6 +322,16 @@ function insertRawColl(coll, eventp, params, isSession) {
         return;
     }
 
+    var appkey = eventp.app_key;
+    var checkAppKey = jsonQuery(['[app_key=?]',appkey], {data: appKeyMaps}).value;
+    if (!checkAppKey) {
+        console.log(eventp.app_key+" not in appKeyMaps!!!!!");
+        console.log(eventp.ip_address);
+        console.log(eventp.country);
+        common.returnMessage(params, 200, 'Success');
+        return;
+    }
+
     if (eventp.app_key != appKey.key["Perfect_And"]) {
         //sendKafkaRest(eventp, eventp.app_key, isSession);
         sendKafka(eventp, eventp.app_key, isSession);
@@ -596,9 +608,10 @@ function findAndRemoveKey(array, value) {
 }
 
 function updateOEMTable() {
-    oemCount = 0;
-    oemMaps.length = 0;
     common.db.collection('oems').find().toArray(function(err, data) {
+        var tmpoemCount = 0;
+        var tmpoemMaps = [];
+        tmpoemMaps.length = 0;
         for (var i = 0 ; i < data.length ; i ++) {
             for (var j=0;j<data[i].sr_no.length;j++) {
                 oemData = {};
@@ -606,17 +619,41 @@ function updateOEMTable() {
                 oemData.start = data[i].start;
                 oemData.end = data[i].end;
                 oemData.sr_no = data[i].sr_no[j];
-                oemMaps[oemCount] = oemData;
-                oemCount++;
+                tmpoemMaps[tmpoemCount] = oemData;
+                tmpoemCount++;
             }
         }
-        workerEnv["OEMS"] = JSON.stringify(oemMaps);
+        workerEnv["OEMS"] = JSON.stringify(tmpoemMaps);
         console.log("update oem-length:"+data.length);
         var now = new Date();
         var oems = workerEnv["OEMS"];
+        oemMaps.length = 0;
         oemMaps = JSON.parse(oems);
         console.log('update OEM table =========================='+now+'= length:'+oemMaps.length+'=========================');
         //console.log(oemMaps);
+    });
+    common.db.collection('apps').find().toArray(function(err, data) {
+        var tmpappsCount = 0;
+        var tmpappsMaps = [];
+        tmpappsMaps.length = 0;
+        for (var i = 0 ; i < data.length ; i ++) {
+            appKeyData = {};
+            appKeyData.key = data[i].key;
+            tmpappsMaps[tmpappsCount] = appKeyData;
+            tmpappsCount++;
+        }
+        workerEnv["APPS"] = JSON.stringify(tmpappsMaps);
+        console.log("update appKey-length:"+data.length);
+        var now = new Date();
+        var apps = workerEnv["APPS"];
+        appKeyMaps.length = 0;
+        appKeyMaps = JSON.parse(apps);
+        console.log('update apps key table =========================='+now+'= length:'+appKeyMaps.length+'=========================');
+
+        for (var i = 0; i < workerCount; i++) {
+            //workerEnv["workerID"] = i;
+            cluster.fork(workerEnv);
+        }
     });
 }
 
@@ -644,10 +681,26 @@ if (cluster.isMaster) {
         workerEnv["OEMS"] = JSON.stringify(oemMaps);
         console.log("oem-length:"+data.length);
 
+        common.db.collection('apps').find().toArray(function(err, data) {
+            for (var i = 0 ; i < data.length ; i ++) {
+                appKeyData = {};
+                appKeyData.key = data[i].key;
+                appKeyMaps[appKeyCount] = appKeyData;
+                appKeyCount++;
+            }
+            workerEnv["APPS"] = JSON.stringify(appKeyMaps);
+            console.log("appKey-length:"+data.length);
+
+            for (var i = 0; i < workerCount; i++) {
+                cluster.fork(workerEnv);
+            }
+        });
+/*
         for (var i = 0; i < workerCount; i++) {
             //workerEnv["workerID"] = i;
             cluster.fork(workerEnv);
         }
+*/
     });
 
     cluster.on('exit', function(worker) {
@@ -656,8 +709,14 @@ if (cluster.isMaster) {
 
 } else {
     var oems = process.env['OEMS'];
+    var apps = process.env['APPS'];
     //workerID = process.env['WorkerID'];
+    oemMaps.length = 0;
     oemMaps = JSON.parse(oems);
+    appKeyMaps.length = 0;
+    appKeyMaps = JSON.parse(apps);
+    console.log("init update oem-length:"+oemMaps.length);
+    console.log("init update app-length:"+appKeyMaps.length);
     var baseTimeOut = 3600000;
 
     setInterval(function() {
