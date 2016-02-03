@@ -323,7 +323,7 @@ function insertRawColl(coll, eventp, params, isSession) {
     }
 
     var appkey = eventp.app_key;
-    var checkAppKey = jsonQuery(['[app_key=?]',appkey], {data: appKeyMaps}).value;
+    var checkAppKey = jsonQuery(['[key=?]',appkey], {data: appKeyMaps}).value;
     if (!checkAppKey) {
         console.log(eventp.app_key+" not in appKeyMaps!!!!!");
         console.log(eventp.ip_address);
