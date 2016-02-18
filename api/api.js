@@ -27,12 +27,14 @@ var http = require('http'),
 http.globalAgent.maxSockets = common.config.api.max_sockets || 1024;
 
 //////////////////////////////////
+var kafakStatus = 0;
 var kafka = require('kafka-node');
 var Producer = kafka.Producer;//kafka.HighLevelProducer;//kafka.Producer;
 var Client = kafka.Client;
 
 var zkList = '172.31.19.126:2181,172.31.27.99:2181,172.31.27.76:2181';  // bootstrap.servers
 var client = new Client(zkList);
+
 //var p = argv.p || 0; // default is 0
 //var a = argv.a || 0; // no compress
 var producer = new Producer(client, { requireAcks: 1});
@@ -50,7 +52,7 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
 producer.on('ready', function () {
     isProducerReady = true;
     producer.createTopics(['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 'Node_Event_YCN_And', 'Node_Event_YCN_iOS', 'Node_Event_YCP_And', 'Node_Event_YCP_iOS', 'Node_Event_YMK_And', 'Node_Event_YMK_iOS',
-                 'Node_Session_BCS_And', 'Node_Session_BCS_iOS', 'Node_Session_OtherApp', 'Node_Session_YCN_And', 'Node_Session_YCN_iOS', 'Node_Session_YCP_And', 'Node_Session_YCP_iOS', 'Node_Session_YMK_And', 'Node_Session_YMK_iOS', 'Elly'], false, function (err, data) {
+                 'Node_Session_BCS_And', 'Node_Session_BCS_iOS', 'Node_Session_OtherApp', 'Node_Session_YCN_And', 'Node_Session_YCN_iOS', 'Node_Session_YCP_And', 'Node_Session_YCP_iOS', 'Node_Session_YMK_And', 'Node_Session_YMK_iOS', 'Elly', 'ABC', 'OWL'], false, function (err, data) {
         console.log("createTopic: " + data);
         if (err) {
             console.log("ERROR: " + err);
@@ -60,7 +62,16 @@ producer.on('ready', function () {
 });
 
 producer.on('error', function (err) {
+    producer.close();
+    client.close();
     console.log('producer error', err);
+    cando = false;
+});
+
+client.on('error',function(err){
+        producer.close();
+        client.close();
+        console.log('client error', err);
 });
 //////////////////////////////////
 
@@ -104,7 +115,9 @@ function getNodeTopicName(header, appkey) {
 
 function sendKafka(data, key, isSession) {
     var topicName = getNodeTopicName((isSession ? "Session" : "Event"), key);
-    //var topicName = "Elly";
+    var topicName = "Elly";
+    var topicName = "OWL";
+    var topicName = "ABC";
     randomCnt = ((++randomCnt)%partitionNum);
     if (cando) {
         //console.log(JSON.stringify(data));
@@ -655,6 +668,10 @@ function updateOEMTable() {
             cluster.fork(workerEnv);
         }
     });
+}
+
+function checkKafkaStaus() {
+
 }
 
 if (cluster.isMaster) {
