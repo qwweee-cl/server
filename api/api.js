@@ -31,7 +31,8 @@ var kafka = require('kafka-node');
 var Producer = kafka.Producer;//kafka.HighLevelProducer;//kafka.Producer;
 var Client = kafka.Client;
 
-var zkList = '172.31.27.186:2181,172.31.27.187:2181,172.31.27.188:2181';  // bootstrap.servers
+//var zkList = '172.31.27.186:2181,172.31.27.187:2181,172.31.27.188:2181';  // bootstrap.servers
+var zkList = '172.31.27.186:2181,172.31.27.187:2181,172.31.27.188:2181,172.31.16.236:2181,172.31.16.237:2181,172.31.16.238:2181,172.31.16.239:2181';  // bootstrap.servers
 var client = new Client(zkList);
 //var p = argv.p || 0; // default is 0
 //var a = argv.a || 0; // no compress
