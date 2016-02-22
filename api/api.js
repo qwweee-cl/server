@@ -32,9 +32,12 @@ var kafka = require('kafka-node');
 var Producer = kafka.Producer;//kafka.HighLevelProducer;//kafka.Producer;
 var Client = kafka.Client;
 
+var timeToRetryConnection = 12*1000; // 12 seconds
+var reconnectInterval = null;
+
 var zkList = '172.31.19.126:2181,172.31.27.99:2181,172.31.27.76:2181';  // bootstrap.servers
 
-zkList = '172.31.19.126:2181,172.31.27.99:2181,172.31.27.76:2181,172.31.8.63:2181,172.31.22.54:2181,172.31.22.195:2181,172.31.29.230:2181';  // bootstrap.servers
+zkList = '172.31.16.207:2181,172.31.27.99:2181,172.31.26.88:2181,172.31.8.63:2181,172.31.22.54:2181,172.31.22.195:2181,172.31.29.230:2181';  // bootstrap.servers
 var client = new Client(zkList);
 
 //var p = argv.p || 0; // default is 0
@@ -50,8 +53,8 @@ var cando = false;
 var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 'Node_Event_YCN_And', 'Node_Event_YCN_iOS', 'Node_Event_YCP_And', 'Node_Event_YCP_iOS', 'Node_Event_YMK_And', 'Node_Event_YMK_iOS',
                  'Node_Session_BCS_And', 'Node_Session_BCS_iOS', 'Node_Session_OtherApp', 'Node_Session_YCN_And', 'Node_Session_YCN_iOS', 'Node_Session_YCP_And', 'Node_Session_YCP_iOS', 'Node_Session_YMK_And', 'Node_Session_YMK_iOS'];
 //var topicListTest = ['test1', 'test2', 'test3', 'test4', 'test5', 'test6'];
-                 
-producer.on('ready', function () {
+
+function producerReady() {
     isProducerReady = true;
     producer.createTopics(['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 'Node_Event_YCN_And', 'Node_Event_YCN_iOS', 'Node_Event_YCP_And', 'Node_Event_YCP_iOS', 'Node_Event_YMK_And', 'Node_Event_YMK_iOS',
                  'Node_Session_BCS_And', 'Node_Session_BCS_iOS', 'Node_Session_OtherApp', 'Node_Session_YCN_And', 'Node_Session_YCN_iOS', 'Node_Session_YCP_And', 'Node_Session_YCP_iOS', 'Node_Session_YMK_And', 'Node_Session_YMK_iOS', 'Elly', 'ABC', 'OWL'], false, function (err, data) {
@@ -61,20 +64,47 @@ producer.on('ready', function () {
         }
         cando = true;
     });
-});
+    if(reconnectInterval!=null) {
+        clearTimeout(reconnectInterval);
+        reconnectInterval =null;
+    }
+};
 
-producer.on('error', function (err) {
+function producerError(err) {
     producer.close();
     client.close();
     console.log('producer error', err);
     cando = false;
-});
+    if ( reconnectInterval == null) { // Multiple Error Events may fire, only set one connection retry.
+        reconnectInterval =
+        setTimeout(function () {
+                log.info("reconnect is called in producer error event");
+                client = new Client(zkList);
+                producer = new Producer(client, { requireAcks: 1});
+        }, timeToRetryConnection);
+    }
+};
 
-client.on('error',function(err){
-        producer.close();
-        client.close();
-        console.log('client error', err);
-});
+function clientError(err) {
+    producer.close();
+    client.close();
+    console.log('client error', err);
+    if ( reconnectInterval == null) { // Multiple Error Events may fire, only set one connection retry.
+        reconnectInterval =
+        setTimeout(function () {
+                log.info("reconnect is called in producer error event");
+                client = new Client(zkList);
+                producer = new Producer(client, { requireAcks: 1});
+        }, timeToRetryConnection);
+    }
+};
+
+
+producer.on('ready', producerReady);
+
+producer.on('error', producerError);
+
+client.on('error', clientError);
 //////////////////////////////////
 
 var appMap = {
