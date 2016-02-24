@@ -81,6 +81,11 @@ function producerError(err) {
                 console.log("reconnect is called in producer error event");
                 client = new Client(zkList);
                 producer = new Producer(client, { requireAcks: 1});
+                producer.on('ready', producerReady);
+
+                producer.on('error', producerError);
+
+                client.on('error', clientError);
         }, timeToRetryConnection);
     }
 };
@@ -95,6 +100,11 @@ function clientError(err) {
                 console.log("reconnect is called in producer error event");
                 client = new Client(zkList);
                 producer = new Producer(client, { requireAcks: 1});
+                producer.on('ready', producerReady);
+
+                producer.on('error', producerError);
+
+                client.on('error', clientError);
         }, timeToRetryConnection);
     }
 };
