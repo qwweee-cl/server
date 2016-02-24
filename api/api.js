@@ -78,7 +78,7 @@ function producerError(err) {
     if ( reconnectInterval == null) { // Multiple Error Events may fire, only set one connection retry.
         reconnectInterval =
         setTimeout(function () {
-                log.info("reconnect is called in producer error event");
+                console.log("reconnect is called in producer error event");
                 client = new Client(zkList);
                 producer = new Producer(client, { requireAcks: 1});
         }, timeToRetryConnection);
@@ -92,7 +92,7 @@ function clientError(err) {
     if ( reconnectInterval == null) { // Multiple Error Events may fire, only set one connection retry.
         reconnectInterval =
         setTimeout(function () {
-                log.info("reconnect is called in producer error event");
+                console.log("reconnect is called in producer error event");
                 client = new Client(zkList);
                 producer = new Producer(client, { requireAcks: 1});
         }, timeToRetryConnection);
