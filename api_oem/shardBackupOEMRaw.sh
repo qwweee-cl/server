@@ -41,7 +41,7 @@ function error_exp
 {
 	echo -e "[Shard OEM]${header} Loop Backup Batch error: ${mainLogFile}"\
 	$(tail -20 ${mainLogFile})\
-	| mail -s "[Shard OEM]${header} Loop Backup Batch Error Trap(${pid})" ${AWSM}
+	| mail -s "[Wrong][Shard OEM]${header} Loop Backup Batch Error Trap(${pid})" ${AWSM}
 	#rm -f ${LOCKFILE}
 	exit 1
 }
@@ -50,7 +50,7 @@ function checkLoopStop() {
 	if [ -f "${loopFile}" ]; then
 		echo "${loopFile} exist"
 		echo -e "[Shard OEM]${header} Loop Backup Batch Stop on $(date +%Y%m%d-%H:%M)"\
-		| mail -s "[Shard OEM]${header} Loop Backup Batch Stop" ${AWSM}
+		| mail -s "[Wrong][Shard OEM]${header} Loop Backup Batch Stop" ${AWSM}
 		exit 0
 	fi
 }
@@ -71,6 +71,8 @@ gzipPath="/mem/mongo_oem_shard_gzip/"
 exportPath="/mem/mongo_oem_shard_backup/"
 s3Path="/s3mnt/shard_backup/oem_hourly_data/"
 CachePath="/mem/tmp/s3cache/clcom2-countly/shard_backup/oem_hourly_data/"
+
+cmds3Path="s3://clcom2-countly/shard_backup/oem_hourly_data/"
 #mongo="localhost:27017"
 batchdb=""
 #indexNum="1"
@@ -84,10 +86,10 @@ fi
 if [ ! -d "$gzipPath" ]; then
 	mkdir $gzipPath
 fi
-if [ ! -d "$s3Path" ]; then
-	echo "mkdir $s3Path"
-	mkdir $s3Path
-fi
+#if [ ! -d "$s3Path" ]; then
+#	echo "mkdir $s3Path"
+#	mkdir $s3Path
+#fi
 
 for ((;1;)); do
 	curdate=$(date +%Y%m%d-%H%M)
@@ -136,6 +138,7 @@ for ((;1;)); do
 		$cmd 2>&1 >> $one_time_log 
 
 		echo $PWD
+
 		cmd="/bin/tar czf ${gzipPath}${rawdate}.tgz ./"
 		echo $cmd 2>&1 >> $one_time_log 
 		$cmd 2>&1 >> $one_time_log 
@@ -143,15 +146,19 @@ for ((;1;)); do
 		echo $cmd 2>&1 >> $one_time_log 
 		$cmd 2>&1 >> $one_time_log 
 
-		cmd="/bin/cp ${gzipPath}${rawdate}.tgz ${s3Path}${rawdate}.tmp"
+		cmd="aws s3 mv ${gzipPath}${rawdate}.tgz ${cmds3Path}${rawdate}.tgz"
 		echo $cmd 2>&1 >> $one_time_log 
-		$cmd 2>&1 >> $one_time_log 
-		cmd="/bin/rm ${gzipPath}${rawdate}.tgz"
-		echo $cmd 2>&1 >> $one_time_log 
-		$cmd 2>&1 >> $one_time_log 
-		cmd="/bin/mv ${s3Path}${rawdate}.tmp ${s3Path}${rawdate}.tgz"
-		echo $cmd 2>&1 >> $one_time_log 
-		$cmd 2>&1 >> $one_time_log 
+		$cmd 2>&1 >> $one_time_log
+
+#		cmd="/bin/cp ${gzipPath}${rawdate}.tgz ${s3Path}${rawdate}.tmp"
+#		echo $cmd 2>&1 >> $one_time_log 
+#		$cmd 2>&1 >> $one_time_log 
+#		cmd="/bin/rm ${gzipPath}${rawdate}.tgz"
+#		echo $cmd 2>&1 >> $one_time_log 
+#		$cmd 2>&1 >> $one_time_log 
+#		cmd="/bin/mv ${s3Path}${rawdate}.tmp ${s3Path}${rawdate}.tgz"
+#		echo $cmd 2>&1 >> $one_time_log 
+#		$cmd 2>&1 >> $one_time_log 
 
 		cd ${path}
 

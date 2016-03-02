@@ -9,7 +9,7 @@ function error_exp
 {
 	echo -e "[Shard OEM] OEM Backup Dashboard Error Please check log ${one_time_log}"\
 	$(tail -20 ${one_time_log})\
-	| mail -s "[Shard OEM] OEM Backup Dashboard Error Trap(${pid})" ${mail_target}
+	| mail -s "[Wrong][Shard OEM] OEM Backup Dashboard Error Trap(${pid})" ${mail_target}
 	exit 0
 }
 function sendSummaryMail() {
@@ -39,7 +39,7 @@ exportPath="/mem/mongo_oem_hourly_dashboard_backup/"
 s3DashboardPath="/s3mnt/shard_backup/OEM/dashboard_data/"
 DashboardCachePath="/mem/tmp/s3cache/clcom2-countly/shard_backup/OEM/dashboard_data/"
 
-
+cmds3DashboardPath="s3://clcom2-countly/shard_backup/OEM/dashboard_data/"
 
 savedate=$(date +%Y%m%d)
 dashboarddate=${savedate}"_countly"
@@ -64,10 +64,10 @@ fi
 if [ ! -d "${gzipPath}" ]; then
 	mkdir ${gzipPath}
 fi
-if [ ! -d "${s3DashboardPath}" ]; then
-	echo "mkdir ${s3DashboardPath}"
-	mkdir ${s3DashboardPath}
-fi
+#if [ ! -d "${s3DashboardPath}" ]; then
+#	echo "mkdir ${s3DashboardPath}"
+#	mkdir ${s3DashboardPath}
+#fi
 
 cmd="node getOEMs.js"
 echo -e $cmd
@@ -130,14 +130,18 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 	echo $cmd
 	$cmd
 	## move dashboard zip file to s3
-	if [ ! -d "$s3DashboardPath" ]; then
-		echo "mkdir $s3DashboardPath"
-		mkdir $s3DashboardPath
-	fi
-	cmd="/bin/cp $gzipPath$dashboarddate.tgz $s3DashboardPath"
-	echo $cmd
-	$cmd
-	cmd="/bin/rm $gzipPath$dashboarddate.tgz"
+#	if [ ! -d "$s3DashboardPath" ]; then
+#		echo "mkdir $s3DashboardPath"
+#		mkdir $s3DashboardPath
+#	fi
+#	cmd="/bin/cp $gzipPath$dashboarddate.tgz $s3DashboardPath"
+#	echo $cmd
+#	$cmd
+#	cmd="/bin/rm $gzipPath$dashboarddate.tgz"
+#	echo $cmd
+#	$cmd
+
+	cmd="aws s3 mv $gzipPath$dashboarddate.tgz $cmds3DashboardPath"
 	echo $cmd
 	$cmd
 

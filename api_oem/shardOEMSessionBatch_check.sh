@@ -9,7 +9,7 @@ function error_exp
 	#| mail -s "Daily BB data import exception" $dashboard_team
 	echo -e "[Shard OEM]${oemName} Loop Session Batch Error Please check log ${mainLogFile}"\
 	$(tail -20 ${mainLogFile})\
-	| mail -s "[Shard OEM]${oemName} ${start_date} ${start_round} Session Error Trap(${pid})" ${mail_target}
+	| mail -s "[Wrong][Shard OEM]${oemName} ${start_date} ${start_round} Session Error Trap(${pid})" ${mail_target}
 	#rm -f ${LOCKFILE}
 	exit 1
 }
@@ -37,7 +37,7 @@ function checkLoopStop() {
 	if [ -f "${loopFile}" ]; then
 		echo "${loopFile} exist"
 		echo -e "Loop Session Batch Stop on $(date +%Y%m%d-%H:%M)"\
-		| mail -s "[Shard OEM]${oemName} ${start_date} ${start_round} Session Batch Stop" ${mail_target}
+		| mail -s "[Wrong][Shard OEM]${oemName} ${start_date} ${start_round} Session Batch Stop" ${mail_target}
 		exit 0
 	fi
 }
@@ -67,17 +67,17 @@ function sendSummaryMail() {
 function sendWrongMail1() {
 	oemName="${1}"
 	echo -e $(tail -20 ${one_day_log})\
-	| mail -s "[Shard OEM][Wrong DB][Session]${oemName} ${start_date} ${start_round}" ${Gary}
+	| mail -s "[Wrong][Shard OEM][Wrong DB][Session]${oemName} ${start_date} ${start_round}" ${Gary}
 }
 function sendWrongMail2() {
 	oemName="${1}"
 	echo -e $(tail -20 ${one_day_log})\
-	| mail -s "[Shard OEM][Wrong S3][Session]${oemName} ${start_date} ${start_round}" ${Gary}
+	| mail -s "[Wrong][Shard OEM][Wrong S3][Session]${oemName} ${start_date} ${start_round}" ${Gary}
 }
 function sendWrongMail3() {
 	oemName="${1}"
 	echo -e $(tail -20 ${one_day_log})\
-	| mail -s "[Shard OEM][next OEMs round][Session]${oemName} ${start_date} ${start_round}" ${Gary}
+	| mail -s "[Wrong][Shard OEM][next OEMs round][Session]${oemName} ${start_date} ${start_round}" ${Gary}
 }
 
 log_path="/usr/local/countly/log/shardOEMSession"
@@ -93,6 +93,7 @@ rawSession="/mem/tmp/RawSession/"
 batchdb=""
 
 s3Path="/s3mnt/shard_backup/oem_hourly_data/"
+cmds3Path="s3://clcom2-countly/shard_backup/oem_hourly_data/"
 
 ## backup dashboard need
 checkTime=$(date +%H%M)
@@ -176,10 +177,10 @@ fi
 if [ ! -d "${gzipPath}" ]; then
 	mkdir ${gzipPath}
 fi
-if [ ! -d "${s3DashboardPath}" ]; then
-	echo "mkdir ${s3DashboardPath}"
-	mkdir ${s3DashboardPath}
-fi
+#if [ ! -d "${s3DashboardPath}" ]; then
+#	echo "mkdir ${s3DashboardPath}"
+#	mkdir ${s3DashboardPath}
+#fi
 
 
 while true;
@@ -437,8 +438,10 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 		echo -e ${small_date}
 		echo -e ${start_round}
 		s3OEMFile=${s3Path}${filedate}"_${oemName}_${start_round}.tgz"
+		cmds3OEMFile=${cmds3Path}${filedate}"_${oemName}_${start_round}.tgz"
 		fileExist=true
-		echo -e ${s3OEMFile}
+#		echo -e ${s3OEMFile}
+		echo -e ${cmds3OEMFile}
 
 		if [ "${batchdb}" != "oem_${oemName}_raw${small_date}_${start_round}" ]; then
 			echo -e "${oemName} could be process session oem_${oemName}_raw${small_date}_${start_round} not ${batchdb}" 2>&1 >> "$one_day_log"
@@ -446,20 +449,35 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 			exit 1
 		fi
 
-		if [ ! -f ${s3OEMFile} ]; then
-			echo "${s3OEMFile} file not exist" >> ${one_day_log}
+#		if [ ! -f ${s3OEMFile} ]; then
+#			echo "${s3OEMFile} file not exist" >> ${one_day_log}
+#			fileExist=false
+#		fi
+
+#		if [ ! -s ${s3OEMFile} ]; then
+#			echo "${s3OEMFile} file size is 0" >> ${one_day_log}
+#			fileExist=false
+#		fi
+
+		existFile=`aws s3 ls ${cmds3OEMFile} | wc -l`
+
+		duFile=`aws s3 ls ${cmds3OEMFile} | awk '{ print $3 }'`
+
+
+		if [ ${existFile} == "0" ]; then
+			echo "${cmds3OEMFile} file not exist" >> ${one_day_log}
 			fileExist=false
 		fi
 
-		if [ ! -s ${s3OEMFile} ]; then
-			echo "${s3OEMFile} file size is 0" >> ${one_day_log}
+		if [ -z ${duFile} ]; then
+			echo "${cmds3OEMFile} file size is 0" >> ${one_day_log}
 			fileExist=false
 		fi
 
 		echo -e ${fileExist}
 
 		if [ ${fileExist} = false ]; then
-			echo "${s3OEMFile} s3 file not exist" >> ${one_day_log}
+			echo "${cmds3OEMFile} s3 file not exist" >> ${one_day_log}
 			sendWrongMail2 ${oemName}
 			exit 1
 		fi
