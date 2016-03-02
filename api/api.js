@@ -784,8 +784,8 @@ if (cluster.isMaster) {
     });
 
     cluster.on('exit', function(worker) {
-        console.log(cluster.isMaster);
-        console.log(worker);
+        //console.log(cluster.isMaster);
+        //console.log(worker);
         cluster.fork(workerEnv);
     });
 
@@ -804,8 +804,8 @@ if (cluster.isMaster) {
     appKeyMaps = JSON.parse(apps);
     console.log("init update oem-length:"+oemMaps.length);
     console.log("init update app-length:"+appKeyMaps.length);
-    console.log(cluster.isMaster);
-    console.log(worker);
+    //console.log(cluster.isMaster);
+    //console.log(worker);
     var baseTimeOut = 3600000;
 
     setInterval(function() {
