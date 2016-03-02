@@ -28,6 +28,7 @@ http.globalAgent.maxSockets = common.config.api.max_sockets || 1024;
 
 //////////////////////////////////
 var kafakStatus = 0;
+var checkCount = 120;
 var kafka = require('kafka-node');
 var Producer = kafka.Producer;//kafka.HighLevelProducer;//kafka.Producer;
 var Client = kafka.Client;
@@ -712,8 +713,28 @@ function updateOEMTable() {
     });
 }
 
-function checkKafkaStaus() {
-
+function checkKafkaStatus() {
+    console.log("check Kafka Status: "+kafakStatus);
+    producer.createTopics(['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 'Node_Event_YCN_And', 'Node_Event_YCN_iOS', 'Node_Event_YCP_And', 'Node_Event_YCP_iOS', 'Node_Event_YMK_And', 'Node_Event_YMK_iOS',
+                 'Node_Session_BCS_And', 'Node_Session_BCS_iOS', 'Node_Session_OtherApp', 'Node_Session_YCN_And', 'Node_Session_YCN_iOS', 'Node_Session_YCP_And', 'Node_Session_YCP_iOS', 'Node_Session_YMK_And', 'Node_Session_YMK_iOS', 'Elly', 'ABC', 'OWL'], false, function (err, data) {
+        console.log("createTopic: " + data);
+        if (err) {
+            kafakStatus++;
+            console.log("ERROR: " + err + " "+kafakStatus);
+            return;
+        }
+        kafakStatus = 0;
+    });
+    if (kafakStatus >= checkCount) {
+        var exec = require('child_process').exec;
+        var cmd = 'sudo stop countly-supervisor';
+        exec(cmd, function(error, stdout, stderr) {
+            // command output is in stdout
+            if (error) {
+                console.log(error);
+            }
+        });
+    }
 }
 
 if (cluster.isMaster) {
@@ -763,8 +784,15 @@ if (cluster.isMaster) {
     });
 
     cluster.on('exit', function(worker) {
+        console.log(cluster.isMaster);
+        console.log(worker);
         cluster.fork(workerEnv);
     });
+
+    setInterval(function() {
+        /** update workerEnv OEM tables data **/
+        checkKafkaStatus();
+    }, 5000);
 
 } else {
     var oems = process.env['OEMS'];
@@ -776,6 +804,8 @@ if (cluster.isMaster) {
     appKeyMaps = JSON.parse(apps);
     console.log("init update oem-length:"+oemMaps.length);
     console.log("init update app-length:"+appKeyMaps.length);
+    console.log(cluster.isMaster);
+    console.log(worker);
     var baseTimeOut = 3600000;
 
     setInterval(function() {
