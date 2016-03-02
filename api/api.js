@@ -715,14 +715,23 @@ function updateOEMTable() {
 
 function checkKafkaStatus() {
     console.log("check Kafka Status: "+kafakStatus);
-    producer.createTopics(['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 'Node_Event_YCN_And', 'Node_Event_YCN_iOS', 'Node_Event_YCP_And', 'Node_Event_YCP_iOS', 'Node_Event_YMK_And', 'Node_Event_YMK_iOS',
-                 'Node_Session_BCS_And', 'Node_Session_BCS_iOS', 'Node_Session_OtherApp', 'Node_Session_YCN_And', 'Node_Session_YCN_iOS', 'Node_Session_YCP_And', 'Node_Session_YCP_iOS', 'Node_Session_YMK_And', 'Node_Session_YMK_iOS', 'Elly', 'ABC', 'OWL'], false, function (err, data) {
+    producer.createTopics(['check'], false, function (err, data) {
         console.log("createTopic: " + data);
         if (err) {
             kafakStatus++;
             console.log("ERROR: " + err + " "+kafakStatus);
             return;
         }
+        var 
+        producer.send([
+            { topic: "check", messages: "1"}
+        }], function (err, result) {
+            if (err) {
+                console.log("ERROR: " + err);
+                console.log("result: " + JSON.stringify(result));
+                kafakStatus++;
+            }                   
+        });
         kafakStatus = 0;
     });
     if (kafakStatus >= checkCount) {
