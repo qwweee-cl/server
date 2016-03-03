@@ -722,15 +722,16 @@ function checkKafkaStatus() {
             console.log("ERROR: " + err + " "+kafakStatus);
             return;
         }
-        var 
         producer.send([
             { topic: "check", messages: "1"}
         }], function (err, result) {
             if (err) {
                 console.log("ERROR: " + err);
-                console.log("result: " + JSON.stringify(result));
                 kafakStatus++;
-            }                   
+                return;
+            }
+            console.log("result: " + JSON.stringify(result));
+            kafakStatus = 0;
         });
         kafakStatus = 0;
     });
