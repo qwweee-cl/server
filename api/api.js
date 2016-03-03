@@ -724,7 +724,7 @@ function checkKafkaStatus() {
         }
         producer.send([
             { topic: "check", messages: "1"}
-        }], function (err, result) {
+        ], function (err, result) {
             if (err) {
                 console.log("ERROR: " + err);
                 kafakStatus++;
@@ -733,7 +733,6 @@ function checkKafkaStatus() {
             console.log("result: " + JSON.stringify(result));
             kafakStatus = 0;
         });
-        kafakStatus = 0;
     });
     if (kafakStatus >= checkCount) {
         var exec = require('child_process').exec;
