@@ -77,7 +77,7 @@ function sendWrongMail2() {
 function sendWrongMail3() {
 	oemName="${1}"
 	echo -e $(tail -20 ${one_day_log})\
-	| mail -s "[Wrong][Shard OEM][next OEMs round][Session]${oemName} ${start_date} ${start_round}" ${Gary}
+	| mail -s "[Shard OEM][next OEMs round][Session]${oemName} ${start_date} ${start_round}" ${Gary}
 }
 
 log_path="/usr/local/countly/log/shardOEMSession"
