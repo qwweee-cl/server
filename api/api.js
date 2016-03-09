@@ -56,6 +56,8 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
 //var topicListTest = ['test1', 'test2', 'test3', 'test4', 'test5', 'test6'];
 
 function producerReady() {
+    var date = new Date();
+    console.log("ready: "+date.toString());
     isProducerReady = true;
     producer.createTopics(['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 'Node_Event_YCN_And', 'Node_Event_YCN_iOS', 'Node_Event_YCP_And', 'Node_Event_YCP_iOS', 'Node_Event_YMK_And', 'Node_Event_YMK_iOS',
                  'Node_Session_BCS_And', 'Node_Session_BCS_iOS', 'Node_Session_OtherApp', 'Node_Session_YCN_And', 'Node_Session_YCN_iOS', 'Node_Session_YCP_And', 'Node_Session_YCP_iOS', 'Node_Session_YMK_And', 'Node_Session_YMK_iOS', 'Elly', 'ABC', 'OWL'], false, function (err, data) {
@@ -72,6 +74,8 @@ function producerReady() {
 };
 
 function producerError(err) {
+    var date = new Date();
+    console.log("perror: "+date.toString());
     producer.close();
     client.close();
     console.log('producer error', err);
@@ -92,6 +96,8 @@ function producerError(err) {
 };
 
 function clientError(err) {
+    var date = new Date();
+    console.log("cerror: "+date.toString());
     producer.close();
     client.close();
     console.log('client error', err);
