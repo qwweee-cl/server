@@ -1117,13 +1117,19 @@ if (cluster.isMaster) {
                     common.returnHtml(params, 200, 'Success');
                     return;
                 }
-                                
+
                 var mi = tmp_str["mi"];
                 delete tmp_str["mi"];
+                var src = crc.crc32(JSON.stringify(tmp_str).replace(/\\|\ /g, '').replace(/\"\{/g, '{').replace(/\}\"/g, '}')).toString(16);
                 console.log(JSON.stringify(tmp_str).replace(/\\|\ /g, '').replace(/\"\{/g, '{').replace(/\}\"/g, '}'));
-                console.log("CRC: "+crc.crc32(JSON.stringify(tmp_str).replace(/\\|\ /g, '').replace(/\"\{/g, '{').replace(/\}\"/g, '}')).toString(16));
+                console.log("src: "+src);
                 console.log("mi: "+mi);
-
+                if (mi != src) {
+                    console.log("mi != src");
+                } else {
+                    console.log("mi == src");
+                }
+                
                 if (!params.qstring.app_key || !params.qstring.device_id) {
                     var now = new Date();
                     console.log('Missing parameter "app_key" or "device_id"'+'=========='+now+'==========');
