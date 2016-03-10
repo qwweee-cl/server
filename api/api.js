@@ -1107,6 +1107,11 @@ if (cluster.isMaster) {
                         console.log('Send 400 Success');
                         return false;
                     }
+                    var mi = tmp_str["mi"];
+                    delete tmp_str["mi"];
+                    console.log(JSON.stringify(tmp_str).replace(/\\|\ /g, '').replace(/\"\{/g, '{').replace(/\}\"/g, '}'));
+                    console.log("CRC: "+crc.crc32(JSON.stringify(tmp_str).replace(/\\|\ /g, '').replace(/\"\{/g, '{').replace(/\}\"/g, '}')).toString(16));
+                    console.log("mi: "+mi);
                 }
                 if (params.qstring.app_key == '17a82958af48fdd76801a15991b2cafa1f0bcf92') {
                     common.returnMessage(params, 200, 'Success');
