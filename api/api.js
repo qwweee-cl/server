@@ -11,6 +11,7 @@ var http = require('http'),
     appKeyMaps = [],
     oemCount = 0,
     appKeyCount = 0,
+    crc = require('crc'),
     countlyApi = {
         data:{
             usage:require('./parts/data/usage.js'),
