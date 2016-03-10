@@ -34,7 +34,7 @@ var kafka = require('kafka-node');
 var Producer = kafka.Producer;//kafka.HighLevelProducer;//kafka.Producer;
 var Client = kafka.Client;
 
-var timeToRetryConnection = 12*1000; // 12 seconds
+var timeToRetryConnection = 1*1000; // 12 seconds
 var reconnectInterval = null;
 
 var zkList = '172.31.19.126:2181,172.31.27.99:2181,172.31.27.76:2181';  // bootstrap.servers
@@ -1124,12 +1124,12 @@ if (cluster.isMaster) {
                 //console.log(JSON.stringify(tmp_str).replace(/\\|\ /g, '').replace(/\"\{/g, '{').replace(/\}\"/g, '}'));
                 //console.log("src: "+src);
                 //console.log("mi: "+mi);
-                if (mi != src) {
+/*                if (mi != src) {
                     console.log("mi != src");
                 } else {
                     console.log("mi == src");
                 }
-
+*/
                 if (!params.qstring.app_key || !params.qstring.device_id) {
                     var now = new Date();
                     console.log('Missing parameter "app_key" or "device_id"'+'=========='+now+'==========');
