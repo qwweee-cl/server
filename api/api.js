@@ -717,9 +717,9 @@ function updateOEMTable() {
 }
 
 function checkKafkaStatus() {
-    console.log("check Kafka Status: "+kafakStatus);
+    //console.log("check Kafka Status: "+kafakStatus);
     producer.createTopics(['check'], false, function (err, data) {
-        console.log("createTopic: " + data);
+        //console.log("createTopic: " + data);
         if (err) {
             kafakStatus++;
             console.log("ERROR: " + err + " "+kafakStatus);
@@ -733,7 +733,7 @@ function checkKafkaStatus() {
                 kafakStatus++;
                 return;
             }
-            console.log("result: " + JSON.stringify(result));
+            //console.log("result: " + JSON.stringify(result));
             kafakStatus = 0;
         });
     });
