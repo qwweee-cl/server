@@ -27,13 +27,19 @@ var http = require('http'),
 http.globalAgent.maxSockets = common.config.api.max_sockets || 1024;
 
 //////////////////////////////////
+var kafakStatus = 0;
+var checkCount = 120;
 var kafka = require('kafka-node');
 var Producer = kafka.Producer;//kafka.HighLevelProducer;//kafka.Producer;
 var Client = kafka.Client;
 
 //var zkList = '172.31.27.186:2181,172.31.27.187:2181,172.31.27.188:2181';  // bootstrap.servers
 var zkList = '172.31.27.186:2181,172.31.27.187:2181,172.31.27.188:2181,172.31.16.236:2181,172.31.16.237:2181,172.31.16.238:2181,172.31.16.239:2181';  // bootstrap.servers
+var timeToRetryConnection = 12*1000; // 12 seconds
+var reconnectInterval = null;
+
 var client = new Client(zkList);
+
 //var p = argv.p || 0; // default is 0
 //var a = argv.a || 0; // no compress
 var producer = new Producer(client, { requireAcks: 1});
@@ -47,8 +53,10 @@ var cando = false;
 var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 'Node_Event_YCN_And', 'Node_Event_YCN_iOS', 'Node_Event_YCP_And', 'Node_Event_YCP_iOS', 'Node_Event_YMK_And', 'Node_Event_YMK_iOS',
                  'Node_Session_BCS_And', 'Node_Session_BCS_iOS', 'Node_Session_OtherApp', 'Node_Session_YCN_And', 'Node_Session_YCN_iOS', 'Node_Session_YCP_And', 'Node_Session_YCP_iOS', 'Node_Session_YMK_And', 'Node_Session_YMK_iOS'];
 //var topicListTest = ['test1', 'test2', 'test3', 'test4', 'test5', 'test6'];
-                 
-producer.on('ready', function () {
+
+function producerReady() {
+    var date = new Date();
+    console.log("ready: "+date.toString());
     isProducerReady = true;
     producer.createTopics(['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 'Node_Event_YCN_And', 'Node_Event_YCN_iOS', 'Node_Event_YCP_And', 'Node_Event_YCP_iOS', 'Node_Event_YMK_And', 'Node_Event_YMK_iOS',
                  'Node_Session_BCS_And', 'Node_Session_BCS_iOS', 'Node_Session_OtherApp', 'Node_Session_YCN_And', 'Node_Session_YCN_iOS', 'Node_Session_YCP_And', 'Node_Session_YCP_iOS', 'Node_Session_YMK_And', 'Node_Session_YMK_iOS'], false, function (err, data) {
@@ -58,11 +66,61 @@ producer.on('ready', function () {
         }
         cando = true;
     });
-});
+    if(reconnectInterval!=null) {
+        clearTimeout(reconnectInterval);
+        reconnectInterval =null;
+    }
+};
 
-producer.on('error', function (err) {
+function producerError(err) {
+    var date = new Date();
+    console.log("perror: "+date.toString());
+    producer.close();
+    client.close();
     console.log('producer error', err);
-});
+    cando = false;
+    if ( reconnectInterval == null) { // Multiple Error Events may fire, only set one connection retry.
+        reconnectInterval =
+        setTimeout(function () {
+                console.log("reconnect is called in producer error event");
+                client = new Client(zkList);
+                producer = new Producer(client, { requireAcks: 1});
+                producer.on('ready', producerReady);
+
+                producer.on('error', producerError);
+
+                client.on('error', clientError);
+        }, timeToRetryConnection);
+    }
+};
+
+function clientError(err) {
+    var date = new Date();
+    console.log("cerror: "+date.toString());
+    producer.close();
+    client.close();
+    console.log('client error', err);
+    if ( reconnectInterval == null) { // Multiple Error Events may fire, only set one connection retry.
+        reconnectInterval =
+        setTimeout(function () {
+                console.log("reconnect is called in producer error event");
+                client = new Client(zkList);
+                producer = new Producer(client, { requireAcks: 1});
+                producer.on('ready', producerReady);
+
+                producer.on('error', producerError);
+
+                client.on('error', clientError);
+        }, timeToRetryConnection);
+    }
+};
+
+
+producer.on('ready', producerReady);
+
+producer.on('error', producerError);
+
+client.on('error', clientError);
 //////////////////////////////////
 
 var appMap = {
@@ -658,6 +716,39 @@ function updateOEMTable() {
     });
 }
 
+function checkKafkaStatus() {
+    console.log("check Kafka Status: "+kafakStatus);
+    producer.createTopics(['check'], false, function (err, data) {
+        console.log("createTopic: " + data);
+        if (err) {
+            kafakStatus++;
+            console.log("ERROR: " + err + " "+kafakStatus);
+            return;
+        }
+        producer.send([
+            { topic: "check", messages: "1"}
+        ], function (err, result) {
+            if (err) {
+                console.log("ERROR: " + err);
+                kafakStatus++;
+                return;
+            }
+            console.log("result: " + JSON.stringify(result));
+            kafakStatus = 0;
+        });
+    });
+    if (kafakStatus >= checkCount) {
+        var exec = require('child_process').exec;
+        var cmd = 'sudo stop countly-supervisor';
+        exec(cmd, function(error, stdout, stderr) {
+            // command output is in stdout
+            if (error) {
+                console.log(error);
+            }
+        });
+    }
+}
+
 if (cluster.isMaster) {
     var now = new Date();
     console.log('start api =========================='+now+'==========================');
@@ -709,6 +800,11 @@ if (cluster.isMaster) {
         cluster.fork(workerEnv);
     });
 
+    setInterval(function() {
+        /** update workerEnv OEM tables data **/
+        checkKafkaStatus();
+    }, 5000);
+
 } else {
     var oems = process.env['OEMS'];
     var apps = process.env['APPS'];
@@ -719,6 +815,8 @@ if (cluster.isMaster) {
     appKeyMaps = JSON.parse(apps);
     console.log("init update oem-length:"+oemMaps.length);
     console.log("init update app-length:"+appKeyMaps.length);
+    //console.log(cluster.isMaster);
+    //console.log(worker);
     var baseTimeOut = 3600000;
 
     setInterval(function() {
