@@ -841,6 +841,26 @@ if (cluster.isMaster) {
                 'res':res
             };
 
+        if (queryString.app_id && queryString.app_id.length != 24) {
+            console.log('Invalid parameter "app_id"');
+            console.log('===========================================================');
+            console.log(JSON.stringify(params));
+            console.log('===========================================================');
+            common.returnMessage(params, 200, 'Success');
+            return false;
+        }
+
+        if (queryString.user_id && queryString.user_id.length != 24) {
+            console.log('Invalid parameter "user_id"');
+            console.log('===========================================================');
+            console.log(JSON.stringify(params));
+            console.log('===========================================================');
+            common.returnMessage(params, 200, 'Success');
+            return false;
+        }
+
+        
+
         var verifyStr = req.url.replace(/\/i\?/g, "");
         console.log(verifyStr);
         console.log("\n uma-h: "+req.headers['uma-h']);
@@ -863,24 +883,6 @@ if (cluster.isMaster) {
             console.log("uma check sum verified");
         } else {
             console.log("uma check sum failed");
-        }
-
-        if (queryString.app_id && queryString.app_id.length != 24) {
-            console.log('Invalid parameter "app_id"');
-            console.log('===========================================================');
-            console.log(JSON.stringify(params));
-            console.log('===========================================================');
-            common.returnMessage(params, 200, 'Success');
-            return false;
-        }
-
-        if (queryString.user_id && queryString.user_id.length != 24) {
-            console.log('Invalid parameter "user_id"');
-            console.log('===========================================================');
-            console.log(JSON.stringify(params));
-            console.log('===========================================================');
-            common.returnMessage(params, 200, 'Success');
-            return false;
         }
 
         for (var i = 1; i < paths.length; i++) {
