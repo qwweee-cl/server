@@ -12,6 +12,10 @@ var http = require('http'),
     oemCount = 0,
     appKeyCount = 0,
     crc = require('crc'),
+    fs = require('fs'),
+    crypto = require('crypto'),
+    privateKey = fs.readFileSync('/usr/local/countly/api/countly_private.pem'),
+    publicKey = fs.readFileSync('/usr/local/countly/api/countly_public.pem'),
     countlyApi = {
         data:{
             usage:require('./parts/data/usage.js'),
@@ -845,10 +849,6 @@ if (cluster.isMaster) {
         console.log(verifyStr);
         console.log("\n uma-h: "+req.headers['uma-h']);
 
-        var fs = require('fs');
-        var crypto = require('crypto');
-        var privateKey = fs.readFileSync('/usr/local/countly/api/countly_private.pem');
-        var publicKey = fs.readFileSync('/usr/local/countly/api/countly_public.pem');
         var ver = false;
         //var signer = crypto.createSign('sha256');
         //signer.update(verifyStr);
