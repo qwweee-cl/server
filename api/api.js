@@ -841,6 +841,30 @@ if (cluster.isMaster) {
                 'res':res
             };
 
+        var verifyStr = req.url.replace(/\/i\?/g, "");
+        console.log(verifyStr);
+        console.log("\n uma-h: "+req.headers['uma-h']);
+
+        var fs = require('fs');
+        var crypto = require('crypto');
+        var privateKey = fs.readFileSync('/usr/local/countly/api/countly_private.pem');
+        var publicKey = fs.readFileSync('/usr/local/countly/api/countly_public.pem');
+        //var signer = crypto.createSign('sha256');
+        //signer.update(verifyStr);
+        //var sign = signer.sign(privateKey,'base64');
+        var sign = req.headers['uma-h'];
+        console.log(sign);
+        var verifier = crypto.createVerify('sha256');
+        verifier.update(verifyStr);
+        var ver = verifier.verify(publicKey, sign,'base64');
+        console.log(ver);
+
+        if (ver) {
+            console.log("uma check sum verified");
+        } else {
+            console.log("uma check sum failed");
+        }
+
         if (queryString.app_id && queryString.app_id.length != 24) {
             console.log('Invalid parameter "app_id"');
             console.log('===========================================================');
