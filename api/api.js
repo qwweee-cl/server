@@ -846,8 +846,8 @@ if (cluster.isMaster) {
             };
 
         var verifyStr = req.url.replace(/\/i\?/g, "");
-        console.log(verifyStr);
-        console.log("\n uma-h: "+req.headers['uma-h']);
+        //console.log(verifyStr);
+        //console.log("\n uma-h: "+req.headers['uma-h']);
 
         var ver = false;
         //var signer = crypto.createSign('sha256');
@@ -855,11 +855,11 @@ if (cluster.isMaster) {
         //var sign = signer.sign(privateKey,'base64');
         if (req.headers['uma-h']) {
             var sign = req.headers['uma-h'];
-            console.log(sign);
+            //console.log(sign);
             var verifier = crypto.createVerify('sha256');
             verifier.update(verifyStr);
             ver = verifier.verify(publicKey, sign,'base64');
-            console.log(ver);
+            console.log("crc: "+ver);
         }
 
         if (ver) {
