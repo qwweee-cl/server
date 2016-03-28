@@ -1273,11 +1273,13 @@ if (cluster.isMaster) {
                         return false;
                     }
                 }
-
-                var verifyStr = req.url.replace(/\/i\?/g, "");
-                verifier = crypto.createVerify('sha256');
-                verifier.update(verifyStr);
-                params.verifiy = verifier.verify(publicKey, sign,'base64');
+                params.verifiy = true;
+                if (req.headers['uma-h']) {
+                    var sign = req.headers['uma-h'];
+                    var verifier = crypto.createVerify('sha256');
+                    verifier.update(verifyStr);
+                    params.verifiy = verifier.verify(publicKey, sign,'base64');
+                }
 
                 validateAppForWriteAPI(params);
                 break;
