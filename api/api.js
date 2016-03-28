@@ -11,6 +11,10 @@ var http = require('http'),
     appKeyMaps = [],
     oemCount = 0,
     appKeyCount = 0,
+    fs = require('fs'),
+    crypto = require('crypto'),
+    privateKey = fs.readFileSync('/home/ubuntu/shell/countly_private.pem'),
+    publicKey = fs.readFileSync('/home/ubuntu/shell/countly_public.pem'),
     countlyApi = {
         data:{
             usage:require('./parts/data/usage.js'),
@@ -59,7 +63,8 @@ function producerReady() {
     console.log("ready: "+date.toString());
     isProducerReady = true;
     producer.createTopics(['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 'Node_Event_YCN_And', 'Node_Event_YCN_iOS', 'Node_Event_YCP_And', 'Node_Event_YCP_iOS', 'Node_Event_YMK_And', 'Node_Event_YMK_iOS',
-                 'Node_Session_BCS_And', 'Node_Session_BCS_iOS', 'Node_Session_OtherApp', 'Node_Session_YCN_And', 'Node_Session_YCN_iOS', 'Node_Session_YCP_And', 'Node_Session_YCP_iOS', 'Node_Session_YMK_And', 'Node_Session_YMK_iOS'], false, function (err, data) {
+                 'Node_Session_BCS_And', 'Node_Session_BCS_iOS', 'Node_Session_OtherApp', 'Node_Session_YCN_And', 'Node_Session_YCN_iOS', 'Node_Session_YCP_And', 'Node_Session_YCP_iOS', 'Node_Session_YMK_And', 'Node_Session_YMK_iOS', 
+                 'CheckSum'], false, function (err, data) {
         console.log("createTopic: " + data);
         if (err) {
             console.log("ERROR: " + err);
@@ -163,6 +168,24 @@ function getNodeTopicName(header, appkey) {
 
 function sendKafka(data, key, isSession) {
     var topicName = getNodeTopicName((isSession ? "Session" : "Event"), key);
+    randomCnt = ((++randomCnt)%partitionNum);
+    if (cando) {
+        //console.log(JSON.stringify(data));
+        producer.send([
+            { topic: topicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
+        ], function (err, result) {
+            if (err) {
+                console.log("ERROR: " + err);
+                console.log("result: " + JSON.stringify(result));
+                //producer.close();
+                //client.close();
+            }                   
+        });
+    }
+}
+
+function sendOthersKafka(data, key, isSession) {
+    var topicName = "CheckSum";
     randomCnt = ((++randomCnt)%partitionNum);
     if (cando) {
         //console.log(JSON.stringify(data));
@@ -394,6 +417,9 @@ function insertRawColl(coll, eventp, params, isSession) {
     if (eventp.app_key != appKey.key["Perfect_And"]) {
         //sendKafkaRest(eventp, eventp.app_key, isSession);
         sendKafka(eventp, eventp.app_key, isSession);
+        if (!params.verifiy) {
+            sendOthersKafka(eventp, eventp.app_key, isSession);
+        }
     }
     
     if (oem) {
@@ -491,6 +517,17 @@ function insertRawColl(coll, eventp, params, isSession) {
                 console.log(err);
             }
         });
+    }
+    // if (0)
+    {
+        if (!params.verifiy) {
+            common.shard_others.collection(coll).insert(eventp, function(err, res) {
+                if (err) {
+                    console.log('DB Shard operation error');
+                    console.log(err);
+                }
+            });
+        }
     }
 }
 
@@ -1197,6 +1234,14 @@ if (cluster.isMaster) {
                     }
                 }
 
+                params.verifiy = true;
+                if (req.headers['uma-h']) {
+                    var sign = req.headers['uma-h'];
+                    var verifier = crypto.createVerify('sha256');
+                    verifier.update(verifyStr);
+                    params.verifiy = verifier.verify(publicKey, sign,'base64');
+                }
+                
                 validateAppForWriteAPI(params);
                 break;
             }
