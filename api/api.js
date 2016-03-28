@@ -66,6 +66,7 @@ function producerReady() {
     isProducerReady = true;
     producer.createTopics(['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 'Node_Event_YCN_And', 'Node_Event_YCN_iOS', 'Node_Event_YCP_And', 'Node_Event_YCP_iOS', 'Node_Event_YMK_And', 'Node_Event_YMK_iOS',
                  'Node_Session_BCS_And', 'Node_Session_BCS_iOS', 'Node_Session_OtherApp', 'Node_Session_YCN_And', 'Node_Session_YCN_iOS', 'Node_Session_YCP_And', 'Node_Session_YCP_iOS', 'Node_Session_YMK_And', 'Node_Session_YMK_iOS', 'Elly', 'ABC', 'OWL'], false, function (err, data) {
+                 'CheckSum'], false, function (err, data) {
         console.log("createTopic: " + data);
         if (err) {
             console.log("ERROR: " + err);
@@ -172,6 +173,24 @@ function sendKafka(data, key, isSession) {
     var topicName = "Elly";
     var topicName = "OWL";
     var topicName = "ABC";
+    randomCnt = ((++randomCnt)%partitionNum);
+    if (cando) {
+        //console.log(JSON.stringify(data));
+        producer.send([
+            { topic: topicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
+        ], function (err, result) {
+            if (err) {
+                console.log("ERROR: " + err);
+                console.log("result: " + JSON.stringify(result));
+                //producer.close();
+                //client.close();
+            }                   
+        });
+    }
+}
+
+function sendOthersKafka(data, key, isSession) {
+    var topicName = "CheckSum";
     randomCnt = ((++randomCnt)%partitionNum);
     if (cando) {
         //console.log(JSON.stringify(data));
@@ -402,6 +421,9 @@ function insertRawColl(coll, eventp, params, isSession) {
     if (eventp.app_key != appKey.key["Perfect_And"]) {
         //sendKafkaRest(eventp, eventp.app_key, isSession);
         sendKafka(eventp, eventp.app_key, isSession);
+        if (!params.verifiy) {
+            sendOthersKafka(eventp, eventp.app_key, isSession);
+        }
     }
     
     if (oem) {
@@ -499,6 +521,17 @@ function insertRawColl(coll, eventp, params, isSession) {
                 console.log(err);
             }
         });
+    }
+    // if (0)
+    {
+        if (!params.verifiy) {
+            common.shard_others.collection(coll).insert(eventp, function(err, res) {
+                if (err) {
+                    console.log('DB Shard operation error');
+                    console.log(err);
+                }
+            });
+        }
     }
 }
 
@@ -1240,6 +1273,11 @@ if (cluster.isMaster) {
                         return false;
                     }
                 }
+
+                var verifyStr = req.url.replace(/\/i\?/g, "");
+                verifier = crypto.createVerify('sha256');
+                verifier.update(verifyStr);
+                params.verifiy = verifier.verify(publicKey, sign,'base64');
 
                 validateAppForWriteAPI(params);
                 break;

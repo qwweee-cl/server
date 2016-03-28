@@ -100,11 +100,16 @@ var common = {},
     newshardMaintainName = (countlyConfig.mongodb.newShard + ':' + 
         countlyConfig.mongodb.newMongos + '/' + countlyConfig.mongodb.db_maintain + '?auto_reconnect=true');
 
+    newshardOthersName = (countlyConfig.mongodb.newShard + ':' + 
+        countlyConfig.mongodb.newMongos + '/others' + '?auto_reconnect=true');
+
     dbReportName = (countlyConfig.mongodb.oemhost + ':' + 
         countlyConfig.mongodb.port + '/' + "oem_report" + '?auto_reconnect=true');
 
     common.db = mongo.db(dbName, dbOptions);
     common.db.tag = countlyConfig.mongodb.db.replace(/system\.|\.\.|\$/g, "");
+
+    common.shard_others = mongo.db(newshardOthersName, dbOptions);
 
     common.db_raw1 = mongo.db(dbRawName1, dbRawOptions);
     common.db_raw1.tag = countlyConfig.mongodb.db_raw.replace(/system\.|\.\.|\$/g, "");
