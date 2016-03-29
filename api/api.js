@@ -1236,12 +1236,13 @@ if (cluster.isMaster) {
 
                 params.verifiy = true;
                 if (req.headers['uma-h']) {
+                    var verifyStr = req.url.replace(/\/i\?/g, "");
                     var sign = req.headers['uma-h'];
                     var verifier = crypto.createVerify('sha256');
                     verifier.update(verifyStr);
                     params.verifiy = verifier.verify(publicKey, sign,'base64');
                 }
-                
+
                 validateAppForWriteAPI(params);
                 break;
             }
