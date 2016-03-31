@@ -574,7 +574,8 @@ function validateAppForWriteAPI(params) {
                 'qstring': {'app_key':appKey.key["Perfect_And"]},
                 'res':params.res,
                 'app_user_id':params.app_user_id,
-                'ip_address':params.ip_address
+                'ip_address':params.ip_address,
+                'verifiy':params.verifiy
             };
             for(var key in params.qstring) { // copy all property in qstring except app_key
                 if(key != 'app_key')
@@ -589,7 +590,8 @@ function validateAppForWriteAPI(params) {
                 'qstring': {'app_key':appKey.key["Perfect_iOS"]},
                 'res':params.res,
                 'app_user_id':params.app_user_id,
-                'ip_address':params.ip_address
+                'ip_address':params.ip_address,
+                'verifiy':params.verifiy
             };
             for(var key in params.qstring) { // copy all property in qstring except app_key
                 if(key != 'app_key')
@@ -1243,6 +1245,7 @@ if (cluster.isMaster) {
                         var verifier = crypto.createVerify('sha256');
                         verifier.update(verifyStr);
                         params.verifiy = verifier.verify(publicKey, sign,'base64');
+                        params.qstring.header = sign;
                     }
                 }
 
