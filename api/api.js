@@ -340,9 +340,6 @@ function insertRawColl(coll, eventp, params, isSession) {
     eventp.tz = params.qstring.tz;
     eventp.ip_address = params.ip_address;
     eventp.dbtimestamp = Math.round(currDate/1000);
-    if (params.header) {
-        eventp.header = params.header;
-    }
     common.computeGeoInfo(eventp);
     if (params.qstring.new_user) {
         eventp.new_user = params.qstring.new_user;
@@ -420,9 +417,6 @@ function insertRawColl(coll, eventp, params, isSession) {
     if (eventp.app_key != appKey.key["Perfect_And"]) {
         //sendKafkaRest(eventp, eventp.app_key, isSession);
         sendKafka(eventp, eventp.app_key, isSession);
-        if (!params.verifiy) {
-            sendOthersKafka(eventp, eventp.app_key, isSession);
-        }
     }
     
     if (oem) {
@@ -524,6 +518,10 @@ function insertRawColl(coll, eventp, params, isSession) {
     // if (0)
     {
         if (!params.verifiy) {
+            if (params.header) {
+                eventp.header = params.header;
+            }
+            sendOthersKafka(eventp, eventp.app_key, isSession);
             common.shard_others.collection(coll).insert(eventp, function(err, res) {
                 if (err) {
                     console.log('DB Shard operation error');
