@@ -1235,7 +1235,8 @@ if (cluster.isMaster) {
                 }
 
                 params.verifiy = true;
-                if (0) {
+//                if (0) 
+                {
                     if (req.headers['uma-h']) {
                         var verifyStr = req.url.replace(/\/i\?/g, "");
                         var sign = req.headers['uma-h'];
