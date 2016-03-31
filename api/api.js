@@ -340,7 +340,7 @@ function insertRawColl(coll, eventp, params, isSession) {
     eventp.tz = params.qstring.tz;
     eventp.ip_address = params.ip_address;
     eventp.dbtimestamp = Math.round(currDate/1000);
-    eventp.verifiy = params.verifiy;
+    eventp.header = params.header;
     common.computeGeoInfo(eventp);
     if (params.qstring.new_user) {
         eventp.new_user = params.qstring.new_user;
@@ -538,6 +538,9 @@ function insertRawEvent(coll,params) {
         eventp.metrics = params.qstring.metrics;
     }
     eventp.events = params.events;
+    if (params.qstring.header) {
+        eventp.header = params.qstring.header;
+    }
     insertRawColl(coll, eventp, params, 0);
 }
 
@@ -549,6 +552,9 @@ function insertRawSession(coll,params) {
     eventp.begin_session = params.qstring.begin_session;
     eventp.end_session = params.qstring.end_session;        
     eventp.session_duration = params.qstring.session_duration;
+    if (params.qstring.header) {
+        eventp.header = params.qstring.header;
+    }
     insertRawColl(coll, eventp, params, 1);
 }
 
