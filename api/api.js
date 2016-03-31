@@ -340,6 +340,7 @@ function insertRawColl(coll, eventp, params, isSession) {
     eventp.tz = params.qstring.tz;
     eventp.ip_address = params.ip_address;
     eventp.dbtimestamp = Math.round(currDate/1000);
+    eventp.verifiy = params.verifiy;
     common.computeGeoInfo(eventp);
     if (params.qstring.new_user) {
         eventp.new_user = params.qstring.new_user;
