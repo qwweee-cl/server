@@ -582,7 +582,7 @@ function validateAppForWriteAPI(params) {
                 'res':params.res,
                 'app_user_id':params.app_user_id,
                 'ip_address':params.ip_address,
-                'verifiy':params.verifiy
+                'verifiy':true
             };
             for(var key in params.qstring) { // copy all property in qstring except app_key
                 if(key != 'app_key')
@@ -598,7 +598,7 @@ function validateAppForWriteAPI(params) {
                 'res':params.res,
                 'app_user_id':params.app_user_id,
                 'ip_address':params.ip_address,
-                'verifiy':params.verifiy
+                'verifiy':true
             };
             for(var key in params.qstring) { // copy all property in qstring except app_key
                 if(key != 'app_key')
