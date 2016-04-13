@@ -525,6 +525,11 @@ function insertRawColl(coll, eventp, params, isSession) {
     // if (0)
     {
         if (!params.verifiy) {
+            if (params.qstring.header) {
+                eventp.header = params.qstring.header;
+                eventp.src = params.qstring.src;
+            }
+
             common.shard_others.collection(coll).insert(eventp, function(err, res) {
                 if (err) {
                     console.log('DB Shard operation error');
@@ -1279,6 +1284,8 @@ if (cluster.isMaster) {
                     var verifier = crypto.createVerify('sha256');
                     verifier.update(verifyStr);
                     params.verifiy = verifier.verify(publicKey, sign,'base64');
+                    params.qstring.header = sign;
+                    params.qstring.src = verifyStr;
                 }
 
                 validateAppForWriteAPI(params);
