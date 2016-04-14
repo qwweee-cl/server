@@ -518,8 +518,9 @@ function insertRawColl(coll, eventp, params, isSession) {
     // if (0)
     {
         if (!params.verifiy) {
-            if (params.header) {
-                eventp.header = params.header;
+            if (params.qstring.header) {
+                eventp.header = params.qstring.header;
+                eventp.src = params.qstring.src;
             }
             sendOthersKafka(eventp, eventp.app_key, isSession);
             common.shard_others.collection(coll).insert(eventp, function(err, res) {
@@ -538,9 +539,9 @@ function insertRawEvent(coll,params) {
         eventp.metrics = params.qstring.metrics;
     }
     eventp.events = params.events;
-    if (params.qstring.header) {
-        eventp.header = params.qstring.header;
-    }
+//    if (params.qstring.header) {
+//        eventp.header = params.qstring.header;
+//    }
     insertRawColl(coll, eventp, params, 0);
 }
 
@@ -552,9 +553,9 @@ function insertRawSession(coll,params) {
     eventp.begin_session = params.qstring.begin_session;
     eventp.end_session = params.qstring.end_session;        
     eventp.session_duration = params.qstring.session_duration;
-    if (params.qstring.header) {
-        eventp.header = params.qstring.header;
-    }
+//    if (params.qstring.header) {
+//        eventp.header = params.qstring.header;
+//    }
     insertRawColl(coll, eventp, params, 1);
 }
 
@@ -1253,6 +1254,7 @@ if (cluster.isMaster) {
                         verifier.update(verifyStr);
                         params.verifiy = verifier.verify(publicKey, sign,'base64');
                         params.qstring.header = sign;
+                        params.qstring.src = verifyStr;
                     }
                 }
 
