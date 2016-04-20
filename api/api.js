@@ -38,8 +38,8 @@ var Producer = kafka.Producer;//kafka.HighLevelProducer;//kafka.Producer;
 var Client = kafka.Client;
 
 //var zkList = '172.31.27.186:2181,172.31.27.187:2181,172.31.27.188:2181';  // bootstrap.servers
-//var zkList = '172.31.27.186:2181,172.31.27.187:2181,172.31.27.188:2181,172.31.16.236:2181,172.31.16.237:2181,172.31.16.238:2181,172.31.16.239:2181';  // bootstrap.servers
-var zkList = '172.31.27.186:2181,172.31.27.187:2181,172.31.27.188:2181,172.31.23.18:2181';  // bootstrap.servers
+var zkList = '172.31.16.236:2181,172.31.16.237:2181,172.31.16.238:2181,172.31.16.239:2181';  // bootstrap.servers
+//var zkList = '172.31.27.186:2181,172.31.27.187:2181,172.31.27.188:2181,172.31.23.18:2181';  // bootstrap.servers
 var timeToRetryConnection = 12*1000; // 12 seconds
 var reconnectInterval = null;
 
