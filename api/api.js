@@ -417,7 +417,18 @@ function insertRawColl(coll, eventp, params, isSession) {
 
     if (eventp.app_key != appKey.key["Perfect_And"]) {
         //sendKafkaRest(eventp, eventp.app_key, isSession);
-        sendKafka(eventp, eventp.app_key, isSession);
+        // if (0)
+        {
+            if (!params.verifiy) {
+                if (params.qstring.header) {
+                    eventp.header = params.qstring.header;
+                    eventp.src = params.qstring.src;
+                }
+                sendOthersKafka(eventp, eventp.app_key, isSession);
+            } else {
+                sendKafka(eventp, eventp.app_key, isSession);
+            }
+        }
     }
     
     if (oem) {
@@ -509,14 +520,29 @@ function insertRawColl(coll, eventp, params, isSession) {
     }
     //if (0)
     {
-        common.getNewShardRawDB(eventp.app_key, currDate).collection(coll).insert(eventp, function(err, res) {
-            if (err) {
-                console.log('DB Shard operation error');
-                console.log(err);
+        if (!params.verifiy) {
+            if (params.qstring.header) {
+                eventp.header = params.qstring.header;
+                eventp.src = params.qstring.src;
             }
-        });
+            common.shard_others.collection(coll).insert(eventp, function(err, res) {
+                if (err) {
+                    console.log('DB Shard operation error');
+                    console.log(err);
+                }
+            });
+        } else {
+            common.getNewShardRawDB(eventp.app_key, currDate).collection(coll).insert(eventp, function(err, res) {
+                if (err) {
+                    console.log('DB Shard operation error');
+                    console.log(err);
+                }
+            });
+        }
+        
     }
     // if (0)
+/*
     {
         if (!params.verifiy) {
             if (params.qstring.header) {
@@ -532,6 +558,7 @@ function insertRawColl(coll, eventp, params, isSession) {
             });
         }
     }
+*/
 }
 
 function insertRawEvent(coll,params) {
