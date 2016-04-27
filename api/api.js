@@ -415,7 +415,7 @@ function insertRawColl(coll, eventp, params, isSession) {
         return;
     }
 
-    if (eventp.app_key != appKey.key["Perfect_And"]) {
+    if (!(eventp.app_key == appKey.key["Perfect_And"] || eventp.app_key == appKey.key["Perfect_iOS"])) {
         //sendKafkaRest(eventp, eventp.app_key, isSession);
         // if (0)
         {
@@ -575,9 +575,9 @@ function insertRawEvent(coll,params) {
 
 function insertRawSession(coll,params) {
     var eventp = {};
-    if (params.qstring.begin_session) {
+    //if (params.qstring.begin_session) {
         eventp.metrics = params.qstring.metrics;
-    }
+    //}
     eventp.begin_session = params.qstring.begin_session;
     eventp.end_session = params.qstring.end_session;        
     eventp.session_duration = params.qstring.session_duration;
