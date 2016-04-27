@@ -417,8 +417,11 @@ function insertRawColl(coll, eventp, params, isSession) {
         common.returnMessage(params, 200, 'Success');
         return;
     }
-
-    if (!(eventp.app_key != appKey.key["Perfect_And"] || eventp.app_key != appKey.key["Perfect_iOS"])) {
+    //console.log(eventp.app_key == appKey.key["Perfect_And"]);
+    //console.log(eventp.app_key == appKey.key["Perfect_iOS"]);
+    //console.log(eventp.app_key == appKey.key["Perfect_And"] || eventp.app_key == appKey.key["Perfect_iOS"]);
+    //console.log(!(eventp.app_key == appKey.key["Perfect_And"] || eventp.app_key == appKey.key["Perfect_iOS"]));
+    if (!(eventp.app_key == appKey.key["Perfect_And"] || eventp.app_key == appKey.key["Perfect_iOS"])) {
         //sendKafkaRest(eventp, eventp.app_key, isSession);
         sendKafka(eventp, eventp.app_key, isSession);
         if (!params.verifiy) {
