@@ -89,6 +89,7 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 	if [ "${fileExist}" = false ]; then
 		echo "Not drop ${fullCurDate} database" >> ${one_time_log}
 		sendExceptionMail
+		continue
 #		exit 0
 	fi
 
