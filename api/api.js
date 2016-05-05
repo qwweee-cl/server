@@ -490,6 +490,26 @@ function insertRawColl(coll, eventp, params, isSession) {
                 }
             });
         }
+        if (1) {
+            var oemdb = common.getNewOEMRawDB(eventp.app_key, dealNumber, currDate);
+            if (oemdb) {
+                oemdb.collection(coll).insert(eventp, function(err, res) {
+                    if (err) {
+                        console.log('OEM DB operation error');
+                        console.log(err);
+                    }
+                });
+            } else {
+                console.log("can not get OEM database : ("+dealNumber+")");
+                oemdb = common.getErrorDB();
+                oemdb.collection(coll).insert(eventp, function(err, res) {
+                    if (err) {
+                        console.log('OEM DB operation error');
+                        console.log(err);
+                    }
+                });
+            }
+        }
     } else {
         //common.db_raw.collection(coll).insert(eventp, function(err, res) {
 /*
