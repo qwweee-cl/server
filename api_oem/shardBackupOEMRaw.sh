@@ -72,7 +72,7 @@ exportPath="/mem/mongo_oem_shard_backup/"
 s3Path="/s3mnt/shard_backup/oem_hourly_data/"
 CachePath="/mem/tmp/s3cache/clcom2-countly/shard_backup/oem_hourly_data/"
 
-cmds3Path="s3://clcom2-countly/shard_backup/oem_hourly_data/"
+cmds3Path="s3://clcom2-countly/shard_backup/oem_hourly_data_test/"
 #mongo="localhost:27017"
 batchdb=""
 #indexNum="1"
