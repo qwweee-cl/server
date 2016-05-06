@@ -39,7 +39,7 @@ exportPath="/mem/mongo_oem_hourly_dashboard_backup/"
 s3DashboardPath="/s3mnt/shard_backup/OEM/dashboard_data/"
 DashboardCachePath="/mem/tmp/s3cache/clcom2-countly/shard_backup/OEM/dashboard_data/"
 
-cmds3DashboardPath="s3://clcom2-countly/shard_backup/OEM/dashboard_data/"
+cmds3DashboardPath="s3://clcom2-countly/shard_backup/OEM/dashboard_data_test/"
 
 savedate=$(date +%Y%m%d)
 dashboarddate=${savedate}"_countly"
@@ -80,7 +80,7 @@ dashboard="cladtest:27017"
 ## this is for test end
 
 dashboarddb="countly"
-dashboard="claddb2:27017"
+dashboard="countly-oem:27017"
 
 savedate=$(date +%Y%m%d)
 dashboarddate=${savedate}"_countly"
