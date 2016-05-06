@@ -56,7 +56,7 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 
 	echo -e ${s3One1}
 
-	existFile1=`aws s3 ls ${s3One1} | wc -l`
+	existFile1=`/usr/local/bin/aws s3 ls ${s3One1} | wc -l`
 
 	fileExist=true
 
@@ -72,7 +72,7 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 	status=1
 	string="File Is Zero";
 
-	duFile1=`aws s3 ls ${s3One1} | awk '{ print $3 }'`
+	duFile1=`/usr/local/bin/aws s3 ls ${s3One1} | awk '{ print $3 }'`
 
 	if [ -z ${duFile1} ]; then
 		echo "${s3One1} file size is 0" >> ${one_time_log}
