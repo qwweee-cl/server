@@ -92,8 +92,8 @@ DashboardCachePath="/mem/tmp/s3cache/clcom2-countly/shard_backup/OEM/dashboard_d
 rawSession="/mem/tmp/RawSession/"
 batchdb=""
 
-s3Path="/s3mnt/shard_backup/oem_hourly_data/"
-cmds3Path="s3://clcom2-countly/shard_backup/oem_hourly_data/"
+s3Path="/s3mnt/shard_backup/oem_hourly_data_test/"
+cmds3Path="s3://clcom2-countly/shard_backup/oem_hourly_data_test/"
 
 ## backup dashboard need
 checkTime=$(date +%H%M)
