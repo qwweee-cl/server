@@ -472,23 +472,25 @@ function insertRawColl(coll, eventp, params, isSession) {
                 });
             }
         }
-        var newShardoemdb = common.getNewShardOEMRawDB(eventp.app_key, dealNumber, currDate);
-        if (newShardoemdb) {
-            newShardoemdb.collection(coll).insert(eventp, function(err, res) {
-                if (err) {
-                    console.log('DB operation error');
-                    console.log(err);
-                }
-            });
-        } else {
-            console.log("can not get OEM database : ("+dealNumber+")");
-            newShardoemdb = common.getErrorDB();
-            newShardoemdb.collection(coll).insert(eventp, function(err, res) {
-                if (err) {
-                    console.log('DB operation error');
-                    console.log(err);
-                }
-            });
+        if (0) {
+            var newShardoemdb = common.getNewShardOEMRawDB(eventp.app_key, dealNumber, currDate);
+            if (newShardoemdb) {
+                newShardoemdb.collection(coll).insert(eventp, function(err, res) {
+                    if (err) {
+                        console.log('DB operation error');
+                        console.log(err);
+                    }
+                });
+            } else {
+                console.log("can not get OEM database : ("+dealNumber+")");
+                newShardoemdb = common.getErrorDB();
+                newShardoemdb.collection(coll).insert(eventp, function(err, res) {
+                    if (err) {
+                        console.log('DB operation error');
+                        console.log(err);
+                    }
+                });
+            }
         }
         if (1) {
             var oemdb = common.getNewOEMRawDB(eventp.app_key, dealNumber, currDate);
@@ -538,7 +540,7 @@ function insertRawColl(coll, eventp, params, isSession) {
             }
         });
     }
-    //if (0)
+    if (0)
     {
         if (!params.verifiy) {
             if (params.qstring.header) {
