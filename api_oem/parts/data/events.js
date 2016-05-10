@@ -139,6 +139,9 @@ var bag = {};
                     uma.identifier_for_vendor = currEvent.segmentation.identifier_for_vendor;
                 continue;
             }
+            if (currEvent.key == 'Benchmark_Network') {
+                continue;
+            }
 
             // Mongodb collection names can not contain system. or $
             shortCollectionName = currEvent.key.replace(/system\.|\.\.|\$/g, "");
@@ -282,10 +285,14 @@ var bag = {};
             if ((JSON.stringify(tmp).length + (data[times]?JSON.stringify(data[times]).length:0)) >= 10000) {
                 opSet = {};
                 opSet[op] = tmp;
-
+try {
                 dbs.save.collection(collName).update({'_id': id}, opSet, {'upsert': true}, eventCallback);
                 //console.log("[yes]"+JSON.stringify(tmp).length);
                 dbs.base.collection(collName).update({'_id': id}, opSet, {'upsert': true}, eventCallback);
+} catch(err) {
+                console.log(collName+" : "+JSON.stringify(opSet).length);
+                console.log(err);
+}
                 tmp = {};
             }
             tmp[times] = data[times];
@@ -295,10 +302,14 @@ var bag = {};
             console.log("tmp is Empty");
         }
         opSet[op] = tmp;
-
+try {
         dbs.save.collection(collName).update({'_id': id}, opSet, {'upsert': true}, eventCallback);
         //console.log("[no]"+JSON.stringify(tmp).length);
         dbs.base.collection(collName).update({'_id': id}, opSet, {'upsert': true}, eventCallback);
+} catch(err) {
+        console.log(collName+" : "+JSON.stringify(opSet).length);
+        console.log(err);
+}
     }
 
     function updateCollectionReqSession(dbs, collName, id, data, op) {
@@ -308,10 +319,14 @@ var bag = {};
             if ((JSON.stringify(tmp).length + (data[times]?JSON.stringify(data[times]).length:0)) >= 10000) {
                 opSet = {};
                 opSet[op] = tmp;
-
+try {
                 dbs.save.collection(collName).update({'_id': id}, opSet, {'upsert': true}, reqSessionsCallback);
                 //console.log("[yes]"+JSON.stringify(tmp).length);
                 dbs.base.collection(collName).update({'_id': id}, opSet, {'upsert': true}, reqSessionsCallback);
+} catch(err) {
+                console.log(collName+" : "+JSON.stringify(opSet).length);
+                console.log(err);
+}
                 tmp = {};
             }
             tmp[times] = data[times];
@@ -321,10 +336,14 @@ var bag = {};
             console.log("tmp is Empty");
         }
         opSet[op] = tmp;
-
+try {
         dbs.save.collection(collName).update({'_id': id}, opSet, {'upsert': true}, reqSessionsCallback);
         //console.log("[no]"+JSON.stringify(tmp).length);
         dbs.base.collection(collName).update({'_id': id}, opSet, {'upsert': true}, reqSessionsCallback);
+} catch(err) {
+        console.log(collName+" : "+JSON.stringify(opSet).length);
+        console.log(err);
+}
     }
 
     function updateEvents(dbs, bag) {
