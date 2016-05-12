@@ -76,6 +76,8 @@ for (( j = 0 ; j < ${#oems[@]} ; j++ )) do
   echo -e "node ensureSessionIndex.js ${dbHost} ${batchdb} raw_session_ecc26ef108c821f3aadc5e283c512ee68be7d43e" >> ${one_time_log}
   echo -e "node ensureSessionIndex.js ${dbHost} ${batchdb} raw_session_488fea5101de4a8226718db0611c2ff2daeca06a" >> ${one_time_log}
   echo -e "node ensureSessionIndex.js ${dbHost} ${batchdb} raw_session_7cd568771523a0621abff9ae3f95daf3a8694392" >> ${one_time_log}
+  echo -e "node ensureSessionIndex.js ${dbHost} ${batchdb} raw_session_0a9928b86e75195094cac739c1f0dbd6d5660ad6" >> ${one_time_log}
+  echo -e "node ensureSessionIndex.js ${dbHost} ${batchdb} raw_session_32201f63d36dcf07963ed97727a3dc3019e0e458" >> ${one_time_log}
   node ensureSessionIndex.js ${dbHost} ${batchdb} raw_session_e315c111663af26a53e5fe4c82cc1baeecf50599
   node ensureSessionIndex.js ${dbHost} ${batchdb} raw_session_c277de0546df31757ff26a723907bc150add4254
   node ensureSessionIndex.js ${dbHost} ${batchdb} raw_session_75edfca17dfbe875e63a66633ed6b00e30adcb92
@@ -86,6 +88,8 @@ for (( j = 0 ; j < ${#oems[@]} ; j++ )) do
   node ensureSessionIndex.js ${dbHost} ${batchdb} raw_session_ecc26ef108c821f3aadc5e283c512ee68be7d43e
   node ensureSessionIndex.js ${dbHost} ${batchdb} raw_session_488fea5101de4a8226718db0611c2ff2daeca06a
   node ensureSessionIndex.js ${dbHost} ${batchdb} raw_session_7cd568771523a0621abff9ae3f95daf3a8694392
+  node ensureSessionIndex.js ${dbHost} ${batchdb} raw_session_0a9928b86e75195094cac739c1f0dbd6d5660ad6
+  node ensureSessionIndex.js ${dbHost} ${batchdb} raw_session_32201f63d36dcf07963ed97727a3dc3019e0e458
 
   echo -e "node ensureEventIndex.js ${dbHost} ${batchdb} raw_event_e315c111663af26a53e5fe4c82cc1baeecf50599" >> ${one_time_log}
   echo -e "node ensureEventIndex.js ${dbHost} ${batchdb} raw_event_c277de0546df31757ff26a723907bc150add4254" >> ${one_time_log}
@@ -97,6 +101,8 @@ for (( j = 0 ; j < ${#oems[@]} ; j++ )) do
   echo -e "node ensureEventIndex.js ${dbHost} ${batchdb} raw_event_ecc26ef108c821f3aadc5e283c512ee68be7d43e" >> ${one_time_log}
   echo -e "node ensureEventIndex.js ${dbHost} ${batchdb} raw_event_488fea5101de4a8226718db0611c2ff2daeca06a" >> ${one_time_log}
   echo -e "node ensureEventIndex.js ${dbHost} ${batchdb} raw_event_7cd568771523a0621abff9ae3f95daf3a8694392" >> ${one_time_log}
+  echo -e "node ensureEventIndex.js ${dbHost} ${batchdb} raw_event_0a9928b86e75195094cac739c1f0dbd6d5660ad6" >> ${one_time_log}
+  echo -e "node ensureEventIndex.js ${dbHost} ${batchdb} raw_event_32201f63d36dcf07963ed97727a3dc3019e0e458" >> ${one_time_log}
   node ensureEventIndex.js ${dbHost} ${batchdb} raw_event_e315c111663af26a53e5fe4c82cc1baeecf50599
   node ensureEventIndex.js ${dbHost} ${batchdb} raw_event_c277de0546df31757ff26a723907bc150add4254
   node ensureEventIndex.js ${dbHost} ${batchdb} raw_event_75edfca17dfbe875e63a66633ed6b00e30adcb92
@@ -107,6 +113,8 @@ for (( j = 0 ; j < ${#oems[@]} ; j++ )) do
   node ensureEventIndex.js ${dbHost} ${batchdb} raw_event_ecc26ef108c821f3aadc5e283c512ee68be7d43e
   node ensureEventIndex.js ${dbHost} ${batchdb} raw_event_488fea5101de4a8226718db0611c2ff2daeca06a
   node ensureEventIndex.js ${dbHost} ${batchdb} raw_event_7cd568771523a0621abff9ae3f95daf3a8694392
+  node ensureEventIndex.js ${dbHost} ${batchdb} raw_event_0a9928b86e75195094cac739c1f0dbd6d5660ad6
+  node ensureEventIndex.js ${dbHost} ${batchdb} raw_event_32201f63d36dcf07963ed97727a3dc3019e0e458
 
 done
 
