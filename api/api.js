@@ -143,7 +143,7 @@ var appMap = {
 			"895ef49612e79d93c462c6d34abd8949b4c849af" : {appName: "YCN", appOS: "And"}, // YouCam_Nail_And
 			"ecc26ef108c821f3aadc5e283c512ee68be7d43e" : {appName: "YCN", appOS: "iOS"}, // YouCam_Nail_iOS
 			"488fea5101de4a8226718db0611c2ff2daeca06a" : {appName: "BCS", appOS: "And"}, // BeautyCircle_And
-			"7cd568771523a0621abff9ae3f95daf3a8694392" : {appName: "BCS", appOS: "iOS"} // BeautyCircle_iOS
+			"7cd568771523a0621abff9ae3f95daf3a8694392" : {appName: "BCS", appOS: "iOS"}, // BeautyCircle_iOS
             "0a9928b86e75195094cac739c1f0dbd6d5660ad6" : {appName: "YCL", appOS: "And"}, // BeautyCircle_And
             "32201f63d36dcf07963ed97727a3dc3019e0e458" : {appName: "YCL", appOS: "iOS"} // BeautyCircle_iOS
 };
