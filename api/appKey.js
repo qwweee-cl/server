@@ -12,6 +12,8 @@ var appKey = {};
 		"YouCam_Nail_iOS"	: "ecc26ef108c821f3aadc5e283c512ee68be7d43e",
 		"BeautyCircle_And"	: "488fea5101de4a8226718db0611c2ff2daeca06a",
 		"BeautyCircle_iOS"	: "7cd568771523a0621abff9ae3f95daf3a8694392",
+		"YouCam_Live_And"	: "0a9928b86e75195094cac739c1f0dbd6d5660ad6",
+		"YouCam_Live_iOS"	: "32201f63d36dcf07963ed97727a3dc3019e0e458",
 	};
 }(appKey));
 

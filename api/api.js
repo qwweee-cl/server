@@ -55,17 +55,20 @@ var cando = false;
 //var workerID;
 //var isProducerReady = false;
 
-var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 'Node_Event_YCN_And', 'Node_Event_YCN_iOS', 'Node_Event_YCP_And', 'Node_Event_YCP_iOS', 'Node_Event_YMK_And', 'Node_Event_YMK_iOS',
-                 'Node_Session_BCS_And', 'Node_Session_BCS_iOS', 'Node_Session_OtherApp', 'Node_Session_YCN_And', 'Node_Session_YCN_iOS', 'Node_Session_YCP_And', 'Node_Session_YCP_iOS', 'Node_Session_YMK_And', 'Node_Session_YMK_iOS'];
-//var topicListTest = ['test1', 'test2', 'test3', 'test4', 'test5', 'test6'];
+var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 
+                 'Node_Event_YCN_And', 'Node_Event_YCN_iOS', 'Node_Event_YCP_And', 
+                 'Node_Event_YCP_iOS', 'Node_Event_YMK_And', 'Node_Event_YMK_iOS',
+                 'Node_Session_BCS_And', 'Node_Session_BCS_iOS', 'Node_Session_OtherApp', 
+                 'Node_Session_YCN_And', 'Node_Session_YCN_iOS', 'Node_Session_YCP_And', 
+                 'Node_Session_YCP_iOS', 'Node_Session_YMK_And', 'Node_Session_YMK_iOS', 
+                 'Node_Session_YCL_And', 'Node_Session_YCL_iOS', 'Node_Event_YCL_And', 
+                 'Node_Event_YCL_iOS', 'CheckSum'];
 
 function producerReady() {
     var date = new Date();
     console.log("ready: "+date.toString());
     isProducerReady = true;
-    producer.createTopics(['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 'Node_Event_YCN_And', 'Node_Event_YCN_iOS', 'Node_Event_YCP_And', 'Node_Event_YCP_iOS', 'Node_Event_YMK_And', 'Node_Event_YMK_iOS',
-                 'Node_Session_BCS_And', 'Node_Session_BCS_iOS', 'Node_Session_OtherApp', 'Node_Session_YCN_And', 'Node_Session_YCN_iOS', 'Node_Session_YCP_And', 'Node_Session_YCP_iOS', 'Node_Session_YMK_And', 'Node_Session_YMK_iOS', 
-                 'CheckSum'], false, function (err, data) {
+    producer.createTopics(topicList, false, function (err, data) {
         console.log("createTopic: " + data);
         if (err) {
             console.log("ERROR: " + err);
@@ -141,6 +144,8 @@ var appMap = {
 			"ecc26ef108c821f3aadc5e283c512ee68be7d43e" : {appName: "YCN", appOS: "iOS"}, // YouCam_Nail_iOS
 			"488fea5101de4a8226718db0611c2ff2daeca06a" : {appName: "BCS", appOS: "And"}, // BeautyCircle_And
 			"7cd568771523a0621abff9ae3f95daf3a8694392" : {appName: "BCS", appOS: "iOS"} // BeautyCircle_iOS
+            "0a9928b86e75195094cac739c1f0dbd6d5660ad6" : {appName: "YCL", appOS: "And"}, // BeautyCircle_And
+            "32201f63d36dcf07963ed97727a3dc3019e0e458" : {appName: "YCL", appOS: "iOS"} // BeautyCircle_iOS
 };
 
 function getTopicName(header, appkey) {
@@ -609,8 +614,16 @@ function insertRawSession(coll,params) {
     insertRawColl(coll, eventp, params, 1);
 }
 
-var listAppKeyToPerfect_And = [appKey.key["YouCam_MakeUp_And"], appKey.key["YouCam_Perfect_And"], appKey.key["YouCam_Nail_And"], appKey.key["BeautyCircle_And"]],
-    listAppKeyToPerfect_iOS = [appKey.key["YouCam_MakeUp_iOS"], appKey.key["YouCam_Perfect_iOS"], appKey.key["YouCam_Nail_iOS"], appKey.key["BeautyCircle_iOS"]];
+var listAppKeyToPerfect_And = [appKey.key["YouCam_MakeUp_And"], 
+                               appKey.key["YouCam_Perfect_And"], 
+                               appKey.key["YouCam_Nail_And"], 
+                               appKey.key["BeautyCircle_And"],
+                               appKey.key["YouCam_Live_And"]],
+    listAppKeyToPerfect_iOS = [appKey.key["YouCam_MakeUp_iOS"], 
+                               appKey.key["YouCam_Perfect_iOS"], 
+                               appKey.key["YouCam_Nail_iOS"], 
+                               appKey.key["BeautyCircle_iOS"],
+                               appKey.key["YouCam_Live_iOS"]];
 // Checks app_key from the http request against "apps" collection.
 // This is the first step of every write request to API.
 function validateAppForWriteAPI(params) {
@@ -625,7 +638,7 @@ function validateAppForWriteAPI(params) {
 
     if (params.qstring.begin_session || params.qstring.end_session || params.qstring.session_duration) {
         insertRawSession(common.rawCollection['session']+params.qstring.app_key, params);
-
+/*
         // also insert to Perfect if app is YCP or YMK
         if(-1 != listAppKeyToPerfect_And.indexOf(params.qstring.app_key)) {
             var tmpParams = {
@@ -657,7 +670,7 @@ function validateAppForWriteAPI(params) {
             }
             insertRawSession(common.rawCollection['session']+appKey.key["Perfect_iOS"], tmpParams);
         }
-            
+*/
     }
 
     common.returnMessage(params, 200, 'Success');
