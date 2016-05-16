@@ -22,8 +22,8 @@ path="/usr/local/countly/api"
 cd ${path}
 
 mongo="localhost:30000"
-s3Path="/s3mnt/shard_backup/oem_hourly_data/"
-cmds3Path="s3://clcom2-countly/shard_backup/oem_hourly_data/"
+s3Path="/s3mnt/shard_backup/oem_hourly_data_test/"
+cmds3Path="s3://clcom2-countly/shard_backup/oem_hourly_data_test/"
 
 fullCurDate=$(date -d "-4 days" +%Y%m%d)
 
