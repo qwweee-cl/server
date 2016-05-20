@@ -826,6 +826,7 @@ var common = {},
         // Location of the user is retrieved using geoip-lite module from her IP address.
         params.country = 'Unknown';
         params.city = 'Unknown';
+        params.state = 'Unknown';
         var locationData = geoip.lookup(params.ip_address);
 
         if (locationData) {
@@ -835,13 +836,17 @@ var common = {},
 
             if (locationData.city) {
                 params.city = locationData.city;
-            } 
+            }
+
+            if (locationData.region) {
+                params.state = locationData.region;
+            }
 
             // Coordinate values of the user location has no use for now
             if (locationData.ll) {
                 params.lat = locationData.ll[0];
                 params.lng = locationData.ll[1];
-           }
+            }
         }
     };
 
