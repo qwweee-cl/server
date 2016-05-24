@@ -500,7 +500,7 @@ function insertRawColl(coll, eventp, params, isSession) {
         }
         if (1) {
             var eventpOEM = eventp;
-            if (checkOEM.deal_no != 'intex' || checkOEM.deal_no != 'medion') {
+            if (!(checkOEM.deal_no == 'intex' || checkOEM.deal_no == 'medion')) {
                 eventpOEM = JSON.parse(JSON.stringify(eventp));
                 eventpOEM.store_name = checkOEM.deal_no;
             }
