@@ -203,6 +203,29 @@ function sendOthersKafka(data, key, isSession) {
                 console.log("result: " + JSON.stringify(result));
                 //producer.close();
                 //client.close();
+            }
+        });
+    }
+}
+
+function sendOEMKafka(data, key, isSession) {
+    var topicName = "OEM";
+    if (isSession) {
+        topicName = "OEM_session";
+    } else {
+        topicName = "OEM_event";
+    }
+    randomCnt = ((++randomCnt)%partitionNum);
+    if (cando) {
+        //console.log(JSON.stringify(data));
+        producer.send([
+            { topic: topicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
+        ], function (err, result) {
+            if (err) {
+                console.log("ERROR: " + err);
+                console.log("result: " + JSON.stringify(result));
+                //producer.close();
+                //client.close();
             }                   
         });
     }
@@ -332,6 +355,7 @@ function insertRawColl(coll, eventp, params, isSession) {
     var dealNumber = "";
     var oem = false;
     var currDate = new Date();
+    var checkOEM = null;
     //console.log('insert collection name:'+coll);
     eventp.app_key = params.qstring.app_key;
     //eventp.app_id = params.app_id;
@@ -360,7 +384,7 @@ function insertRawColl(coll, eventp, params, isSession) {
         //dealNumber = eventp.vendor.deal_no;
         srNumber = eventp.vendor.sr_no_ori;
         if (srNumber) {
-            var checkOEM = jsonQuery(['[sr_no=?]',srNumber], {data: oemMaps}).value;
+            checkOEM = jsonQuery(['[sr_no=?]',srNumber], {data: oemMaps}).value;
             if (!checkOEM) {
                 oem = false;
                 //console.log("not in oem table :"+dealNumber);
@@ -471,9 +495,12 @@ function insertRawColl(coll, eventp, params, isSession) {
                 });
             }
         }
-        var newShardoemdb = common.getNewShardOEMRawDB(eventp.app_key, dealNumber, currDate);
+        var eventpOEM = JSON.parse(JSON.stringify(eventp));
+        eventpOEM.store_name = checkOEM.deal_no;
+        sendOEMKafka(eventpOEM, eventpOEM.app_key, isSession);
+        var newShardoemdb = common.getNewShardOEMRawDB(eventpOEM.app_key, dealNumber, currDate);
         if (newShardoemdb) {
-            newShardoemdb.collection(coll).insert(eventp, function(err, res) {
+            newShardoemdb.collection(coll).insert(eventpOEM, function(err, res) {
                 if (err) {
                     console.log('DB operation error');
                     console.log(err);
@@ -482,7 +509,7 @@ function insertRawColl(coll, eventp, params, isSession) {
         } else {
             console.log("can not get OEM database : ("+dealNumber+")");
             newShardoemdb = common.getErrorDB();
-            newShardoemdb.collection(coll).insert(eventp, function(err, res) {
+            newShardoemdb.collection(coll).insert(eventpOEM, function(err, res) {
                 if (err) {
                     console.log('DB operation error');
                     console.log(err);
