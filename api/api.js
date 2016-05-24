@@ -332,6 +332,7 @@ function insertRawColl(coll, eventp, params, isSession) {
     var dealNumber = "";
     var oem = false;
     var currDate = new Date();
+    var checkOEM = null;
     //console.log('insert collection name:'+coll);
     eventp.app_key = params.qstring.app_key;
     //eventp.app_id = params.app_id;
@@ -360,7 +361,7 @@ function insertRawColl(coll, eventp, params, isSession) {
         //dealNumber = eventp.vendor.deal_no;
         srNumber = eventp.vendor.sr_no_ori;
         if (srNumber) {
-            var checkOEM = jsonQuery(['[sr_no=?]',srNumber], {data: oemMaps}).value;
+            checkOEM = jsonQuery(['[sr_no=?]',srNumber], {data: oemMaps}).value;
             if (!checkOEM) {
                 oem = false;
                 //console.log("not in oem table :"+dealNumber);
@@ -498,9 +499,13 @@ function insertRawColl(coll, eventp, params, isSession) {
             }
         }
         if (1) {
-            var oemdb = common.getNewOEMRawDB(eventp.app_key, dealNumber, currDate);
+            var eventpOEM = eventp;
+            if (checkOEM.deal_no != 'intex' || checkOEM.deal_no != 'medion') {
+                eventpOEM = JSON.parse(JSON.stringify(eventp));
+            }
+            var oemdb = common.getNewOEMRawDB(eventpOEM.app_key, dealNumber, currDate);
             if (oemdb) {
-                oemdb.collection(coll).insert(eventp, function(err, res) {
+                oemdb.collection(coll).insert(eventpOEM, function(err, res) {
                     if (err) {
                         console.log('OEM DB operation error');
                         console.log(err);
@@ -509,7 +514,7 @@ function insertRawColl(coll, eventp, params, isSession) {
             } else {
                 console.log("can not get OEM database : ("+dealNumber+")");
                 oemdb = common.getErrorDB();
-                oemdb.collection(coll).insert(eventp, function(err, res) {
+                oemdb.collection(coll).insert(eventpOEM, function(err, res) {
                     if (err) {
                         console.log('OEM DB operation error');
                         console.log(err);
