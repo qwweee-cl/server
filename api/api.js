@@ -502,6 +502,7 @@ function insertRawColl(coll, eventp, params, isSession) {
             var eventpOEM = eventp;
             if (checkOEM.deal_no != 'intex' || checkOEM.deal_no != 'medion') {
                 eventpOEM = JSON.parse(JSON.stringify(eventp));
+                eventpOEM.store_name = checkOEM.deal_no;
             }
             var oemdb = common.getNewOEMRawDB(eventpOEM.app_key, dealNumber, currDate);
             if (oemdb) {
