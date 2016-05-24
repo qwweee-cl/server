@@ -62,7 +62,7 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
                  'Node_Session_YCN_And', 'Node_Session_YCN_iOS', 'Node_Session_YCP_And', 
                  'Node_Session_YCP_iOS', 'Node_Session_YMK_And', 'Node_Session_YMK_iOS', 
                  'Node_Session_YCL_And', 'Node_Session_YCL_iOS', 'Node_Event_YCL_And', 
-                 'Node_Event_YCL_iOS', 'CheckSum'];
+                 'Node_Event_YCL_iOS', 'OEM_session', 'OEM_event', 'CheckSum'];
 
 function producerReady() {
     var date = new Date();
@@ -204,6 +204,29 @@ function sendOthersKafka(data, key, isSession) {
                 //producer.close();
                 //client.close();
             }                   
+        });
+    }
+}
+
+function sendOEMKafka(data, key, isSession) {
+    var topicName = "OEM_";
+    if (isSession) {
+        topicName = "OEM_session";
+    } else {
+        topicName = "OEM_event";
+    }
+    randomCnt = ((++randomCnt)%partitionNum);
+    if (cando) {
+        //console.log(JSON.stringify(data));
+        producer.send([
+            { topic: topicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
+        ], function (err, result) {
+            if (err) {
+                console.log("ERROR: " + err);
+                console.log("result: " + JSON.stringify(result));
+                //producer.close();
+                //client.close();
+            }
         });
     }
 }
@@ -503,6 +526,7 @@ function insertRawColl(coll, eventp, params, isSession) {
             if (!(checkOEM.deal_no == 'intex' || checkOEM.deal_no == 'medion')) {
                 eventpOEM = JSON.parse(JSON.stringify(eventp));
                 eventpOEM.store_name = checkOEM.deal_no;
+                sendOEMKafka(eventp, eventp.app_key, isSession);
             }
             var oemdb = common.getNewOEMRawDB(eventpOEM.app_key, dealNumber, currDate);
             if (oemdb) {
