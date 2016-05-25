@@ -526,7 +526,7 @@ function insertRawColl(coll, eventp, params, isSession) {
             if (!(checkOEM.deal_no == 'intex' || checkOEM.deal_no == 'medion')) {
                 eventpOEM = JSON.parse(JSON.stringify(eventp));
                 eventpOEM.store_name = checkOEM.deal_no;
-                sendOEMKafka(eventp, eventp.app_key, isSession);
+                sendOEMKafka(eventpOEM, eventpOEM.app_key, isSession);
             }
             var oemdb = common.getNewOEMRawDB(eventpOEM.app_key, dealNumber, currDate);
             if (oemdb) {
