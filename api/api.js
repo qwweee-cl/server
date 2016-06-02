@@ -62,7 +62,7 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
                  'Node_Session_YCN_And', 'Node_Session_YCN_iOS', 'Node_Session_YCP_And', 
                  'Node_Session_YCP_iOS', 'Node_Session_YMK_And', 'Node_Session_YMK_iOS', 
                  'Node_Session_YCL_And', 'Node_Session_YCL_iOS', 'Node_Event_YCL_And', 
-                 'Node_Event_YCL_iOS', 'OEM_session', 'OEM_event', 'CheckSum'];
+                 'Node_Event_YCL_iOS', 'OEM_session', 'OEM_event', 'OEM_others', 'CheckSum'];
 
 function producerReady() {
     var date = new Date();
@@ -208,13 +208,21 @@ function sendOthersKafka(data, key, isSession) {
     }
 }
 
-function sendOEMKafka(data, key, isSession) {
-    var topicName = "OEM_";
-    if (isSession) {
-        topicName = "OEM_session";
-    } else {
-        topicName = "OEM_event";
+function getOEMTopicName(header, appkey) {
+    var topicName = "";
+    for (var key in appMap) {
+        if (key == 'd10ca4b26d3022735f3c403fd3c91271eb3054b0') continue;
+        if (appkey.indexOf(key) >= 0) {
+            topicName = header;
+            return topicName;
+        }
     }
+    topicName = "OEM_others";
+    return topicName;
+}
+
+function sendOEMKafka(data, key, isSession) {
+    var topicName = getOEMTopicName((isSession ? "OEM_session" : "OEM_event"), key);
     randomCnt = ((++randomCnt)%partitionNum);
     if (cando) {
         //console.log(JSON.stringify(data));
