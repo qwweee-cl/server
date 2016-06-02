@@ -223,6 +223,9 @@ function getOEMTopicName(header, appkey) {
 
 function sendOEMKafka(data, key, isSession) {
     var topicName = getOEMTopicName((isSession ? "OEM_session" : "OEM_event"), key);
+    if (topicName == "OEM_others") {
+        return;
+    }
     randomCnt = ((++randomCnt)%partitionNum);
     if (cando) {
         //console.log(JSON.stringify(data));
