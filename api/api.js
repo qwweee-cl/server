@@ -78,6 +78,7 @@ function producerReady() {
             if (kafkaErrorCount >= 10) {
                 kafkaErrorCount = 0;
                 errorContext = "";
+                console.log("Kafka Exception Send Mail");
                 var cmd = 'echo "'+errorContext+'" | mail -s "Kafka Exception Count Over 10 times" gary_huang@perfectcorp.com';
                 exec(cmd, function(error, stdout, stderr) {
                     if(error)
@@ -113,8 +114,6 @@ function producerError(err) {
                 client.on('error', clientError);
         }, timeToRetryConnection);
     }
-    kafkaErrorCount = 0;
-    errorContext = "";
 };
 
 function clientError(err) {
@@ -136,8 +135,6 @@ function clientError(err) {
                 client.on('error', clientError);
         }, timeToRetryConnection);
     }
-    kafkaErrorCount = 0;
-    errorContext = "";
 };
 
 
@@ -197,6 +194,7 @@ function kafkaCB(err, result) {
         if (kafkaErrorCount >= 10) {
             kafkaErrorCount = 0;
             errorContext = "";
+            console.log("Kafka Exception Send Mail");
             var cmd = 'echo "'+errorContext+'" | mail -s "Kafka Exception Count Over 10 times" gary_huang@perfectcorp.com';
             exec(cmd, function(error, stdout, stderr) {
                 if(error)
