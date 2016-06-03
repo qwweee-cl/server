@@ -40,6 +40,8 @@ var Client = kafka.Client;
 
 var timeToRetryConnection = 1*1000; // 12 seconds
 var reconnectInterval = null;
+var kafkaErrorCount = 0;
+var errorContext = "";
 
 var zkList = '172.31.19.126:2181,172.31.27.99:2181,172.31.27.76:2181';  // bootstrap.servers
 
@@ -71,6 +73,17 @@ function producerReady() {
         console.log("createTopic: " + data);
         if (err) {
             console.log("ERROR: " + err);
+            kafkaErrorCount++;
+            errorContext+=(JSON.stringify(err)+"\r\n");
+            if (kafkaErrorCount >= 10) {
+                kafkaErrorCount = 0;
+                errorContext = "";
+                var cmd = 'echo "'+errorContext+'" | mail -s "Kafka Exception Count Over 10 times" gary_huang@perfectcorp.com';
+                exec(cmd, function(error, stdout, stderr) {
+                    if(error)
+                        console.log(error);
+                });
+            }
         }
         cando = true;
     });
@@ -100,6 +113,8 @@ function producerError(err) {
                 client.on('error', clientError);
         }, timeToRetryConnection);
     }
+    kafkaErrorCount = 0;
+    errorContext = "";
 };
 
 function clientError(err) {
@@ -121,6 +136,8 @@ function clientError(err) {
                 client.on('error', clientError);
         }, timeToRetryConnection);
     }
+    kafkaErrorCount = 0;
+    errorContext = "";
 };
 
 
@@ -169,6 +186,26 @@ function getNodeTopicName(header, appkey) {
     return topicName;
 }
 
+function kafkaCB(err, result) {
+    kafkaErrorCount++;
+    errorContext+=(JSON.stringify(err)+"\r\n");
+    if (err) {
+        console.log("ERROR: " + err);
+        console.log("result: " + JSON.stringify(result));
+        //producer.close();
+        //client.close();
+        if (kafkaErrorCount >= 10) {
+            kafkaErrorCount = 0;
+            errorContext = "";
+            var cmd = 'echo "'+errorContext+'" | mail -s "Kafka Exception Count Over 10 times" gary_huang@perfectcorp.com';
+            exec(cmd, function(error, stdout, stderr) {
+                if(error)
+                    console.log(error);
+            });
+        }
+    }
+}
+
 function sendKafka(data, key, isSession) {
     var topicName = getNodeTopicName((isSession ? "Session" : "Event"), key);
     var topicName = "Elly";
@@ -179,14 +216,7 @@ function sendKafka(data, key, isSession) {
         //console.log(JSON.stringify(data));
         producer.send([
             { topic: topicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
-        ], function (err, result) {
-            if (err) {
-                console.log("ERROR: " + err);
-                console.log("result: " + JSON.stringify(result));
-                //producer.close();
-                //client.close();
-            }                   
-        });
+        ], kafkaCB);
     }
 }
 
@@ -197,14 +227,7 @@ function sendOthersKafka(data, key, isSession) {
         //console.log(JSON.stringify(data));
         producer.send([
             { topic: topicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
-        ], function (err, result) {
-            if (err) {
-                console.log("ERROR: " + err);
-                console.log("result: " + JSON.stringify(result));
-                //producer.close();
-                //client.close();
-            }
-        });
+        ], kafkaCB);
     }
 }
 
@@ -220,14 +243,7 @@ function sendOEMKafka(data, key, isSession) {
         //console.log(JSON.stringify(data));
         producer.send([
             { topic: topicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
-        ], function (err, result) {
-            if (err) {
-                console.log("ERROR: " + err);
-                console.log("result: " + JSON.stringify(result));
-                //producer.close();
-                //client.close();
-            }                   
-        });
+        ], kafkaCB);
     }
 }
 
