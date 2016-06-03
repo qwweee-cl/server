@@ -62,7 +62,7 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
                  'Node_Session_YCN_And', 'Node_Session_YCN_iOS', 'Node_Session_YCP_And', 
                  'Node_Session_YCP_iOS', 'Node_Session_YMK_And', 'Node_Session_YMK_iOS', 
                  'Node_Session_YCL_And', 'Node_Session_YCL_iOS', 'Node_Event_YCL_And', 
-                 'Node_Event_YCL_iOS', 'OEM_session', 'OEM_event', 'OEM_others', 'CheckSum'];
+                 'Node_Event_YCL_iOS', 'OEM_session', 'OEM_event', 'CheckSum'];
 
 function producerReady() {
     var date = new Date();
