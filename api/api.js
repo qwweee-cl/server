@@ -44,6 +44,7 @@ var kafkaErrorCount = 0;
 var kafkaErrorMaxCount = 10;
 var errorContext = "";
 var kafkaCheckTimeout = 1*60*60*1000;
+var failMailList = "hendry_wu@perfectcorp.com,gary_huang@perfectcorp.com"
 
 var zkList = '172.31.19.126:2181,172.31.27.99:2181,172.31.27.76:2181';  // bootstrap.servers
 
@@ -81,7 +82,7 @@ function producerReady() {
                 //kafkaErrorCount = 0;
                 //errorContext = "";
                 console.log("Kafka Exception Send Mail");
-                var cmd = 'echo "'+errorContext+'" | mail -s "Kafka Exception Count '+kafkaErrorCount+' times" gary_huang@perfectcorp.com';
+                var cmd = 'echo "'+errorContext+'" | mail -s "Kafka Exception Count '+kafkaErrorCount+' times" '+failMailList;
                 exec(cmd, function(error, stdout, stderr) {
                     if(error)
                         console.log(error);
@@ -197,7 +198,7 @@ function kafkaCB(err, result) {
             //kafkaErrorCount = 0;
             //errorContext = "";
             console.log("Kafka Exception Send Mail");
-            var cmd = 'echo "'+errorContext+'" | mail -s "Kafka Exception Count '+kafkaErrorCount+' times" gary_huang@perfectcorp.com';
+            var cmd = 'echo "'+errorContext+'" | mail -s "Kafka Exception Count '+kafkaErrorCount+' times" '+failMailList;
             exec(cmd, function(error, stdout, stderr) {
                 if(error)
                     console.log(error);
