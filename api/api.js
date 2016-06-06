@@ -41,7 +41,9 @@ var Client = kafka.Client;
 var timeToRetryConnection = 1*1000; // 12 seconds
 var reconnectInterval = null;
 var kafkaErrorCount = 0;
+var kafkaErrorMaxCount = 10;
 var errorContext = "";
+var kafkaCheckTimeout = 1*60*60*1000;
 
 var zkList = '172.31.19.126:2181,172.31.27.99:2181,172.31.27.76:2181';  // bootstrap.servers
 
@@ -75,9 +77,9 @@ function producerReady() {
             console.log("ERROR: " + err);
             kafkaErrorCount++;
             errorContext+=(JSON.stringify(err)+"\r\n");
-            if (kafkaErrorCount >= 10) {
-                kafkaErrorCount = 0;
-                errorContext = "";
+            if (kafkaErrorCount >= kafkaErrorMaxCount) {
+                //kafkaErrorCount = 0;
+                //errorContext = "";
                 console.log("Kafka Exception Send Mail");
                 var cmd = 'echo "'+errorContext+'" | mail -s "Kafka Exception Count Over 10 times" gary_huang@perfectcorp.com';
                 exec(cmd, function(error, stdout, stderr) {
@@ -191,9 +193,9 @@ function kafkaCB(err, result) {
         console.log("result: " + JSON.stringify(result));
         //producer.close();
         //client.close();
-        if (kafkaErrorCount >= 10) {
-            kafkaErrorCount = 0;
-            errorContext = "";
+        if (kafkaErrorCount >= kafkaErrorMaxCount) {
+            //kafkaErrorCount = 0;
+            //errorContext = "";
             console.log("Kafka Exception Send Mail");
             var cmd = 'echo "'+errorContext+'" | mail -s "Kafka Exception Count Over 10 times" gary_huang@perfectcorp.com';
             exec(cmd, function(error, stdout, stderr) {
@@ -840,6 +842,11 @@ function checkKafkaStatus() {
     }
 }
 
+function funcResetKafakErrorCount() {
+    kafkaErrorCount = 0;
+    errorContext = "";
+}
+
 if (cluster.isMaster) {
     var now = new Date();
     console.log('start api =========================='+now+'==========================');
@@ -915,6 +922,11 @@ if (cluster.isMaster) {
         /** update workerEnv OEM tables data **/
         updateOEMTable();
     }, baseTimeOut);
+
+    setInterval(function() {
+        /** update workerEnv OEM tables data **/
+        funcResetKafakErrorCount();
+    }, kafkaCheckTimeout);
     //console.log(oemMaps);
 
     http.Server(function (req, res) {
