@@ -77,11 +77,11 @@ function producerReady() {
             console.log("ERROR: " + err);
             kafkaErrorCount++;
             errorContext+=(JSON.stringify(err)+"\r\n");
-            if (kafkaErrorCount >= kafkaErrorMaxCount) {
+            if (kafkaErrorCount && (kafkaErrorCount%kafkaErrorMaxCount >= 0)) {
                 //kafkaErrorCount = 0;
                 //errorContext = "";
                 console.log("Kafka Exception Send Mail");
-                var cmd = 'echo "'+errorContext+'" | mail -s "Kafka Exception Count Over 10 times" gary_huang@perfectcorp.com';
+                var cmd = 'echo "'+errorContext+'" | mail -s "Kafka Exception Count '+kafkaErrorCount+' times" gary_huang@perfectcorp.com';
                 exec(cmd, function(error, stdout, stderr) {
                     if(error)
                         console.log(error);
@@ -193,11 +193,11 @@ function kafkaCB(err, result) {
         console.log("result: " + JSON.stringify(result));
         //producer.close();
         //client.close();
-        if (kafkaErrorCount >= kafkaErrorMaxCount) {
+        if (kafkaErrorCount && (kafkaErrorCount%kafkaErrorMaxCount >= 0)) {
             //kafkaErrorCount = 0;
             //errorContext = "";
             console.log("Kafka Exception Send Mail");
-            var cmd = 'echo "'+errorContext+'" | mail -s "Kafka Exception Count Over 10 times" gary_huang@perfectcorp.com';
+            var cmd = 'echo "'+errorContext+'" | mail -s "Kafka Exception Count '+kafkaErrorCount+' times" gary_huang@perfectcorp.com';
             exec(cmd, function(error, stdout, stderr) {
                 if(error)
                     console.log(error);
