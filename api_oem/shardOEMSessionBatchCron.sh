@@ -21,11 +21,12 @@ function error_exp
 }
 
 function backupDashboard() {
+  backupDashLog="/usr/local/countly/log/shardOEMDashBackupCron.log"
   cd $working_dir
 ## call backup script
   cmd="${working_dir}/shardBackupDashboardDBCronByOEM.sh"
   echo ${cmd} 2>&1 >> ${one_day_log}
-  $cmd
+  $cmd 2>&1 >> ${backupDashLog}
 }
 function checkLoopStop() {
   loopFile="/tmp/shardStopOEMSessionCronFile"
