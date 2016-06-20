@@ -29,7 +29,7 @@ function error_exp
 {
   echo -e "[Shard OEM]${oemName} Process Session Batch Error Please check log ${mainLogFile}"\
   $(tail -20 ${mainLogFile})\
-  | mail -s "[Wrong][Shard OEM]${oemName} ${start_date} ${start_round} Session Error Trap(${pid})" ${mail_target}
+  | mail -s "[Wrong][Shard OEM]${oemName} ${start_date} ${start_round} Process Session Error Trap(${pid})" ${mail_target}
   if [ -f ${LOCKFILE} ]; then
     rm ${LOCKFILE}
   fi

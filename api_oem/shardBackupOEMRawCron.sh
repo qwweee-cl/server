@@ -18,9 +18,9 @@ echo -e ${pid}
 
 function error_exp
 {
-  echo -e "[Shard OEM]${header} Loop Backup Batch error: ${mainLogFile}"\
+  echo -e "[Shard OEM]${header} Backup Batch error: ${mainLogFile}"\
   $(tail -20 ${mainLogFile})\
-  | mail -s "[Wrong][Shard OEM]${header} Loop Backup Batch Error Trap(${pid})" ${AWSM}
+  | mail -s "[Wrong][Shard OEM]${header} Backup Batch Error Trap(${pid})" ${AWSM}
   if [ -f ${LOCKFILE} ]; then
     rm ${LOCKFILE}
   fi
@@ -30,8 +30,8 @@ function checkLoopStop() {
   loopFile="/tmp/shardStopBackupCronOEMFile"
   if [ -f "${loopFile}" ]; then
     echo "${loopFile} exist"
-    echo -e "[Shard OEM]${header} Loop Backup Batch Stop on $(date +%Y%m%d-%H:%M)"\
-    | mail -s "[Wrong][Shard OEM]${header} Loop Backup Batch Stop" ${AWSM}
+    echo -e "[Shard OEM]${header} Backup Batch Stop on $(date +%Y%m%d-%H:%M)"\
+    | mail -s "[Wrong][Shard OEM]${header} Backup Batch Stop" ${AWSM}
     if [ -f ${LOCKFILE} ]; then
       rm ${LOCKFILE}
     fi
@@ -40,7 +40,12 @@ function checkLoopStop() {
 }
 function sendSummaryMail() {
   echo -e $(tail -20 ${one_time_log})\
-  | mail -s "[Shard OEM]${header} Loop Backup Raw Log Summary" ${AWSM}
+  | mail -s "[Shard OEM] ${fullDate} ${header} ALL Backup Raw Finished" ${AWSM}
+}
+function sendSummaryMailPerOEM() {
+  oemName="${1}"
+  echo -e $(tail -20 ${one_time_log})\
+  | mail -s "[Shard OEM][${oemName}] ${fullDate}_00 Backup Raw Log Summary" ${AWSM}
 }
 
 logpath="/usr/local/countly/log/shardBackup/"
@@ -133,6 +138,8 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
   echo $cmd 2>&1 >> $one_time_log 
   $cmd 2>&1 >> $one_time_log
 
+  echo -e "Send Summary Mail"
+  sendSummaryMailPerOEM ${oemName}
 done;
 
 echo -e "Program(${pid}) stops on `date +"%Y-%m-%d %T"`." 2>&1 >> $one_time_log
