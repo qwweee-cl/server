@@ -16,7 +16,7 @@ function error_exp
   if [ -f ${LOCKFILE} ]; then
     rm ${LOCKFILE}
   fi
-  exit 0
+  exit 1
 }
 function sendSummaryMail() {
 	echo -e $(tail -20 $one_time_log)\
