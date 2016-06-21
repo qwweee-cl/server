@@ -78,7 +78,7 @@ function producerReady() {
             console.log("ERROR: " + err);
             kafkaErrorCount++;
             errorContext+=(JSON.stringify(err)+"\r\n");
-            if (kafkaErrorCount && (kafkaErrorCount%kafkaErrorMaxCount >= 0)) {
+            if (kafkaErrorCount && (kafkaErrorCount%kafkaErrorMaxCount == 0)) {
                 //kafkaErrorCount = 0;
                 //errorContext = "";
                 console.log("Kafka Exception Send Mail");
@@ -194,7 +194,7 @@ function kafkaCB(err, result) {
         console.log("result: " + JSON.stringify(result));
         //producer.close();
         //client.close();
-        if (kafkaErrorCount && (kafkaErrorCount%kafkaErrorMaxCount >= 0)) {
+        if (kafkaErrorCount && (kafkaErrorCount%kafkaErrorMaxCount == 0)) {
             //kafkaErrorCount = 0;
             //errorContext = "";
             console.log("Kafka Exception Send Mail");
