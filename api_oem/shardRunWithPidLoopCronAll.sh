@@ -3,7 +3,17 @@
 SCRIPTNAME=`basename $0`
 #PIDFILE=/var/run/${SCRIPTNAME}.pid
 LOCKFILE="/tmp/shardBackupAndSessionBatchOEM.pid"
-
+trap 'error_exp'  ERR SIGINT SIGTERM
+function error_exp
+{
+  echo -e "[Shard OEM]CronAll Batch error: ${mainLogFile}"\
+  $(tail -20 ${mainLogFile})\
+  | mail -s "[Wrong][Shard OEM] ${processDate} CronAll Batch Batch Error Trap(${PID})" ${AWSM}
+  if [ -f ${LOCKFILE} ]; then
+    rm ${LOCKFILE}
+  fi
+  exit 1
+}
 if [ -e ${LOCKFILE} ] ; then
     echo "already running"
     echo -e "[Shard OEM] OEM Loop Backup And Session Cronjob already running, please close ${LOCKFILE}"\
