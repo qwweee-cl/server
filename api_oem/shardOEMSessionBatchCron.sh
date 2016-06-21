@@ -157,9 +157,9 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
   cmds3OEMFile=${cmds3Path}${filedate}"_${oemName}_${start_round}.tgz"
   fileExist=true
   echo -e ${cmds3OEMFile}
-  existFile=`aws s3 ls ${cmds3OEMFile} | wc -l`
+  existFile=`/usr/local/bin/aws s3 ls ${cmds3OEMFile} | wc -l`
   
-  duFile=`aws s3 ls ${cmds3OEMFile} | awk '{ print $3 }'`
+  duFile=`/usr/local/bin/aws s3 ls ${cmds3OEMFile} | awk '{ print $3 }'`
 
   if [ ${existFile} == "0" ]; then
     echo "${cmds3OEMFile} file not exist" >> ${one_day_log}

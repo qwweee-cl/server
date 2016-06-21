@@ -108,7 +108,7 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
   echo $cmd
   $cmd
 
-  cmd="aws s3 mv ${gzipPath}${dashboarddate}.tgz ${cmds3DashboardPath}"
+  cmd="/usr/local/bin/aws s3 mv ${gzipPath}${dashboarddate}.tgz ${cmds3DashboardPath}"
   echo $cmd
   $cmd
 

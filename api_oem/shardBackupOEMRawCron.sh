@@ -134,7 +134,7 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
   echo $cmd 2>&1 >> $one_time_log 
   $cmd 2>&1 >> $one_time_log 
 
-  cmd="aws s3 mv ${gzipPath}${rawdate}.tgz ${cmds3Path}${rawdate}.tgz"
+  cmd="/usr/local/bin/aws s3 mv ${gzipPath}${rawdate}.tgz ${cmds3Path}${rawdate}.tgz"
   echo $cmd 2>&1 >> $one_time_log 
   $cmd 2>&1 >> $one_time_log
 
