@@ -20,7 +20,7 @@ function error_exp
 }
 function sendSummaryMail() {
 	echo -e $(tail -20 $one_time_log)\
-	| mail -s "[Shard OEM] ${folderTime} OEM Session Loop Backup Dashboard Summary" ${AWSM}
+	| mail -s "[Shard OEM] ${folderTime} OEM Session Backup Dashboard Summary" ${AWSM}
 }
 
 logpath="/usr/local/countly/log/shardOEMSession/"

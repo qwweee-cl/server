@@ -48,6 +48,10 @@ function sendSummaryMail() {
   echo -e $(tail -20 ${one_day_log})\
   | mail -s "[Shard OEM]${oemName} ${start_date} ${start_round} Session Summary" ${mail_target}
 }
+function sendSummaryTotalMail() {
+  echo -e $(tail -20 ${mainLogFile})\
+  | mail -s "[Shard OEM] ${start_date} ${start_round} All OEMs are Processing Session" ${mail_target}
+}
 function sendWrongMail1() {
   oemName="${1}"
   echo -e $(tail -20 ${one_day_log})\
@@ -198,7 +202,7 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 ## send summary mail
 #  sendSummaryMail ${oemName}
 done;
-
+sendSummaryTotalMail
 if [ -f ${LOCKFILE} ]; then
     rm ${LOCKFILE}
 fi
