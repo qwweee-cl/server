@@ -44,7 +44,7 @@ var kafkaErrorCount = 0;
 var kafkaErrorMaxCount = 10;
 var errorContext = "";
 var kafkaCheckTimeout = 1*60*60*1000;
-var failMailList = "hendry_wu@perfectcorp.com,gary_huang@perfectcorp.com"
+var failMailList = "hendry_wu@perfectcorp.com,gary_huang@perfectcorp.com";
 
 var zkList = '172.31.19.126:2181,172.31.27.99:2181,172.31.27.76:2181';  // bootstrap.servers
 
@@ -904,7 +904,7 @@ if (cluster.isMaster) {
         /** update workerEnv OEM tables data **/
         checkKafkaStatus();
     }, 5000);
-    
+
     setInterval(function() {
         /** update workerEnv OEM tables data **/
         funcResetKafakErrorCount();
