@@ -904,6 +904,11 @@ if (cluster.isMaster) {
         /** update workerEnv OEM tables data **/
         checkKafkaStatus();
     }, 5000);
+    
+    setInterval(function() {
+        /** update workerEnv OEM tables data **/
+        funcResetKafakErrorCount();
+    }, kafkaCheckTimeout);
 
 } else {
     var oems = process.env['OEMS'];
