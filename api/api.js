@@ -660,9 +660,11 @@ function insertRawEvent(coll,params) {
 
 function insertRawSession(coll,params) {
     var eventp = {};
+    if (params.qstring.metrics) {
     //if (params.qstring.begin_session) {
         eventp.metrics = params.qstring.metrics;
     //}
+    }
     eventp.begin_session = params.qstring.begin_session;
     eventp.end_session = params.qstring.end_session;        
     eventp.session_duration = params.qstring.session_duration;
