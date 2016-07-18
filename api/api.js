@@ -67,7 +67,11 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
                  'Node_Session_YCN_And', 'Node_Session_YCN_iOS', 'Node_Session_YCP_And', 
                  'Node_Session_YCP_iOS', 'Node_Session_YMK_And', 'Node_Session_YMK_iOS', 
                  'Node_Session_YCL_And', 'Node_Session_YCL_iOS', 'Node_Event_YCL_And', 
-                 'Node_Event_YCL_iOS', 'OEM_session', 'OEM_event', 'CheckSum'];
+                 'Node_Event_YCL_iOS', 'Node_Session_YMC_And', 'Node_Session_YMC_iOS',
+                 'Node_Session_YCF_And', 'Node_Session_YCF_iOS', 'Node_Session_YCC_And',
+                 'Node_Session_YCC_iOS', 'Node_Event_YMC_And', 'Node_Event_YMC_iOS',
+                 'Node_Event_YCF_And', 'Node_Event_YCF_iOS', 'Node_Event_YCC_And',
+                 'Node_Event_YCC_iOS', 'OEM_session', 'OEM_event', 'CheckSum'];
 
 function producerReady() {
     var date = new Date();
@@ -161,8 +165,14 @@ var appMap = {
 			"ecc26ef108c821f3aadc5e283c512ee68be7d43e" : {appName: "YCN", appOS: "iOS"}, // YouCam_Nail_iOS
 			"488fea5101de4a8226718db0611c2ff2daeca06a" : {appName: "BCS", appOS: "And"}, // BeautyCircle_And
 			"7cd568771523a0621abff9ae3f95daf3a8694392" : {appName: "BCS", appOS: "iOS"}, // BeautyCircle_iOS
-            "0a9928b86e75195094cac739c1f0dbd6d5660ad6" : {appName: "YCL", appOS: "And"}, // BeautyCircle_And
-            "32201f63d36dcf07963ed97727a3dc3019e0e458" : {appName: "YCL", appOS: "iOS"} // BeautyCircle_iOS
+            "0a9928b86e75195094cac739c1f0dbd6d5660ad6" : {appName: "YCL", appOS: "And"}, // YouCam_Live_And
+            "32201f63d36dcf07963ed97727a3dc3019e0e458" : {appName: "YCL", appOS: "iOS"}, // YouCam_Live_iOS
+            "58624be20f93c99117c83fc4efb13e3db2b54c17" : {appName: "YMC", appOS: "And"}, // YouCam_Makeup_China_And
+            "d2892f0d5485a7a5818b267d369b674669d1b415" : {appName: "YMC", appOS: "iOS"}, // YouCam_Makeup_China_iOS
+            "093ceb063bc69ffe79af7852a715f95fd91547f2" : {appName: "YCF", appOS: "And"}, // YouCam_Fun_And
+            "9d23f2108e703661545fe60336ab5e4ef120b189" : {appName: "YCF", appOS: "iOS"}, // YouCam_Fun_iOS
+            "82694c09eb10f576b12645cad667dc2c740db1a0" : {appName: "YCC", appOS: "And"}, // YouCam_Collage_And
+            "3aa2b6516f3d9ea559561a8c3bca1fe0b8a96371" : {appName: "YCC", appOS: "iOS"} // YouCam_Collage_iOS
 };
 
 function getTopicName(header, appkey) {
