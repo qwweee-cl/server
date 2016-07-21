@@ -49,7 +49,7 @@ var failMailList = "hendry_wu@perfectcorp.com,gary_huang@perfectcorp.com";
 var zkList = '172.31.19.126:2181,172.31.27.99:2181,172.31.27.76:2181';  // bootstrap.servers
 
 zkList = '172.31.19.74:2181,172.31.27.99:2181,172.31.22.124:2181';  // bootstrap.servers
-zkList = '172.31.19.74:2181';  // bootstrap.servers
+zkList = '172.31.21.47:2181';  // bootstrap.servers
 var client = new Client(zkList);
 
 //var p = argv.p || 0; // default is 0
