@@ -929,13 +929,15 @@ function checkKafkaStatus() {
     }
 }
 
-function funcResetKafakErrorCount() {
-    console.log("Kafka Exception Send Mail");
-    var cmd = 'echo "'+errorContext+'" | mail -s "Kafka Exception Count '+kafkaErrorCount+' times" '+failMailList;
-    exec(cmd, function(error, stdout, stderr) {
-        if(error)
-            console.log(error);
-    });
+function funcResetKafkaErrorCount() {
+    if (kafkaErrorCount) {
+        console.log("Kafka Exception Send Mail");
+        var cmd = 'echo "'+errorContext+'" | mail -s "Kafka Exception Count '+kafkaErrorCount+' times" '+failMailList;
+        exec(cmd, function(error, stdout, stderr) {
+            if(error)
+                console.log(error);
+        });
+    }
     kafkaErrorCount = 0;
     errorContext = "";
 }
@@ -998,7 +1000,7 @@ if (cluster.isMaster) {
 
     setInterval(function() {
         /** update workerEnv OEM tables data **/
-        funcResetKafakErrorCount();
+        funcResetKafkaErrorCount();
     }, kafkaCheckTimeout);
 
 } else {
@@ -1022,7 +1024,7 @@ if (cluster.isMaster) {
 
     setInterval(function() {
         /** update workerEnv OEM tables data **/
-        funcResetKafakErrorCount();
+        funcResetKafkaErrorCount();
     }, kafkaCheckTimeout);
     //console.log(oemMaps);
 
