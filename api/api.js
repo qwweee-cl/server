@@ -43,7 +43,7 @@ var zkList = '172.31.27.186:2181,172.31.27.187:2181,172.31.27.188:2181,172.31.23
 var timeToRetryConnection = 12*1000; // 12 seconds
 var reconnectInterval = null;
 var kafkaErrorCount = 0;
-var kafkaErrorMaxCount = 10;
+var kafkaErrorMaxCount = 10000;
 var errorContext = "";
 var kafkaCheckTimeout = 1*60*60*1000;
 var failMailList = "hendry_wu@perfectcorp.com,gary_huang@perfectcorp.com";
@@ -930,6 +930,12 @@ function checkKafkaStatus() {
 }
 
 function funcResetKafakErrorCount() {
+    console.log("Kafka Exception Send Mail");
+    var cmd = 'echo "'+errorContext+'" | mail -s "Kafka Exception Count '+kafkaErrorCount+' times" '+failMailList;
+    exec(cmd, function(error, stdout, stderr) {
+        if(error)
+            console.log(error);
+    });
     kafkaErrorCount = 0;
     errorContext = "";
 }
