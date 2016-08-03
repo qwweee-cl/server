@@ -533,6 +533,7 @@ function insertRawColl(coll, eventp, params, isSession) {
         eventpOEM.store_name = checkOEM.deal_no;
         sendOEMKafka(eventpOEM, eventpOEM.app_key, isSession);
         var newShardoemdb = common.getNewShardOEMRawDB(eventpOEM.app_key, dealNumber, currDate);
+        if (0) {
         if (newShardoemdb) {
             newShardoemdb.collection(coll).insert(eventpOEM, function(err, res) {
                 if (err) {
@@ -549,6 +550,7 @@ function insertRawColl(coll, eventp, params, isSession) {
                     console.log(err);
                 }
             });
+        }
         }
     } else {
         //common.db_raw.collection(coll).insert(eventp, function(err, res) {
@@ -578,7 +580,7 @@ function insertRawColl(coll, eventp, params, isSession) {
             }
         });
     }
-    //if (0)
+    if (0)
     {
         common.getNewShardRawDB(eventp.app_key, currDate).collection(coll).insert(eventp, function(err, res) {
             if (err) {
@@ -587,7 +589,7 @@ function insertRawColl(coll, eventp, params, isSession) {
             }
         });
     }
-    // if (0)
+    if (0)
     {
         if (!params.verifiy) {
             if (params.qstring.header) {
