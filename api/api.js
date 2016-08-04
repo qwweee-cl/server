@@ -907,10 +907,52 @@ if (cluster.isMaster) {
     tmpuserCount = 0;
     tmpuserMaps.length = 0;
 
-    common.db.collection('ABTesting').find().each(function(err, data) {
+    common.db.collection('ABTesting').find({},{batchSize:1000}).each(function(err, data) {
         if (!data) {
             workerEnv["ABTEST"] = JSON.stringify(tmpuserMaps);
             console.log("ABTesting Length: "+tmpuserMaps.length);
+            /* do oem table and appkey map */
+            common.db.collection('oems').find().toArray(function(err, data) {
+                for (var i = 0 ; i < data.length ; i ++) {
+                    //var oemdb1 = common.getOEMRawDB(data[i].deal_no);
+                    //var oemdb2 = common.getOEMDB(data[i].deal_no);
+                    //console.log(oemdb1.tag);
+                    //console.log(oemdb2.tag);
+                    for (var j=0;j<data[i].sr_no.length;j++) {
+                        oemData = {};
+                        oemData.deal_no = data[i].deal_no;
+                        oemData.start = data[i].start;
+                        oemData.end = data[i].end;
+                        oemData.sr_no = data[i].sr_no[j];
+                        oemMaps[oemCount] = oemData;
+                        oemCount++;
+                    }
+                }
+                workerEnv["OEMS"] = JSON.stringify(oemMaps);
+                console.log("oem-length:"+data.length);
+
+                common.db.collection('apps').find().toArray(function(err, data) {
+                    for (var i = 0 ; i < data.length ; i ++) {
+                        appKeyData = {};
+                        appKeyData.key = data[i].key;
+                        appKeyMaps[appKeyCount] = appKeyData;
+                        appKeyCount++;
+                    }
+                    workerEnv["APPS"] = JSON.stringify(appKeyMaps);
+                    console.log("appKey-length:"+data.length);
+
+                    for (var i = 0; i < workerCount; i++) {
+                        cluster.fork(workerEnv);
+                    }
+           
+                });
+        /*
+                for (var i = 0; i < workerCount; i++) {
+                    //workerEnv["workerID"] = i;
+                    cluster.fork(workerEnv);
+                }
+        */
+            });
             return;
         }
         userTableData = {};
@@ -930,47 +972,7 @@ if (cluster.isMaster) {
         console.log("ABTesting-length:"+data.length);
     });
 */
-    common.db.collection('oems').find().toArray(function(err, data) {
-        for (var i = 0 ; i < data.length ; i ++) {
-            //var oemdb1 = common.getOEMRawDB(data[i].deal_no);
-            //var oemdb2 = common.getOEMDB(data[i].deal_no);
-            //console.log(oemdb1.tag);
-            //console.log(oemdb2.tag);
-            for (var j=0;j<data[i].sr_no.length;j++) {
-                oemData = {};
-                oemData.deal_no = data[i].deal_no;
-                oemData.start = data[i].start;
-                oemData.end = data[i].end;
-                oemData.sr_no = data[i].sr_no[j];
-                oemMaps[oemCount] = oemData;
-                oemCount++;
-            }
-        }
-        workerEnv["OEMS"] = JSON.stringify(oemMaps);
-        console.log("oem-length:"+data.length);
-
-        common.db.collection('apps').find().toArray(function(err, data) {
-            for (var i = 0 ; i < data.length ; i ++) {
-                appKeyData = {};
-                appKeyData.key = data[i].key;
-                appKeyMaps[appKeyCount] = appKeyData;
-                appKeyCount++;
-            }
-            workerEnv["APPS"] = JSON.stringify(appKeyMaps);
-            console.log("appKey-length:"+data.length);
-
-            for (var i = 0; i < workerCount; i++) {
-                cluster.fork(workerEnv);
-            }
-   
-        });
-/*
-        for (var i = 0; i < workerCount; i++) {
-            //workerEnv["workerID"] = i;
-            cluster.fork(workerEnv);
-        }
-*/
-    });
+    
 
     cluster.on('exit', function(worker) {
         //console.log(cluster.isMaster);
