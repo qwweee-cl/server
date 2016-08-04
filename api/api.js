@@ -240,7 +240,7 @@ function sendKafka(data, key, isSession) {
         producer.send([
             { topic: topicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
         ], kafkaCB);
-        var deviceID = eventp.device_id;
+        var deviceID = data.device_id;
         var checkABTest = jsonQuery(['[user_id=?]',deviceID], {data: userTableMaps}).value;
         if (checkABTest) {
             console.log("This Device ID in ABTesting");
@@ -1013,6 +1013,7 @@ if (cluster.isMaster) {
     //console.log(cluster.isMaster);
     //console.log(worker);
     var baseTimeOut = 3600000;
+    updateABTesting();
 
     setInterval(function() {
         /** update workerEnv OEM tables data **/
