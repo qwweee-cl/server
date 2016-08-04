@@ -241,12 +241,16 @@ function sendKafka(data, key, isSession) {
             { topic: topicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
         ], kafkaCB);
         var deviceID = data.device_id;
-        var checkABTest = jsonQuery(['[user_id=?]',deviceID], {data: userTableMaps}).value;
+        var checkABTest = userTableMaps[data.device_id];
+        //var checkABTest = jsonQuery(['[user_id=?]',deviceID], {data: userTableMaps}).value;
+        console.log(checkABTest);
         if (checkABTest) {
             console.log("This Device ID in ABTesting");
+            if (0) {
             producer.send([
                 { topic: ABTestTopicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
             ], kafkaCB);
+            }
         }
     }
 }
@@ -806,10 +810,14 @@ function updateABTesting() {
             console.log('update ABTesting table =========================='+now+'= length:'+userTableMaps.length+'=========================');
             return;
         }
+        tmpuserMaps[data.user_id] = 1;
+
+        /*
         userTableData = {};
         userTableData.user_id = data.user_id;
         tmpuserMaps[tmpuserCount] = userTableData;
         tmpuserCount++; 
+        */
     });
 /*
     common.dbABTest.collection('ABTesting').find().toArray(function(err, data) {
