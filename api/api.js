@@ -13,6 +13,8 @@ var http = require('http'),
     oemCount = 0,
     appKeyCount = 0,
     userTableCount = 0,
+    tmpuserMaps = [],
+    tmpuserCount = 0,
     crc = require('crc'),
     fs = require('fs'),
     crypto = require('crypto'),
@@ -791,9 +793,10 @@ function findAndRemoveKey(array, value) {
 }
 
 function updateABTesting() {
+    tmpuserCount = 0;
+    tmpuserMaps.length = 0;
+/*
     common.dbABTest.collection('ABTesting').find().toArray(function(err, data) {
-        var tmpuserCount = 0;
-        var tmpuserMaps = [];
         tmpuserMaps.length = 0;
         for (var i = 0 ; i < data.length ; i ++) {
             userTableData = {};
@@ -809,6 +812,7 @@ function updateABTesting() {
         userTableMaps = JSON.parse(abtesting);
         console.log('update ABTesting table =========================='+now+'= length:'+userTableMaps.length+'=========================');
     });
+*/
 }
 
 function updateOEMTable() {
@@ -898,6 +902,23 @@ if (cluster.isMaster) {
     var now = new Date();
     console.log('start api =========================='+now+'==========================');
     var workerCount = (common.config.api.workers)? common.config.api.workers : os.cpus().length;
+    workerEnv["ABTEST"] = JSON.stringify(userTableMaps);
+
+    tmpuserCount = 0;
+    tmpuserMaps.length = 0;
+
+    common.db.collection('ABTesting').find().each(function(err, data) {
+        if (!data) {
+            workerEnv["ABTEST"] = JSON.stringify(tmpuserMaps);
+            console.log("ABTesting Length: "+tmpuserMaps.length);
+        }
+        if (data.user_id) {
+            userTableData = {};
+            userTableData.user_id = data.user_id;
+            tmpuserMaps[tmpuserCount] = userTableData;
+            tmpuserCount++;
+        } 
+    });
 
     common.db.collection('ABTesting').find().toArray(function(err, data) {
         for (var i = 0 ; i < data.length ; i ++) {
@@ -909,7 +930,6 @@ if (cluster.isMaster) {
         workerEnv["ABTEST"] = JSON.stringify(userTableMaps);
         console.log("ABTesting-length:"+data.length);
     });
-    workerEnv["ABTEST"] = JSON.stringify(userTableMaps);
 
     common.db.collection('oems').find().toArray(function(err, data) {
         for (var i = 0 ; i < data.length ; i ++) {
