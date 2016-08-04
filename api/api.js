@@ -795,6 +795,22 @@ function findAndRemoveKey(array, value) {
 function updateABTesting() {
     tmpuserCount = 0;
     tmpuserMaps.length = 0;
+    common.db.collection('ABTesting').find({},{batchSize:1000}).each(function(err, data) {
+        if (!data) {
+            workerEnv["ABTEST"] = JSON.stringify(tmpuserMaps);
+            console.log("ABTesting Length: "+tmpuserMaps.length);
+            var now = new Date();
+            var abtesting = workerEnv["ABTEST"];
+            userTableMaps.length = 0;
+            userTableMaps = JSON.parse(abtesting);
+            console.log('update ABTesting table =========================='+now+'= length:'+userTableMaps.length+'=========================');
+            return;
+        }
+        userTableData = {};
+        userTableData.user_id = data.user_id;
+        tmpuserMaps[tmpuserCount] = userTableData;
+        tmpuserCount++; 
+    });
 /*
     common.dbABTest.collection('ABTesting').find().toArray(function(err, data) {
         tmpuserMaps.length = 0;
@@ -1001,6 +1017,7 @@ if (cluster.isMaster) {
     setInterval(function() {
         /** update workerEnv OEM tables data **/
         updateOEMTable();
+        updateABTesting();
     }, baseTimeOut);
 
     setInterval(function() {
