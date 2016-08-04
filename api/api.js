@@ -911,15 +911,14 @@ if (cluster.isMaster) {
         if (!data) {
             workerEnv["ABTEST"] = JSON.stringify(tmpuserMaps);
             console.log("ABTesting Length: "+tmpuserMaps.length);
+            return;
         }
-        if (data.user_id) {
-            userTableData = {};
-            userTableData.user_id = data.user_id;
-            tmpuserMaps[tmpuserCount] = userTableData;
-            tmpuserCount++;
-        } 
+        userTableData = {};
+        userTableData.user_id = data.user_id;
+        tmpuserMaps[tmpuserCount] = userTableData;
+        tmpuserCount++; 
     });
-
+/*
     common.db.collection('ABTesting').find().toArray(function(err, data) {
         for (var i = 0 ; i < data.length ; i ++) {
             ABTestData = {};
@@ -930,7 +929,7 @@ if (cluster.isMaster) {
         workerEnv["ABTEST"] = JSON.stringify(userTableMaps);
         console.log("ABTesting-length:"+data.length);
     });
-
+*/
     common.db.collection('oems').find().toArray(function(err, data) {
         for (var i = 0 ; i < data.length ; i ++) {
             //var oemdb1 = common.getOEMRawDB(data[i].deal_no);
