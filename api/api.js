@@ -9,11 +9,11 @@ var http = require('http'),
     workerEnv = {},
     oemMaps = [],
     appKeyMaps = [],
-    userTableMaps = [],
+    userTableMaps = {},
     oemCount = 0,
     appKeyCount = 0,
     userTableCount = 0,
-    tmpuserMaps = [],
+    tmpuserMaps = {},
     tmpuserCount = 0,
     crc = require('crc'),
     fs = require('fs'),
@@ -242,7 +242,6 @@ function sendKafka(data, key, isSession) {
         ], kafkaCB);
         var deviceID = data.device_id;
         var checkABTest = userTableMaps[data.device_id];
-        //var checkABTest = jsonQuery(['[user_id=?]',deviceID], {data: userTableMaps}).value;
         console.log(checkABTest);
         if (checkABTest) {
             console.log("This Device ID in ABTesting");
@@ -801,22 +800,23 @@ function updateABTesting() {
     tmpuserMaps.length = 0;
     common.db.collection('ABTesting').find({},{batchSize:1000}).each(function(err, data) {
         if (!data) {
-            workerEnv["ABTEST"] = JSON.stringify(tmpuserMaps);
-            console.log("ABTesting Length: "+tmpuserMaps.length);
+            //workerEnv["ABTEST"] = JSON.stringify(tmpuserMaps);
+            console.log("ABTesting Length: "+tmpuserCount);
             var now = new Date();
             var abtesting = workerEnv["ABTEST"];
-            userTableMaps.length = 0;
+            userTableMaps = {};
             userTableMaps = JSON.parse(abtesting);
-            console.log('update ABTesting table =========================='+now+'= length:'+userTableMaps.length+'=========================');
+            console.log('update ABTesting table =========================='+now+'= length:'+tmpuserCount+'=========================');
             return;
         }
         tmpuserMaps[data.user_id] = 1;
+        tmpuserCount++;
 
         /*
         userTableData = {};
         userTableData.user_id = data.user_id;
         tmpuserMaps[tmpuserCount] = userTableData;
-        tmpuserCount++; 
+        tmpuserCount++;
         */
     });
 /*
@@ -929,18 +929,19 @@ if (cluster.isMaster) {
     workerEnv["ABTEST"] = JSON.stringify(userTableMaps);
 
     tmpuserCount = 0;
-    tmpuserMaps.length = 0;
+    tmpuserMaps = {};
 
     common.db.collection('ABTesting').find({},{batchSize:1000}).each(function(err, data) {
         if (!data) {
             workerEnv["ABTEST"] = JSON.stringify(tmpuserMaps);
-            console.log("ABTesting Length: "+tmpuserMaps.length);
-            
+            console.log("ABTesting Length: "+tmpuserCount);
+            var now = new Date();
+            var abtesting = workerEnv["ABTEST"];
+            userTableMaps = {};
+            userTableMaps = JSON.parse(abtesting);
             return;
         }
-        userTableData = {};
-        userTableData.user_id = data.user_id;
-        tmpuserMaps[tmpuserCount] = userTableData;
+        tmpuserMaps[data.user_id] = 1;
         tmpuserCount++; 
     });
 
@@ -1013,11 +1014,11 @@ if (cluster.isMaster) {
     oemMaps = JSON.parse(oems);
     appKeyMaps.length = 0;
     appKeyMaps = JSON.parse(apps);
-    userTableMaps.length = 0;
+    userTableMaps = {};
     userTableMaps = JSON.parse(abtesting);
     console.log("init update oem-length:"+oemMaps.length);
     console.log("init update app-length:"+appKeyMaps.length);
-    console.log("init update ABTesting-length:"+userTableMaps.length);
+    //console.log("init update ABTesting-length:"+userTableMaps.length);
     //console.log(cluster.isMaster);
     //console.log(worker);
     var baseTimeOut = 3600000;
