@@ -242,9 +242,9 @@ function sendKafka(data, key, isSession) {
         ], kafkaCB);
         var deviceID = data.device_id;
         var checkABTest = userTableMaps[data.device_id];
-        console.log(checkABTest);
+        //console.log(checkABTest);
         if (checkABTest) {
-            console.log("This Device ID in ABTesting");
+            //console.log("This Device ID in ABTesting");
             if (0) {
             producer.send([
                 { topic: ABTestTopicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
@@ -800,7 +800,7 @@ function updateABTesting() {
     tmpuserMaps.length = 0;
     common.db.collection('ABTesting').find({},{batchSize:1000}).each(function(err, data) {
         if (!data) {
-            //workerEnv["ABTEST"] = JSON.stringify(tmpuserMaps);
+            workerEnv["ABTEST"] = JSON.stringify(tmpuserMaps);
             console.log("ABTesting Length: "+tmpuserCount);
             var now = new Date();
             var abtesting = workerEnv["ABTEST"];
