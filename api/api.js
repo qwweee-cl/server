@@ -899,6 +899,18 @@ if (cluster.isMaster) {
     console.log('start api =========================='+now+'==========================');
     var workerCount = (common.config.api.workers)? common.config.api.workers : os.cpus().length;
 
+    common.db.collection('ABTesting').find().toArray(function(err, data) {
+        for (var i = 0 ; i < data.length ; i ++) {
+            ABTestData = {};
+            ABTestData.user_id = data[i].user_id;
+            userTableMaps[userTableCount] = ABTestData;
+            userTableCount++;
+        }
+        workerEnv["ABTEST"] = JSON.stringify(userTableMaps);
+        console.log("ABTesting-length:"+data.length);
+    });
+    workerEnv["ABTEST"] = JSON.stringify(userTableMaps);
+
     common.db.collection('oems').find().toArray(function(err, data) {
         for (var i = 0 ; i < data.length ; i ++) {
             //var oemdb1 = common.getOEMRawDB(data[i].deal_no);
@@ -927,26 +939,11 @@ if (cluster.isMaster) {
             }
             workerEnv["APPS"] = JSON.stringify(appKeyMaps);
             console.log("appKey-length:"+data.length);
-/*
+
             for (var i = 0; i < workerCount; i++) {
                 cluster.fork(workerEnv);
             }
-*/
-            common.db.collection('ABTesting').find().toArray(function(err, data) {
-                for (var i = 0 ; i < data.length ; i ++) {
-                    ABTestData = {};
-                    ABTestData.user_id = data[i].user_id;
-                    userTableMaps[userTableCount] = ABTestData;
-                    userTableCount++;
-                }
-                workerEnv["ABTEST"] = JSON.stringify(userTableMaps);
-                console.log("ABTesting-length:"+data.length);
-
-                for (var i = 0; i < workerCount; i++) {
-                    cluster.fork(workerEnv);
-                }
-                
-            });
+   
         });
 /*
         for (var i = 0; i < workerCount; i++) {
