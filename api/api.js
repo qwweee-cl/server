@@ -9,8 +9,10 @@ var http = require('http'),
     workerEnv = {},
     oemMaps = [],
     appKeyMaps = [],
+    userTableMaps = [],
     oemCount = 0,
     appKeyCount = 0,
+    userTableCount = 0,
     crc = require('crc'),
     fs = require('fs'),
     crypto = require('crypto'),
@@ -73,7 +75,7 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
                  'Node_Session_YCF_And', 'Node_Session_YCF_iOS', 'Node_Session_YCC_And',
                  'Node_Session_YCC_iOS', 'Node_Event_YMC_And', 'Node_Event_YMC_iOS',
                  'Node_Event_YCF_And', 'Node_Event_YCF_iOS', 'Node_Event_YCC_And',
-                 'Node_Event_YCC_iOS', 'OEM_session', 'OEM_event', 'CheckSum'];
+                 'Node_Event_YCC_iOS', 'OEM_session', 'OEM_event', 'CheckSum', 'ABTesting'];
 
 function producerReady() {
     var date = new Date();
@@ -81,7 +83,7 @@ function producerReady() {
     isProducerReady = true;
     producer.createTopics(['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 'Node_Event_YCN_And', 'Node_Event_YCN_iOS', 'Node_Event_YCP_And', 'Node_Event_YCP_iOS', 'Node_Event_YMK_And', 'Node_Event_YMK_iOS',
                  'Node_Session_BCS_And', 'Node_Session_BCS_iOS', 'Node_Session_OtherApp', 'Node_Session_YCN_And', 'Node_Session_YCN_iOS', 'Node_Session_YCP_And', 'Node_Session_YCP_iOS', 'Node_Session_YMK_And', 'Node_Session_YMK_iOS', 'Elly', 'ABC', 'OWL',
-                 'CheckSum'], false, function (err, data) {
+                 'CheckSum', 'ABTesting'], false, function (err, data) {
         console.log("createTopic: " + data);
         if (err) {
             console.log("ERROR: " + err);
@@ -229,12 +231,21 @@ function sendKafka(data, key, isSession) {
     var topicName = "Elly";
     var topicName = "OWL";
     var topicName = "ABC";
+    var ABTestTopicName = "ABTesting";
     randomCnt = ((++randomCnt)%partitionNum);
     if (cando) {
         //console.log(JSON.stringify(data));
         producer.send([
             { topic: topicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
         ], kafkaCB);
+        var deviceID = eventp.device_id;
+        var checkABTest = jsonQuery(['[user_id=?]',deviceID], {data: userTableMaps}).value;
+        if (checkABTest) {
+            console.log("This Device ID in ABTesting");
+            producer.send([
+                { topic: ABTestTopicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
+            ], kafkaCB);
+        }
     }
 }
 
@@ -779,6 +790,27 @@ function findAndRemoveKey(array, value) {
     }
 }
 
+function updateABTesting() {
+    common.dbABTest.collection('ABTesting').find().toArray(function(err, data) {
+        var tmpuserCount = 0;
+        var tmpuserMaps = [];
+        tmpuserMaps.length = 0;
+        for (var i = 0 ; i < data.length ; i ++) {
+            userTableData = {};
+            userTableData.user_id = data[i].user_id;
+            tmpuserMaps[tmpuserCount] = userTableData;
+            tmpuserCount++;
+        }
+        workerEnv["ABTEST"] = JSON.stringify(tmpuserMaps);
+        console.log("update ABTestingList-length:"+data.length);
+        var now = new Date();
+        var abtesting = workerEnv["ABTEST"];
+        userTableMaps.length = 0;
+        userTableMaps = JSON.parse(abtesting);
+        console.log('update ABTesting table =========================='+now+'= length:'+userTableMaps.length+'=========================');
+    });
+}
+
 function updateOEMTable() {
     common.db.collection('oems').find().toArray(function(err, data) {
         var tmpoemCount = 0;
@@ -821,11 +853,6 @@ function updateOEMTable() {
         appKeyMaps.length = 0;
         appKeyMaps = JSON.parse(apps);
         console.log('update apps key table =========================='+now+'= length:'+appKeyMaps.length+'=========================');
-
-        for (var i = 0; i < workerCount; i++) {
-            //workerEnv["workerID"] = i;
-            cluster.fork(workerEnv);
-        }
     });
 }
 
@@ -900,10 +927,26 @@ if (cluster.isMaster) {
             }
             workerEnv["APPS"] = JSON.stringify(appKeyMaps);
             console.log("appKey-length:"+data.length);
-
+/*
             for (var i = 0; i < workerCount; i++) {
                 cluster.fork(workerEnv);
             }
+*/
+            common.db.collection('ABTesting').find().toArray(function(err, data) {
+                for (var i = 0 ; i < data.length ; i ++) {
+                    ABTestData = {};
+                    ABTestData.user_id = data[i].user_id;
+                    userTableMaps[userTableCount] = ABTestData;
+                    userTableCount++;
+                }
+                workerEnv["ABTEST"] = JSON.stringify(userTableMaps);
+                console.log("ABTesting-length:"+data.length);
+
+                for (var i = 0; i < workerCount; i++) {
+                    cluster.fork(workerEnv);
+                }
+                
+            });
         });
 /*
         for (var i = 0; i < workerCount; i++) {
@@ -932,13 +975,17 @@ if (cluster.isMaster) {
 } else {
     var oems = process.env['OEMS'];
     var apps = process.env['APPS'];
+    var abtesting = process.env['ABTEST'];
     //workerID = process.env['WorkerID'];
     oemMaps.length = 0;
     oemMaps = JSON.parse(oems);
     appKeyMaps.length = 0;
     appKeyMaps = JSON.parse(apps);
+    userTableMaps.length = 0;
+    userTableMaps = JSON.parse(abtesting);
     console.log("init update oem-length:"+oemMaps.length);
     console.log("init update app-length:"+appKeyMaps.length);
+    console.log("init update ABTesting-length:"+userTableMaps.length);
     //console.log(cluster.isMaster);
     //console.log(worker);
     var baseTimeOut = 3600000;
