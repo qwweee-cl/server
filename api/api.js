@@ -812,7 +812,7 @@ function updateABTesting() {
 //            var abtesting = workerEnv["ABTEST"];
             userTableMaps = {};
 //            userTableMaps = JSON.parse(abtesting);
-            userTableFilter.clear();
+            //userTableFilter.clear();
             userTableFilter = tmpFilter.toObject();
             console.log('update ABTesting table =========================='+now+'= length:'+tmpuserCount+'=========================');
             return;
