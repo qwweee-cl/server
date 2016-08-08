@@ -1033,7 +1033,8 @@ if (cluster.isMaster) {
     //console.log("init update ABTesting-length:"+userTableMaps.length);
     //console.log(cluster.isMaster);
     //console.log(worker);
-    var baseTimeOut = 3600000;
+    //var baseTimeOut = 3600000;
+    var baseTimeOut = 600000;
     updateABTesting();
 
     setInterval(function() {
