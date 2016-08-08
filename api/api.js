@@ -247,9 +247,9 @@ function sendKafka(data, key, isSession) {
         ], kafkaCB);
         var deviceID = data.device_id;
 //        var checkABTest = userTableMaps[data.device_id];
-        console.log("Filter: "+userTableFilter);
-        var checkABTest = userTableFilter.contains(deviceID);
-        console.log(userTableFilter.inspect());
+        console.log("Filter: "+GLOBAL.userTableFilter);
+        var checkABTest = GLOBAL.userTableFilter.contains(deviceID);
+        console.log(GLOBAL.userTableFilter.inspect());
         console.log(checkABTest);
         if (checkABTest) {
             console.log("This Device ID in ABTesting");
@@ -815,8 +815,8 @@ function updateABTesting() {
 //            var abtesting = workerEnv["ABTEST"];
             userTableMaps = {};
 //            userTableMaps = JSON.parse(abtesting);
-            userTableFilter = BloomFilter.create(numberOfElements, falsePositiveRate);
-            userTableFilter = tmpFilter.toObject();
+            GLOBAL.userTableFilter = BloomFilter.create(numberOfElements, falsePositiveRate);
+            GLOBAL.userTableFilter = tmpFilter.toObject();
             console.log('update ABTesting table =========================='+now+'= length:'+tmpuserCount+'=========================');
             return;
         }
