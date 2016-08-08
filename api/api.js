@@ -14,7 +14,7 @@ var http = require('http'),
     numberOfElements = 100000;
     falsePositiveRate = 0.01;
     userTableFilter = BloomFilter.create(numberOfElements, falsePositiveRate),
-    tmpFilter = BloomFilter.create(numberOfElements, falsePositiveRate),
+//    tmpFilter = BloomFilter.create(numberOfElements, falsePositiveRate),
     oemCount = 0,
     appKeyCount = 0,
     userTableCount = 0,
@@ -804,6 +804,7 @@ function findAndRemoveKey(array, value) {
 function updateABTesting() {
     tmpuserCount = 0;
     tmpuserMaps.length = 0;
+    var tmpFilter = BloomFilter.create(numberOfElements, falsePositiveRate)
     common.db.collection('ABTesting').find({},{batchSize:1000}).each(function(err, data) {
         if (!data) {
 //            workerEnv["ABTEST"] = JSON.stringify(tmpuserMaps);
@@ -812,7 +813,7 @@ function updateABTesting() {
 //            var abtesting = workerEnv["ABTEST"];
             userTableMaps = {};
 //            userTableMaps = JSON.parse(abtesting);
-            //userTableFilter.clear();
+            userTableFilter.clear();
             userTableFilter = tmpFilter.toObject();
             console.log('update ABTesting table =========================='+now+'= length:'+tmpuserCount+'=========================');
             return;
@@ -939,6 +940,7 @@ if (cluster.isMaster) {
 
     tmpuserCount = 0;
     tmpuserMaps = {};
+    var tmpFilter = BloomFilter.create(numberOfElements, falsePositiveRate);
 
     common.db.collection('ABTesting').find({},{batchSize:1000}).each(function(err, data) {
         if (!data) {
