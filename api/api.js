@@ -248,7 +248,7 @@ function sendKafka(data, key, isSession) {
         var deviceID = data.device_id;
 //        var checkABTest = userTableMaps[data.device_id];
         console.log("Filter: "+userTableFilter);
-        var checkABTest = userTableFilter.contains(data.device_id);
+        var checkABTest = userTableFilter.contains(deviceID);
         console.log(userTableFilter.inspect());
         console.log(checkABTest);
         if (checkABTest) {
