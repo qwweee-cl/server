@@ -815,13 +815,13 @@ function updateABTesting() {
 //            var abtesting = workerEnv["ABTEST"];
             userTableMaps = {};
 //            userTableMaps = JSON.parse(abtesting);
-            GLOBAL.userTableFilter = BloomFilter.create(numberOfElements, falsePositiveRate);
-            GLOBAL.userTableFilter = tmpFilter;
+            //GLOBAL.userTableFilter = BloomFilter.create(numberOfElements, falsePositiveRate);
+            //GLOBAL.userTableFilter = tmpFilter;
             console.log('update ABTesting table =========================='+now+'= length:'+tmpuserCount+'=========================');
             return;
         }
 //        tmpuserMaps[data.user_id] = 1;
-        tmpFilter.insert(data.user_id);
+        userTableFilter.insert(data.user_id);
         tmpuserCount++;
 
         /*
