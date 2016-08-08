@@ -247,7 +247,7 @@ function sendKafka(data, key, isSession) {
         ], kafkaCB);
         var deviceID = data.device_id;
 //        var checkABTest = userTableMaps[data.device_id];
-        console.log(userTableFilter);
+        console.log("Filter: "+userTableFilter);
         var checkABTest = userTableFilter.contains(data.device_id);
         console.log(userTableFilter.inspect());
         console.log(checkABTest);
@@ -815,7 +815,7 @@ function updateABTesting() {
 //            var abtesting = workerEnv["ABTEST"];
             userTableMaps = {};
 //            userTableMaps = JSON.parse(abtesting);
-            userTableFilter.clear();
+            userTableFilter = BloomFilter.create(numberOfElements, falsePositiveRate);
             userTableFilter = tmpFilter.toObject();
             console.log('update ABTesting table =========================='+now+'= length:'+tmpuserCount+'=========================');
             return;
@@ -942,6 +942,7 @@ if (cluster.isMaster) {
 
     tmpuserCount = 0;
     tmpuserMaps = {};
+/*
     var tmpFilter = BloomFilter.create(numberOfElements, falsePositiveRate);
 
     common.db.collection('ABTesting').find({},{batchSize:1000}).each(function(err, data) {
@@ -952,7 +953,7 @@ if (cluster.isMaster) {
 //            var abtesting = workerEnv["ABTEST"];
             userTableMaps = {};
 //            userTableMaps = JSON.parse(abtesting);
-            userTableFilter.clear();
+            userTableFilter = BloomFilter.create(numberOfElements, falsePositiveRate);
             userTableFilter = tmpFilter.toObject();
             return;
         }
@@ -960,7 +961,7 @@ if (cluster.isMaster) {
         tmpFilter.insert(data.user_id);
         tmpuserCount++; 
     });
-
+*/
     /* do oem table and appkey map */
     common.db.collection('oems').find().toArray(function(err, data) {
         for (var i = 0 ; i < data.length ; i ++) {
@@ -1039,7 +1040,6 @@ if (cluster.isMaster) {
     //console.log(worker);
     //var baseTimeOut = 3600000;
     var baseTimeOut = 600000;
-    userTableFilter = BloomFilter.create(numberOfElements, falsePositiveRate);
     updateABTesting();
 
     setInterval(function() {
