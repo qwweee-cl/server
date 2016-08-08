@@ -6,10 +6,15 @@ var http = require('http'),
     exec = require('child_process').exec,
     jsonQuery = require('json-query'),
 	moment = require('moment-timezone'),
+    BloomFilter = require('bloom-filter'),
     workerEnv = {},
     oemMaps = [],
     appKeyMaps = [],
     userTableMaps = {},
+    numberOfElements = 100000;
+    falsePositiveRate = 0.01;
+    userTableFilter = BloomFilter.create(numberOfElements, falsePositiveRate),
+    tmpFilter = BloomFilter.create(numberOfElements, falsePositiveRate),
     oemCount = 0,
     appKeyCount = 0,
     userTableCount = 0,
@@ -241,7 +246,8 @@ function sendKafka(data, key, isSession) {
             { topic: topicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
         ], kafkaCB);
         var deviceID = data.device_id;
-        var checkABTest = userTableMaps[data.device_id];
+//        var checkABTest = userTableMaps[data.device_id];
+        var checkABTest = userTableFilter.contains(data.device_id);
         //console.log(checkABTest);
         if (checkABTest) {
             console.log("This Device ID in ABTesting");
@@ -800,16 +806,19 @@ function updateABTesting() {
     tmpuserMaps.length = 0;
     common.db.collection('ABTesting').find({},{batchSize:1000}).each(function(err, data) {
         if (!data) {
-            workerEnv["ABTEST"] = JSON.stringify(tmpuserMaps);
+//            workerEnv["ABTEST"] = JSON.stringify(tmpuserMaps);
             console.log("ABTesting Length: "+tmpuserCount);
             var now = new Date();
-            var abtesting = workerEnv["ABTEST"];
+//            var abtesting = workerEnv["ABTEST"];
             userTableMaps = {};
-            userTableMaps = JSON.parse(abtesting);
+//            userTableMaps = JSON.parse(abtesting);
+            userTableFilter.clear();
+            userTableFilter = tmpFilter.toObject();
             console.log('update ABTesting table =========================='+now+'= length:'+tmpuserCount+'=========================');
             return;
         }
-        tmpuserMaps[data.user_id] = 1;
+//        tmpuserMaps[data.user_id] = 1;
+        tmpFilter.insert(data.user_id);
         tmpuserCount++;
 
         /*
@@ -933,15 +942,18 @@ if (cluster.isMaster) {
 
     common.db.collection('ABTesting').find({},{batchSize:1000}).each(function(err, data) {
         if (!data) {
-            workerEnv["ABTEST"] = JSON.stringify(tmpuserMaps);
+//            workerEnv["ABTEST"] = JSON.stringify(tmpuserMaps);
             console.log("ABTesting Length: "+tmpuserCount);
             var now = new Date();
-            var abtesting = workerEnv["ABTEST"];
+//            var abtesting = workerEnv["ABTEST"];
             userTableMaps = {};
-            userTableMaps = JSON.parse(abtesting);
+//            userTableMaps = JSON.parse(abtesting);
+            userTableFilter.clear();
+            userTableFilter = tmpFilter.toObject();
             return;
         }
-        tmpuserMaps[data.user_id] = 1;
+//        tmpuserMaps[data.user_id] = 1;
+        tmpFilter.insert(data.user_id);
         tmpuserCount++; 
     });
 
