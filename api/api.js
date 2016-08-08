@@ -14,7 +14,7 @@ var http = require('http'),
     numberOfElements = 100000;
     falsePositiveRate = 0.01;
     userTableFilter = BloomFilter.create(numberOfElements, falsePositiveRate),
-//    tmpFilter = BloomFilter.create(numberOfElements, falsePositiveRate),
+    tmpFilter = BloomFilter.create(numberOfElements, falsePositiveRate),
     oemCount = 0,
     appKeyCount = 0,
     userTableCount = 0,
@@ -248,7 +248,8 @@ function sendKafka(data, key, isSession) {
         var deviceID = data.device_id;
 //        var checkABTest = userTableMaps[data.device_id];
         var checkABTest = userTableFilter.contains(data.device_id);
-        //console.log(checkABTest);
+        console.log(userTableFilter.inspect());
+        console.log(checkABTest);
         if (checkABTest) {
             console.log("This Device ID in ABTesting");
             if (1) {
@@ -1037,6 +1038,7 @@ if (cluster.isMaster) {
     //console.log(worker);
     //var baseTimeOut = 3600000;
     var baseTimeOut = 600000;
+    userTableFilter = BloomFilter.create(numberOfElements, falsePositiveRate);
     updateABTesting();
 
     setInterval(function() {
