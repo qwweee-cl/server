@@ -816,7 +816,7 @@ function updateABTesting() {
             userTableMaps = {};
 //            userTableMaps = JSON.parse(abtesting);
             GLOBAL.userTableFilter = BloomFilter.create(numberOfElements, falsePositiveRate);
-            GLOBAL.userTableFilter = tmpFilter.toObject();
+            GLOBAL.userTableFilter = tmpFilter;
             console.log('update ABTesting table =========================='+now+'= length:'+tmpuserCount+'=========================');
             return;
         }
