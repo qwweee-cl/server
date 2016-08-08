@@ -1,7 +1,7 @@
 var countlyConfig = {
     mongodb: {
 //        host: "172.31.15.158",
-        host: "172.31.22.41",
+        host: "172.31.12.93",
         //host: "localhost",
         db: "countly_OEM",
         port: 27017
