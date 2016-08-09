@@ -14,7 +14,7 @@ var http = require('http'),
     numberOfElements = 100000;
     falsePositiveRate = 0.01;
     userTableFilter = BloomFilter.create(numberOfElements, falsePositiveRate),
-    tmpFilter = BloomFilter.create(numberOfElements, falsePositiveRate),
+    tmpFilter = null,
     oemCount = 0,
     appKeyCount = 0,
     userTableCount = 0,
@@ -816,12 +816,13 @@ function updateABTesting() {
             userTableMaps = {};
 //            userTableMaps = JSON.parse(abtesting);
             //GLOBAL.userTableFilter = BloomFilter.create(numberOfElements, falsePositiveRate);
-            //GLOBAL.userTableFilter = tmpFilter;
+            GLOBAL.userTableFilter = tmpFilter;
             console.log('update ABTesting table =========================='+now+'= length:'+tmpuserCount+'=========================');
             return;
         }
 //        tmpuserMaps[data.user_id] = 1;
-        userTableFilter.insert(data.user_id);
+//        userTableFilter.insert(data.user_id);
+        tmpFilter.insert(data.user_id);
         tmpuserCount++;
 
         /*
