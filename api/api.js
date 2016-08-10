@@ -1046,7 +1046,7 @@ if (cluster.isMaster) {
     setInterval(function() {
         /** update workerEnv OEM tables data **/
         updateOEMTable();
-        updateABTesting();
+        //updateABTesting();
     }, baseTimeOut);
 
     setInterval(function() {
