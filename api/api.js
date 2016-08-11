@@ -257,7 +257,7 @@ function sendKafka(data, key, isSession) {
 //        console.log(GLOBAL.userTableFilter.inspect());
         //console.log(checkABTest);
         if (checkABTest) {
-            console.log("This Device ID in ABTesting");
+            //console.log("This Device ID in ABTesting");
             if (1) {
             producer.send([
                 { topic: ABTestTopicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
