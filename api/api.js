@@ -247,9 +247,11 @@ function sendKafka(data, key, isSession) {
     randomCnt = ((++randomCnt)%partitionNum);
     if (cando) {
         //console.log(JSON.stringify(data));
+/*
         producer.send([
             { topic: topicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
         ], kafkaCB);
+*/
         var deviceID = data.device_id;
 //        var checkABTest = userTableMaps[data.device_id];
 //        console.log("Filter: "+GLOBAL.userTableFilter);
@@ -258,7 +260,7 @@ function sendKafka(data, key, isSession) {
         //console.log(checkABTest);
         if (checkABTest) {
             //console.log("This Device ID in ABTesting");
-            if (1) {
+            if (0) {
             producer.send([
                 { topic: ABTestTopicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
             ], kafkaCB);
