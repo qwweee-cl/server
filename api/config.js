@@ -44,12 +44,12 @@ var countlyConfig = {
     mongodb: "localhost:27017/countly?auto_reconnect=true",
     */
     api: {
-        workers: 2,
+        workers: 4,
         port: 3001,
         host: "localhost",
         safe: false,
         session_duration_limit: 3601,
-        max_sockets: 1024,
+        max_sockets: 10240,
         cl_endsession_ongoing_timeout: 10,
         cl_wait_time: 60,
         cl_is_debug: false,
