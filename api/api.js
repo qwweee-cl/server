@@ -255,13 +255,13 @@ function sendKafka(data, key, isSession) {
         var deviceID = data.device_id;
 //        var checkABTest = userTableMaps[data.device_id];
 //        console.log("Filter: "+GLOBAL.userTableFilter);
-//        var checkABTest = GLOBAL.userTableFilter.test(deviceID);
-        var checkABTest = false;
+        var checkABTest = GLOBAL.userTableFilter.test(deviceID);
+//        var checkABTest = false;
 //        console.log(GLOBAL.userTableFilter.inspect());
         //console.log(checkABTest);
         if (checkABTest) {
             //console.log("This Device ID in ABTesting");
-            if (0) {
+            if (1) {
             producer.send([
                 { topic: ABTestTopicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
             ], kafkaCB);
