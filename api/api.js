@@ -253,6 +253,7 @@ function sendKafka(data, key, isSession) {
         ], kafkaCB);
 
         var deviceID = data.device_id;
+/*
 //        var checkABTest = userTableMaps[data.device_id];
 //        console.log("Filter: "+GLOBAL.userTableFilter);
         var checkABTest = GLOBAL.userTableFilter.test(deviceID);
@@ -267,6 +268,7 @@ function sendKafka(data, key, isSession) {
             ], kafkaCB);
             }
         }
+*/
     }
 }
 
