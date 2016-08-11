@@ -6,14 +6,19 @@ var http = require('http'),
     exec = require('child_process').exec,
     jsonQuery = require('json-query'),
 	moment = require('moment-timezone'),
-    BloomFilter = require('bloom-filter'),
+//    BloomFilter = require('bloom-filter'),
     workerEnv = {},
     oemMaps = [],
     appKeyMaps = [],
     userTableMaps = {},
-    numberOfElements = 100000;
-    falsePositiveRate = 0.01;
-    userTableFilter = BloomFilter.create(numberOfElements, falsePositiveRate),
+    bf = require('bloomfilter'),
+    BloomFilter = bf.BloomFilter,
+//    numberOfElements = 100000;
+//    falsePositiveRate = 0.01;
+//    userTableFilter = BloomFilter.create(numberOfElements, falsePositiveRate),
+    elements = 958505,
+    hashfunc = 6,
+    userTableFilter = new BloomFilter(elements, hashfunc),
     tmpFilter = null,
     oemCount = 0,
     appKeyCount = 0,
@@ -248,7 +253,7 @@ function sendKafka(data, key, isSession) {
         var deviceID = data.device_id;
 //        var checkABTest = userTableMaps[data.device_id];
 //        console.log("Filter: "+GLOBAL.userTableFilter);
-        var checkABTest = GLOBAL.userTableFilter.contains(deviceID);
+        var checkABTest = GLOBAL.userTableFilter.test(deviceID);
 //        console.log(GLOBAL.userTableFilter.inspect());
         //console.log(checkABTest);
         if (checkABTest) {
@@ -806,7 +811,7 @@ function findAndRemoveKey(array, value) {
 function updateABTesting() {
     tmpuserCount = 0;
     tmpuserMaps.length = 0;
-    var tmpFilter = BloomFilter.create(numberOfElements, falsePositiveRate)
+    var tmpFilter = new BloomFilter(elements, hashfunc);
     common.db.collection('ABTesting').find({},{batchSize:1000}).each(function(err, data) {
         if (!data) {
 //            workerEnv["ABTEST"] = JSON.stringify(tmpuserMaps);
@@ -822,7 +827,8 @@ function updateABTesting() {
         }
 //        tmpuserMaps[data.user_id] = 1;
 //        userTableFilter.insert(data.user_id);
-        tmpFilter.insert(data.user_id);
+//        tmpFilter.insert(data.user_id);
+        tmpFilter.add(data.user_id);
         tmpuserCount++;
 
         /*
