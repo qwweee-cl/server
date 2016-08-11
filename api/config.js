@@ -49,7 +49,7 @@ var countlyConfig = {
         host: "localhost",
         safe: false,
         session_duration_limit: 3601,
-        max_sockets: 3072,
+        max_sockets: 1024,
         cl_endsession_ongoing_timeout: 10,
         cl_wait_time: 60,
         cl_is_debug: false,
