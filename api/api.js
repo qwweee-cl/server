@@ -68,7 +68,7 @@ var client = new Client(zkList);
 
 //var p = argv.p || 0; // default is 0
 //var a = argv.a || 0; // no compress
-var producer = new Producer(client, { requireAcks: 0});
+var producer = new Producer(client, { requireAcks: 1});
 var partitionNum = 6;
 var randomCnt = -1;
 var cando = false;
@@ -218,6 +218,7 @@ function getNodeTopicName(header, appkey) {
 }
 
 function kafkaCB(err, result) {
+    //console.log(result);
     if (err) {
         kafkaErrorCount++;
         errorContext+=(JSON.stringify(err)+"\r\n");
@@ -563,10 +564,12 @@ function insertRawColl(coll, eventp, params, isSession) {
                 });
             }
         }
+if (0) {
         var eventpOEM = JSON.parse(JSON.stringify(eventp));
         eventpOEM.store_name = checkOEM.deal_no;
         sendOEMKafka(eventpOEM, eventpOEM.app_key, isSession);
         var newShardoemdb = common.getNewShardOEMRawDB(eventpOEM.app_key, dealNumber, currDate);
+}
         if (0) {
         if (newShardoemdb) {
             newShardoemdb.collection(coll).insert(eventpOEM, function(err, res) {
