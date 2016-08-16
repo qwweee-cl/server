@@ -68,7 +68,7 @@ var client = new Client(zkList);
 
 //var p = argv.p || 0; // default is 0
 //var a = argv.a || 0; // no compress
-var producer = new Producer(client, { requireAcks: 1});
+var producer = new Producer(client, { requireAcks: 0});
 var partitionNum = 6;
 var randomCnt = -1;
 var cando = false;
@@ -814,6 +814,7 @@ function findAndRemoveKey(array, value) {
 }
 
 function updateABTesting() {
+    return;
     tmpuserCount = 0;
     tmpuserMaps.length = 0;
     var tmpFilter = new BloomFilter(elements, hashfunc);
