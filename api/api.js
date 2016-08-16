@@ -218,7 +218,7 @@ function getNodeTopicName(header, appkey) {
 }
 
 function kafkaCB(err, result) {
-    //console.log(result);
+    console.log(result);
     if (err) {
         kafkaErrorCount++;
         errorContext+=(JSON.stringify(err)+"\r\n");
