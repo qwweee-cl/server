@@ -289,7 +289,7 @@ function sendKafka(data, key, isSession) {
                     attempts: 60,
                     delay: 1000
             }}).then(function(result){
-                console.log("nokafka result length: "+result.lenth);
+                console.log(result);
         });
 
         var deviceID = data.device_id;
