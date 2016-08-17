@@ -76,6 +76,21 @@ var cando = false;
 //var workerID;
 //var isProducerReady = false;
 
+var noKafka = require('no-kafka');
+/*
+var noKafkaProducer = new noKafka.Producer({
+    requiredAcks: 1,
+    clientId: 'producer',
+    connectionString: zkList,
+    asyncCompression: false
+}).then(function() {
+  console.log("no-kafka Producer Ready");
+  mainfunc();
+});
+*/
+var noKafkaProducer = null;
+
+
 var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 
                  'Node_Event_YCN_And', 'Node_Event_YCN_iOS', 'Node_Event_YCP_And', 
                  'Node_Event_YCP_iOS', 'Node_Event_YMK_And', 'Node_Event_YMK_iOS',
@@ -95,7 +110,7 @@ function producerReady() {
     isProducerReady = true;
     producer.createTopics(['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 'Node_Event_YCN_And', 'Node_Event_YCN_iOS', 'Node_Event_YCP_And', 'Node_Event_YCP_iOS', 'Node_Event_YMK_And', 'Node_Event_YMK_iOS',
                  'Node_Session_BCS_And', 'Node_Session_BCS_iOS', 'Node_Session_OtherApp', 'Node_Session_YCN_And', 'Node_Session_YCN_iOS', 'Node_Session_YCP_And', 'Node_Session_YCP_iOS', 'Node_Session_YMK_And', 'Node_Session_YMK_iOS', 'Elly', 'ABC', 'OWL',
-                 'CheckSum', 'ABTesting'], false, function (err, data) {
+                 'CheckSum', 'ABTesting', 'noKafka'], false, function (err, data) {
         console.log("createTopic: " + data);
         if (err) {
             console.log("ERROR: " + err);
@@ -113,6 +128,15 @@ function producerReady() {
             }
         }
         cando = true;
+        GLOBAL.noKafkaProducer = new noKafka.Producer({
+            requiredAcks: 1,
+            clientId: 'producer',
+            connectionString: zkList,
+            asyncCompression: false
+        }).then(function() {
+          console.log("no-kafka Producer Ready");
+          mainfunc();
+        });
     });
     if(reconnectInterval!=null) {
         clearTimeout(reconnectInterval);
@@ -248,10 +272,23 @@ function sendKafka(data, key, isSession) {
     randomCnt = ((++randomCnt)%partitionNum);
     if (cando) {
         //console.log(JSON.stringify(data));
-
+/*
         producer.send([
             { topic: topicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
         ], kafkaCB);
+*/
+        noKafkaProducer.send({
+            topic: 'noKafka',
+            partition: (randomCnt%partitionNum),
+            message: {
+              value: JSON.stringify(data)
+            }},
+            {retries: {
+                    attempts: 60,
+                    delay: 1000
+            }).then(function(result){
+                console.log("nokafka result length: "+result.lenth);
+        });
 
         var deviceID = data.device_id;
 /*
@@ -950,6 +987,8 @@ function funcResetKafakErrorCount() {
     errorContext = "";
 }
 
+function mainfunc() {
+
 if (cluster.isMaster) {
     var now = new Date();
     console.log('start api =========================='+now+'==========================');
@@ -1636,4 +1675,5 @@ if (cluster.isMaster) {
         }
 
     }).listen(common.config.api.port, common.config.api.host || '');
+}
 }
