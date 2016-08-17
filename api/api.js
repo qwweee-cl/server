@@ -132,7 +132,7 @@ function producerReady() {
                 });
             }
         }
-        GLOBAL.noKafkaProducer.init().then(function() {
+        noKafkaProducer.init().then(function() {
           console.log("no-kafka Producer Ready");
           cando = true;
           mainfunc();
@@ -277,7 +277,7 @@ function sendKafka(data, key, isSession) {
             { topic: topicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
         ], kafkaCB);
 */
-        GLOBAL.noKafkaProducer.send({
+        noKafkaProducer.send({
             topic: 'noKafka',
             partition: (randomCnt%partitionNum),
             message: {
