@@ -93,7 +93,7 @@ var noKafkaProducer = new noKafka.Producer({
 var noKafkaProducer = new noKafka.Producer({
             requiredAcks: 1,
             clientId: 'producer',
-            connectionString: zkList,
+            connectionString: kafkaList,
             asyncCompression: false
         });
 
