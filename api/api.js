@@ -286,7 +286,7 @@ function sendKafka(data, key, isSession) {
             {retries: {
                     attempts: 60,
                     delay: 1000
-            }).then(function(result){
+            }}).then(function(result){
                 console.log("nokafka result length: "+result.lenth);
         });
 
