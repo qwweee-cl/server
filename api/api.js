@@ -280,7 +280,7 @@ function sendKafka(data, key, isSession) {
         ], kafkaCB);
 */
         noKafkaProducer.send({
-            topic: 'noKafka',
+            topic: topicName,
             partition: (randomCnt%partitionNum),
             message: {
               value: JSON.stringify(data)
