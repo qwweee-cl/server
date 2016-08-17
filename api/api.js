@@ -88,7 +88,12 @@ var noKafkaProducer = new noKafka.Producer({
   mainfunc();
 });
 */
-var noKafkaProducer = null;
+var noKafkaProducer = new noKafka.Producer({
+            requiredAcks: 1,
+            clientId: 'producer',
+            connectionString: zkList,
+            asyncCompression: false
+        });
 
 
 var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 
@@ -127,12 +132,7 @@ function producerReady() {
                 });
             }
         }
-        GLOBAL.noKafkaProducer = new noKafka.Producer({
-            requiredAcks: 1,
-            clientId: 'producer',
-            connectionString: zkList,
-            asyncCompression: false
-        }).then(function() {
+        GLOBAL.noKafkaProducer.init().then(function() {
           console.log("no-kafka Producer Ready");
           cando = true;
           mainfunc();
