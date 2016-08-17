@@ -127,7 +127,6 @@ function producerReady() {
                 });
             }
         }
-        cando = true;
         GLOBAL.noKafkaProducer = new noKafka.Producer({
             requiredAcks: 1,
             clientId: 'producer',
@@ -135,6 +134,7 @@ function producerReady() {
             asyncCompression: false
         }).then(function() {
           console.log("no-kafka Producer Ready");
+          cando = true;
           mainfunc();
         });
     });
@@ -277,7 +277,7 @@ function sendKafka(data, key, isSession) {
             { topic: topicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
         ], kafkaCB);
 */
-        noKafkaProducer.send({
+        GLOBAL.noKafkaProducer.send({
             topic: 'noKafka',
             partition: (randomCnt%partitionNum),
             message: {
