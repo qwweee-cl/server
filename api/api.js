@@ -274,11 +274,11 @@ function sendKafka(data, key, isSession) {
     randomCnt = ((++randomCnt)%partitionNum);
     if (cando) {
         //console.log(JSON.stringify(data));
-/*
+if (0) {
         producer.send([
             { topic: topicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
         ], kafkaCB);
-*/
+} else {
         noKafkaProducer.send({
             topic: topicName,
             partition: (randomCnt%partitionNum),
@@ -291,7 +291,7 @@ function sendKafka(data, key, isSession) {
             }}).then(function(result){
                 console.log(result);
         });
-
+}
         var deviceID = data.device_id;
 /*
 //        var checkABTest = userTableMaps[data.device_id];
