@@ -57,6 +57,8 @@ var reconnectInterval = null;
 var kafkaErrorCount = 0;
 var kafkaErrorMaxCount = 10000;
 var errorContext = "";
+var nokafkaErrorCount = 0;
+var nokafkaerrorContext = "";
 var kafkaCheckTimeout = 1*60*60*1000;
 var failMailList = "hendry_wu@perfectcorp.com,gary_huang@perfectcorp.com";
 
@@ -289,7 +291,22 @@ if (0) {
                     attempts: 60,
                     delay: 1000
             }}).then(function(result){
-                console.log(result);
+                result.forEach(function(entry) {
+                    if (entry.error) {
+                        console.log("ERROR: " + entry.error);
+                        nokafkaErrorCount++;
+                        nokafkaerrorContext+=(JSON.stringify(err)+"\r\n");
+                        if (nokafkaErrorCount && (nokafkaErrorCount%kafkaErrorMaxCount == 0)) {
+                            console.log("Kafka Exception Send Mail");
+                            var cmd = 'echo "'+nokafkaerrorContext+'" | mail -s "Kafka Exception Count '+nokafkaErrorCount+' times" '+failMailList;
+                            exec(cmd, function(error, stdout, stderr) {
+                                if(error)
+                                    console.log(error);
+                            });
+                        }
+                    }
+                });
+                //console.log(result);
         });
 }
         var deviceID = data.device_id;
@@ -985,8 +1002,16 @@ function checkKafkaStatus() {
 }
 
 function funcResetKafakErrorCount() {
+    if (kafkaErrorCount) {
+        console.log("kafkaErrorCount: "+kafkaErrorCount);
+    }
+    if (nokafkaErrorCount) {
+        console.log("nokafkaErrorCount: "+nokafkaErrorCount);
+    }
     kafkaErrorCount = 0;
     errorContext = "";
+    nokafkaErrorCount = 0;
+    nokafkaerrorContext = "";
 }
 
 function mainfunc() {
