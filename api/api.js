@@ -63,6 +63,7 @@ var cando = false;
 
 var nokafkaErrorCount = 0;
 var nokafkaerrorContext = "";
+var isNoKafka = false;
 var kafkaList = '172.31.27.186:9092,172.31.27.187:9092,172.31.27.188:9092,172.31.23.18:9092';  // bootstrap.servers
 
 var noKafka = require('no-kafka');
@@ -246,7 +247,7 @@ function sendKafka(data, key, isSession) {
     randomCnt = ((++randomCnt)%partitionNum);
     if (cando) {
         //console.log(JSON.stringify(data));
-if(1) {
+if(!isNoKafka) {
         producer.send([
             { topic: topicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
         ], kafkaCB);
@@ -287,7 +288,7 @@ function sendOthersKafka(data, key, isSession) {
     randomCnt = ((++randomCnt)%partitionNum);
     if (cando) {
         //console.log(JSON.stringify(data));
-if(1) {
+if(!isNoKafka) {
         producer.send([
             { topic: topicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
         ], kafkaCB);
@@ -344,7 +345,7 @@ function sendOEMKafka(data, key, isSession) {
     randomCnt = ((++randomCnt)%partitionNum);
     if (cando) {
         //console.log(JSON.stringify(data));
-if (1) {
+if (!isNoKafka) {
         producer.send([
             { topic: topicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
         ], kafkaCB);
