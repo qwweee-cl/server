@@ -60,6 +60,22 @@ var cando = false;
 //var workerID;
 //var isProducerReady = false;
 
+
+var nokafkaErrorCount = 0;
+var nokafkaerrorContext = "";
+var kafkaList = '172.31.27.186:9092,172.31.27.187:9092,172.31.27.188:9092,172.31.23.18:9092';  // bootstrap.servers
+
+var noKafka = require('no-kafka');
+var noKafkaProducer = new noKafka.Producer({
+    requiredAcks: 1,
+    clientId: 'producer',
+    connectionString: kafkaList,
+    asyncCompression: false
+});
+
+
+
+
 var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 
                  'Node_Event_YCN_And', 'Node_Event_YCN_iOS', 'Node_Event_YCP_And', 
                  'Node_Event_YCP_iOS', 'Node_Event_YMK_And', 'Node_Event_YMK_iOS',
@@ -94,7 +110,12 @@ function producerReady() {
                 });
             }
         }
-        cando = true;
+        noKafkaProducer.init().then(function() {
+            console.log("no-kafka Producer Ready");
+            cando = true;
+            mainfunc();
+        });
+        //cando = true;
     });
     if(reconnectInterval!=null) {
         clearTimeout(reconnectInterval);
@@ -225,9 +246,39 @@ function sendKafka(data, key, isSession) {
     randomCnt = ((++randomCnt)%partitionNum);
     if (cando) {
         //console.log(JSON.stringify(data));
+if(1) {
         producer.send([
             { topic: topicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
         ], kafkaCB);
+} else {
+        noKafkaProducer.send({
+            topic: topicName,
+            partition: (randomCnt%partitionNum),
+            message: {
+              value: JSON.stringify(data)
+            }},
+            {retries: {
+                    attempts: 60,
+                    delay: 1000
+            }}).then(function(result){
+                result.forEach(function(entry) {
+                    if (entry.error) {
+                        console.log("ERROR: " + entry.error);
+                        nokafkaErrorCount++;
+                        nokafkaerrorContext+=(JSON.stringify(err)+"\r\n");
+                        if (nokafkaErrorCount && (nokafkaErrorCount%kafkaErrorMaxCount == 0)) {
+                            console.log("no-Kafka Exception Send Mail");
+                            var cmd = 'echo "'+nokafkaerrorContext+'" | mail -s "no-Kafka Exception Count '+nokafkaErrorCount+' times" '+failMailList;
+                            exec(cmd, function(error, stdout, stderr) {
+                                if(error)
+                                    console.log(error);
+                            });
+                        }
+                    }
+                });
+                //console.log(result);
+        });
+}
     }
 }
 
@@ -236,9 +287,39 @@ function sendOthersKafka(data, key, isSession) {
     randomCnt = ((++randomCnt)%partitionNum);
     if (cando) {
         //console.log(JSON.stringify(data));
+if(1) {
         producer.send([
             { topic: topicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
         ], kafkaCB);
+} else {
+        noKafkaProducer.send({
+            topic: topicName,
+            partition: (randomCnt%partitionNum),
+            message: {
+              value: JSON.stringify(data)
+            }},
+            {retries: {
+                    attempts: 60,
+                    delay: 1000
+            }}).then(function(result){
+                result.forEach(function(entry) {
+                    if (entry.error) {
+                        console.log("ERROR: " + entry.error);
+                        nokafkaErrorCount++;
+                        nokafkaerrorContext+=(JSON.stringify(err)+"\r\n");
+                        if (nokafkaErrorCount && (nokafkaErrorCount%kafkaErrorMaxCount == 0)) {
+                            console.log("no-Kafka Exception Send Mail");
+                            var cmd = 'echo "'+nokafkaerrorContext+'" | mail -s "no-Kafka Exception Count '+nokafkaErrorCount+' times" '+failMailList;
+                            exec(cmd, function(error, stdout, stderr) {
+                                if(error)
+                                    console.log(error);
+                            });
+                        }
+                    }
+                });
+                //console.log(result);
+        });
+}
     }
 }
 
@@ -263,9 +344,39 @@ function sendOEMKafka(data, key, isSession) {
     randomCnt = ((++randomCnt)%partitionNum);
     if (cando) {
         //console.log(JSON.stringify(data));
+if (1) {
         producer.send([
             { topic: topicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
         ], kafkaCB);
+} else {
+        noKafkaProducer.send({
+            topic: topicName,
+            partition: (randomCnt%partitionNum),
+            message: {
+              value: JSON.stringify(data)
+            }},
+            {retries: {
+                    attempts: 60,
+                    delay: 1000
+            }}).then(function(result){
+                result.forEach(function(entry) {
+                    if (entry.error) {
+                        console.log("ERROR: " + entry.error);
+                        nokafkaErrorCount++;
+                        nokafkaerrorContext+=(JSON.stringify(err)+"\r\n");
+                        if (nokafkaErrorCount && (nokafkaErrorCount%kafkaErrorMaxCount == 0)) {
+                            console.log("no-Kafka Exception Send Mail");
+                            var cmd = 'echo "'+nokafkaerrorContext+'" | mail -s "no-Kafka Exception Count '+nokafkaErrorCount+' times" '+failMailList;
+                            exec(cmd, function(error, stdout, stderr) {
+                                if(error)
+                                    console.log(error);
+                            });
+                        }
+                    }
+                });
+                //console.log(result);
+        });
+}
     }
 }
 
@@ -930,17 +1041,33 @@ function checkKafkaStatus() {
 }
 
 function funcResetKafkaErrorCount() {
+if (1) {
     if (kafkaErrorCount) {
         console.log("Kafka Exception Send Mail");
         var cmd = 'echo "'+errorContext+'" | mail -s "Kafka Exception Count '+kafkaErrorCount+' times" '+failMailList;
         exec(cmd, function(error, stdout, stderr) {
             if(error)
-                console.log(error);
+                console.log("kafka send mail error: "+error);
         });
     }
     kafkaErrorCount = 0;
     errorContext = "";
+} else {
+    if (nokafkaErrorCount) {
+        console.log("nokafkaErrorCount: "+nokafkaErrorCount);
+        console.log("no-Kafka Exception Send Mail");
+        var cmd = 'echo "'+nokafkaerrorContext+'" | mail -s "Kafka Exception Count '+nokafkaErrorCount+' times" '+failMailList;
+        exec(cmd, function(error, stdout, stderr) {
+            if(error)
+                console.log("no-kafka send mail error: "+error);
+        });
+    }
+    nokafkaErrorCount = 0;
+    nokafkaerrorContext = "";
 }
+}
+
+function mainfunc() {
 
 if (cluster.isMaster) {
     var now = new Date();
@@ -1564,4 +1691,5 @@ if (cluster.isMaster) {
         }
 
     }).listen(common.config.api.port, common.config.api.host || '');
+}
 }
