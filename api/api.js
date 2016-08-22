@@ -63,7 +63,7 @@ var cando = false;
 
 var nokafkaErrorCount = 0;
 var nokafkaerrorContext = "";
-var isNoKafka = false;
+var isNoKafka = true;
 var kafkaList = '172.31.27.186:9092,172.31.27.187:9092,172.31.27.188:9092,172.31.23.18:9092';  // bootstrap.servers
 
 var noKafka = require('no-kafka');
