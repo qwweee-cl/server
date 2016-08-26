@@ -326,10 +326,38 @@ if (0) {
             //console.log(checkABTest);
             if (checkABTest) {
                 //console.log("This Device ID in ABTesting");
-                if (1) {
+                if (0) {
                 producer.send([
                     { topic: ABTestTopicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
                 ], kafkaCB);
+                } else {
+                noKafkaProducer.send({
+                    topic: ABTestTopicName,
+                    partition: (randomCnt%partitionNum),
+                    message: {
+                      value: JSON.stringify(data)
+                    }},
+                    {retries: {
+                            attempts: 60,
+                            delay: 1000
+                    }}).then(function(result){
+                        result.forEach(function(entry) {
+                            if (entry.error) {
+                                console.log("ERROR: " + entry.error);
+                                nokafkaErrorCount++;
+                                nokafkaerrorContext+=(JSON.stringify(err)+"\r\n");
+                                if (nokafkaErrorCount && (nokafkaErrorCount%kafkaErrorMaxCount == 0)) {
+                                    console.log("Kafka Exception Send Mail");
+                                    var cmd = 'echo "'+nokafkaerrorContext+'" | mail -s "Kafka Exception Count '+nokafkaErrorCount+' times" '+failMailList;
+                                    exec(cmd, function(error, stdout, stderr) {
+                                        if(error)
+                                            console.log(error);
+                                    });
+                                }
+                            }
+                        });
+                        //console.log(result);
+                });
                 }
             }
         }
