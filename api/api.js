@@ -103,11 +103,8 @@ var noKafkaProducer = new noKafka.Producer({
 
 
 const cassandra = require('cassandra-driver');
-if (0) {
-    const cassandraIP = { contactPoints: ['172.31.27.165','172.31.27.166','172.31.27.167','172.31.27.168'], keyspace: 'countly_activities'};
-} else {
-    const cassandraIP = { contactPoints: ['172.31.3.66'], keyspace: 'countly_activities'};
-}
+const cassandraOption = { contactPoints: ['172.31.27.165','172.31.27.166','172.31.27.167','172.31.27.168'], keyspace: 'countly_activities'};
+//const cassandraOption = { contactPoints: ['172.31.3.66'], keyspace: 'countly_activities'};
 const query = 'SELECT device_id, is_for_web_filter FROM bc_trend_ab_user;';
 
 var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 
@@ -883,7 +880,7 @@ function findAndRemoveKey(array, value) {
 }
 
 function updateABTesting() {
-    bloomConf = JSON.parse(fs.readFileSync('./bloomfilter.conf', 'utf8'));
+    bloomConf = JSON.parse(fs.readFileSync('/usr/local/countly/api/bloomfilter.conf', 'utf8'));
     tmpuserCount = 0;
     var tmpFilter = new BloomFilter(bloomConf.elements, bloomConf.hashfunc);
     var cassandraClient = new cassandra.Client(cassandraOption);
