@@ -13,12 +13,14 @@ var http = require('http'),
     userTableMaps = {},
     bf = require('bloomfilter'),
     BloomFilter = bf.BloomFilter,
+    bloomConf = null,
 //    numberOfElements = 100000;
 //    falsePositiveRate = 0.01;
 //    userTableFilter = BloomFilter.create(numberOfElements, falsePositiveRate),
     elements = 958505,
     hashfunc = 6,
-    userTableFilter = new BloomFilter(elements, hashfunc),
+//    userTableFilter = new BloomFilter(elements, hashfunc),
+    userTableFilter = null,
     tmpFilter = null,
     oemCount = 0,
     appKeyCount = 0,
@@ -99,6 +101,14 @@ var noKafkaProducer = new noKafka.Producer({
             asyncCompression: false
         });
 
+
+const cassandra = require('cassandra-driver');
+if (0) {
+    const cassandraIP = { contactPoints: ['172.31.27.165','172.31.27.166','172.31.27.167','172.31.27.168'], keyspace: 'countly_activities'};
+} else {
+    const cassandraIP = { contactPoints: ['172.31.3.66'], keyspace: 'countly_activities'};
+}
+const query = 'SELECT device_id, is_for_web_filter FROM bc_trend_ab_user;';
 
 var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 
                  'Node_Event_YCN_And', 'Node_Event_YCN_iOS', 'Node_Event_YCP_And', 
@@ -873,10 +883,50 @@ function findAndRemoveKey(array, value) {
 }
 
 function updateABTesting() {
-    return;
+    bloomConf = JSON.parse(fs.readFileSync('./bloomfilter.conf', 'utf8'));
     tmpuserCount = 0;
-    tmpuserMaps.length = 0;
-    var tmpFilter = new BloomFilter(elements, hashfunc);
+    var tmpFilter = new BloomFilter(bloomConf.elements, bloomConf.hashfunc);
+    var cassandraClient = new cassandra.Client(cassandraOption);
+    var start = new Date();
+    console.log('Start update ABTesting User Table: %s', start.toString());
+    cassandraClient.eachRow(query, [], { autoPage : true, fetchSize : 20000 },
+    function(n, row) {
+        if (is_for_web_filter) {
+            filter.add(row.device_id);
+            tmpuserCount++;
+        }
+    },
+    function (err, result) {
+        if (result) {
+            console.log('TMP BloomFilter add finished : %d', tmpuserCount);
+            GLOBAL.userTableFilter = tmpFilter;
+            var end = new Date();
+            var diff = end.getTime() - start.getTime();
+            console.log('End update ABTesting User Table: %s', end.toString());
+            console.log('Update Time: %d', (diff/1000));
+            console.log('update ABTesting table =========================='+now+'= length:'+tmpuserCount+'=========================');
+        }
+        if (err) {
+            console.log('Error : %s', err.toString());
+            console.log('updated records : %d', count);
+            // send mail
+            console.log("Update BloomFilter Error Send Mail");
+            var cmd = 'echo "'+err.toString()+'" | mail -s "Update BloomFilter Error" '+failMailList;
+            exec(cmd, function(error, stdout, stderr) {
+                if(error)
+                    console.log(error);
+            });
+        }
+        cassandraClient.shutdown(function (err,result) {
+            console.log('error : '+err);
+            console.log('result : '+result);
+        });
+        return;
+    });
+    return;
+
+
+
     common.db.collection('ABTesting').find({},{batchSize:1000}).each(function(err, data) {
         if (!data) {
 //            workerEnv["ABTEST"] = JSON.stringify(tmpuserMaps);
@@ -1121,6 +1171,7 @@ if (cluster.isMaster) {
     //console.log(cluster.isMaster);
     //console.log(worker);
     var baseTimeOut = 3600000;
+    var abtestTimeOut = 600000;
     //var baseTimeOut = 600000;
     updateABTesting();
 
@@ -1129,6 +1180,11 @@ if (cluster.isMaster) {
         updateOEMTable();
         //updateABTesting();
     }, baseTimeOut);
+
+    setInterval(function() {
+        /** update workerEnv OEM tables data **/
+        updateABTesting();
+    }, abtestTimeOut);
 
     setInterval(function() {
         /** update workerEnv OEM tables data **/
