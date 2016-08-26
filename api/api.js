@@ -888,8 +888,8 @@ function updateABTesting() {
     console.log('Start update ABTesting User Table: %s', start.toString());
     cassandraClient.eachRow(query, [], { autoPage : true, fetchSize : 20000 },
     function(n, row) {
-        if (row.is_for_web_filter) {
-            filter.add(row.device_id);
+        if (!row.is_for_web_filter) {
+            tmpFilter.add(row.device_id);
             tmpuserCount++;
         }
     },
@@ -1168,7 +1168,7 @@ if (cluster.isMaster) {
     //console.log(cluster.isMaster);
     //console.log(worker);
     var baseTimeOut = 3600000;
-    var abtestTimeOut = 600000;
+    var abtestTimeOut = 1800000;
     //var baseTimeOut = 600000;
     updateABTesting();
 
