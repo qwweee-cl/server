@@ -107,6 +107,15 @@ const cassandra = require('cassandra-driver');
 const cassandraOption = { contactPoints: ['172.31.3.66'], keyspace: 'countly_activities'};
 const query = 'SELECT device_id, is_for_web_filter FROM bc_trend_ab_user;';
 
+var schedule = require('node-schedule');
+var isUpdating = false;
+
+//var job = schedule.scheduleJob('30 07 */1 * *', function(){
+var job = schedule.scheduleJob('*/30 * * * *', function(){
+    console.log('Call update ABTesting Table!');
+    updateABTesting();
+});
+
 var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 
                  'Node_Event_YCN_And', 'Node_Event_YCN_iOS', 'Node_Event_YCP_And', 
                  'Node_Event_YCP_iOS', 'Node_Event_YMK_And', 'Node_Event_YMK_iOS',
@@ -909,6 +918,11 @@ function findAndRemoveKey(array, value) {
 }
 
 function updateABTesting() {
+    if (isUpdating) {
+        console.log('Updating so break');
+        return;
+    }
+    isUpdating = true;
     bloomConf = JSON.parse(fs.readFileSync('/usr/local/countly/api/bloomfilter.conf', 'utf8'));
     tmpuserCount = 0;
     var tmpFilter = new BloomFilter(bloomConf.elements, bloomConf.hashfunc);
@@ -947,6 +961,7 @@ function updateABTesting() {
             console.log('error : '+err);
             console.log('result : '+result);
         });
+        isUpdating = false;
         return;
     });
     return;
@@ -1197,20 +1212,13 @@ if (cluster.isMaster) {
     //console.log(cluster.isMaster);
     //console.log(worker);
     var baseTimeOut = 3600000;
-    var abtestTimeOut = 1800000;
     //var baseTimeOut = 600000;
     updateABTesting();
 
     setInterval(function() {
         /** update workerEnv OEM tables data **/
         updateOEMTable();
-        //updateABTesting();
     }, baseTimeOut);
-
-    setInterval(function() {
-        /** update workerEnv OEM tables data **/
-        updateABTesting();
-    }, abtestTimeOut);
 
     setInterval(function() {
         /** update workerEnv OEM tables data **/
