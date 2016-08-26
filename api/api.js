@@ -901,7 +901,7 @@ function updateABTesting() {
             var diff = end.getTime() - start.getTime();
             console.log('End update ABTesting User Table: %s', end.toString());
             console.log('Update Time: %d', (diff/1000));
-            console.log('update ABTesting table =========================='+now+'= length:'+tmpuserCount+'=========================');
+            console.log('update ABTesting table =========================='+end+'= length:'+tmpuserCount+'=========================');
         }
         if (err) {
             console.log('Error : %s', err.toString());
