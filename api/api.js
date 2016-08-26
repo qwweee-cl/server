@@ -317,22 +317,23 @@ if (0) {
         });
 }
         var deviceID = data.device_id;
-/*
-//        var checkABTest = userTableMaps[data.device_id];
-//        console.log("Filter: "+GLOBAL.userTableFilter);
-        var checkABTest = GLOBAL.userTableFilter.test(deviceID);
-//        var checkABTest = false;
-//        console.log(GLOBAL.userTableFilter.inspect());
-        //console.log(checkABTest);
-        if (checkABTest) {
-            //console.log("This Device ID in ABTesting");
-            if (1) {
-            producer.send([
-                { topic: ABTestTopicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
-            ], kafkaCB);
+        if (GLOBAL.userTableFilter) {
+    //        var checkABTest = userTableMaps[data.device_id];
+    //        console.log("Filter: "+GLOBAL.userTableFilter);
+            var checkABTest = GLOBAL.userTableFilter.test(deviceID);
+    //        var checkABTest = false;
+    //        console.log(GLOBAL.userTableFilter.inspect());
+            //console.log(checkABTest);
+            if (checkABTest) {
+                //console.log("This Device ID in ABTesting");
+                if (1) {
+                producer.send([
+                    { topic: ABTestTopicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
+                ], kafkaCB);
+                }
             }
         }
-*/
+
     }
 }
 
@@ -888,8 +889,8 @@ function updateABTesting() {
     console.log('Start update ABTesting User Table: %s', start.toString());
     cassandraClient.eachRow(query, [], { autoPage : true, fetchSize : 20000 },
     function(n, row) {
-        if (row.is_for_web_filter) {
-            filter.add(row.device_id);
+        if (!row.is_for_web_filter) {
+            tmpFilter.add(row.device_id);
             tmpuserCount++;
         }
     },
@@ -1168,7 +1169,7 @@ if (cluster.isMaster) {
     //console.log(cluster.isMaster);
     //console.log(worker);
     var baseTimeOut = 3600000;
-    var abtestTimeOut = 600000;
+    var abtestTimeOut = 1800000;
     //var baseTimeOut = 600000;
     updateABTesting();
 
