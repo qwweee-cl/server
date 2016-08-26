@@ -103,8 +103,8 @@ var noKafkaProducer = new noKafka.Producer({
 
 
 const cassandra = require('cassandra-driver');
-const cassandraOption = { contactPoints: ['172.31.27.165','172.31.27.166','172.31.27.167','172.31.27.168'], keyspace: 'countly_activities'};
-//const cassandraOption = { contactPoints: ['172.31.3.66'], keyspace: 'countly_activities'};
+//const cassandraOption = { contactPoints: ['172.31.27.165','172.31.27.166','172.31.27.167','172.31.27.168'], keyspace: 'countly_activities'};
+const cassandraOption = { contactPoints: ['172.31.3.66'], keyspace: 'countly_activities'};
 const query = 'SELECT device_id, is_for_web_filter FROM bc_trend_ab_user;';
 
 var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 
@@ -888,7 +888,7 @@ function updateABTesting() {
     console.log('Start update ABTesting User Table: %s', start.toString());
     cassandraClient.eachRow(query, [], { autoPage : true, fetchSize : 20000 },
     function(n, row) {
-        if (is_for_web_filter) {
+        if (row.is_for_web_filter) {
             filter.add(row.device_id);
             tmpuserCount++;
         }
