@@ -75,6 +75,23 @@ var noKafkaProducer = new noKafka.Producer({
 });
 
 
+var bf = require('bloomfilter'),
+    BloomFilter = bf.BloomFilter,
+    userTableFilter = null,
+    tmpuserCount = 0,
+    checkBloomFilter = true,
+    isUpdating = false;
+
+const cassandra = require('cassandra-driver');
+const cassandraOption = { contactPoints: ['172.31.27.165','172.31.27.166','172.31.27.167','172.31.27.168'], keyspace: 'countly_activities'};
+const query = 'SELECT device_id, is_for_web_filter FROM bc_trend_ab_user;';
+var ABTestTopicName = 'ABTesting';
+
+var schedule = require('node-schedule'),
+    job = schedule.scheduleJob('30 07 */1 * *', function(){
+        console.log('Call update ABTesting Table!');
+        updateABTestingTable();
+    });
 
 
 var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 
@@ -88,7 +105,8 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
                  'Node_Session_YCF_And', 'Node_Session_YCF_iOS', 'Node_Session_YCC_And',
                  'Node_Session_YCC_iOS', 'Node_Event_YMC_And', 'Node_Event_YMC_iOS',
                  'Node_Event_YCF_And', 'Node_Event_YCF_iOS', 'Node_Event_YCC_And',
-                 'Node_Event_YCC_iOS', 'OEM_session', 'OEM_event', 'CheckSum'];
+                 'Node_Event_YCC_iOS', 'OEM_session', 'OEM_event', 'CheckSum',
+                 'ABTesting'];
 
 function producerReady() {
     var date = new Date();
@@ -245,6 +263,8 @@ function kafkaCB(err, result) {
 function sendKafka(data, key, isSession) {
     var topicName = getNodeTopicName((isSession ? "Session" : "Event"), key);
     randomCnt = ((++randomCnt)%partitionNum);
+    var deviceID = data.device_id;
+    var checkABTest = false;
     if (cando) {
         //console.log(JSON.stringify(data));
 if(!isNoKafka) {
@@ -279,6 +299,40 @@ if(!isNoKafka) {
                 });
                 //console.log(result);
         });
+        if (checkBloomFilter) {
+            if (GLOBAL.userTableFilter) {
+                checkABTest = GLOBAL.userTableFilter.test(deviceID);
+                if (checkABTest) {
+                    noKafkaProducer.send({
+                        topic: ABTestTopicName,
+                        partition: (randomCnt%partitionNum),
+                        message: {
+                          value: JSON.stringify(data)
+                        }},
+                        {retries: {
+                                attempts: 60,
+                                delay: 1000
+                        }}).then(function(result){
+                            result.forEach(function(entry) {
+                                if (entry.error) {
+                                    console.log("ERROR: " + entry.error);
+                                    nokafkaErrorCount++;
+                                    nokafkaerrorContext+=(JSON.stringify(err)+"\r\n");
+                                    if (nokafkaErrorCount && (nokafkaErrorCount%kafkaErrorMaxCount == 0)) {
+                                        console.log("no-Kafka Exception Send Mail");
+                                        var cmd = 'echo "'+nokafkaerrorContext+'" | mail -s "no-Kafka Exception Count '+nokafkaErrorCount+' times" '+failMailList;
+                                        exec(cmd, function(error, stdout, stderr) {
+                                            if(error)
+                                                console.log(error);
+                                        });
+                                    }
+                                }
+                            });
+                            //console.log(result);
+                    });
+                }
+            }
+        }
 }
     }
 }
@@ -1068,6 +1122,72 @@ if (1) {
 }
 }
 
+function updateABTestingTable() {
+    if (isUpdating) {
+        console.log('Updating so break');
+        return;
+    }
+    isUpdating = true;
+    bloomConf = JSON.parse(fs.readFileSync('/usr/local/countly/api/bloomfilter.conf', 'utf8'));
+    tmpuserCount = 0;
+    var tmpFilter = new BloomFilter(bloomConf.elements, bloomConf.hashfunc);
+    var cassandraClient = new cassandra.Client(cassandraOption);
+    var start = new Date();
+    console.log('Start update ABTesting User Table: %s', start.toString());
+    cassandraClient.eachRow(query, [], { autoPage : true, fetchSize : 20000 },
+    function(n, row) {
+//        if (!row.is_for_web_filter) {
+        if (row.is_for_web_filter) {
+            tmpFilter.add(row.device_id);
+            tmpuserCount++;
+        }
+    },
+    function (err, result) {
+        if (result) {
+            console.log('TMP BloomFilter add finished : %d', tmpuserCount);
+            GLOBAL.userTableFilter = tmpFilter;
+            var end = new Date();
+            var diff = end.getTime() - start.getTime();
+            console.log('End update ABTesting User Table: %s', end.toString());
+            console.log('Update Time: %d', (diff/1000));
+            console.log('update ABTesting table =========================='+end+'= length:'+tmpuserCount+'=========================');
+        }
+        if (err) {
+            console.log('Error : %s', err.toString());
+            console.log('updated records : %d', count);
+            // send mail
+            console.log("Update BloomFilter Error Send Mail");
+            var cmd = 'echo "'+err.toString()+'" | mail -s "Update BloomFilter Error" '+failMailList;
+            exec(cmd, function(error, stdout, stderr) {
+                if(error)
+                    console.log(error);
+            });
+        }
+        cassandraClient.shutdown(function (err,result) {
+            console.log('error : '+err);
+            console.log('result : '+result);
+        });
+        isUpdating = false;
+        return;
+    });
+    return;
+/*
+    tmpuserCount = 0;
+    tmpFilter = new BloomFilter(elements, hashfunc);
+    common.db.collection('ABTesting').find({},{batchSize:1000}).each(function(err, data) {
+        if (!data) {
+            console.log("ABTesting Length: "+tmpuserCount);
+            var now = new Date();
+            GLOBAL.userTableFilter = tmpFilter;
+            console.log('update ABTesting table =========================='+now+'= length:'+tmpuserCount+'=========================');
+            return;
+        }
+        tmpFilter.add(data.user_id);
+        tmpuserCount++;
+    });
+*/
+}
+
 function mainfunc() {
 
 if (cluster.isMaster) {
@@ -1144,6 +1264,7 @@ if (cluster.isMaster) {
     //console.log(cluster.isMaster);
     //console.log(worker);
     var baseTimeOut = 3600000;
+    updateABTestingTable();
 
     setInterval(function() {
         /** update workerEnv OEM tables data **/
