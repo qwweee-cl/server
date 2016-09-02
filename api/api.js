@@ -79,7 +79,7 @@ var bf = require('bloomfilter'),
     BloomFilter = bf.BloomFilter,
     userTableFilter = null,
     tmpuserCount = 0,
-    checkBloomFilter = false,
+    checkBloomFilter = true,
     isUpdating = false;
 
 const cassandra = require('cassandra-driver');
