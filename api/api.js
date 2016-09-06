@@ -918,6 +918,7 @@ function findAndRemoveKey(array, value) {
 }
 
 function updateABTesting() {
+    return;
     if (isUpdating) {
         console.log('Updating so break');
         return;
