@@ -107,6 +107,19 @@ const cassandra = require('cassandra-driver');
 const cassandraOption = { contactPoints: ['172.31.3.66'], keyspace: 'countly_activities'};
 const query = 'SELECT device_id, is_for_web_filter FROM bc_trend_ab_user;';
 
+const mysql = require('mysql');
+var host = 'cognos-db.czkpdhvixbu3.ap-northeast-1.rds.amazonaws.com';
+var user = 'abtest';
+var password = 'abtest';
+var connection = mysql.createConnection({
+  host     : host,
+  user     : user,
+  password : password
+});
+var mysqlQuery = "SELECT device_id FROM ABTest.bc_trend_ab_user WHERE is_for_web_filter = false;";
+
+connection.connect();
+
 var schedule = require('node-schedule');
 var isUpdating = false;
 
@@ -918,6 +931,33 @@ function findAndRemoveKey(array, value) {
 }
 
 function updateABTesting() {
+    if (isUpdating) {
+        console.log('Updating so break');
+        return;
+    }
+    isUpdating = true;
+    bloomConf = JSON.parse(fs.readFileSync('/usr/local/countly/api/bloomfilter.conf', 'utf8'));
+    tmpuserCount = 0;
+    var tmpFilter = new BloomFilter(bloomConf.elements, bloomConf.hashfunc);
+    var start = new Date();
+    console.log('Start update ABTesting User Table: %s', start.toString());
+    connection.query(mysqlQuery, function(err, rows, fields) {
+        if (err) throw err;
+        if (rows) {
+            for (var i=0;i<rows.length;i++) {
+                tmpFilter.add(rows[i].device_id);
+                tmpuserCount++;
+            }
+            console.log('TMP BloomFilter add finished : %d', tmpuserCount);
+            GLOBAL.userTableFilter = tmpFilter;
+            var end = new Date();
+            var diff = end.getTime() - start.getTime();
+            console.log('End update ABTesting User Table: %s', end.toString());
+            console.log('Update Time: %d', (diff/1000));
+            console.log('update ABTesting table =========================='+end+'= length:'+tmpuserCount+'=========================');
+        }
+    });
+
     return;
     if (isUpdating) {
         console.log('Updating so break');
