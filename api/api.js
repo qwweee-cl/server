@@ -111,6 +111,7 @@ const mysql = require('mysql');
 var host = 'cognos-db.czkpdhvixbu3.ap-northeast-1.rds.amazonaws.com';
 var user = 'abtest';
 var password = 'abtest';
+/*
 var connection = mysql.createConnection({
   host     : host,
   user     : user,
@@ -119,7 +120,7 @@ var connection = mysql.createConnection({
 var mysqlQuery = "SELECT device_id FROM ABTest.bc_trend_ab_user WHERE is_for_web_filter = false;";
 
 connection.connect();
-
+*/
 var schedule = require('node-schedule');
 var isUpdating = false;
 
@@ -936,6 +937,15 @@ function updateABTesting() {
         return;
     }
     isUpdating = true;
+    var connection = mysql.createConnection({
+        host     : host,
+        user     : user,
+        password : password
+    });
+    var mysqlQuery = "SELECT device_id FROM ABTest.bc_trend_ab_user WHERE is_for_web_filter = false;";
+
+    connection.connect();
+
     bloomConf = JSON.parse(fs.readFileSync('/usr/local/countly/api/bloomfilter.conf', 'utf8'));
     tmpuserCount = 0;
     var tmpFilter = new BloomFilter(bloomConf.elements, bloomConf.hashfunc);
@@ -955,6 +965,7 @@ function updateABTesting() {
             console.log('End update ABTesting User Table: %s', end.toString());
             console.log('Update Time: %d', (diff/1000));
             console.log('update ABTesting table =========================='+end+'= length:'+tmpuserCount+'=========================');
+            connection.release();
         }
     });
 
