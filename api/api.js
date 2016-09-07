@@ -79,7 +79,7 @@ var bf = require('bloomfilter'),
     BloomFilter = bf.BloomFilter,
     userTableFilter = null,
     tmpuserCount = 0,
-    checkBloomFilter = false,
+    checkBloomFilter = true,
     isUpdating = false;
 
 const cassandra = require('cassandra-driver');
@@ -91,7 +91,7 @@ const mysql = require('mysql');
 var host = 'cognos-db.czkpdhvixbu3.ap-northeast-1.rds.amazonaws.com';
 var user = 'abtest';
 var password = 'abtest';
-var enableABTesting = false;
+var enableABTesting = true;
 /*
 var connection = mysql.createConnection({
   host     : host,
