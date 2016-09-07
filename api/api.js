@@ -87,6 +87,23 @@ const cassandraOption = { contactPoints: ['172.31.27.165','172.31.27.166','172.3
 const query = 'SELECT device_id, is_for_web_filter FROM bc_trend_ab_user;';
 var ABTestTopicName = 'ABTesting';
 
+const mysql = require('mysql');
+var host = 'cognos-db.czkpdhvixbu3.ap-northeast-1.rds.amazonaws.com';
+var user = 'abtest';
+var password = 'abtest';
+var enableABTesting = false;
+/*
+var connection = mysql.createConnection({
+  host     : host,
+  user     : user,
+  password : password
+});
+var mysqlQuery = "SELECT device_id FROM ABTest.bc_trend_ab_user WHERE is_for_web_filter = false;";
+
+connection.connect();
+*/
+
+
 var schedule = require('node-schedule'),
     job = schedule.scheduleJob('30 07 */1 * *', function(){
         console.log('Call update ABTesting Table!');
@@ -1123,6 +1140,48 @@ if (1) {
 }
 
 function updateABTestingTable() {
+    if (!enableABTesting) {
+        console.log('Disable ABTesting!!');
+        return;
+    }
+    if (isUpdating) {
+        console.log('Updating so break');
+        return;
+    }
+    isUpdating = true;
+    var connection = mysql.createConnection({
+        host     : host,
+        user     : user,
+        password : password
+    });
+    var mysqlQuery = "SELECT device_id FROM ABTest.bc_trend_ab_user WHERE is_for_web_filter = true;";
+
+    connection.connect();
+
+    bloomConf = JSON.parse(fs.readFileSync('/usr/local/countly/api/bloomfilter.conf', 'utf8'));
+    tmpuserCount = 0;
+    var tmpFilter = new BloomFilter(bloomConf.elements, bloomConf.hashfunc);
+    var start = new Date();
+    console.log('Start update ABTesting User Table: %s', start.toString());
+    connection.query(mysqlQuery, function(err, rows, fields) {
+        if (err) throw err;
+        if (rows) {
+            for (var i=0;i<rows.length;i++) {
+                tmpFilter.add(rows[i].device_id);
+                tmpuserCount++;
+            }
+            console.log('TMP BloomFilter add finished : %d', tmpuserCount);
+            GLOBAL.userTableFilter = tmpFilter;
+            var end = new Date();
+            var diff = end.getTime() - start.getTime();
+            console.log('End update ABTesting User Table: %s', end.toString());
+            console.log('Update Time: %d', (diff/1000));
+            console.log('update ABTesting table =========================='+end+'= length:'+tmpuserCount+'=========================');
+        }
+        connection.end();
+    });
+    return;
+/*
     if (isUpdating) {
         console.log('Updating so break');
         return;
@@ -1171,6 +1230,7 @@ function updateABTestingTable() {
         return;
     });
     return;
+*/
 /*
     tmpuserCount = 0;
     tmpFilter = new BloomFilter(elements, hashfunc);
