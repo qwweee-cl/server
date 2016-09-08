@@ -105,7 +105,7 @@ connection.connect();
 
 
 var schedule = require('node-schedule'),
-    job = schedule.scheduleJob('30 07 */1 * *', function(){
+    job = schedule.scheduleJob('00 03 */1 * *', function(){
         console.log('Call update ABTesting Table!');
         updateABTestingTable();
     });
