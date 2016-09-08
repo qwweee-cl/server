@@ -112,7 +112,7 @@ var host = 'cognos-db.czkpdhvixbu3.ap-northeast-1.rds.amazonaws.com';
 var user = 'abtest';
 var password = 'abtest';
 var database = 'ABTest';
-var client = mysql.createConnectionSync(host, user, password, database);
+var mysqlClient = mysql.createConnectionSync(host, user, password, database);
 var chunkSize = 100000;
 var countQuery = "SELECT count(*) as total FROM ABTest.bc_trend_ab_user WHERE is_for_web_filter = false;";
 var chunkQuery = 'SELECT device_id FROM ABTest.bc_trend_ab_user WHERE is_for_web_filter = false LIMIT '+chunkSize;
@@ -936,7 +936,7 @@ function updateABTesting() {
     var totalCount = 0;
     var periods = 0;
 
-    var handle = client.querySync(countQuery);
+    var handle = mysqlClient.querySync(countQuery);
     var result = handle.fetchAllSync();
     totalCount = result[0].total;
     periods = Math.ceil(totalCount/chunkSize);
@@ -949,7 +949,7 @@ function updateABTesting() {
     for (var i=0;i<rows.length;i++) {
         var offset = i*chunkSize;
         var tmpQuery = chunkQuery+' OFFSET '+offset;
-        var handle = client.querySync(tmpQuery);
+        var handle = mysqlClient.querySync(tmpQuery);
         var result = handle.fetchAllSync();
         for (var j=0;j<result.length;j++) {
             tmpFilter.add(result[j].device_id);
