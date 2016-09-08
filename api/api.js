@@ -946,7 +946,7 @@ function updateABTesting() {
     var tmpFilter = new BloomFilter(bloomConf.elements, bloomConf.hashfunc);
     var start = new Date();
     console.log('Start update ABTesting User Table: %s', start.toString());
-    for (var i=0;i<rows.length;i++) {
+    for (var i=0;i<periods;i++) {
         var offset = i*chunkSize;
         var tmpQuery = chunkQuery+' OFFSET '+offset;
         var handle = mysqlClient.querySync(tmpQuery);
