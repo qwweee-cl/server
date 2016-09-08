@@ -114,8 +114,8 @@ var password = 'abtest';
 var database = 'ABTest';
 var mysqlClient = mysql.createConnectionSync(host, user, password, database);
 var chunkSize = 100000;
-var countQuery = "SELECT count(*) as total FROM ABTest.bc_trend_ab_user WHERE is_for_web_filter = false;";
-var chunkQuery = 'SELECT device_id FROM ABTest.bc_trend_ab_user WHERE is_for_web_filter = false LIMIT '+chunkSize;
+var countQuery = "SELECT count(*) as total FROM ABTest.bc_trend_ab_user WHERE is_for_web_filter = true;";
+var chunkQuery = 'SELECT device_id FROM ABTest.bc_trend_ab_user WHERE is_for_web_filter = true LIMIT '+chunkSize;
 
 var schedule = require('node-schedule');
 var isUpdating = false;
