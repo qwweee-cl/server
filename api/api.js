@@ -115,7 +115,7 @@ var database = 'ABTest';
 var client = mysql.createConnectionSync(host, user, password, database);
 var chunkSize = 100000;
 var countQuery = "SELECT count(*) as total FROM ABTest.bc_trend_ab_user WHERE is_for_web_filter = false;";
-var query = 'SELECT device_id FROM ABTest.bc_trend_ab_user WHERE is_for_web_filter = false LIMIT '+chunkSize;
+var chunkQuery = 'SELECT device_id FROM ABTest.bc_trend_ab_user WHERE is_for_web_filter = false LIMIT '+chunkSize;
 
 var schedule = require('node-schedule');
 var isUpdating = false;
@@ -948,7 +948,7 @@ function updateABTesting() {
     console.log('Start update ABTesting User Table: %s', start.toString());
     for (var i=0;i<rows.length;i++) {
         var offset = i*chunkSize;
-        var tmpQuery = query+' OFFSET '+offset;
+        var tmpQuery = chunkQuery+' OFFSET '+offset;
         var handle = client.querySync(tmpQuery);
         var result = handle.fetchAllSync();
         for (var j=0;j<result.length;j++) {
