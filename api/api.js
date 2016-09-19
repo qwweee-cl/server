@@ -1282,6 +1282,7 @@ if (cluster.isMaster) {
             paths = urlParts.pathname.split("/"),
             apiPath = "",
             body = [],
+            headers = req.headers,
             params = {
                 'qstring':queryString,
                 'res':res
