@@ -1346,12 +1346,39 @@ if (cluster.isMaster) {
                         return false;
                     }
                 }
-                if (!queryString.type) {
+                if (!params.qstring.type) {
                     common.returnMessage(params, 400, 'error service');
                     return false;
                 }
-                console.log(queryString.type);
-                var type = queryString.type;
+                console.log(params.qstring.type);
+                if (!params.qstring.app_key || !params.qstring.device_id) {
+                    var now = new Date();
+                    console.log('Missing parameter "app_key" or "device_id"'+'=========='+now+'==========');
+                    console.log("IP: "+params.ip_address);
+                    console.log(params.qstring);
+                    common.returnMessage(params, 200, 'Success');
+                    console.log("Send 200 Success");
+                    return false;
+                }
+                params.qstring.app_key = params.qstring.app_key.replace('"','');
+                params.qstring.app_key = params.qstring.app_key.replace('{','');
+                params.qstring.app_key = params.qstring.app_key.replace(':','');
+                params.qstring.app_key = params.qstring.app_key.replace('}','');
+                if (params.qstring.vendor_info) {
+                    try {
+                        params.qstring.vendor_info = JSON.parse(params.qstring.vendor_info);
+                    } catch (SyntaxError) {
+                        var now = new Date();
+                        console.log('Parse vendor_info JSON failed'+'=========='+now+'==========');
+                        console.log(JSON.stringify(params.qstring));
+                        common.returnMessage(params, 200, 'Success');
+                        console.log('Send 200 Success');
+                        return false;
+                    }
+                }
+
+                var type = params.qstring.type;
+                params.verifiy = true;
                 req.on('data', function(data) {
                     console.log("Received POST data:");
                     body.push(data);
