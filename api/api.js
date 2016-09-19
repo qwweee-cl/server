@@ -5,6 +5,7 @@ var http = require('http'),
     common = require('./utils/common.js'),
     exec = require('child_process').exec,
     jsonQuery = require('json-query'),
+    avro = require('./avro'),
 	moment = require('moment-timezone'),
 //    BloomFilter = require('bloom-filter'),
     workerEnv = {},
@@ -1280,6 +1281,7 @@ if (cluster.isMaster) {
             queryString = urlParts.query,
             paths = urlParts.pathname.split("/"),
             apiPath = "",
+            body = [],
             params = {
                 'qstring':queryString,
                 'res':res
@@ -1335,6 +1337,32 @@ if (cluster.isMaster) {
         }
 
         switch (apiPath) {
+            case '/avro':
+            {
+                if (req.method == 'POST') {
+                    if (headers['content-type'] != 'application/avro') {
+                        common.returnMessage(params, 400, 'error content-type');
+                        return false;
+                    }
+                }
+                if (!queryString.type) {
+                    common.returnMessage(params, 400, 'error service');
+                    return false;
+                }
+                console.log(queryString.type);
+                var type = queryString.type;
+                req.on('data', function(data) {
+                    console.log("Received POST data:");
+                    body.push(data);
+                });
+                req.on('end', function() {
+                    body = Buffer.concat(body);
+                    common.returnMessage(params, 200, 'success');
+                    console.log(avro.avroDecode(type, body));
+                    return true;
+                });
+                break;
+            }
             case '/batch':
             {
                 //common.returnMessage(params, 401, 'Run Batch by app key is not support.');
