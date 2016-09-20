@@ -78,6 +78,7 @@ var client = new Client(zkList);
 var producer = new Producer(client, { requireAcks: 1});
 var partitionNum = 6;
 var randomCnt = -1;
+var randomCntAvro = -1;
 var cando = false;
 //var YCP_And_count = 0;
 //var workerID;
@@ -127,6 +128,8 @@ var job = schedule.scheduleJob('*/30 * * * *', function(){
     updateABTesting();
 });
 
+var messageTypeList = ['beginSession', 'endSession', 'events'];
+
 var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 
                  'Node_Event_YCN_And', 'Node_Event_YCN_iOS', 'Node_Event_YCP_And', 
                  'Node_Event_YCP_iOS', 'Node_Event_YMK_And', 'Node_Event_YMK_iOS',
@@ -138,7 +141,19 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
                  'Node_Session_YCF_And', 'Node_Session_YCF_iOS', 'Node_Session_YCC_And',
                  'Node_Session_YCC_iOS', 'Node_Event_YMC_And', 'Node_Event_YMC_iOS',
                  'Node_Event_YCF_And', 'Node_Event_YCF_iOS', 'Node_Event_YCC_And',
-                 'Node_Event_YCC_iOS', 'OEM_session', 'OEM_event', 'CheckSum', 'ABTesting'];
+                 'Node_Event_YCC_iOS', 'OEM_session', 'OEM_event', 'CheckSum', 'ABTesting',
+                 'Avro_Event_BCS_And', 'Avro_Event_BCS_iOS', 'Avro_Event_OtherApp', 
+                 'Avro_Event_YCN_And', 'Avro_Event_YCN_iOS', 'Avro_Event_YCP_And', 
+                 'Avro_Event_YCP_iOS', 'Avro_Event_YMK_And', 'Avro_Event_YMK_iOS',
+                 'Avro_Session_BCS_And', 'Avro_Session_BCS_iOS', 'Avro_Session_OtherApp', 
+                 'Avro_Session_YCN_And', 'Avro_Session_YCN_iOS', 'Avro_Session_YCP_And', 
+                 'Avro_Session_YCP_iOS', 'Avro_Session_YMK_And', 'Avro_Session_YMK_iOS', 
+                 'Avro_Session_YCL_And', 'Avro_Session_YCL_iOS', 'Avro_Event_YCL_And', 
+                 'Avro_Event_YCL_iOS', 'Avro_Session_YMC_And', 'Avro_Session_YMC_iOS',
+                 'Avro_Session_YCF_And', 'Avro_Session_YCF_iOS', 'Avro_Session_YCC_And',
+                 'Avro_Session_YCC_iOS', 'Avro_Event_YMC_And', 'Avro_Event_YMC_iOS',
+                 'Avro_Event_YCF_And', 'Avro_Event_YCF_iOS', 'Avro_Event_YCC_And',
+                 'Avro_Event_YCC_iOS', 'Avro_OEM_session', 'Avro_OEM_event', 'Avro_CheckSum', 'Avro_ABTesting'];
 
 function producerReady() {
     var date = new Date();
@@ -269,6 +284,18 @@ function getNodeTopicName(header, appkey) {
         }
     }
     topicName = "Node_" + header+"_OtherApp";
+    return topicName;
+}
+
+function getNodeTopicNameAvro(header, appkey) {
+    var topicName = "";
+    for (var key in appMap) {
+        if (appkey.indexOf(key) >= 0) {
+            topicName = "Avro_" + header+"_"+appMap[key].appName+"_"+appMap[key].appOS;
+            return topicName;
+        }
+    }
+    topicName = "Avro_" + header+"_OtherApp";
     return topicName;
 }
 
@@ -521,6 +548,190 @@ function sendKafkaRest(data, key, isSession) {
 	}
 
   //common.kafka.topic("elly").produce(JSON.stringify(data));
+}
+
+function sendKafkaAvro(avroKey, avroValue, appKey, isSession) {
+    var topicName = getNodeTopicNameAvro((isSession ? "Session" : "Event"), appKey);
+    var topicName = "Elly";
+    var topicName = "OWL";
+    var topicName = "ABC";
+    var ABTestTopicName = "Avro_ABTesting";
+    randomCntAvro = ((++randomCntAvro)%partitionNum);
+    if (cando) {
+        //console.log(JSON.stringify(data));
+if (0) {
+        return;
+        producer.send([
+            { topic: topicName, partition: (randomCntAvro%partitionNum), messages: JSON.stringify(data)}
+        ], kafkaCB);
+} else {
+        noKafkaProducer.send({
+            topic: topicName,
+            partition: (randomCntAvro%partitionNum),
+            message: {
+              key: JSON.stringify(avroKey),
+              value: avroValue
+            }},
+            {retries: {
+                    attempts: 60,
+                    delay: 1000
+            }}).then(function(result){
+                result.forEach(function(entry) {
+                    if (entry.error) {
+                        console.log("ERROR: " + entry.error);
+                        nokafkaErrorCount++;
+                        nokafkaerrorContext+=(JSON.stringify(err)+"\r\n");
+                        if (nokafkaErrorCount && (nokafkaErrorCount%kafkaErrorMaxCount == 0)) {
+                            console.log("Kafka Exception Send Mail");
+                            var cmd = 'echo "'+nokafkaerrorContext+'" | mail -s "Kafka Exception Count '+nokafkaErrorCount+' times" '+failMailList;
+                            exec(cmd, function(error, stdout, stderr) {
+                                if(error)
+                                    console.log(error);
+                            });
+                        }
+                    }
+                });
+                //console.log(result);
+        });
+}
+        var deviceID = data.device_id;
+        if (GLOBAL.userTableFilter) {
+    //        var checkABTest = userTableMaps[data.device_id];
+    //        console.log("Filter: "+GLOBAL.userTableFilter);
+            var checkABTest = GLOBAL.userTableFilter.test(deviceID);
+    //        var checkABTest = false;
+    //        console.log(GLOBAL.userTableFilter.inspect());
+            //console.log(checkABTest);
+            if (checkABTest) {
+                //console.log("This Device ID in ABTesting");
+if (0) {
+                producer.send([
+                    { topic: ABTestTopicName, partition: (randomCntAvro%partitionNum), messages: JSON.stringify(data)}
+                ], kafkaCB);
+} else {
+                noKafkaProducer.send({
+                    topic: ABTestTopicName,
+                    partition: (randomCntAvro%partitionNum),
+                    message: {
+                      key: JSON.stringify(avroKey),
+                      value: avroValue
+                    }},
+                    {retries: {
+                            attempts: 60,
+                            delay: 1000
+                    }}).then(function(result){
+                        result.forEach(function(entry) {
+                            if (entry.error) {
+                                console.log("ERROR: " + entry.error);
+                                nokafkaErrorCount++;
+                                nokafkaerrorContext+=(JSON.stringify(err)+"\r\n");
+                                if (nokafkaErrorCount && (nokafkaErrorCount%kafkaErrorMaxCount == 0)) {
+                                    console.log("Kafka Exception Send Mail");
+                                    var cmd = 'echo "'+nokafkaerrorContext+'" | mail -s "Kafka Exception Count '+nokafkaErrorCount+' times" '+failMailList;
+                                    exec(cmd, function(error, stdout, stderr) {
+                                        if(error)
+                                            console.log(error);
+                                    });
+                                }
+                            }
+                        });
+                        //console.log(result);
+                });
+}
+            }
+        }
+
+    }
+}
+
+function sendOthersKafkaAvro(avroKey, avroValue, appKey, isSession) {
+    var topicName = "Avro_CheckSum";
+    randomCntAvro = ((++randomCntAvro)%partitionNum);
+    if (cando) {
+        //console.log(JSON.stringify(data));
+if (0)
+        producer.send([
+            { topic: topicName, partition: (randomCntAvro%partitionNum), messages: JSON.stringify(data)}
+        ], kafkaCB);
+} else {
+        noKafkaProducer.send({
+            topic: topicName,
+            partition: (randomCntAvro%partitionNum),
+            message: {
+              key: JSON.stringify(avroKey),
+              value: avroValue
+            }},
+            {retries: {
+                    attempts: 60,
+                    delay: 1000
+            }}).then(function(result){
+                result.forEach(function(entry) {
+                    if (entry.error) {
+                        console.log("ERROR: " + entry.error);
+                        nokafkaErrorCount++;
+                        nokafkaerrorContext+=(JSON.stringify(err)+"\r\n");
+                        if (nokafkaErrorCount && (nokafkaErrorCount%kafkaErrorMaxCount == 0)) {
+                            console.log("Kafka Exception Send Mail");
+                            var cmd = 'echo "'+nokafkaerrorContext+'" | mail -s "Kafka Exception Count '+nokafkaErrorCount+' times" '+failMailList;
+                            exec(cmd, function(error, stdout, stderr) {
+                                if(error)
+                                    console.log(error);
+                            });
+                        }
+                    }
+                });
+                //console.log(result);
+        });
+}
+    }
+}
+
+function sendOEMKafkaAvro(avroKey, avroValue, appKey, isSession) {
+    var topicName = "Avro_OEM";
+    if (isSession) {
+        topicName = "Avro_OEM_session";
+    } else {
+        topicName = "Avro_OEM_event";
+    }
+    randomCntAvro = ((++randomCntAvro)%partitionNum);
+    if (cando) {
+        //console.log(JSON.stringify(data));
+if (0) {
+        return;
+        producer.send([
+            { topic: topicName, partition: (randomCntAvro%partitionNum), messages: JSON.stringify(data)}
+        ], kafkaCB);
+} else {
+        noKafkaProducer.send({
+            topic: topicName,
+            partition: (randomCntAvro%partitionNum),
+            message: {
+              key: JSON.stringify(avroKey),
+              value: avroValue
+            }},
+            {retries: {
+                    attempts: 60,
+                    delay: 1000
+            }}).then(function(result){
+                result.forEach(function(entry) {
+                    if (entry.error) {
+                        console.log("ERROR: " + entry.error);
+                        nokafkaErrorCount++;
+                        nokafkaerrorContext+=(JSON.stringify(err)+"\r\n");
+                        if (nokafkaErrorCount && (nokafkaErrorCount%kafkaErrorMaxCount == 0)) {
+                            console.log("Kafka Exception Send Mail");
+                            var cmd = 'echo "'+nokafkaerrorContext+'" | mail -s "Kafka Exception Count '+nokafkaErrorCount+' times" '+failMailList;
+                            exec(cmd, function(error, stdout, stderr) {
+                                if(error)
+                                    console.log(error);
+                            });
+                        }
+                    }
+                });
+                //console.log(result);
+        });
+}
+    }
 }
 
 function logDbError(err, res) {
@@ -1154,6 +1365,57 @@ function funcResetKafakErrorCount() {
     nokafkaerrorContext = "";
 }
 
+function validateAppForWriteAvroAPI(params, typeStr, bodyBuffer) {
+    if (params.qstring.app_key == '17a82958af48fdd76801a15991b2cafa1f0bcf92') {
+        common.returnMessage(params, 200, 'Success');
+        return;
+    }
+    var currDate = new Date();
+    var avroKey = {};
+    var oem = false;
+    var checkOEM = null;
+    var dealNumber = null;
+    avroKey.ip_address = params.ip_address;
+    avroKey.msg_type = params.qstring.msgtype;
+    avroKey.dbtimestamp = Math.round(currDate/1000);
+    var appKey = params.qstring.app_key;
+    var isSession = ((params.qstring.msgtype<=1)?1:0);
+    if (params.qstring.vendor_info) {
+        //console.log(JSON.stringify(params.qstring.vendor_info));
+        oem = true;
+        srNumber = params.qstring.vendor_info.sr_no_ori;
+        if (srNumber) {
+            checkOEM = jsonQuery(['[sr_no=?]',srNumber], {data: oemMaps}).value;
+            if (!checkOEM) {
+                oem = false;
+                //console.log("not in oem table :"+dealNumber);
+            } else {
+                //console.log("in oem table :"+dealNumber);
+                // check start and end (timestamp per sec)
+                dealNumber = checkOEM.deal_no;
+                if (!dealNumber) {
+                    oem = false;
+                }
+            }
+        } else {
+            oem = false;
+        }
+    }
+    if (oem) {
+        var avroKeyOEM = JSON.parse(JSON.stringify(avroKey));
+        avroKeyOEM.store_name = checkOEM.deal_no;
+        //sendOEMKafkaAvro(eventpOEM, eventpOEM.app_key, isSession);
+        sendOEMKafkaAvro(avroKeyOEM, bodyBuffer, appKey, isSession);
+    }
+    //sendKafkaAvro(eventp, eventp.app_key, isSession);
+    sendKafkaAvro(avroKey, bodyBuffer, appKey, isSession);
+    if (!params.verifiy) {
+        //sendOthersKafkaAvro(eventp, eventp.app_key, isSession);
+        sendOthersKafkaAvro(avroKey, bodyBuffer, appKey, isSession);
+    }
+    common.returnMessage(params, 200, 'Success');
+}
+
 function mainfunc() {
 
 if (cluster.isMaster) {
@@ -1340,26 +1602,59 @@ if (cluster.isMaster) {
         switch (apiPath) {
             case '/avro':
             {
+                params.ip_address =  getIpAddress(req);
                 if (req.method == 'POST') {
                     if (headers['content-type'] != 'application/avro') {
-                        common.returnMessage(params, 400, 'error content-type');
+                        //common.returnMessage(params, 400, 'error content-type');
+                        common.returnMessage(params, 200, 'Success');
+                        console.log("content-type not application/avro!!");
                         return false;
                     }
-                }
-                if (!params.qstring.type) {
-                    common.returnMessage(params, 400, 'error service');
-                    return false;
-                }
-                console.log(params.qstring.type);
-                if (!params.qstring.app_key || !params.qstring.device_id) {
-                    var now = new Date();
-                    console.log('Missing parameter "app_key" or "device_id"'+'=========='+now+'==========');
-                    console.log("IP: "+params.ip_address);
-                    console.log(params.qstring);
+                } else {
+                    //common.returnMessage(params, 400, 'error method');
                     common.returnMessage(params, 200, 'Success');
-                    console.log("Send 200 Success");
+                    console.log("request method not POST!!");
                     return false;
                 }
+                if (!params.qstring.msgtype) {
+                    //common.returnMessage(params, 400, 'error service');
+                    common.returnMessage(params, 200, 'Success');
+                    console.log("url not include request type!!");
+                    return false;
+                }
+                if (!params.qstring.app_key) {
+                    console.log('Null app_key: '+params.ip_address);
+                    common.returnMessage(params, 200, 'Success');
+                    return false;
+                }
+                if (!params.qstring.device_id) {
+                    console.log('Null device_id: '+params.qstring.ip_address+' app key: '+params.qstring.app_key);
+                    common.returnMessage(params, 200, 'Success');
+                    return false;
+                }
+                if (params.qstring.app_key.length != 40) {
+                    console.log("app_key length over 40!!");
+                    console.log(params.ip_address);
+                    console.log(params.qstring.app_key);
+                    common.returnMessage(params, 200, 'Success');
+                    return false;
+                }
+                if (params.qstring.msgtype<0 || params.qstring.msgtype>2) {
+                    console.log("message type no match!!");
+                    console.log(params.ip_address);
+                    console.log(params.qstring.app_key);
+                    common.returnMessage(params, 200, 'Success');
+                    return false;
+                }
+                /*
+                if (!params.qstring.vendor_info) {
+                    console.log("request not include vendro_info!!");
+                    common.returnMessage(params, 200, 'Success');
+                    return false;
+                }
+                */
+
+                console.log(params.qstring.msgtype);
                 params.qstring.app_key = params.qstring.app_key.replace('"','');
                 params.qstring.app_key = params.qstring.app_key.replace('{','');
                 params.qstring.app_key = params.qstring.app_key.replace(':','');
@@ -1376,16 +1671,42 @@ if (cluster.isMaster) {
                         return false;
                     }
                 }
-
-                var type = params.qstring.type;
+                var type = 0;
+                try {
+                    type = messageTypeList[params.qstring.msgtype];
+                } catch (err) {
+                    var now = new Date();
+                    console.log('change messageType List error!!!'+'=========='+now+'==========');
+                    console.log('message type : '+params.qstring.msgtype);
+                    common.returnMessage(params, 200, 'Success');
+                    return false;
+                }
                 params.verifiy = true;
+
+                var appkey = params.qstring.app_key;
+                var checkAppKey = jsonQuery(['[key=?]',appkey], {data: appKeyMaps}).value;
+                if (!checkAppKey) {
+                    console.log(params.ip_address);
+                    console.log(params.qstring.app_key+" not in appKeyMaps!!!!!");
+                    common.returnMessage(params, 200, 'Success');
+                    return false;
+                }
+                if (req.headers['uma-h']) {
+                    var sign = req.headers['uma-h'];
+                    var verifier = crypto.createVerify('sha256');
+                    verifier.update(verifyStr);
+                    params.verifiy = verifier.verify(publicKey, sign,'base64');
+                    params.qstring.header = sign;
+                    params.qstring.src = verifyStr;
+                }
                 req.on('data', function(data) {
                     console.log("Received POST data:");
                     body.push(data);
                 });
                 req.on('end', function() {
                     body = Buffer.concat(body);
-                    common.returnMessage(params, 200, 'success');
+                    validateAppForWriteAvroAPI(params, type, body);
+                    // this is for test
                     console.log(avro.avroDecode(type, body));
                     return true;
                 });
