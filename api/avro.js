@@ -76,48 +76,114 @@ const avroMap = {
 },
   "events": {
   "type": "record",
-  "namespace" : "com.perfectcorp.countly.schema",
+  "namespace": "com.perfectcorp.countly.schema",
   "name": "EventRaw",
   "doc": "EventRaw",
-  "fields": [
-  {"name": "app_key", "type": "string"},
-  {"name": "device_id", "type": "string"},
-  {"name": "timestamp", "type": "long"},
-  {"name": "tz", "type": "string"},
-  {"name": "metrics", "type": {
-    "type": "record",
-    "name": "Metrics",
-    "fields": [
-      {"name": "_device", "type": "string"},
-      {"name": "_os", "type": "string"},
-      {"name": "_os_version", "type": "string"},
-      {"name": "_carrier", "type": "string"},
-      {"name": "_resolution", "type": "string"},
-      {"name": "_density", "type": "string"},
-      {"name": "_locale", "type": "string"},
-      {"name": "_app_version", "type": "string"}
-    ]}
+  "fields": [{
+    "name": "app_key",
+    "type": "string"
   },
-  {"name": "vendor_info", "type": {
-    "type": "record",
-    "name": "VendorInfo",
-    "fields": [
-      {"name": "sr_no_ori", "type": "string"},
-      {"name": "sr_no_cur", "type": "string"}
-    ]}
+  {
+    "name": "device_id",
+    "type": "string"
   },
-  {"name": "events", "type": {
-    "type": "array", "items": {
-    "name": "Events",
+  {
+    "name": "timestamp",
+    "type": "long"
+  },
+  {
+    "name": "tz",
+    "type": "string"
+  },
+  {
+    "name": "metrics",
+    "type": {
       "type": "record",
-      "fields": [
-        {"name": "key", "type": "string"},
-          {"name": "count", "type": "int"},
-          {"name": "timestamp", "type": "long"},
-          {"name": "tz", "type": "string"},
-          {"name": "sum", "type": "long"}
-      ]
+      "name": "Metrics",
+      "fields": [{
+        "name": "_device",
+        "type": "string"
+      },
+      {
+        "name": "_os",
+        "type": "string"
+      },
+      {
+        "name": "_os_version",
+        "type": "string"
+      },
+      {
+        "name": "_carrier",
+        "type": "string"
+      },
+      {
+        "name": "_resolution",
+        "type": "string"
+      },
+      {
+        "name": "_density",
+        "type": "string"
+      },
+      {
+        "name": "_locale",
+        "type": "string"
+      },
+      {
+        "name": "_app_version",
+        "type": "string"
+      }]
     }
+  },
+  {
+    "name": "vendor_info",
+    "type": {
+      "type": "record",
+      "name": "VendorInfo",
+      "fields": [{
+        "name": "sr_no_ori",
+        "type": "string"
+      },
+      {
+        "name": "sr_no_cur",
+        "type": "string"
+      }]
+    }
+  },
+  {
+    "name": "events",
+    "type": {
+      "type": "array",
+      "items": {
+        "name": "Events",
+        "type": "record",
+        "fields": [{
+          "name": "key",
+          "type": "string"
+        },
+        {
+          "name": "count",
+          "type": "int"
+        },
+        {
+        "name": "timestamp",
+          "type": "long"
+        },
+        {
+          "name": "tz",
+          "type": "string"
+        },
+        {
+          "name": "segmentation",
+          "type": {
+            "type": "map",
+            "values": "string"
+          }
+        },
+        {
+          "name": "sum",
+          "type": "long"
+        }]
+      }
     }
   }]
 }
