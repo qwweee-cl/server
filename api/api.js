@@ -550,7 +550,7 @@ function sendKafkaRest(data, key, isSession) {
   //common.kafka.topic("elly").produce(JSON.stringify(data));
 }
 
-function sendKafkaAvro(avroKey, avroValue, appKey, isSession) {
+function sendKafkaAvro(avroKey, avroValue, appKey, isSession, device_id) {
     var topicName = getNodeTopicNameAvro((isSession ? "Session" : "Event"), appKey);
     var topicName = "Elly";
     var topicName = "OWL";
@@ -594,7 +594,7 @@ if (0) {
                 //console.log(result);
         });
 }
-        var deviceID = data.device_id;
+        var deviceID = device_id;
         if (GLOBAL.userTableFilter) {
     //        var checkABTest = userTableMaps[data.device_id];
     //        console.log("Filter: "+GLOBAL.userTableFilter);
@@ -1408,7 +1408,7 @@ function validateAppForWriteAvroAPI(params, typeStr, bodyBuffer) {
         sendOEMKafkaAvro(avroKeyOEM, bodyBuffer, appKey, isSession);
     }
     //sendKafkaAvro(eventp, eventp.app_key, isSession);
-    sendKafkaAvro(avroKey, bodyBuffer, appKey, isSession);
+    sendKafkaAvro(avroKey, bodyBuffer, appKey, isSession, params.qstring.device_id);
     if (!params.verifiy) {
         //sendOthersKafkaAvro(eventp, eventp.app_key, isSession);
         sendOthersKafkaAvro(avroKey, bodyBuffer, appKey, isSession);
