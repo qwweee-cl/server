@@ -649,7 +649,7 @@ function sendOthersKafkaAvro(avroKey, avroValue, appKey, isSession) {
     randomCntAvro = ((++randomCntAvro)%partitionNum);
     if (cando) {
         //console.log(JSON.stringify(data));
-if (0)
+if (0) {
         producer.send([
             { topic: topicName, partition: (randomCntAvro%partitionNum), messages: JSON.stringify(data)}
         ], kafkaCB);
