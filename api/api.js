@@ -1376,7 +1376,7 @@ function validateAppForWriteAvroAPI(params, typeStr, bodyBuffer) {
     var checkOEM = null;
     var dealNumber = null;
     avroKey.ip_address = params.ip_address;
-    avroKey.msg_type = params.qstring.msgtype;
+    avroKey.msg_type = typeStr;
     avroKey.dbtimestamp = Math.round(currDate/1000);
     var appKey = params.qstring.app_key;
     var isSession = ((params.qstring.msgtype<=1)?1:0);
