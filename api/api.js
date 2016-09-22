@@ -1657,7 +1657,7 @@ if (cluster.isMaster) {
                 }
                 */
 
-                console.log(params.qstring.msgtype);
+                //console.log(params.qstring.msgtype);
                 params.qstring.app_key = params.qstring.app_key.replace('"','');
                 params.qstring.app_key = params.qstring.app_key.replace('{','');
                 params.qstring.app_key = params.qstring.app_key.replace(':','');
@@ -1703,7 +1703,7 @@ if (cluster.isMaster) {
                     params.qstring.src = verifyStr;
                 }
                 req.on('data', function(data) {
-                    console.log("Received POST data:");
+                    //console.log("Received POST data:");
                     body.push(data);
                 });
                 req.on('end', function() {
