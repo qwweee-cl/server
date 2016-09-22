@@ -349,7 +349,7 @@ if (0) {
                     if (entry.error) {
                         console.log("ERROR: " + entry.error);
                         nokafkaErrorCount++;
-                        nokafkaerrorContext+=(JSON.stringify(err)+"\r\n");
+                        nokafkaerrorContext+=(JSON.stringify(entry.error)+"\r\n");
                         if (nokafkaErrorCount && (nokafkaErrorCount%kafkaErrorMaxCount == 0)) {
                             console.log("Kafka Exception Send Mail");
                             var cmd = 'echo "'+nokafkaerrorContext+'" | mail -s "Kafka Exception Count '+nokafkaErrorCount+' times" '+failMailList;
@@ -392,7 +392,7 @@ if (0) {
                             if (entry.error) {
                                 console.log("ERROR: " + entry.error);
                                 nokafkaErrorCount++;
-                                nokafkaerrorContext+=(JSON.stringify(err)+"\r\n");
+                                nokafkaerrorContext+=(JSON.stringify(entry.error)+"\r\n");
                                 if (nokafkaErrorCount && (nokafkaErrorCount%kafkaErrorMaxCount == 0)) {
                                     console.log("Kafka Exception Send Mail");
                                     var cmd = 'echo "'+nokafkaerrorContext+'" | mail -s "Kafka Exception Count '+nokafkaErrorCount+' times" '+failMailList;
@@ -580,7 +580,7 @@ if (0) {
                     if (entry.error) {
                         console.log("ERROR: " + entry.error);
                         nokafkaErrorCount++;
-                        nokafkaerrorContext+=(JSON.stringify(err)+"\r\n");
+                        nokafkaerrorContext+=(JSON.stringify(entry.error)+"\r\n");
                         if (nokafkaErrorCount && (nokafkaErrorCount%kafkaErrorMaxCount == 0)) {
                             console.log("Kafka Exception Send Mail");
                             var cmd = 'echo "'+nokafkaerrorContext+'" | mail -s "Kafka Exception Count '+nokafkaErrorCount+' times" '+failMailList;
@@ -624,7 +624,7 @@ if (0) {
                             if (entry.error) {
                                 console.log("ERROR: " + entry.error);
                                 nokafkaErrorCount++;
-                                nokafkaerrorContext+=(JSON.stringify(err)+"\r\n");
+                                nokafkaerrorContext+=(JSON.stringify(entry.error)+"\r\n");
                                 if (nokafkaErrorCount && (nokafkaErrorCount%kafkaErrorMaxCount == 0)) {
                                     console.log("Kafka Exception Send Mail");
                                     var cmd = 'echo "'+nokafkaerrorContext+'" | mail -s "Kafka Exception Count '+nokafkaErrorCount+' times" '+failMailList;
@@ -669,7 +669,7 @@ if (0) {
                     if (entry.error) {
                         console.log("ERROR: " + entry.error);
                         nokafkaErrorCount++;
-                        nokafkaerrorContext+=(JSON.stringify(err)+"\r\n");
+                        nokafkaerrorContext+=(JSON.stringify(entry.error)+"\r\n");
                         if (nokafkaErrorCount && (nokafkaErrorCount%kafkaErrorMaxCount == 0)) {
                             console.log("Kafka Exception Send Mail");
                             var cmd = 'echo "'+nokafkaerrorContext+'" | mail -s "Kafka Exception Count '+nokafkaErrorCount+' times" '+failMailList;
@@ -717,7 +717,7 @@ if (0) {
                     if (entry.error) {
                         console.log("ERROR: " + entry.error);
                         nokafkaErrorCount++;
-                        nokafkaerrorContext+=(JSON.stringify(err)+"\r\n");
+                        nokafkaerrorContext+=(JSON.stringify(entry.error)+"\r\n");
                         if (nokafkaErrorCount && (nokafkaErrorCount%kafkaErrorMaxCount == 0)) {
                             console.log("Kafka Exception Send Mail");
                             var cmd = 'echo "'+nokafkaerrorContext+'" | mail -s "Kafka Exception Count '+nokafkaErrorCount+' times" '+failMailList;
@@ -1710,7 +1710,7 @@ if (cluster.isMaster) {
                     body = Buffer.concat(body);
                     validateAppForWriteAvroAPI(params, type, body);
                     // this is for test
-                    console.log(avro.avroDecode(type, body));
+                    //console.log(avro.avroDecode(type, body));
                     return true;
                 });
                 break;
