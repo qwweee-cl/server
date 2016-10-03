@@ -1422,7 +1422,7 @@ function validateAppForWriteAvroAPI(params, typeStr, bodyBuffer) {
             oemJson.events = JSON.parse(oemJson.events);
         }
         */
-        oemJson.app_user_id = common.crypto.createHash('sha1').update("undefined"+oemJson.device_id);
+        oemJson.app_user_id = common.crypto.createHash('sha1').update("undefined"+oemJson.device_id).digest('hex');
         oemJson.ip_address = avroKey.ip_address;
         common.computeGeoInfo(oemJson);
         var newShardoemdb = common.getNewShardOEMRawDB(appKey, dealNumber, currDate);
