@@ -1423,6 +1423,9 @@ function validateAppForWriteAvroAPI(params, typeStr, bodyBuffer) {
         oemJson.app_user_id = common.crypto.createHash('sha1').update("undefined"+oemJson.device_id);
         common.computeGeoInfo(oemJson);
         var newShardoemdb = common.getNewShardOEMRawDB(appKey, dealNumber, currDate);
+        if (!newShardoemdb) {
+            console.log("can't get mongo db!!");
+        }
         /*
         if (newShardoemdb) {
             newShardoemdb.collection(coll).insert(eventpOEM, function(err, res) {
