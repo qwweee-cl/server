@@ -1405,6 +1405,7 @@ function validateAppForWriteAvroAPI(params, typeStr, bodyBuffer) {
         }
     }
     if (oem) {
+        var coll = null;
         var avroKeyOEM = JSON.parse(JSON.stringify(avroKey));
         avroKeyOEM.store_name = checkOEM.deal_no;
         //sendOEMKafkaAvro(eventpOEM, eventpOEM.app_key, isSession);
@@ -1425,14 +1426,26 @@ function validateAppForWriteAvroAPI(params, typeStr, bodyBuffer) {
         oemJson.app_user_id = common.crypto.createHash('sha1').update("undefined"+oemJson.device_id).digest('hex');
         oemJson.ip_address = avroKey.ip_address;
         common.computeGeoInfo(oemJson);
+
+        if (oemJson.events) {
+            coll = common.rawCollection['event']+params.qstring.app_key;
+        }
+
+        if (oemJson.begin_session || oemJson.end_session || oemJson.session_duration) {
+            coll = common.rawCollection['session']+params.qstring.app_key;
+        }
+
         var newShardoemdb = common.getNewShardOEMRawDB(appKey, dealNumber, currDate);
         if (!newShardoemdb) {
             console.log("can't get mongo db!!");
         }
-        console.log(oemJson);
-        /*
+        console.log(newShardoemdb.tag);
+        if (!coll) {
+            console.log("can't get collection name!!");
+        }
+/*
         if (newShardoemdb) {
-            newShardoemdb.collection(coll).insert(eventpOEM, function(err, res) {
+            newShardoemdb.collection(coll).insert(oemJson, function(err, res) {
                 if (err) {
                     console.log('DB operation error');
                     console.log(err);
@@ -1448,7 +1461,7 @@ function validateAppForWriteAvroAPI(params, typeStr, bodyBuffer) {
                 }
             });
         }
-        */
+*/
     }
     //sendKafkaAvro(eventp, eventp.app_key, isSession);
     sendKafkaAvro(avroKey, bodyBuffer, appKey, isSession, params.qstring.device_id);
