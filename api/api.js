@@ -153,7 +153,8 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
                  'Avro_Session_YCF_And', 'Avro_Session_YCF_iOS', 'Avro_Session_YCC_And',
                  'Avro_Session_YCC_iOS', 'Avro_Event_YMC_And', 'Avro_Event_YMC_iOS',
                  'Avro_Event_YCF_And', 'Avro_Event_YCF_iOS', 'Avro_Event_YCC_And',
-                 'Avro_Event_YCC_iOS', 'Avro_OEM_session', 'Avro_OEM_event', 'Avro_CheckSum', 'Avro_ABTesting'];
+                 'Avro_Event_YCC_iOS', 'Avro_OEM_session', 'Avro_OEM_event', 'Avro_CheckSum',
+                 'Avro_ABTesting', 'Avro_OEM_session', 'Avro_OEM_event'];
 
 function producerReady() {
     var date = new Date();
@@ -1443,7 +1444,7 @@ function validateAppForWriteAvroAPI(params, typeStr, bodyBuffer) {
         if (!coll) {
             console.log("can't get collection name!!");
         }
-/*
+
         if (newShardoemdb) {
             newShardoemdb.collection(coll).insert(oemJson, function(err, res) {
                 if (err) {
@@ -1461,7 +1462,7 @@ function validateAppForWriteAvroAPI(params, typeStr, bodyBuffer) {
                 }
             });
         }
-*/
+
     }
     //sendKafkaAvro(eventp, eventp.app_key, isSession);
     sendKafkaAvro(avroKey, bodyBuffer, appKey, isSession, params.qstring.device_id);
