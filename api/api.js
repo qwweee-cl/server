@@ -1411,7 +1411,6 @@ function validateAppForWriteAvroAPI(params, typeStr, bodyBuffer) {
         sendOEMKafkaAvro(avroKeyOEM, bodyBuffer, appKey, isSession);
         // decode and sned to mongodb for compute
         var oemJson = JSON.parse(avro.avroDecode(typeStr, bodyBuffer));
-        console.log(oemJson);
         /*
         if (oemJson.metrics) {
             oemJson.metrics = JSON.parse(oemJson.metrics);
@@ -1429,6 +1428,7 @@ function validateAppForWriteAvroAPI(params, typeStr, bodyBuffer) {
         if (!newShardoemdb) {
             console.log("can't get mongo db!!");
         }
+        console.log(oemJson);
         /*
         if (newShardoemdb) {
             newShardoemdb.collection(coll).insert(eventpOEM, function(err, res) {
