@@ -1409,6 +1409,39 @@ function validateAppForWriteAvroAPI(params, typeStr, bodyBuffer) {
         avroKeyOEM.store_name = checkOEM.deal_no;
         //sendOEMKafkaAvro(eventpOEM, eventpOEM.app_key, isSession);
         sendOEMKafkaAvro(avroKeyOEM, bodyBuffer, appKey, isSession);
+        // decode and sned to mongodb for compute
+        var oemJson = JSON.parse(avro.avroDecode(typeStr, bodyBuffer));
+        if (oemJson.metrics) {
+            oemJson.metrics = JSON.parse(oemJson.metrics);
+        }
+        if (oemJson.vendor_info) {
+            oemJson.vendor_info = JSON.parse(oemJson.vendor_info);
+        }
+        if (oemJson.events) {
+            oemJson.events = JSON.parse(oemJson.events);
+        }
+        oemJson.app_user_id = common.crypto.createHash('sha1').update("undefined"+oemJson.device_id);
+        common.computeGeoInfo(oemJson);
+        var newShardoemdb = common.getNewShardOEMRawDB(appKey, dealNumber, currDate);
+        /*
+        if (newShardoemdb) {
+            newShardoemdb.collection(coll).insert(eventpOEM, function(err, res) {
+                if (err) {
+                    console.log('DB operation error');
+                    console.log(err);
+                }
+            });
+        } else {
+            console.log("can not get OEM database : ("+dealNumber+")");
+            newShardoemdb = common.getErrorDB();
+            newShardoemdb.collection(coll).insert(eventpOEM, function(err, res) {
+                if (err) {
+                    console.log('DB operation error');
+                    console.log(err);
+                }
+            });
+        }
+        */
     }
     //sendKafkaAvro(eventp, eventp.app_key, isSession);
     sendKafkaAvro(avroKey, bodyBuffer, appKey, isSession, params.qstring.device_id);
