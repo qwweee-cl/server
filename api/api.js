@@ -1411,6 +1411,8 @@ function validateAppForWriteAvroAPI(params, typeStr, bodyBuffer) {
         sendOEMKafkaAvro(avroKeyOEM, bodyBuffer, appKey, isSession);
         // decode and sned to mongodb for compute
         var oemJson = JSON.parse(avro.avroDecode(typeStr, bodyBuffer));
+        console.log(oemJson);
+        /*
         if (oemJson.metrics) {
             oemJson.metrics = JSON.parse(oemJson.metrics);
         }
@@ -1420,6 +1422,7 @@ function validateAppForWriteAvroAPI(params, typeStr, bodyBuffer) {
         if (oemJson.events) {
             oemJson.events = JSON.parse(oemJson.events);
         }
+        */
         oemJson.app_user_id = common.crypto.createHash('sha1').update("undefined"+oemJson.device_id);
         common.computeGeoInfo(oemJson);
         var newShardoemdb = common.getNewShardOEMRawDB(appKey, dealNumber, currDate);
