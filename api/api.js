@@ -1426,6 +1426,8 @@ function validateAppForWriteAvroAPI(params, typeStr, bodyBuffer) {
         */
         oemJson.app_user_id = common.crypto.createHash('sha1').update("undefined"+oemJson.device_id).digest('hex');
         oemJson.ip_address = avroKey.ip_address;
+        oemJson.dbtimestamp = avroKey.dbtimestamp;
+        oemJson.store_name = avroKeyOEM.store_name;
         common.computeGeoInfo(oemJson);
 
         if (oemJson.events) {
@@ -1722,6 +1724,18 @@ if (cluster.isMaster) {
                     } catch (SyntaxError) {
                         var now = new Date();
                         console.log('Parse vendor_info JSON failed'+'=========='+now+'==========');
+                        console.log(JSON.stringify(params.qstring));
+                        common.returnMessage(params, 200, 'Success');
+                        console.log('Send 200 Success');
+                        return false;
+                    }
+                }
+                if (params.qstring.AB) {
+                    try {
+                        params.qstring.AB = JSON.parse(params.qstring.AB);
+                    } catch (SyntaxError) {
+                        var now = new Date();
+                        console.log('Parse AB JSON failed'+'=========='+now+'==========');
                         console.log(JSON.stringify(params.qstring));
                         common.returnMessage(params, 200, 'Success');
                         console.log('Send 200 Success');
