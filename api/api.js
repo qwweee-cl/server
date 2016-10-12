@@ -79,6 +79,8 @@ var producer = new Producer(client, { requireAcks: 1});
 var partitionNum = 6;
 var randomCnt = -1;
 var randomCntAvro = -1;
+var randomCntAvroOEM = -1;
+var randomCntAvroABTesting = -1;
 var cando = false;
 //var YCP_And_count = 0;
 //var workerID;
@@ -558,6 +560,7 @@ function sendKafkaAvro(avroKey, avroValue, appKey, isSession, device_id) {
     var topicName = "Avro_ABC";
     var ABTestTopicName = "Avro_ABTesting";
     randomCntAvro = ((++randomCntAvro)%partitionNum);
+    randomCntAvroABTesting = ((++randomCntAvroABTesting)%partitionNum);
     if (cando) {
         //console.log(JSON.stringify(data));
 if (0) {
@@ -600,12 +603,12 @@ if (0) {
         if (codestartAB) {
 if (0) {
                 producer.send([
-                    { topic: ABTestTopicName, partition: (randomCntAvro%partitionNum), messages: JSON.stringify(data)}
+                    { topic: ABTestTopicName, partition: (randomCntAvroABTesting%partitionNum), messages: JSON.stringify(data)}
                 ], kafkaCB);
 } else {
                 noKafkaProducer.send({
                     topic: ABTestTopicName,
-                    partition: (randomCntAvro%partitionNum),
+                    partition: (randomCntAvroABTesting%partitionNum),
                     message: {
                       key: JSON.stringify(avroKey),
                       value: avroValue
@@ -647,12 +650,12 @@ if (0) {
                 //console.log("This Device ID in ABTesting");
 if (0) {
                 producer.send([
-                    { topic: ABTestTopicName, partition: (randomCntAvro%partitionNum), messages: JSON.stringify(data)}
+                    { topic: ABTestTopicName, partition: (randomCntAvroABTesting%partitionNum), messages: JSON.stringify(data)}
                 ], kafkaCB);
 } else {
                 noKafkaProducer.send({
                     topic: ABTestTopicName,
-                    partition: (randomCntAvro%partitionNum),
+                    partition: (randomCntAvroABTesting%partitionNum),
                     message: {
                       key: JSON.stringify(avroKey),
                       value: avroValue
@@ -733,18 +736,18 @@ function sendOEMKafkaAvro(avroKey, avroValue, appKey, isSession) {
     } else {
         topicName = "Avro_OEM_event";
     }
-    randomCntAvro = ((++randomCntAvro)%partitionNum);
+    randomCntAvroOEM = ((++randomCntAvroOEM)%partitionNum);
     if (cando) {
         //console.log(JSON.stringify(data));
 if (0) {
         return;
         producer.send([
-            { topic: topicName, partition: (randomCntAvro%partitionNum), messages: JSON.stringify(data)}
+            { topic: topicName, partition: (randomCntAvroOEM%partitionNum), messages: JSON.stringify(data)}
         ], kafkaCB);
 } else {
         noKafkaProducer.send({
             topic: topicName,
-            partition: (randomCntAvro%partitionNum),
+            partition: (randomCntAvroOEM%partitionNum),
             message: {
               key: JSON.stringify(avroKey),
               value: avroValue
