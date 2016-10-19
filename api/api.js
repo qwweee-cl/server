@@ -717,7 +717,7 @@ function insertRawColl(coll, eventp, params, isSession) {
                 sendOthersKafka(eventp, eventp.app_key, isSession);
             } else {
                 sendKafka(eventp, eventp.app_key, isSession);
-                if (0)
+//                if (0)
                 {
                 if (params.errorHeader) {
                     sendUMAHKafka(eventp, eventp.app_key, isSession);
