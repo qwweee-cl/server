@@ -121,7 +121,8 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
                  'Node_Session_YCC_iOS', 'Node_Event_YMC_And', 'Node_Event_YMC_iOS',
                  'Node_Event_YCF_And', 'Node_Event_YCF_iOS', 'Node_Event_YCC_And',
                  'Node_Event_YCC_iOS', 'OEM_session', 'OEM_event', 'CheckSum',
-                 'ABTesting', 'UMA-H'];
+                 'ABTesting', '_UMAH_YMK_And', '_UMAH_YMK_iOS', '_UMAH_YCP_And',
+                 '_UMAH_YCP_iOS'];
 
 function producerReady() {
     var date = new Date();
@@ -394,8 +395,8 @@ if(!isNoKafka) {
     }
 }
 
-function sendUMAHKafka(data, key, isSession) {
-    var topicName = "UMA-H";
+function sendUMAHKafka(data, key, isSession, topicName) {
+    var topicName = topicName;
     randomCntOthers = ((++randomCntOthers)%partitionNum);
     if (cando) {
         //console.log(JSON.stringify(data));
@@ -720,7 +721,7 @@ function insertRawColl(coll, eventp, params, isSession) {
 //                if (0)
                 {
                 if (params.errorHeader) {
-                    sendUMAHKafka(eventp, eventp.app_key, isSession);
+                    sendUMAHKafka(eventp, eventp.app_key, isSession, params.topicName);
                 }
                 }
             }
@@ -1770,12 +1771,55 @@ if (cluster.isMaster) {
                         // do something to check
                         // YMK Android and iOS
                         //if (params.qstring.app_key == '75edfca17dfbe875e63a66633ed6b00e30adcb92' || params.qstring.app_key == '9219f32e8de29b826faf44eb9b619788e29041bb') {
-                        if (params.qstring.app_key == '75edfca17dfbe875e63a66633ed6b00e30adcb92') {
+                        if (params.qstring.app_key == 'c277de0546df31757ff26a723907bc150add4254') {
                             // app version
                             if (params.qstring.metrics && params.qstring.metrics._app_version) {
                                 var versionArray = params.qstring.metrics._app_version.split(".");
                                 try {
                                     if (versionArray.length >= 2 && parseInt(versionArray[0])>=5 && parseInt(versionArray[1])>=12) {
+                                        params.topicName = '_UMAH_YCP_iOS';
+                                        params.errorHeader = true;
+                                    }
+                                } catch (err) {
+                                    console.log("parseInt Exception!!!");
+                                }
+                            }
+                        }
+                        else if (params.qstring.app_key == 'e315c111663af26a53e5fe4c82cc1baeecf50599') {
+                            // app version
+                            if (params.qstring.metrics && params.qstring.metrics._app_version) {
+                                var versionArray = params.qstring.metrics._app_version.split(".");
+                                try {
+                                    if (versionArray.length >= 2 && parseInt(versionArray[0])>=5 && parseInt(versionArray[1])>=12) {
+                                        params.topicName = '_UMAH_YCP_And';
+                                        params.errorHeader = true;
+                                    }
+                                } catch (err) {
+                                    console.log("parseInt Exception!!!");
+                                }
+                            }
+                        }
+                        else if (params.qstring.app_key == '9219f32e8de29b826faf44eb9b619788e29041bb') {
+                            // app version
+                            if (params.qstring.metrics && params.qstring.metrics._app_version) {
+                                var versionArray = params.qstring.metrics._app_version.split(".");
+                                try {
+                                    if (versionArray.length >= 2 && parseInt(versionArray[0])>=5 && parseInt(versionArray[1])>=12) {
+                                        params.topicName = '_UMAH_YMK_iOS';
+                                        params.errorHeader = true;
+                                    }
+                                } catch (err) {
+                                    console.log("parseInt Exception!!!");
+                                }
+                            }
+                        }
+                        else if (params.qstring.app_key == '75edfca17dfbe875e63a66633ed6b00e30adcb92') {
+                            // app version
+                            if (params.qstring.metrics && params.qstring.metrics._app_version) {
+                                var versionArray = params.qstring.metrics._app_version.split(".");
+                                try {
+                                    if (versionArray.length >= 2 && parseInt(versionArray[0])>=5 && parseInt(versionArray[1])>=12) {
+                                        params.topicName = '_UMAH_YMK_And';
                                         params.errorHeader = true;
                                     }
                                 } catch (err) {
