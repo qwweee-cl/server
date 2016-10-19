@@ -1769,8 +1769,8 @@ if (cluster.isMaster) {
                     } else {
                         // do something to check
                         // YMK Android and iOS
-                        if (params.qstring.app_key == '75edfca17dfbe875e63a66633ed6b00e30adcb92' || params.qstring.app_key == '9219f32e8de29b826faf44eb9b619788e29041bb') {
-                        //if (params.qstring.app_key == '75edfca17dfbe875e63a66633ed6b00e30adcb92') {
+                        //if (params.qstring.app_key == '75edfca17dfbe875e63a66633ed6b00e30adcb92' || params.qstring.app_key == '9219f32e8de29b826faf44eb9b619788e29041bb') {
+                        if (params.qstring.app_key == '75edfca17dfbe875e63a66633ed6b00e30adcb92') {
                             // app version
                             if (params.qstring.metrics && params.qstring.metrics._app_version) {
                                 var versionArray = params.qstring.metrics._app_version.split(".");
