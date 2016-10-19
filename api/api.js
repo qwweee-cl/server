@@ -54,7 +54,10 @@ var client = new Client(zkList);
 //var a = argv.a || 0; // no compress
 var producer = new Producer(client, { requireAcks: 1});
 var partitionNum = 6;
-var randomCnt = -1;
+var randomCnt = 0;
+var randomCntOEM = 0;
+var randomCntABTesting = 0;
+var randomCntOthers = 0;
 var cando = false;
 //var YCP_And_count = 0;
 //var workerID;
@@ -118,7 +121,7 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
                  'Node_Session_YCC_iOS', 'Node_Event_YMC_And', 'Node_Event_YMC_iOS',
                  'Node_Event_YCF_And', 'Node_Event_YCF_iOS', 'Node_Event_YCC_And',
                  'Node_Event_YCC_iOS', 'OEM_session', 'OEM_event', 'CheckSum',
-                 'ABTesting'];
+                 'ABTesting', 'UMA-H'];
 
 function producerReady() {
     var date = new Date();
@@ -315,9 +318,10 @@ if(!isNoKafka) {
             if (GLOBAL.userTableFilter) {
                 checkABTest = GLOBAL.userTableFilter.test(deviceID);
                 if (checkABTest) {
+                    randomCntABTesting = ((++randomCntABTesting)%partitionNum);
                     noKafkaProducer.send({
                         topic: ABTestTopicName,
-                        partition: (randomCnt%partitionNum),
+                        partition: (randomCntABTesting%partitionNum),
                         message: {
                           value: JSON.stringify(data)
                         }},
@@ -351,17 +355,18 @@ if(!isNoKafka) {
 
 function sendOthersKafka(data, key, isSession) {
     var topicName = "CheckSum";
+    randomCntOthers = ((++randomCntOthers)%partitionNum);
     randomCnt = ((++randomCnt)%partitionNum);
     if (cando) {
         //console.log(JSON.stringify(data));
 if(!isNoKafka) {
         producer.send([
-            { topic: topicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
+            { topic: topicName, partition: (randomCntOthers%partitionNum), messages: JSON.stringify(data)}
         ], kafkaCB);
 } else {
         noKafkaProducer.send({
             topic: topicName,
-            partition: (randomCnt%partitionNum),
+            partition: (randomCntOthers%partitionNum),
             message: {
               value: JSON.stringify(data)
             }},
@@ -408,17 +413,17 @@ function sendOEMKafka(data, key, isSession) {
     if (topicName == "OEM_others") {
         return;
     }
-    randomCnt = ((++randomCnt)%partitionNum);
+    randomCntOEM = ((++randomCntOEM)%partitionNum);
     if (cando) {
         //console.log(JSON.stringify(data));
 if (!isNoKafka) {
         producer.send([
-            { topic: topicName, partition: (randomCnt%partitionNum), messages: JSON.stringify(data)}
+            { topic: topicName, partition: (randomCntOEM%partitionNum), messages: JSON.stringify(data)}
         ], kafkaCB);
 } else {
         noKafkaProducer.send({
             topic: topicName,
-            partition: (randomCnt%partitionNum),
+            partition: (randomCntOEM%partitionNum),
             message: {
               value: JSON.stringify(data)
             }},
@@ -1714,6 +1719,9 @@ if (cluster.isMaster) {
                         params.verifiy = verifier.verify(publicKey, sign,'base64');
                         params.qstring.header = sign;
                         params.qstring.src = verifyStr;
+                    } else {
+                        // do something to check
+                        
                     }
                 }
 
