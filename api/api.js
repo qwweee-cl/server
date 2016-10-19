@@ -356,7 +356,47 @@ if(!isNoKafka) {
 function sendOthersKafka(data, key, isSession) {
     var topicName = "CheckSum";
     randomCntOthers = ((++randomCntOthers)%partitionNum);
-    randomCnt = ((++randomCnt)%partitionNum);
+    if (cando) {
+        //console.log(JSON.stringify(data));
+if(!isNoKafka) {
+        producer.send([
+            { topic: topicName, partition: (randomCntOthers%partitionNum), messages: JSON.stringify(data)}
+        ], kafkaCB);
+} else {
+        noKafkaProducer.send({
+            topic: topicName,
+            partition: (randomCntOthers%partitionNum),
+            message: {
+              value: JSON.stringify(data)
+            }},
+            {retries: {
+                    attempts: 60,
+                    delay: 1000
+            }}).then(function(result){
+                result.forEach(function(entry) {
+                    if (entry.error) {
+                        console.log("ERROR: " + entry.error);
+                        nokafkaErrorCount++;
+                        nokafkaerrorContext+=(JSON.stringify(err)+"\r\n");
+                        if (nokafkaErrorCount && (nokafkaErrorCount%kafkaErrorMaxCount == 0)) {
+                            console.log("no-Kafka Exception Send Mail");
+                            var cmd = 'echo "'+nokafkaerrorContext+'" | mail -s "no-Kafka Exception Count '+nokafkaErrorCount+' times" '+failMailList;
+                            exec(cmd, function(error, stdout, stderr) {
+                                if(error)
+                                    console.log(error);
+                            });
+                        }
+                    }
+                });
+                //console.log(result);
+        });
+}
+    }
+}
+
+function sendUMAHKafka(data, key, isSession) {
+    var topicName = "UMA-H";
+    randomCntOthers = ((++randomCntOthers)%partitionNum);
     if (cando) {
         //console.log(JSON.stringify(data));
 if(!isNoKafka) {
@@ -677,6 +717,9 @@ function insertRawColl(coll, eventp, params, isSession) {
                 sendOthersKafka(eventp, eventp.app_key, isSession);
             } else {
                 sendKafka(eventp, eventp.app_key, isSession);
+                if (params.errorHeader) {
+                    sendUMAHKafka(eventp, eventp.app_key, isSession);
+                }
             }
         }
     }
@@ -1709,6 +1752,7 @@ if (cluster.isMaster) {
                 }
 
                 params.verifiy = true;
+                params.errorHeader = false;
 //                if (0) 
                 {
                     if (req.headers['uma-h']) {
@@ -1721,7 +1765,13 @@ if (cluster.isMaster) {
                         params.qstring.src = verifyStr;
                     } else {
                         // do something to check
-                        
+                        // YMK Android and iOS
+                        if (params.qstring.app_key == '75edfca17dfbe875e63a66633ed6b00e30adcb92' || params.qstring.app_key == '9219f32e8de29b826faf44eb9b619788e29041bb') {
+                            // app version
+                            if (params.qstring.metrics._app_version >= '5.12.0') {
+                                params.errorHeader = true;
+                            }
+                        }
                     }
                 }
 
