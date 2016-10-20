@@ -1776,7 +1776,7 @@ if (cluster.isMaster) {
                             if (params.qstring.metrics && params.qstring.metrics._app_version) {
                                 var versionArray = params.qstring.metrics._app_version.split(".");
                                 try {
-                                    if (versionArray.length >= 2 && parseInt(versionArray[0])>=5 && parseInt(versionArray[1])>=12) {
+                                    if (versionArray.length >= 2 && parseInt(versionArray[0])>=5 && parseInt(versionArray[1])>=11) {
                                         params.topicName = '_UMAH_YCP_iOS';
                                         params.errorHeader = true;
                                     }
@@ -1790,7 +1790,7 @@ if (cluster.isMaster) {
                             if (params.qstring.metrics && params.qstring.metrics._app_version) {
                                 var versionArray = params.qstring.metrics._app_version.split(".");
                                 try {
-                                    if (versionArray.length >= 2 && parseInt(versionArray[0])>=5 && parseInt(versionArray[1])>=12) {
+                                    if (versionArray.length >= 2 && parseInt(versionArray[0])>=5 && parseInt(versionArray[1])>=11) {
                                         params.topicName = '_UMAH_YCP_And';
                                         params.errorHeader = true;
                                     }
