@@ -1773,6 +1773,7 @@ if (cluster.isMaster) {
                         //if (params.qstring.app_key == '75edfca17dfbe875e63a66633ed6b00e30adcb92' || params.qstring.app_key == '9219f32e8de29b826faf44eb9b619788e29041bb') {
                         if (params.qstring.app_key == 'c277de0546df31757ff26a723907bc150add4254') {
                             // app version
+                            if (0) {
                             if (params.qstring.metrics && params.qstring.metrics._app_version) {
                                 var versionArray = params.qstring.metrics._app_version.split(".");
                                 try {
@@ -1783,6 +1784,7 @@ if (cluster.isMaster) {
                                 } catch (err) {
                                     console.log("parseInt Exception!!!");
                                 }
+                            }
                             }
                         }
                         else if (params.qstring.app_key == 'e315c111663af26a53e5fe4c82cc1baeecf50599') {
@@ -1801,6 +1803,7 @@ if (cluster.isMaster) {
                         }
                         else if (params.qstring.app_key == '9219f32e8de29b826faf44eb9b619788e29041bb') {
                             // app version
+                            if (0) {
                             if (params.qstring.metrics && params.qstring.metrics._app_version) {
                                 var versionArray = params.qstring.metrics._app_version.split(".");
                                 try {
@@ -1811,6 +1814,7 @@ if (cluster.isMaster) {
                                 } catch (err) {
                                     console.log("parseInt Exception!!!");
                                 }
+                            }
                             }
                         }
                         else if (params.qstring.app_key == '75edfca17dfbe875e63a66633ed6b00e30adcb92') {
