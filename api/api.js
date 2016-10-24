@@ -1795,6 +1795,7 @@ if (cluster.isMaster) {
                                     if (versionArray.length >= 2 && parseInt(versionArray[0])>=5 && parseInt(versionArray[1])>=11) {
                                         params.topicName = '_UMAH_YCP_And';
                                         params.errorHeader = true;
+                                        params.verifiy = false;
                                     }
                                 } catch (err) {
                                     console.log("parseInt Exception!!!");
@@ -1825,6 +1826,7 @@ if (cluster.isMaster) {
                                     if (versionArray.length >= 2 && parseInt(versionArray[0])>=5 && parseInt(versionArray[1])>=12) {
                                         params.topicName = '_UMAH_YMK_And';
                                         params.errorHeader = true;
+                                        params.verifiy = false;
                                     }
                                 } catch (err) {
                                     console.log("parseInt Exception!!!");
