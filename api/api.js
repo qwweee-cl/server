@@ -1194,7 +1194,7 @@ function updateABTestingRandom() {
     console.log("updateABTesting with sleeping random time!!!");
     setTimeout(function () {
         updateABTesting();
-    }, (getRandomInt(1, 10) * 60000));
+    }, (getRandomInt(1, 20) * 30000));
 }
 
 function updateABTesting() {
