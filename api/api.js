@@ -105,7 +105,8 @@ var chunkQuery = 'SELECT device_id FROM ABTest.bc_trend_ab_user WHERE is_for_web
 var schedule = require('node-schedule'),
     job = schedule.scheduleJob('00 03 */1 * *', function(){
         console.log('Call update ABTesting Table!');
-        updateABTestingTable();
+        //updateABTestingTable();
+        updateABTestingRandom();
     });
 
 
@@ -1184,6 +1185,22 @@ if (1) {
     nokafkaErrorCount = 0;
     nokafkaerrorContext = "";
 }
+}
+
+// Returns a random integer between min (included) and max (excluded)
+// Using Math.round() will give you a non-uniform distribution!
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function updateABTestingRandom() {
+    var randomNum = getRandomInt(1, 20);
+    console.log("updateABTesting with sleeping random "+randomNum+" time!!!");
+    setTimeout(function () {
+        updateABTesting();
+    }, (randomNum * 30000));
 }
 
 function updateABTestingTable() {
