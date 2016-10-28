@@ -125,7 +125,7 @@ var schedule = require('node-schedule');
 var isUpdating = false;
 
 //var job = schedule.scheduleJob('30 07 */1 * *', function(){
-var job = schedule.scheduleJob('*/30 * * * *', function(){
+var job = schedule.scheduleJob('*/10 * * * *', function(){
     console.log('Call update ABTesting Table!');
     updateABTesting();
 });
