@@ -1225,7 +1225,7 @@ function updateABTestingTable() {
     console.log('End update ABTesting User Table: %s', end.toString());
     console.log('Update Time: %d', (diff/1000));
     console.log('update ABTesting table =========================='+end+'= length:'+tmpuserCount+'=========================');
-
+    isUpdating = false;
     return;
 /*
     if (isUpdating) {
