@@ -127,7 +127,7 @@ var isUpdating = false;
 //var job = schedule.scheduleJob('30 07 */1 * *', function(){
 var job = schedule.scheduleJob('*/10 * * * *', function(){
     console.log('Call update ABTesting Table!');
-    updateABTesting();
+    updateABTestingRandom();
 });
 
 var messageTypeList = ['beginSession', 'endSession', 'events'];
@@ -1180,6 +1180,21 @@ function findAndRemoveKey(array, value) {
             index++;
         }
     }
+}
+
+// Returns a random integer between min (included) and max (excluded)
+// Using Math.round() will give you a non-uniform distribution!
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function updateABTestingRandom() {
+    console.log("updateABTesting with sleeping random time!!!");
+    setTimeout(function () {
+        updateABTesting();
+    }, (getRandomInt(10, 120) * 1000));
 }
 
 function updateABTesting() {
