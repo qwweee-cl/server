@@ -97,7 +97,7 @@ var user = 'abtest';
 var password = 'abtest';
 var database = 'ABTest';
 var enableABTesting = true;
-var mysqlClient = mysql.createConnectionSync(host, user, password, database);
+var mysqlClientSync = mysql.createConnectionSync(host, user, password, database);
 var chunkSize = 100000;
 var countQuery = "SELECT count(*) as total FROM ABTest.bc_trend_ab_user WHERE is_for_web_filter = true;";
 var chunkQuery = 'SELECT device_id FROM ABTest.bc_trend_ab_user WHERE is_for_web_filter = true LIMIT '+chunkSize;
@@ -1216,12 +1216,12 @@ function updateABTestingTable() {
     isUpdating = true;
     var totalCount = 0;
     var periods = 0;
-    if (!mysqlClient) {
-       mysqlClient = mysql.createConnectionSync(host, user, password, database);
+    if (!mysqlClientSync) {
+       mysqlClientSync = mysql.createConnectionSync(host, user, password, database);
        console.log("[ERROR] "+(new Date()).toString()+" reconstruct mysqlClient object!!!!!");
     }
-    var handle = mysqlClient.querySync(countQuery);
-    if (!handle) {
+    var handleCount = mysqlClientSync.querySync(countQuery);
+    if (!handleCount) {
         // send mail to admin, can't query mysql
         console.log("[ERROR] "+(new Date()).toString()+" mysql handle can't use!!!");
         var cmd = 'echo "'+errorContext+'" | mail -s "[Countly ABTestTable] update fail!!!!" '+failMailListAdmin;
@@ -1231,7 +1231,7 @@ function updateABTestingTable() {
         });
         return;
     }
-    var result = handle.fetchAllSync();
+    var result = handleCount.fetchAllSync();
     totalCount = result[0].total;
     periods = Math.ceil(totalCount/chunkSize);
 
@@ -1243,8 +1243,8 @@ function updateABTestingTable() {
     for (var i=0;i<periods;i++) {
         var offset = i*chunkSize;
         var tmpQuery = chunkQuery+' OFFSET '+offset;
-        var handle = mysqlClient.querySync(tmpQuery);
-        var result = handle.fetchAllSync();
+        var handleOffset = mysqlClientSync.querySync(tmpQuery);
+        var result = handleOffset.fetchAllSync();
         for (var j=0;j<result.length;j++) {
             tmpFilter.add(result[j].device_id);
             tmpuserCount++;
