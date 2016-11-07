@@ -1231,8 +1231,8 @@ function updateABTestingTable() {
         });
         return;
     }
-    var result = handleCount.fetchAllSync();
-    totalCount = result[0].total;
+    var resultCount = handleCount.fetchAllSync();
+    totalCount = resultCount[0].total;
     periods = Math.ceil(totalCount/chunkSize);
 
     bloomConf = JSON.parse(fs.readFileSync('/usr/local/countly/api/bloomfilter.conf', 'utf8'));
@@ -1244,9 +1244,9 @@ function updateABTestingTable() {
         var offset = i*chunkSize;
         var tmpQuery = chunkQuery+' OFFSET '+offset;
         var handleOffset = mysqlClientSync.querySync(tmpQuery);
-        var result = handleOffset.fetchAllSync();
-        for (var j=0;j<result.length;j++) {
-            tmpFilter.add(result[j].device_id);
+        var resultOffset = handleOffset.fetchAllSync();
+        for (var j=0;j<resultOffset.length;j++) {
+            tmpFilter.add(resultOffset[j].device_id);
             tmpuserCount++;
         }
     }
