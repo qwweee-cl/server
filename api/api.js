@@ -1229,7 +1229,7 @@ function updateABTestingTable() {
             if(error)
                 console.log("updateABTesting Table send mail error: "+error);
         });
-        return;
+        //return;
     }
     var resultCount = handleCount.fetchAllSync();
     totalCount = resultCount[0].total;
