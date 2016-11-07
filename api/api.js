@@ -47,6 +47,7 @@ var kafkaErrorMaxCount = 10000;
 var errorContext = "";
 var kafkaCheckTimeout = 1*60*60*1000;
 var failMailList = "hendry_wu@perfectcorp.com,gary_huang@perfectcorp.com";
+var failMailListAdmin = "gary_huang@perfectcorp.com";
 
 var client = new Client(zkList);
 
@@ -1215,7 +1216,21 @@ function updateABTestingTable() {
     isUpdating = true;
     var totalCount = 0;
     var periods = 0;
+    if (!mysqlClient) {
+       mysqlClient = mysql.createConnectionSync(host, user, password, database);
+       console.log("[ERROR] "+(new Date()).toString()+" reconstruct mysqlClient object!!!!!");
+    }
     var handle = mysqlClient.querySync(countQuery);
+    if (!handle) {
+        // send mail to admin, can't query mysql
+        console.log("[ERROR] "+(new Date()).toString()+" mysql handle can't use!!!");
+        var cmd = 'echo "'+errorContext+'" | mail -s "[Countly ABTestTable] update fail!!!!" '+failMailListAdmin;
+        exec(cmd, function(error, stdout, stderr) {
+            if(error)
+                console.log("updateABTesting Table send mail error: "+error);
+        });
+        return;
+    }
     var result = handle.fetchAllSync();
     totalCount = result[0].total;
     periods = Math.ceil(totalCount/chunkSize);
