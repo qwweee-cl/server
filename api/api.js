@@ -97,7 +97,7 @@ var user = 'abtest';
 var password = 'abtest';
 var database = 'ABTest';
 var enableABTesting = true;
-var mysqlClientSync = mysql.createConnectionSync(host, user, password, database);
+
 var chunkSize = 100000;
 var countQuery = "SELECT count(*) as total FROM ABTest.bc_trend_ab_user WHERE is_for_web_filter = true;";
 var chunkQuery = 'SELECT device_id FROM ABTest.bc_trend_ab_user WHERE is_for_web_filter = true LIMIT '+chunkSize;
@@ -1216,10 +1216,7 @@ function updateABTestingTable() {
     isUpdating = true;
     var totalCount = 0;
     var periods = 0;
-    if (!mysqlClientSync) {
-       mysqlClientSync = mysql.createConnectionSync(host, user, password, database);
-       console.log("[ERROR] "+(new Date()).toString()+" reconstruct mysqlClient object!!!!!");
-    }
+    var mysqlClientSync = mysql.createConnectionSync(host, user, password, database);
     var handleCount = mysqlClientSync.querySync(countQuery);
     if (!handleCount) {
         // send mail to admin, can't query mysql
@@ -1258,6 +1255,7 @@ function updateABTestingTable() {
     console.log('Update Time: %d', (diff/1000));
     console.log('update ABTesting table =========================='+end+'= length:'+tmpuserCount+'=========================');
     isUpdating = false;
+    mysqlClientSync.closeSync()
     return;
 /*
     if (isUpdating) {
