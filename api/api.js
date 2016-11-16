@@ -1359,6 +1359,9 @@ if (cluster.isMaster) {
             }
             workerEnv["APPS"] = JSON.stringify(appKeyMaps);
             console.log("appKey-length:"+data.length);
+            if (!workerCount) {
+                workerCount = (common.config.api.workers)? common.config.api.workers : os.cpus().length;
+            }
 
             for (var i = 0; i < workerCount; i++) {
                 cluster.fork(workerEnv);
