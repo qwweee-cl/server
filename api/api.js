@@ -1120,11 +1120,12 @@ function updateOEMTable() {
         appKeyMaps.length = 0;
         appKeyMaps = JSON.parse(apps);
         console.log('update apps key table =========================='+now+'= length:'+appKeyMaps.length+'=========================');
-
+/*
         for (var i = 0; i < workerCount; i++) {
             //workerEnv["workerID"] = i;
             cluster.fork(workerEnv);
         }
+*/
     });
 }
 
