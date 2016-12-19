@@ -812,6 +812,12 @@ function insertRawColl(coll, eventp, params, isSession) {
     if (params.qstring.qmwd_active_user) {
         eventp.qmwd_active_user = params.qstring.qmwd_active_user;
     }
+    if (params.qstring.session_id) {
+        eventp.session_id = params.qstring.session_id;
+    }
+    if (params.qstring.session_id_idx) {
+        eventp.session_id_idx = params.qstring.session_id_idx;
+    }
     if (params.qstring.vendor_info) {
         //console.log(JSON.stringify(params.qstring.vendor_info, null, 2));
         eventp.vendor = params.qstring.vendor_info;
@@ -1015,6 +1021,12 @@ function insertRawEvent(coll,params) {
     if (params.qstring.metrics) {
         eventp.metrics = params.qstring.metrics;
     }
+    if (params.qstring.session_id) {
+        eventp.session_id = params.qstring.session_id;
+    }
+    if (params.qstring.session_id_idx) {
+        eventp.session_id_idx = params.qstring.session_id_idx;
+    }
     eventp.events = params.events;
     insertRawColl(coll, eventp, params, 0);
 }
@@ -1024,6 +1036,12 @@ function insertRawSession(coll,params) {
     //if (params.qstring.begin_session) {
         eventp.metrics = params.qstring.metrics;
     //}
+    if (params.qstring.session_id) {
+        eventp.session_id = params.qstring.session_id;
+    }
+    if (params.qstring.session_id_idx) {
+        eventp.session_id_idx = params.qstring.session_id_idx;
+    }
     eventp.begin_session = params.qstring.begin_session;
     eventp.end_session = params.qstring.end_session;        
     eventp.session_duration = params.qstring.session_duration;
