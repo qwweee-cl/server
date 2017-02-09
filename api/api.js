@@ -1079,12 +1079,15 @@ function insertRawColl(coll, eventp, params, isSession) {
                     eventp.src = params.qstring.src;
                 }
                 sendOthersKafka(eventp, eventp.app_key, isSession);
+                sendNewOthersKafka(eventp, eventp.app_key, isSession);
             } else {
                 sendKafka(eventp, eventp.app_key, isSession);
+                sendNewKafka(eventp, eventp.app_key, isSession);
 //                if (0)
                 {
                 if (params.errorHeader) {
                     sendUMAHKafka(eventp, eventp.app_key, isSession, params.topicName);
+                    sendNewUMAHKafka(eventp, eventp.app_key, isSession, params.topicName);
                 }
                 }
             }
