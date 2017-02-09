@@ -11,6 +11,7 @@ var http = require('http'),
     appKeyMaps = [],
     oemCount = 0,
     appKeyCount = 0,
+    isRunningMain = false,
     fs = require('fs'),
     crypto = require('crypto'),
     privateKey = fs.readFileSync('/home/ubuntu/shell/countly_private.pem'),
@@ -30,20 +31,54 @@ var http = require('http'),
 
 http.globalAgent.maxSockets = common.config.api.max_sockets || 1024;
 
+
 //////////////////////////////////
 var kafakStatus = 0;
+var kafakNewStatus = 0;
 var checkCount = 120;
 var kafka = require('kafka-node');
 var Producer = kafka.Producer;//kafka.HighLevelProducer;//kafka.Producer;
 var Client = kafka.Client;
 
+var noKafka = require('no-kafka');
+
+//// new kafka
+
+var zkListNew = '172.31.25.82:2181,172.31.30.167:2181,172.31.29.255:2181,172.31.26.160:2181';  // bootstrap.servers
+var clientNew = new Client(zkListNew);
+var producerNew = new Producer(clientNew, { requireAcks: 1});
+var randomCntNew = 0;
+var randomCntOEMNew = 0;
+var randomCntABTestingNew = 0;
+var randomCntOthersNew = 0;
+var candoNew = false;
+
+var reconnectIntervalNew = null;
+var kafkaNewErrorCount = 0;
+var errorNewContext = "";
+
+
+var isNoKafkaNew = true;
+
+var kafkaListNew = '172.31.25.82:9092,172.31.30.167:9092,172.31.29.255:9092,172.31.26.160:9092';  // 
+var noKafkaProducerNew = new noKafka.Producer({
+    requiredAcks: 1,
+    clientId: 'producer',
+    connectionString: kafkaListNew,
+    asyncCompression: false
+});
+
+
+
 //var zkList = '172.31.27.186:2181,172.31.27.187:2181,172.31.27.188:2181';  // bootstrap.servers
 //var zkList = '172.31.16.236:2181,172.31.16.237:2181,172.31.16.238:2181,172.31.16.239:2181';  // bootstrap.servers
 var zkList = '172.31.27.186:2181,172.31.27.187:2181,172.31.27.188:2181,172.31.23.18:2181';  // bootstrap.servers
+
 var timeToRetryConnection = 12*1000; // 12 seconds
 var reconnectInterval = null;
 var kafkaErrorCount = 0;
 var kafkaErrorMaxCount = 10000;
+kafkaErrorMaxCount = 20000;
 var errorContext = "";
 var kafkaCheckTimeout = 1*60*60*1000;
 var failMailList = "hendry_wu@perfectcorp.com,gary_huang@perfectcorp.com";
@@ -57,6 +92,7 @@ var producer = new Producer(client, { requireAcks: 1});
 var partitionNum = 6;
 var randomCnt = 0;
 var randomCntOEM = 0;
+
 var randomCntABTesting = 0;
 var randomCntOthers = 0;
 var cando = false;
@@ -64,13 +100,19 @@ var cando = false;
 //var workerID;
 //var isProducerReady = false;
 
+var isProducerReady = false;
+
+var isProducerReadyNew = false;
+
+var nokafkaNewErrorCount = 0;
+var nokafkaerrorNewContext = "";
+
 
 var nokafkaErrorCount = 0;
 var nokafkaerrorContext = "";
 var isNoKafka = true;
 var kafkaList = '172.31.27.186:9092,172.31.27.187:9092,172.31.27.188:9092,172.31.23.18:9092';  // bootstrap.servers
 
-var noKafka = require('no-kafka');
 var noKafkaProducer = new noKafka.Producer({
     requiredAcks: 1,
     clientId: 'producer',
@@ -125,6 +167,41 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
                  'Node_Event_YCC_iOS', 'OEM_session', 'OEM_event', 'CheckSum',
                  'ABTesting', '_UMAH_YMK_And', '_UMAH_YMK_iOS', '_UMAH_YCP_And',
                  '_UMAH_YCP_iOS'];
+
+
+function producerNewReady() {
+    var date = new Date();
+    console.log("ready: "+date.toString());
+    isProducerReadyNew = true;
+    producerNew.createTopics(topicList, false, function (err, data) {
+        console.log("createTopicNew: " + data);
+        if (err) {
+            console.log("New ERROR: " + err);
+            kafkaNewErrorCount++;
+            errorNewContext+=(JSON.stringify(err)+"\r\n");
+            if (kafkaNewErrorCount && (kafkaNewErrorCount%kafkaErrorMaxCount == 0)) {
+                //kafkaErrorCount = 0;
+                //errorContext = "";
+                console.log("Kafka New Exception Send Mail");
+                var cmd = 'echo "'+errorNewContext+'" | mail -s "Kafka Exception Count '+kafkaNewErrorCount+' times" '+failMailList;
+                exec(cmd, function(error, stdout, stderr) {
+                    if(error)
+                        console.log(error);
+                });
+            }
+        }
+        noKafkaProducerNew.init().then(function() {
+            console.log("no-kafka New Producer Ready");
+            candoNew = true;
+            mainfunc();
+        });
+        //cando = true;
+    });
+    if(reconnectIntervalNew!=null) {
+        clearTimeout(reconnectIntervalNew);
+        reconnectIntervalNew =null;
+    }
+};
 
 function producerReady() {
     var date = new Date();
@@ -182,6 +259,28 @@ function producerError(err) {
     }
 };
 
+function producerNewError(err) {
+    var date = new Date();
+    console.log("New perror: "+date.toString());
+    producerNew.close();
+    clientNew.close();
+    console.log('New producer error', err);
+    candoNew = false;
+    if ( reconnectIntervalNew == null) { // Multiple Error Events may fire, only set one connection retry.
+        reconnectIntervalNew =
+        setTimeout(function () {
+                console.log("New reconnect is called in producer error event");
+                clientNew = new Client(zkListNew);
+                producerNew = new Producer(clientNew, { requireAcks: 1});
+                producerNew.on('ready', producerNewReady);
+
+                producerNew.on('error', producerNewError);
+
+                clientNew.on('error', clientNewError);
+        }, timeToRetryConnection);
+    }
+};
+
 function clientError(err) {
     var date = new Date();
     console.log("cerror: "+date.toString());
@@ -203,12 +302,41 @@ function clientError(err) {
     }
 };
 
+function clientNewError(err) {
+    var date = new Date();
+    console.log("New cerror: "+date.toString());
+    producerNew.close();
+    clientNew.close();
+    console.log('New client error', err);
+    if ( reconnectIntervalNew == null) { // Multiple Error Events may fire, only set one connection retry.
+        reconnectIntervalNew =
+        setTimeout(function () {
+                console.log("New reconnect is called in producer error event");
+                clientNew = new Client(zkListNew);
+                producerNew = new Producer(clientNew, { requireAcks: 1});
+                producerNew.on('ready', producerNewReady);
+
+                producerNew.on('error', producerNewError);
+
+                clientNew.on('error', clientNewError);
+        }, timeToRetryConnection);
+    }
+};
+
 
 producer.on('ready', producerReady);
 
 producer.on('error', producerError);
 
 client.on('error', clientError);
+
+
+
+producerNew.on('ready', producerNewReady);
+
+producerNew.on('error', producerNewError);
+
+clientNew.on('error', clientNewError);
 //////////////////////////////////
 
 var appMap = {
@@ -438,6 +566,188 @@ if(!isNoKafka) {
     }
 }
 
+////// new kafka producer function start
+function kafkaNewCB(err, result) {
+    if (err) {
+        kafkaNewErrorCount++;
+        errorNewContext+=(JSON.stringify(err)+"\r\n");
+        console.log("New ERROR: " + err);
+        console.log("New result: " + JSON.stringify(result));
+        //producer.close();
+        //client.close();
+        if (kafkaNewErrorCount && (kafkaNewErrorCount%kafkaNewErrorMaxCount == 0)) {
+            //kafkaErrorCount = 0;
+            //errorContext = "";
+            console.log("New Kafka Exception Send Mail");
+            var cmd = 'echo "'+errorNewContext+'" | mail -s "Kafka Exception Count '+kafkaNewErrorCount+' times" '+failMailList;
+            exec(cmd, function(error, stdout, stderr) {
+                if(error)
+                    console.log(error);
+            });
+        }
+    }
+}
+
+function sendNewKafka(data, key, isSession) {
+    var topicName = getNodeTopicName((isSession ? "Session" : "Event"), key);
+    randomCntNew = ((++randomCntNew)%partitionNum);
+    var deviceID = data.device_id;
+    var checkABTest = false;
+    if (candoNew) {
+        //console.log(JSON.stringify(data));
+if(!isNoKafka) {
+        producerNew.send([
+            { topic: topicName, partition: (randomCntNew%partitionNum), messages: JSON.stringify(data)}
+        ], kafkaNewCB);
+} else {
+        noKafkaProducerNew.send({
+            topic: topicName,
+            partition: (randomCntNew%partitionNum),
+            message: {
+              value: JSON.stringify(data)
+            }},
+            {retries: {
+                    attempts: 60,
+                    delay: 1000
+            }}).then(function(result){
+                result.forEach(function(entry) {
+                    if (entry.error) {
+                        console.log("ERROR: " + entry.error);
+                        nokafkaNewErrorCount++;
+                        nokafkaerrorNewContext+=(JSON.stringify(err)+"\r\n");
+                        if (nokafkaNewErrorCount && (nokafkaNewErrorCount%kafkaErrorMaxCount == 0)) {
+                            console.log("New no-Kafka Exception Send Mail");
+                            var cmd = 'echo "'+nokafkaerrorNewContext+'" | mail -s "no-Kafka Exception Count '+nokafkaNewErrorCount+' times" '+failMailList;
+                            exec(cmd, function(error, stdout, stderr) {
+                                if(error)
+                                    console.log(error);
+                            });
+                        }
+                    }
+                });
+                //console.log(result);
+        });
+        if (checkBloomFilter) {
+            if (GLOBAL.userTableFilter) {
+                checkABTest = GLOBAL.userTableFilter.test(deviceID);
+                if (checkABTest) {
+                    randomCntABTestingNew = ((++randomCntABTestingNew)%partitionNum);
+                    noKafkaProducer.send({
+                        topic: ABTestTopicName,
+                        partition: (randomCntABTestingNew%partitionNum),
+                        message: {
+                          value: JSON.stringify(data)
+                        }},
+                        {retries: {
+                                attempts: 60,
+                                delay: 1000
+                        }}).then(function(result){
+                            result.forEach(function(entry) {
+                                if (entry.error) {
+                                    console.log("ERROR: " + entry.error);
+                                    nokafkaNewErrorCount++;
+                                    nokafkaerrorNewContext+=(JSON.stringify(err)+"\r\n");
+                                    if (nokafkaNewErrorCount && (nokafkaNewErrorCount%kafkaErrorMaxCount == 0)) {
+                                        console.log("New no-Kafka Exception Send Mail");
+                                        var cmd = 'echo "'+nokafkaerrorNewContext+'" | mail -s "no-Kafka Exception Count '+nokafkaNewErrorCount+' times" '+failMailList;
+                                        exec(cmd, function(error, stdout, stderr) {
+                                            if(error)
+                                                console.log(error);
+                                        });
+                                    }
+                                }
+                            });
+                            //console.log(result);
+                    });
+                }
+            }
+        }
+}
+    }
+}
+
+function sendNewOthersKafka(data, key, isSession) {
+    var topicName = "CheckSum";
+    randomCntOthersNew = ((++randomCntOthersNew)%partitionNum);
+    if (candoNew) {
+        //console.log(JSON.stringify(data));
+if(!isNoKafka) {
+        producerNew.send([
+            { topic: topicName, partition: (randomCntOthersNew%partitionNum), messages: JSON.stringify(data)}
+        ], kafkaNewCB);
+} else {
+        noKafkaProducerNew.send({
+            topic: topicName,
+            partition: (randomCntOthersNew%partitionNum),
+            message: {
+              value: JSON.stringify(data)
+            }},
+            {retries: {
+                    attempts: 60,
+                    delay: 1000
+            }}).then(function(result){
+                result.forEach(function(entry) {
+                    if (entry.error) {
+                        console.log("New ERROR: " + entry.error);
+                        nokafkaNewErrorCount++;
+                        nokafkaerrorNewContext+=(JSON.stringify(err)+"\r\n");
+                        if (nokafkaNewErrorCount && (nokafkaNewErrorCount%kafkaErrorMaxCount == 0)) {
+                            console.log("no-Kafka Exception Send Mail");
+                            var cmd = 'echo "'+nokafkaerrorNewContext+'" | mail -s "no-Kafka Exception Count '+nokafkaNewErrorCount+' times" '+failMailList;
+                            exec(cmd, function(error, stdout, stderr) {
+                                if(error)
+                                    console.log(error);
+                            });
+                        }
+                    }
+                });
+                //console.log(result);
+        });
+}
+    }
+}
+
+function sendNewUMAHKafka(data, key, isSession, topicName) {
+    var topicName = topicName;
+    randomCntOthersNew = ((++randomCntOthersNew)%partitionNum);
+    if (candoNew) {
+        //console.log(JSON.stringify(data));
+if(!isNoKafka) {
+        producer.send([
+            { topic: topicName, partition: (randomCntOthersNew%partitionNum), messages: JSON.stringify(data)}
+        ], kafkaCB);
+} else {
+        noKafkaProducerNew.send({
+            topic: topicName,
+            partition: (randomCntOthersNew%partitionNum),
+            message: {
+              value: JSON.stringify(data)
+            }},
+            {retries: {
+                    attempts: 60,
+                    delay: 1000
+            }}).then(function(result){
+                result.forEach(function(entry) {
+                    if (entry.error) {
+                        console.log("New ERROR: " + entry.error);
+                        nokafkaNewErrorCount++;
+                        nokafkaerrorNewContext+=(JSON.stringify(err)+"\r\n");
+                        if (randomCntOthersNew && (randomCntOthersNew%kafkaErrorMaxCount == 0)) {
+                            console.log("no-Kafka Exception Send Mail");
+                            var cmd = 'echo "'+nokafkaerrorNewContext+'" | mail -s "no-Kafka Exception Count '+randomCntOthersNew+' times" '+failMailList;
+                            exec(cmd, function(error, stdout, stderr) {
+                                if(error)
+                                    console.log(error);
+                            });
+                        }
+                    }
+                });
+                //console.log(result);
+        });
+}
+    }
+}
+
 function getOEMTopicName(header, appkey) {
     var topicName = "";
     for (var key in appMap) {
@@ -482,6 +792,51 @@ if (!isNoKafka) {
                         if (nokafkaErrorCount && (nokafkaErrorCount%kafkaErrorMaxCount == 0)) {
                             console.log("no-Kafka Exception Send Mail");
                             var cmd = 'echo "'+nokafkaerrorContext+'" | mail -s "no-Kafka Exception Count '+nokafkaErrorCount+' times" '+failMailList;
+                            exec(cmd, function(error, stdout, stderr) {
+                                if(error)
+                                    console.log(error);
+                            });
+                        }
+                    }
+                });
+                //console.log(result);
+        });
+}
+    }
+}
+
+
+function sendNewOEMKafka(data, key, isSession) {
+    var topicName = getOEMTopicName((isSession ? "OEM_session" : "OEM_event"), key);
+    if (topicName == "OEM_others") {
+        return;
+    }
+    randomCntOEMNew = ((++randomCntOEMNew)%partitionNum);
+    if (candoNew) {
+        //console.log(JSON.stringify(data));
+if (!isNoKafka) {
+        producerNew.send([
+            { topic: topicName, partition: (randomCntOEMNew%partitionNum), messages: JSON.stringify(data)}
+        ], kafkaNewCB);
+} else {
+        noKafkaProducerNew.send({
+            topic: topicName,
+            partition: (randomCntOEMNew%partitionNum),
+            message: {
+              value: JSON.stringify(data)
+            }},
+            {retries: {
+                    attempts: 60,
+                    delay: 1000
+            }}).then(function(result){
+                result.forEach(function(entry) {
+                    if (entry.error) {
+                        console.log("New ERROR: " + entry.error);
+                        nokafkaNewErrorCount++;
+                        nokafkaerrorNewContext+=(JSON.stringify(err)+"\r\n");
+                        if (nokafkaNewErrorCount && (nokafkaNewErrorCount%kafkaErrorMaxCount == 0)) {
+                            console.log("New no-Kafka Exception Send Mail");
+                            var cmd = 'echo "'+nokafkaerrorNewContext+'" | mail -s "no-Kafka Exception Count '+nokafkaNewErrorCount+' times" '+failMailList;
                             exec(cmd, function(error, stdout, stderr) {
                                 if(error)
                                     console.log(error);
@@ -1180,6 +1535,39 @@ function checkKafkaStatus() {
     }
 }
 
+function checkNewKafkaStatus() {
+    //console.log("check Kafka Status: "+kafakNewStatus);
+    producerNew.createTopics(['check'], false, function (err, data) {
+        //console.log("createTopic: " + data);
+        if (err) {
+            kafakNewStatus++;
+            console.log("New ERROR: " + err + " "+kafakNewStatus);
+            return;
+        }
+        producerNew.send([
+            { topic: "check", messages: "1"}
+        ], function (err, result) {
+            if (err) {
+                console.log("New ERROR: " + err);
+                kafakNewStatus++;
+                return;
+            }
+            //console.log("result: " + JSON.stringify(result));
+            kafakNewStatus = 0;
+        });
+    });
+    if (kafakNewStatus >= checkCount) {
+        var exec = require('child_process').exec;
+        var cmd = 'sudo stop countly-supervisor';
+        exec(cmd, function(error, stdout, stderr) {
+            // command output is in stdout
+            if (error) {
+                console.log(error);
+            }
+        });
+    }
+}
+
 function funcResetKafkaErrorCount() {
 if (1) {
     if (kafkaErrorCount) {
@@ -1204,6 +1592,94 @@ if (1) {
     }
     nokafkaErrorCount = 0;
     nokafkaerrorContext = "";
+}
+}
+
+function funcResetKafkaErrorCount() {
+if (1) {
+    if (kafkaErrorCount) {
+        console.log("Kafka Exception Send Mail");
+        var cmd = 'echo "'+errorContext+'" | mail -s "Kafka Exception Count '+kafkaErrorCount+' times" '+failMailList;
+        exec(cmd, function(error, stdout, stderr) {
+            if(error)
+                console.log("kafka send mail error: "+error);
+        });
+    }
+    kafkaErrorCount = 0;
+    errorContext = "";
+} else {
+    if (nokafkaErrorCount) {
+        console.log("nokafkaErrorCount: "+nokafkaErrorCount);
+        console.log("no-Kafka Exception Send Mail");
+        var cmd = 'echo "'+nokafkaerrorContext+'" | mail -s "Kafka Exception Count '+nokafkaErrorCount+' times" '+failMailList;
+        exec(cmd, function(error, stdout, stderr) {
+            if(error)
+                console.log("no-kafka send mail error: "+error);
+        });
+    }
+    nokafkaErrorCount = 0;
+    nokafkaerrorContext = "";
+}
+}
+
+
+function checkKafkaNewStatus() {
+    //console.log("check Kafka Status: "+kafakStatus);
+    producerNew.createTopics(['check'], false, function (err, data) {
+        //console.log("createTopic: " + data);
+        if (err) {
+            kafakStatus++;
+            console.log("ERROR: " + err + " "+kafakStatus);
+            return;
+        }
+        producerNew.send([
+            { topic: "check", messages: "1"}
+        ], function (err, result) {
+            if (err) {
+                console.log("ERROR: " + err);
+                kafakStatus++;
+                return;
+            }
+            //console.log("result: " + JSON.stringify(result));
+            kafakStatus = 0;
+        });
+    });
+    if (kafakStatus >= checkCount) {
+        var exec = require('child_process').exec;
+        var cmd = 'sudo stop countly-supervisor';
+        exec(cmd, function(error, stdout, stderr) {
+            // command output is in stdout
+            if (error) {
+                console.log(error);
+            }
+        });
+    }
+}
+
+function funcResetKafkaNewErrorCount() {
+if (1) {
+    if (kafkaNewErrorCount) {
+        console.log("New Kafka Exception Send Mail");
+        var cmd = 'echo "'+errorNewContext+'" | mail -s "Kafka Exception Count '+kafkaNewErrorCount+' times" '+failMailList;
+        exec(cmd, function(error, stdout, stderr) {
+            if(error)
+                console.log("New kafka send mail error: "+error);
+        });
+    }
+    kafkaNewErrorCount = 0;
+    errorNewContext = "";
+} else {
+    if (nokafkaNewErrorCount) {
+        console.log("New nokafkaErrorCount: "+nokafkaNewErrorCount);
+        console.log("New no-Kafka Exception Send Mail");
+        var cmd = 'echo "'+nokafkaerrorNewContext+'" | mail -s "New Kafka Exception Count '+nokafkaNewErrorCount+' times" '+failMailList;
+        exec(cmd, function(error, stdout, stderr) {
+            if(error)
+                console.log("New no-kafka send mail error: "+error);
+        });
+    }
+    nokafkaNewErrorCount = 0;
+    nokafkaerrorNewContext = "";
 }
 }
 
@@ -1345,6 +1821,15 @@ function updateABTestingTable() {
 
 function mainfunc() {
 
+if (isRunningMain) {
+    console.log("Main Running");
+    return;
+}
+if (!cando || !candoNew) {
+    console.log("Producer not ready!!");
+    return;
+}
+
 if (cluster.isMaster) {
     var now = new Date();
     console.log('start api =========================='+now+'==========================');
@@ -1402,12 +1887,16 @@ if (cluster.isMaster) {
     setInterval(function() {
         /** update workerEnv OEM tables data **/
         checkKafkaStatus();
+        checkKafkaNewStatus();
     }, 5000);
 
     setInterval(function() {
         /** update workerEnv OEM tables data **/
         funcResetKafkaErrorCount();
+        funcResetKafkaNewErrorCount();
     }, kafkaCheckTimeout);
+
+    isRunningMain = true;
 
 } else {
     var oems = process.env['OEMS'];
@@ -1432,6 +1921,7 @@ if (cluster.isMaster) {
     setInterval(function() {
         /** update workerEnv OEM tables data **/
         funcResetKafkaErrorCount();
+        funcResetKafkaNewErrorCount();
     }, kafkaCheckTimeout);
     //console.log(oemMaps);
 
@@ -2038,5 +2528,6 @@ if (cluster.isMaster) {
         }
 
     }).listen(common.config.api.port, common.config.api.host || '');
+    isRunningMain = true;
 }
 }
