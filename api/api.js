@@ -1161,6 +1161,7 @@ function insertRawColl(coll, eventp, params, isSession) {
                 eventpOEM = JSON.parse(JSON.stringify(eventp));
                 eventpOEM.store_name = checkOEM.deal_no;
                 sendOEMKafka(eventpOEM, eventpOEM.app_key, isSession);
+                sendNewOEMKafka(eventpOEM, eventpOEM.app_key, isSession);
             }
             var oemdb = common.getNewOEMRawDB(eventpOEM.app_key, dealNumber, currDate);
             if (oemdb) {
