@@ -122,9 +122,9 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
                  'Node_Session_YCF_And', 'Node_Session_YCF_iOS', 'Node_Session_YCC_And',
                  'Node_Session_YCC_iOS', 'Node_Event_YMC_And', 'Node_Event_YMC_iOS',
                  'Node_Event_YCF_And', 'Node_Event_YCF_iOS', 'Node_Event_YCC_And',
-                 'Node_Event_YCC_iOS', 'OEM_session', 'OEM_event', 'CheckSum',
-                 'ABTesting', '_UMAH_YMK_And', '_UMAH_YMK_iOS', '_UMAH_YCP_And',
-                 '_UMAH_YCP_iOS'];
+                 'Node_Event_YCC_iOS', 'Node_Session_YMKL_iOS', 'Node_Event_YMKL_iOS', 
+                 'OEM_session', 'OEM_event', 'CheckSum', 'ABTesting', '_UMAH_YMK_And', 
+                 '_UMAH_YMK_iOS', '_UMAH_YCP_And', '_UMAH_YCP_iOS'];
 
 function producerReady() {
     var date = new Date();
@@ -232,7 +232,8 @@ var appMap = {
             "093ceb063bc69ffe79af7852a715f95fd91547f2" : {appName: "YCF", appOS: "And"}, // YouCam_Fun_And
             "9d23f2108e703661545fe60336ab5e4ef120b189" : {appName: "YCF", appOS: "iOS"}, // YouCam_Fun_iOS
             "82694c09eb10f576b12645cad667dc2c740db1a0" : {appName: "YCC", appOS: "And"}, // YouCam_Collage_And
-            "3aa2b6516f3d9ea559561a8c3bca1fe0b8a96371" : {appName: "YCC", appOS: "iOS"} // YouCam_Collage_iOS
+            "3aa2b6516f3d9ea559561a8c3bca1fe0b8a96371" : {appName: "YCC", appOS: "iOS"}, // YouCam_Collage_iOS
+            "582c471bbd055a81b554c7d74658f1ad017e8c2b" : {appName: "YMKL", appOS: "iOS"}, // YouCam_Collage_iOS
 };
 
 function getTopicName(header, appkey) {

@@ -20,6 +20,7 @@ var appKey = {};
 		"YouCam_Fun_iOS"			: "9d23f2108e703661545fe60336ab5e4ef120b189",
 		"YouCam_Collage_And"		: "82694c09eb10f576b12645cad667dc2c740db1a0",
 		"YouCam_Collage_iOS"		: "3aa2b6516f3d9ea559561a8c3bca1fe0b8a96371",
+		"YMK_Live_iOS"				: "582c471bbd055a81b554c7d74658f1ad017e8c2b",
 	};
 }(appKey));
 
