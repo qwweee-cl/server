@@ -47,3 +47,8 @@
 *.fsproj text=auto merge=union 
 *.dbproj text=auto merge=union 
 *.sln text=auto eol=crlf merge=union 
+
+api/node_modules/geoip-lite/data/* filter=lfs diff=lfs merge=lfs
+api/node_modules/geoip-lite/scripts/mydata/* filter=lfs diff=lfs merge=lfs
+api/node_modules/geoip-lite/scripts/mytmp/* filter=lfs diff=lfs merge=lfs
+
