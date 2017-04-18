@@ -92,7 +92,7 @@ const query = 'SELECT device_id, is_for_web_filter FROM bc_trend_ab_user;';
 var ABTestTopicName = 'ABTesting';
 
 const mysql = require('mysql-libmysqlclient');
-var host = 'cognos-db.czkpdhvixbu3.ap-northeast-1.rds.amazonaws.com';
+var host = 'cogons-db-new.czkpdhvixbu3.ap-northeast-1.rds.amazonaws.com';
 var user = 'abtest';
 var password = 'abtest';
 var database = 'ABTest';
