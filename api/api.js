@@ -236,7 +236,7 @@ var appMap = {
             "82694c09eb10f576b12645cad667dc2c740db1a0" : {appName: "YCC", appOS: "And"}, // YouCam_Collage_And
             "3aa2b6516f3d9ea559561a8c3bca1fe0b8a96371" : {appName: "YCC", appOS: "iOS"}, // YouCam_Collage_iOS
             "582c471bbd055a81b554c7d74658f1ad017e8c2b" : {appName: "YMKL", appOS: "iOS"}, // YouCam_Collage_iOS
-            "fa9cbde99587e00afcbd7a9c834e78b5185b8065" : {appName: "YCS", appOS: "Android"}, // YouCam_Store_Android
+            "fa9cbde99587e00afcbd7a9c834e78b5185b8065" : {appName: "YCS", appOS: "And"}, // YouCam_Store_Android
             "9357f63f387a02872cae14f8539b37cc37404727" : {appName: "YCS", appOS: "iOS"}, // YouCam_Store_iOS
 };
 
