@@ -124,7 +124,7 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
                  'Node_Event_YCF_And', 'Node_Event_YCF_iOS', 'Node_Event_YCC_And',
                  'Node_Event_YCC_iOS', 'Node_Session_YMKL_iOS', 'Node_Event_YMKL_iOS', 
                  'Node_Session_YCS_And', 'Node_Session_YCS_iOS', 'Node_Event_YCS_And',
-                 'NOde_Event_YCS_iOS',
+                 'Node_Event_YCS_iOS',
                  'OEM_session', 'OEM_event', 'CheckSum', 'ABTesting', '_UMAH_YMK_And', 
                  '_UMAH_YMK_iOS', '_UMAH_YCP_And', '_UMAH_YCP_iOS'];
 
