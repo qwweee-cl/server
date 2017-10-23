@@ -23,6 +23,8 @@ var appKey = {};
 		"YMK_Live_iOS"				: "582c471bbd055a81b554c7d74658f1ad017e8c2b",
 		"YouCam_Store_And"			: "fa9cbde99587e00afcbd7a9c834e78b5185b8065",
 		"YouCam_Store_iOS"			: "9357f63f387a02872cae14f8539b37cc37404727",
+		"Amway_And"			: "9f093278d98ad4159a6df2f29d021e6e34649747",
+		"Amway_iOS"			: "1a89a46c0465a15ce57f3709ca01c2c9fb36feb4",
 	};
 }(appKey));
 

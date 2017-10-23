@@ -126,7 +126,8 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
                  'Node_Session_YCS_And', 'Node_Session_YCS_iOS', 'Node_Event_YCS_And',
                  'Node_Event_YCS_iOS',
                  'OEM_session', 'OEM_event', 'CheckSum', 'ABTesting', '_UMAH_YMK_And', 
-                 '_UMAH_YMK_iOS', '_UMAH_YCP_And', '_UMAH_YCP_iOS'];
+                 '_UMAH_YMK_iOS', '_UMAH_YCP_And', '_UMAH_YCP_iOS',
+                 'Node_Session_Amway_And', 'Node_Session_Amway_iOS', 'Node_Event_Amway_And', 'Node_Event_Amway_iOS'];
 
 function producerReady() {
     var date = new Date();
@@ -238,6 +239,8 @@ var appMap = {
             "582c471bbd055a81b554c7d74658f1ad017e8c2b" : {appName: "YMKL", appOS: "iOS"}, // YouCam_Collage_iOS
             "fa9cbde99587e00afcbd7a9c834e78b5185b8065" : {appName: "YCS", appOS: "And"}, // YouCam_Store_Android
             "9357f63f387a02872cae14f8539b37cc37404727" : {appName: "YCS", appOS: "iOS"}, // YouCam_Store_iOS
+            "9f093278d98ad4159a6df2f29d021e6e34649747" : {appName: "Amway", appOS: "And"}, // Amway_Android
+            "1a89a46c0465a15ce57f3709ca01c2c9fb36feb4" : {appName: "Amway", appOS: "iOS"}, // Amway_iOS
 };
 
 function getTopicName(header, appkey) {
