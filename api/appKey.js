@@ -27,6 +27,8 @@ var appKey = {};
 		"Amway_iOS"			: "1a89a46c0465a15ce57f3709ca01c2c9fb36feb4",
 		"Aphrodite_And"			: "251ff0b79d64016f72896891275fed15caa231f8",
 		"Aphrodite_iOS"			: "c210e235a2dd64d7625b793443de2d7ab2424ae3",
+		"MaryKay_China_And"		: "3c8be6a417c8e010ca308f1764bcb1542ce737b2",
+		"MaryKay_China_iOS"		: "b3f2a6b45d6e85c800fc1fdd0bc1661e078abc7d",
 	};
 }(appKey));
 

@@ -128,7 +128,8 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
                  'OEM_session', 'OEM_event', 'CheckSum', 'ABTesting', '_UMAH_YMK_And', 
                  '_UMAH_YMK_iOS', '_UMAH_YCP_And', '_UMAH_YCP_iOS',
                  'Node_Session_Amway_And', 'Node_Session_Amway_iOS', 'Node_Event_Amway_And', 'Node_Event_Amway_iOS',
-                 'Node_Session_Aphrodite_And', 'Node_Session_Aphrodite_iOS', 'Node_Event_Aphrodite_And', 'Node_Event_Aphrodite_iOS'];
+                 'Node_Session_Aphrodite_And', 'Node_Session_Aphrodite_iOS', 'Node_Event_Aphrodite_And', 'Node_Event_Aphrodite_iOS',
+                 'Node_Session_MaryKay_China_And', 'Node_Session_MaryKay_China_iOS', 'Node_Event_MaryKay_China_And', 'Node_Event_MaryKay_China_iOS'];
 
 function producerReady() {
     var date = new Date();
@@ -244,6 +245,8 @@ var appMap = {
             "1a89a46c0465a15ce57f3709ca01c2c9fb36feb4" : {appName: "Amway", appOS: "iOS"}, // Amway_iOS
             "251ff0b79d64016f72896891275fed15caa231f8" : {appName: "Aphrodite", appOS: "And"}, // Aphrodite_Android
             "c210e235a2dd64d7625b793443de2d7ab2424ae3" : {appName: "Aphrodite", appOS: "iOS"}, // Aphrodite_iOS
+            "3c8be6a417c8e010ca308f1764bcb1542ce737b2" : {appName: "MaryKay_China", appOS: "And"}, // MaryKay_China_Android
+            "b3f2a6b45d6e85c800fc1fdd0bc1661e078abc7d" : {appName: "MaryKay_China", appOS: "iOS"}, // MaryKay_China_iOS
 };
 
 function getTopicName(header, appkey) {
