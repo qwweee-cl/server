@@ -29,6 +29,8 @@ var appKey = {};
 		"Aphrodite_iOS"			: "c210e235a2dd64d7625b793443de2d7ab2424ae3",
 		"MaryKay_China_And"		: "3c8be6a417c8e010ca308f1764bcb1542ce737b2",
 		"MaryKay_China_iOS"		: "b3f2a6b45d6e85c800fc1fdd0bc1661e078abc7d",
+		"Macy_And"			: "c663695f82953a2cf08a62708abee819017547ad",
+		"Macy_iOS"			: "1a5148404c93125d08471786048b963753bec867",
 	};
 }(appKey));
 
