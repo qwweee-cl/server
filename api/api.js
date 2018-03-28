@@ -654,7 +654,7 @@ function insertRawColl(coll, eventp, params, isSession) {
     eventp.tz = params.qstring.tz;
     eventp.ip_address = params.ip_address;
     eventp.dbtimestamp = Math.round(currDate/1000);
-    common.computeGeoInfo(eventp);
+//    common.computeGeoInfo(eventp);
     if (params.qstring.new_user) {
         eventp.new_user = params.qstring.new_user;
     }
@@ -708,22 +708,24 @@ function insertRawColl(coll, eventp, params, isSession) {
     }
     //console.log('[db insert]:%j', eventp);
     if (!eventp.app_key) {
-        console.log('Null app_key: '+eventp.ip_address);
+        console.log('Null app_key.');
+        console.log(eventp.ip_address);
         return;
     }
     if (!eventp.device_id) {
-        console.log('Null device_id: '+eventp.ip_address+' app key: '+eventp.app_key);
+        console.log('Null device_id, app key: '+eventp.app_key);
+        console.log(eventp.ip_address);
         return;
     }
     if (eventp.app_key.length != 40) {
         console.log("app_key length too long (!=40)");
         console.log(eventp.ip_address);
-        console.log(eventp.country);
         console.log(eventp.app_key);
         common.returnMessage(params, 200, 'Success');
         return;
     }
 
+    common.computeGeoInfo(eventp);
     var appkey = eventp.app_key;
     var checkAppKey = jsonQuery(['[key=?]',appkey], {data: appKeyMaps}).value;
     if (!checkAppKey) {
@@ -1739,6 +1741,13 @@ if (cluster.isMaster) {
                     return;
                 }
                 if (params.qstring.app_key == 'ipsentry') {
+                    common.returnHtml(params, 200, 'Success');
+                    return;
+                }
+                if (params.qstring.app_key.length != 40) {
+                    console.log("app_key length too long (!=40)");
+                    console.log(params.ip_address);
+                    console.log(params.qstring.app_key.length);
                     common.returnHtml(params, 200, 'Success');
                     return;
                 }
