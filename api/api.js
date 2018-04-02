@@ -1744,13 +1744,6 @@ if (cluster.isMaster) {
                     common.returnHtml(params, 200, 'Success');
                     return;
                 }
-                if (params.qstring.app_key.length != 40) {
-                    console.log("app_key length too long (!=40)");
-                    console.log(params.ip_address);
-                    console.log(params.qstring.app_key.length);
-                    common.returnHtml(params, 200, 'Success');
-                    return;
-                }
 
                 if (!params.qstring.app_key || !params.qstring.device_id) {
                     var now = new Date();
@@ -1760,6 +1753,13 @@ if (cluster.isMaster) {
                     common.returnMessage(params, 200, 'Success');
                     console.log("Send 200 Success");
                     return false;
+                }
+                if (params.qstring.app_key.length != 40) {
+                    console.log("app_key length too long (!=40)");
+                    console.log(params.ip_address);
+                    console.log(params.qstring.app_key.length);
+                    common.returnHtml(params, 200, 'Success');
+                    return;
                 }
                 params.qstring.app_key = params.qstring.app_key.replace('"','');
                 params.qstring.app_key = params.qstring.app_key.replace('{','');
