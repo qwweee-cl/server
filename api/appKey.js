@@ -31,6 +31,8 @@ var appKey = {};
 		"MaryKay_China_iOS"		: "b3f2a6b45d6e85c800fc1fdd0bc1661e078abc7d",
 		"Macy_And"			: "c663695f82953a2cf08a62708abee819017547ad",
 		"Macy_iOS"			: "1a5148404c93125d08471786048b963753bec867",
+		"Chanelvmulips_And"		: "84493bce19fc2f47ea01f137c039aee409307ef6",
+		"Chanelvmulips_iOS"		: "91100044a443e63ef1dc5e445bbdcf6780540be9",
 	};
 }(appKey));
 

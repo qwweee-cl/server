@@ -130,7 +130,8 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
                  'Node_Session_Amway_And', 'Node_Session_Amway_iOS', 'Node_Event_Amway_And', 'Node_Event_Amway_iOS',
                  'Node_Session_Aphrodite_And', 'Node_Session_Aphrodite_iOS', 'Node_Event_Aphrodite_And', 'Node_Event_Aphrodite_iOS',
                  'Node_Session_MaryKay_China_And', 'Node_Session_MaryKay_China_iOS', 'Node_Event_MaryKay_China_And', 'Node_Event_MaryKay_China_iOS',
-                 'Node_Session_Macy_And', 'Node_Session_Macy_iOS', 'Node_Event_Macy_And', 'Node_Event_Macy_iOS'
+                 'Node_Session_Macy_And', 'Node_Session_Macy_iOS', 'Node_Event_Macy_And', 'Node_Event_Macy_iOS',
+                 'Node_Session_Chanelvmulips_And', 'Node_Session_Chanelvmulips_iOS', 'Node_Event_Chanelvmulips_And', 'Node_Event_Chanelvmulips_iOS'
 ];
 
 function producerReady() {
@@ -251,6 +252,8 @@ var appMap = {
             "b3f2a6b45d6e85c800fc1fdd0bc1661e078abc7d" : {appName: "MaryKay_China", appOS: "iOS"}, // MaryKay_China_iOS
             "c663695f82953a2cf08a62708abee819017547ad" : {appName: "Macy", appOS: "And"}, // Macy_Android
             "1a5148404c93125d08471786048b963753bec867" : {appName: "Macy", appOS: "iOS"}, // Macy_iOS
+            "84493bce19fc2f47ea01f137c039aee409307ef6" : {appName: "Chanelvmulips", appOS: "And"}, // Chanelvmulips_Android
+            "91100044a443e63ef1dc5e445bbdcf6780540be9" : {appName: "Chanelvmulips", appOS: "iOS"}, // Chanelvmulips_iOS
 };
 
 function getTopicName(header, appkey) {
