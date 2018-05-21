@@ -33,6 +33,7 @@ var appKey = {};
 		"Macy_iOS"			: "1a5148404c93125d08471786048b963753bec867",
 		"Chanelvmulips_And"		: "84493bce19fc2f47ea01f137c039aee409307ef6",
 		"Chanelvmulips_iOS"		: "91100044a443e63ef1dc5e445bbdcf6780540be9",
+		"Belcorp_And"			: "e77207f42d0ad8aa92dee64a95aa55e3168f3b87",
 	};
 }(appKey));
 
