@@ -132,7 +132,8 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
                  'Node_Session_MaryKay_China_And', 'Node_Session_MaryKay_China_iOS', 'Node_Event_MaryKay_China_And', 'Node_Event_MaryKay_China_iOS',
                  'Node_Session_Macy_And', 'Node_Session_Macy_iOS', 'Node_Event_Macy_And', 'Node_Event_Macy_iOS',
                  'Node_Session_Chanelvmulips_And', 'Node_Session_Chanelvmulips_iOS', 'Node_Event_Chanelvmulips_And', 'Node_Event_Chanelvmulips_iOS',
-                 'Node_Session_Belcorp_And', 'Node_Event_Belcorp_And'
+                 'Node_Session_Belcorp_And', 'Node_Event_Belcorp_And',
+                 'Node_Session_Ulta_APP_And', 'Node_Session_Ulta_APP_iOS', 'Node_Event_Ulta_APP_And', 'Node_Event_Ulta_APP_iOS'
 ];
 
 function producerReady() {
@@ -256,6 +257,8 @@ var appMap = {
             "84493bce19fc2f47ea01f137c039aee409307ef6" : {appName: "Chanelvmulips", appOS: "And"}, // Chanelvmulips_Android
             "91100044a443e63ef1dc5e445bbdcf6780540be9" : {appName: "Chanelvmulips", appOS: "iOS"}, // Chanelvmulips_iOS
             "e77207f42d0ad8aa92dee64a95aa55e3168f3b87" : {appName: "Belcorp", appOS: "And"}, // Belcorp_Android
+            "7f23cfce180b8cd241bfddf4a82e71e336b14202" : {appName: "Ulta_APP", appOS: "And"}, // Ulta_APP_Android
+            "6be0c77c08be6f58e2a7cee41f6c733bd82fe7c3" : {appName: "Ulta_APP", appOS: "iOS"}, // Ulta_APP_iOS
 };
 
 function getTopicName(header, appkey) {

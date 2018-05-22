@@ -34,6 +34,8 @@ var appKey = {};
 		"Chanelvmulips_And"		: "84493bce19fc2f47ea01f137c039aee409307ef6",
 		"Chanelvmulips_iOS"		: "91100044a443e63ef1dc5e445bbdcf6780540be9",
 		"Belcorp_And"			: "e77207f42d0ad8aa92dee64a95aa55e3168f3b87",
+		"Ulta_APP_And"			: "7f23cfce180b8cd241bfddf4a82e71e336b14202",
+		"Ulta_APP_iOS"			: "6be0c77c08be6f58e2a7cee41f6c733bd82fe7c3",
 	};
 }(appKey));
 
