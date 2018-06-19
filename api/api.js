@@ -729,6 +729,8 @@ function insertRawColl(coll, eventp, params, isSession) {
         console.log("app_key length too long (!=40)");
         console.log(eventp.ip_address);
         console.log(eventp.app_key);
+        if (eventp.app_key)
+          console.log(eventp.app_key.length);
         common.returnMessage(params, 200, 'Success');
         return;
     }
@@ -1765,7 +1767,9 @@ if (cluster.isMaster) {
                 if (params.qstring.app_key.length != 40) {
                     console.log("app_key length too long (!=40)");
                     console.log(params.ip_address);
-                    console.log(params.qstring.app_key.length);
+                    console.log(params.qstring.app_key);
+                    if (params.qstring.app_key)
+                      console.log(params.qstring.app_key.length);
                     common.returnHtml(params, 200, 'Success');
                     return;
                 }
