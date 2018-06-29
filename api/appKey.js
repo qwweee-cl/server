@@ -36,6 +36,8 @@ var appKey = {};
 		"Belcorp_And"			: "e77207f42d0ad8aa92dee64a95aa55e3168f3b87",
 		"Ulta_APP_And"			: "7f23cfce180b8cd241bfddf4a82e71e336b14202",
 		"Ulta_APP_iOS"			: "6be0c77c08be6f58e2a7cee41f6c733bd82fe7c3",
+		"Samsung_APP_And"		: "10a2326746ab6fc6c8ddbfd9d8315e816e9e7d69",
+		"Samsung_APP_iOS"		: "caf0ed4568d6dcadfc5273f2c5aa2946f86b67aa",
 	};
 }(appKey));
 
