@@ -134,7 +134,7 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
                  'Node_Session_Chanelvmulips_And', 'Node_Session_Chanelvmulips_iOS', 'Node_Event_Chanelvmulips_And', 'Node_Event_Chanelvmulips_iOS',
                  'Node_Session_Belcorp_And', 'Node_Event_Belcorp_And',
                  'Node_Session_Ulta_APP_And', 'Node_Session_Ulta_APP_iOS', 'Node_Event_Ulta_APP_And', 'Node_Event_Ulta_APP_iOS',
-                 'Node_Session_Samsung_And', 'Node_Session_Samsung_iOS', 'Node_Event_Samsung_And', 'Node_Event_Samsung_iOS'
+                 'Node_Session_Samsung_And', 'Node_Session_Samsung_iOS', 'Node_Event_Samsung_And', 'Node_Event_Samsung_iOS', 'Node_Session_SDK', 'Node_Event_SDK'
 ];
 
 function producerReady() {
@@ -249,19 +249,19 @@ var appMap = {
             "9357f63f387a02872cae14f8539b37cc37404727" : {appName: "YCS", appOS: "iOS"}, // YouCam_Store_iOS
             "9f093278d98ad4159a6df2f29d021e6e34649747" : {appName: "Amway", appOS: "And"}, // Amway_Android
             "1a89a46c0465a15ce57f3709ca01c2c9fb36feb4" : {appName: "Amway", appOS: "iOS"}, // Amway_iOS
-            "251ff0b79d64016f72896891275fed15caa231f8" : {appName: "Aphrodite", appOS: "And"}, // Aphrodite_Android
-            "c210e235a2dd64d7625b793443de2d7ab2424ae3" : {appName: "Aphrodite", appOS: "iOS"}, // Aphrodite_iOS
-            "3c8be6a417c8e010ca308f1764bcb1542ce737b2" : {appName: "MaryKay_China", appOS: "And"}, // MaryKay_China_Android
-            "b3f2a6b45d6e85c800fc1fdd0bc1661e078abc7d" : {appName: "MaryKay_China", appOS: "iOS"}, // MaryKay_China_iOS
-            "c663695f82953a2cf08a62708abee819017547ad" : {appName: "Macy", appOS: "And"}, // Macy_Android
-            "1a5148404c93125d08471786048b963753bec867" : {appName: "Macy", appOS: "iOS"}, // Macy_iOS
-            "84493bce19fc2f47ea01f137c039aee409307ef6" : {appName: "Chanelvmulips", appOS: "And"}, // Chanelvmulips_Android
-            "91100044a443e63ef1dc5e445bbdcf6780540be9" : {appName: "Chanelvmulips", appOS: "iOS"}, // Chanelvmulips_iOS
-            "e77207f42d0ad8aa92dee64a95aa55e3168f3b87" : {appName: "Belcorp", appOS: "And"}, // Belcorp_Android
-            "7f23cfce180b8cd241bfddf4a82e71e336b14202" : {appName: "Ulta_APP", appOS: "And"}, // Ulta_APP_Android
-            "6be0c77c08be6f58e2a7cee41f6c733bd82fe7c3" : {appName: "Ulta_APP", appOS: "iOS"}, // Ulta_APP_iOS
-            "10a2326746ab6fc6c8ddbfd9d8315e816e9e7d69" : {appName: "Samsung_APP", appOS: "And"}, // Samsung_APP_Android
-            "caf0ed4568d6dcadfc5273f2c5aa2946f86b67aa" : {appName: "Samsung_APP", appOS: "iOS"}, // Samsung_APP_iOS
+            "251ff0b79d64016f72896891275fed15caa231f8" : {appName: "Aphrodite", appOS: "And", sdk: true}, // Aphrodite_Android
+            "c210e235a2dd64d7625b793443de2d7ab2424ae3" : {appName: "Aphrodite", appOS: "iOS", sdk: true}, // Aphrodite_iOS
+            "3c8be6a417c8e010ca308f1764bcb1542ce737b2" : {appName: "MaryKay_China", appOS: "And", sdk: true}, // MaryKay_China_Android
+            "b3f2a6b45d6e85c800fc1fdd0bc1661e078abc7d" : {appName: "MaryKay_China", appOS: "iOS", sdk: true}, // MaryKay_China_iOS
+            "c663695f82953a2cf08a62708abee819017547ad" : {appName: "Macy", appOS: "And", sdk: true}, // Macy_Android
+            "1a5148404c93125d08471786048b963753bec867" : {appName: "Macy", appOS: "iOS", sdk: true}, // Macy_iOS
+            "84493bce19fc2f47ea01f137c039aee409307ef6" : {appName: "Chanelvmulips", appOS: "And", sdk: true}, // Chanelvmulips_Android
+            "91100044a443e63ef1dc5e445bbdcf6780540be9" : {appName: "Chanelvmulips", appOS: "iOS", sdk: true}, // Chanelvmulips_iOS
+            "e77207f42d0ad8aa92dee64a95aa55e3168f3b87" : {appName: "Belcorp", appOS: "And", sdk: true}, // Belcorp_Android
+            "7f23cfce180b8cd241bfddf4a82e71e336b14202" : {appName: "Ulta_APP", appOS: "And", sdk: true}, // Ulta_APP_Android
+            "6be0c77c08be6f58e2a7cee41f6c733bd82fe7c3" : {appName: "Ulta_APP", appOS: "iOS", sdk: true}, // Ulta_APP_iOS
+            "10a2326746ab6fc6c8ddbfd9d8315e816e9e7d69" : {appName: "Samsung_APP", appOS: "And", sdk: true}, // Samsung_APP_Android
+            "caf0ed4568d6dcadfc5273f2c5aa2946f86b67aa" : {appName: "Samsung_APP", appOS: "iOS", sdk: true}, // Samsung_APP_iOS
 };
 
 function getTopicName(header, appkey) {
@@ -280,7 +280,11 @@ function getNodeTopicName(header, appkey) {
     var topicName = "";
     for (var key in appMap) {
         if (appkey.indexOf(key) >= 0) {
-            topicName = "Node_" + header+"_"+appMap[key].appName+"_"+appMap[key].appOS;
+            if (appMap[key].sdk) {
+                topicName = "Node_" + header+"_SDK";
+            } else {
+                topicName = "Node_" + header+"_"+appMap[key].appName+"_"+appMap[key].appOS;
+            }
             return topicName;
         }
     }
