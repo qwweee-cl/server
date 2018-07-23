@@ -262,6 +262,8 @@ var appMap = {
             "6be0c77c08be6f58e2a7cee41f6c733bd82fe7c3" : {appName: "Ulta_APP", appOS: "iOS", sdk: true}, // Ulta_APP_iOS
             "10a2326746ab6fc6c8ddbfd9d8315e816e9e7d69" : {appName: "Samsung_APP", appOS: "And", sdk: true}, // Samsung_APP_Android
             "caf0ed4568d6dcadfc5273f2c5aa2946f86b67aa" : {appName: "Samsung_APP", appOS: "iOS", sdk: true}, // Samsung_APP_iOS
+            "b98f3c641eb239348cb5662eb02d933e825a4cb2" : {appName: "Shopee_APP", appOS: "And", sdk: true}, // Sopee_APP_Android
+            "e3889727fadd953c085920b85086d09b402822d4" : {appName: "Shopee_APP", appOS: "iOS", sdk: true}, // Sopee_APP_iOS
 };
 
 function getTopicName(header, appkey) {
