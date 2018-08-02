@@ -264,6 +264,8 @@ var appMap = {
             "caf0ed4568d6dcadfc5273f2c5aa2946f86b67aa" : {appName: "Samsung_APP", appOS: "iOS", sdk: true}, // Samsung_APP_iOS
             "b98f3c641eb239348cb5662eb02d933e825a4cb2" : {appName: "Shopee_APP", appOS: "And", sdk: true}, // Sopee_APP_Android
             "e3889727fadd953c085920b85086d09b402822d4" : {appName: "Shopee_APP", appOS: "iOS", sdk: true}, // Sopee_APP_iOS
+            "e2cc30cc2c6dda6ab8b86c32cce36b0edc44a0ac" : {appName: "Sephora_APP", appOS: "And", sdk: true}, // Sephora_APP_Android
+            "69ac8776819cd12613987fccaeb71cf751fd15dd" : {appName: "Sephora_APP", appOS: "iOS", sdk: true}, // Sephora_APP_iOS
 };
 
 function getTopicName(header, appkey) {

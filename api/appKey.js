@@ -40,6 +40,8 @@ var appKey = {};
 		"Samsung_APP_iOS"		: "caf0ed4568d6dcadfc5273f2c5aa2946f86b67aa",
 		"Shopee_APP_And"		: "b98f3c641eb239348cb5662eb02d933e825a4cb2",
 		"Shopee_APP_iOS"		: "e3889727fadd953c085920b85086d09b402822d4",
+		"Sephora_APP_And"		: "e2cc30cc2c6dda6ab8b86c32cce36b0edc44a0ac",
+		"Sephora_APP_iOS"		: "69ac8776819cd12613987fccaeb71cf751fd15dd",
 	};
 }(appKey));
 
