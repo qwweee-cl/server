@@ -42,6 +42,7 @@ var appKey = {};
 		"Shopee_APP_iOS"		: "e3889727fadd953c085920b85086d09b402822d4",
 		"Sephora_APP_And"		: "e2cc30cc2c6dda6ab8b86c32cce36b0edc44a0ac",
 		"Sephora_APP_iOS"		: "69ac8776819cd12613987fccaeb71cf751fd15dd",
+		"NuSkin_APP_iOS"		: "a041f6e19d9f9716ac1cf3d2ac87e17db243b8b0",
 	};
 }(appKey));
 

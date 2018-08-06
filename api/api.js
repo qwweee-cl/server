@@ -266,6 +266,7 @@ var appMap = {
             "e3889727fadd953c085920b85086d09b402822d4" : {appName: "Shopee_APP", appOS: "iOS", sdk: true}, // Sopee_APP_iOS
             "e2cc30cc2c6dda6ab8b86c32cce36b0edc44a0ac" : {appName: "Sephora_APP", appOS: "And", sdk: true}, // Sephora_APP_Android
             "69ac8776819cd12613987fccaeb71cf751fd15dd" : {appName: "Sephora_APP", appOS: "iOS", sdk: true}, // Sephora_APP_iOS
+            "a041f6e19d9f9716ac1cf3d2ac87e17db243b8b0" : {appName: "NuSkin_APP", appOS: "iOS", sdk: true}, // NuSkin_APP_iOS
 };
 
 function getTopicName(header, appkey) {
