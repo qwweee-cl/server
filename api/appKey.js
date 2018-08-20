@@ -25,6 +25,8 @@ var appKey = {};
 		"YouCam_Store_iOS"			: "9357f63f387a02872cae14f8539b37cc37404727",
 		"Amway_And"			: "9f093278d98ad4159a6df2f29d021e6e34649747",
 		"Amway_iOS"			: "1a89a46c0465a15ce57f3709ca01c2c9fb36feb4",
+		"BrandMode_And"			: "b9bf6664c33ca7d55ba347f652abe1bc9ef39378",
+		"BrandMode_iOS"			: "12c6646571c9cf9f7ecb00b4af3ca3ecc49635eb",
 		"Aphrodite_And"			: "251ff0b79d64016f72896891275fed15caa231f8",
 		"Aphrodite_iOS"			: "c210e235a2dd64d7625b793443de2d7ab2424ae3",
 		"MaryKay_China_And"		: "3c8be6a417c8e010ca308f1764bcb1542ce737b2",
