@@ -133,8 +133,7 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
                  'Node_Session_Macy_And', 'Node_Session_Macy_iOS', 'Node_Event_Macy_And', 'Node_Event_Macy_iOS',
                  'Node_Session_Chanelvmulips_And', 'Node_Session_Chanelvmulips_iOS', 'Node_Event_Chanelvmulips_And', 'Node_Event_Chanelvmulips_iOS',
                  'Node_Session_Belcorp_And', 'Node_Event_Belcorp_And',
-                 'Node_Session_Ulta_APP_And', 'Node_Session_Ulta_APP_iOS', 'Node_Event_Ulta_APP_And', 'Node_Event_Ulta_APP_iOS',
-                 'Node_Session_Samsung_And', 'Node_Session_Samsung_iOS', 'Node_Event_Samsung_And', 'Node_Event_Samsung_iOS', 'Node_Session_SDK', 'Node_Event_SDK',
+                 'Node_Session_SDK', 'Node_Event_SDK',
                  'Node_Session_BrandMode_And', 'Node_Session_BrandMode_iOS', 'Node_Event_BrandMode_And', 'Node_Event_BrandMode_iOS'
 ];
 
