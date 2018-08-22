@@ -45,6 +45,8 @@ var appKey = {};
 		"Sephora_APP_And"		: "e2cc30cc2c6dda6ab8b86c32cce36b0edc44a0ac",
 		"Sephora_APP_iOS"		: "69ac8776819cd12613987fccaeb71cf751fd15dd",
 		"NuSkin_APP_iOS"		: "a041f6e19d9f9716ac1cf3d2ac87e17db243b8b0",
+		"Baidu_SDK_And"			: "e59b623a8e311c7a35ea144053d2c476c57a3806",
+		"Baidu_SDK_iOS"			: "8dab8b556e5efc5d712cc91435dd74e9da595f63",
 	};
 }(appKey));
 
