@@ -47,6 +47,7 @@ var appKey = {};
 		"NuSkin_APP_iOS"		: "a041f6e19d9f9716ac1cf3d2ac87e17db243b8b0",
 		"Baidu_SDK_And"			: "e59b623a8e311c7a35ea144053d2c476c57a3806",
 		"Baidu_SDK_iOS"			: "8dab8b556e5efc5d712cc91435dd74e9da595f63",
+		"Henkel_APP_iOS"		: "3ef5d0a9840e2c33208b893dac3d708471e28fe7",
 	};
 }(appKey));
 
