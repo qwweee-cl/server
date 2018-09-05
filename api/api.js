@@ -272,6 +272,8 @@ var appMap = {
             "e59b623a8e311c7a35ea144053d2c476c57a3806" : {appName: "Baidu_SDK", appOS: "And", sdk: true}, // Baidu_SDK_Android
             "8dab8b556e5efc5d712cc91435dd74e9da595f63" : {appName: "Baidu_SDK", appOS: "iOS", sdk: true}, // Baidu_SDK_iOS
             "3ef5d0a9840e2c33208b893dac3d708471e28fe7" : {appName: "Henkel_APP", appOS: "iOS", sdk: true}, // Henkel_APP_iOS
+            "2e33f3e5161308a187044506104933fbbf516df7" : {appName: "Nordstrom_APP", appOS: "And", sdk: true}, // Nordstrom_APP_Android
+            "e53d5025b76090841518eedeffcb313e797daf85" : {appName: "Nordstrom_APP", appOS: "iOS", sdk: true}, // Nordstrom_APP_iOS
 };
 
 function getTopicName(header, appkey) {
