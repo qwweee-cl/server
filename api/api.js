@@ -274,6 +274,7 @@ var appMap = {
             "3ef5d0a9840e2c33208b893dac3d708471e28fe7" : {appName: "Henkel_APP", appOS: "iOS", sdk: true}, // Henkel_APP_iOS
             "2e33f3e5161308a187044506104933fbbf516df7" : {appName: "Nordstrom_APP", appOS: "And", sdk: true}, // Nordstrom_APP_Android
             "e53d5025b76090841518eedeffcb313e797daf85" : {appName: "Nordstrom_APP", appOS: "iOS", sdk: true}, // Nordstrom_APP_iOS
+            "c2bb6f4c426fb1407aa346728db51946f1be40cf" : {appName: "Coty_APP", appOS: "And", sdk: true}, // Coty_APP_Android
 };
 
 function getTopicName(header, appkey) {
