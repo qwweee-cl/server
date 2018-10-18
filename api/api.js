@@ -134,6 +134,7 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
                  'Node_Session_Chanelvmulips_And', 'Node_Session_Chanelvmulips_iOS', 'Node_Event_Chanelvmulips_And', 'Node_Event_Chanelvmulips_iOS',
                  'Node_Session_Belcorp_And', 'Node_Event_Belcorp_And',
                  'Node_Session_SDK', 'Node_Event_SDK',
+                 'Node_Session_YCV_And', 'Node_Event_YCV_And',
                  'Node_Session_BrandMode_And', 'Node_Session_BrandMode_iOS', 'Node_Event_BrandMode_And', 'Node_Event_BrandMode_iOS'
 ];
 
@@ -251,6 +252,7 @@ var appMap = {
             "1a89a46c0465a15ce57f3709ca01c2c9fb36feb4" : {appName: "Amway", appOS: "iOS"}, // Amway_iOS
             "b9bf6664c33ca7d55ba347f652abe1bc9ef39378" : {appName: "BrandMode", appOS: "And"}, // BrandMode_Android
             "12c6646571c9cf9f7ecb00b4af3ca3ecc49635eb" : {appName: "BrandMode", appOS: "iOS"}, // BrandMode_iOS
+            "6993b74968d8ecdaa3b3c633beca800de732381a" : {appName: "YCV", appOS: "And"}, // YouCamVideo_Android
             "251ff0b79d64016f72896891275fed15caa231f8" : {appName: "Aphrodite", appOS: "And", sdk: true}, // Aphrodite_Android
             "c210e235a2dd64d7625b793443de2d7ab2424ae3" : {appName: "Aphrodite", appOS: "iOS", sdk: true}, // Aphrodite_iOS
             "3c8be6a417c8e010ca308f1764bcb1542ce737b2" : {appName: "MaryKay_China", appOS: "And", sdk: true}, // MaryKay_China_Android
