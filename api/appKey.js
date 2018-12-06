@@ -52,6 +52,7 @@ var appKey = {};
 		"Nordstrom_APP_And"		: "2e33f3e5161308a187044506104933fbbf516df7",
 		"Nordstrom_APP_iOS"		: "e53d5025b76090841518eedeffcb313e797daf85",
 		"Coty_APP_And"			: "c2bb6f4c426fb1407aa346728db51946f1be40cf",
+		"LG_Mobile_APP_And"		: "c193e49bf09900c6c46cdd85ad05737177941a3f",
 	};
 }(appKey));
 
