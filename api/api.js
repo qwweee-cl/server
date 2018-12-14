@@ -278,6 +278,8 @@ var appMap = {
             "e53d5025b76090841518eedeffcb313e797daf85" : {appName: "Nordstrom_APP", appOS: "iOS", sdk: true}, // Nordstrom_APP_iOS
             "c2bb6f4c426fb1407aa346728db51946f1be40cf" : {appName: "Coty_APP", appOS: "And", sdk: true}, // Coty_APP_Android
             "c193e49bf09900c6c46cdd85ad05737177941a3f" : {appName: "LG_Mobile_APP", appOS: "And", sdk: true}, // LG_Mobile_APP_Android
+            "6c086f89df896b5286817e871783f803ffc51eae" : {appName: "Amway_CN_makeup_APP", appOS: "And", sdk: true}, // Amway_CN_makeup_APP_Android
+            "e8c4410fdfa48614b5f625ed70814d9720388aa3" : {appName: "Amway_CN_skincare_APP", appOS: "And", sdk: true}, // Amway_CN_skincare_APP_Android
 };
 
 function getTopicName(header, appkey) {

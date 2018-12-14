@@ -53,6 +53,8 @@ var appKey = {};
 		"Nordstrom_APP_iOS"		: "e53d5025b76090841518eedeffcb313e797daf85",
 		"Coty_APP_And"			: "c2bb6f4c426fb1407aa346728db51946f1be40cf",
 		"LG_Mobile_APP_And"		: "c193e49bf09900c6c46cdd85ad05737177941a3f",
+		"Amway_CN_makeup_APP_And"	: "6c086f89df896b5286817e871783f803ffc51eae",
+		"Amway_CN_skincare_APP_And"	: "e8c4410fdfa48614b5f625ed70814d9720388aa3",
 	};
 }(appKey));
 
