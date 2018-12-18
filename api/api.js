@@ -280,6 +280,8 @@ var appMap = {
             "c193e49bf09900c6c46cdd85ad05737177941a3f" : {appName: "LG_Mobile_APP", appOS: "And", sdk: true}, // LG_Mobile_APP_Android
             "6c086f89df896b5286817e871783f803ffc51eae" : {appName: "Amway_CN_makeup_APP", appOS: "And", sdk: true}, // Amway_CN_makeup_APP_Android
             "e8c4410fdfa48614b5f625ed70814d9720388aa3" : {appName: "Amway_CN_skincare_APP", appOS: "And", sdk: true}, // Amway_CN_skincare_APP_Android
+            "5e954ee93b5c921638fda22870942115b06a9b7f" : {appName: "Target_APP", appOS: "And", sdk: true}, // Target_APP_Android
+            "02c5193b372dfab39153d908643ab193fec45671" : {appName: "Target_APP", appOS: "iOS", sdk: true}, // Target_APP_iOS
 };
 
 function getTopicName(header, appkey) {
