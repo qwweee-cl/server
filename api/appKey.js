@@ -57,6 +57,8 @@ var appKey = {};
 		"Amway_CN_skincare_APP_And"	: "e8c4410fdfa48614b5f625ed70814d9720388aa3",
 		"Target_APP_And"		: "5e954ee93b5c921638fda22870942115b06a9b7f",
 		"Target_APP_iOS"		: "02c5193b372dfab39153d908643ab193fec45671",
+		"Alibaba_APP_And"		: "1af5ddb03103baed28f5493e2da04cada6de295d",
+		"Alibaba_APP_iOS"		: "092e4252ae62b245c789721a0d4e8c170645d824",
 	};
 }(appKey));
 

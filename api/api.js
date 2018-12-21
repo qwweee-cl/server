@@ -282,6 +282,8 @@ var appMap = {
             "e8c4410fdfa48614b5f625ed70814d9720388aa3" : {appName: "Amway_CN_skincare_APP", appOS: "And", sdk: true}, // Amway_CN_skincare_APP_Android
             "5e954ee93b5c921638fda22870942115b06a9b7f" : {appName: "Target_APP", appOS: "And", sdk: true}, // Target_APP_Android
             "02c5193b372dfab39153d908643ab193fec45671" : {appName: "Target_APP", appOS: "iOS", sdk: true}, // Target_APP_iOS
+            "1af5ddb03103baed28f5493e2da04cada6de295d" : {appName: "Alibaba_APP", appOS: "And", sdk: true}, // Alibaba_APP_Android
+            "092e4252ae62b245c789721a0d4e8c170645d824" : {appName: "Alibaba_APP", appOS: "iOS", sdk: true}, // Alibaba_APP_iOS
 };
 
 function getTopicName(header, appkey) {
