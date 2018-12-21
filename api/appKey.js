@@ -59,6 +59,10 @@ var appKey = {};
 		"Target_APP_iOS"		: "02c5193b372dfab39153d908643ab193fec45671",
 		"Alibaba_APP_And"		: "1af5ddb03103baed28f5493e2da04cada6de295d",
 		"Alibaba_APP_iOS"		: "092e4252ae62b245c789721a0d4e8c170645d824",
+		"Golden_Scent_makeup_APP_And"	: "bbfc85c7f10800792d984d5250b2066dcd24a016",
+		"Golden_Scent_makeup_APP_iOS"	: "86c5197458e4afeec7542bccc3cec3c5652ecea7",
+		"Golden_Scent_skincare_APP_And"	: "b880f78e2183cab2344f19e6d6f1317592fcfdf2",
+		"Golden_Scent_skincare_APP_iOS"	: "d841ec9fc04673a3940894ff5fb1e7d95b172df2",
 	};
 }(appKey));
 

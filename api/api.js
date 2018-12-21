@@ -284,6 +284,10 @@ var appMap = {
             "02c5193b372dfab39153d908643ab193fec45671" : {appName: "Target_APP", appOS: "iOS", sdk: true}, // Target_APP_iOS
             "1af5ddb03103baed28f5493e2da04cada6de295d" : {appName: "Alibaba_APP", appOS: "And", sdk: true}, // Alibaba_APP_Android
             "092e4252ae62b245c789721a0d4e8c170645d824" : {appName: "Alibaba_APP", appOS: "iOS", sdk: true}, // Alibaba_APP_iOS
+            "bbfc85c7f10800792d984d5250b2066dcd24a016" : {appName: "Golden_Scent_makeup_APP", appOS: "And", sdk: true}, // Golden_Scent_makeup_APP_Android
+            "86c5197458e4afeec7542bccc3cec3c5652ecea7" : {appName: "Golden_Scent_makeup_APP", appOS: "iOS", sdk: true}, // Golden_Scent_makeup_APP_iOS
+            "b880f78e2183cab2344f19e6d6f1317592fcfdf2" : {appName: "Golden_Scent_skincare_APP", appOS: "And", sdk: true}, // Golden_Scent_skincare_APP_Android
+            "d841ec9fc04673a3940894ff5fb1e7d95b172df2" : {appName: "Golden_Scent_skincare_APP", appOS: "iOS", sdk: true}, // Golden_Scent_skincare_APP_iOS
 };
 
 function getTopicName(header, appkey) {
