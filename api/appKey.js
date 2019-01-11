@@ -26,6 +26,7 @@ var appKey = {};
 		"YouCam_Video_And"		: "6993b74968d8ecdaa3b3c633beca800de732381a",
 		"Amway_And"			: "9f093278d98ad4159a6df2f29d021e6e34649747",
 		"Amway_iOS"			: "1a89a46c0465a15ce57f3709ca01c2c9fb36feb4",
+		"Belcorp_Skincare_And"		: "ab8ada3e1f156663453cee32debe3292fba834ae",
 		"BrandMode_And"			: "b9bf6664c33ca7d55ba347f652abe1bc9ef39378",
 		"BrandMode_iOS"			: "12c6646571c9cf9f7ecb00b4af3ca3ecc49635eb",
 		"Aphrodite_And"			: "251ff0b79d64016f72896891275fed15caa231f8",
