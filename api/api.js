@@ -136,7 +136,7 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
                  'Node_Session_Belcorp_And', 'Node_Event_Belcorp_And',
                  'Node_Session_SDK', 'Node_Event_SDK',
                  'Node_Session_YCV_And', 'Node_Event_YCV_And',
-                 'Node_Session_BrandMode_And', 'Node_Session_BrandMode_iOS', 'Node_Event_BrandMode_And', 'Node_Event_BrandMode_iOS'
+                 'Node_Session_BrandMode_And', 'Node_Session_BrandMode_iOS', 'Node_Event_BrandMode_And', 'Node_Event_BrandMode_iOS',
                  'Node_Session_YMK4B_And', 'Node_Session_YMK4B_iOS', 'Node_Event_YMK4B_And', 'Node_Event_YMK4B_iOS'
                  'Node_Session_YMK4BTrial_And', 'Node_Session_YMK4BTrial_iOS', 'Node_Event_YMK4BTrial_And', 'Node_Event_YMK4BTrial_iOS'
 ];
