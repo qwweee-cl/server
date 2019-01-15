@@ -137,6 +137,8 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
                  'Node_Session_SDK', 'Node_Event_SDK',
                  'Node_Session_YCV_And', 'Node_Event_YCV_And',
                  'Node_Session_BrandMode_And', 'Node_Session_BrandMode_iOS', 'Node_Event_BrandMode_And', 'Node_Event_BrandMode_iOS'
+                 'Node_Session_YMK4B_And', 'Node_Session_YMK4B_iOS', 'Node_Event_YMK4B_And', 'Node_Event_YMK4B_iOS'
+                 'Node_Session_YMK4BTrial_And', 'Node_Session_YMK4BTrial_iOS', 'Node_Event_YMK4BTrial_And', 'Node_Event_YMK4BTrial_iOS'
 ];
 
 function producerReady() {
@@ -254,6 +256,10 @@ var appMap = {
             "ab8ada3e1f156663453cee32debe3292fba834ae" : {appName: "Belcorp_Skincare", appOS: "And"}, // Belcorp_Skinkcare_Android
             "b9bf6664c33ca7d55ba347f652abe1bc9ef39378" : {appName: "BrandMode", appOS: "And"}, // BrandMode_Android
             "12c6646571c9cf9f7ecb00b4af3ca3ecc49635eb" : {appName: "BrandMode", appOS: "iOS"}, // BrandMode_iOS
+            "fb0af88d7f5fb1e26e9da63c4339fe94a097eab1" : {appName: "YMK4B", appOS: "And"}, // YMK4B_Android
+            "461299f3d378fc762c56d003e98ae5f02fd52d60" : {appName: "YMK4B", appOS: "iOS"}, // YMK4B_iOS
+            "93f0d4501694758e34a9fbf9f97e17d0a999ab8a" : {appName: "YMK4BTrial", appOS: "And"}, // YMK4BTrial_Android
+            "d0713956948af94d4c53e348c2cb6d816a3c2925" : {appName: "YMK4BTrial", appOS: "iOS"}, // YMK4BTrial_iOS
             "6993b74968d8ecdaa3b3c633beca800de732381a" : {appName: "YCV", appOS: "And"}, // YouCamVideo_Android
             "251ff0b79d64016f72896891275fed15caa231f8" : {appName: "Aphrodite", appOS: "And", sdk: true}, // Aphrodite_Android
             "c210e235a2dd64d7625b793443de2d7ab2424ae3" : {appName: "Aphrodite", appOS: "iOS", sdk: true}, // Aphrodite_iOS
