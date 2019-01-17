@@ -33,6 +33,8 @@ var appKey = {};
 		"YMK4B_iOS"			: "461299f3d378fc762c56d003e98ae5f02fd52d60",
 		"YMK4BTrial_And"		: "93f0d4501694758e34a9fbf9f97e17d0a999ab8a",
 		"YMK4BTrial_iOS"		: "d0713956948af94d4c53e348c2cb6d816a3c2925",
+		"YMK4BBrand_And"		: "43259ebca3c2c882f2ee9e39a679b6e6fd00f552",
+		"YMK4BBrand_iOS"		: "bf6bad03e0833e6e432a74136a01809bb3b980d4",
 		"Aphrodite_And"			: "251ff0b79d64016f72896891275fed15caa231f8",
 		"Aphrodite_iOS"			: "c210e235a2dd64d7625b793443de2d7ab2424ae3",
 		"MaryKay_China_And"		: "3c8be6a417c8e010ca308f1764bcb1542ce737b2",
