@@ -70,6 +70,9 @@ var appKey = {};
 		"Golden_Scent_makeup_APP_iOS"	: "86c5197458e4afeec7542bccc3cec3c5652ecea7",
 		"Golden_Scent_skincare_APP_And"	: "b880f78e2183cab2344f19e6d6f1317592fcfdf2",
 		"Golden_Scent_skincare_APP_iOS"	: "d841ec9fc04673a3940894ff5fb1e7d95b172df2",
+		"SeneGence_SDK_And"		: "b6d12a2f9483efeaa4880c92949474be61cd109a",
+		"SeneGence_SDK_iOS"		: "89347fa159e30a29b54809f6c464b7509d2caa5c",
+		"TomFord_SDK_iOS"		: "f1241c08fb759b14405ddf6b8a63dc9083e4b10c",
 	};
 }(appKey));
 
