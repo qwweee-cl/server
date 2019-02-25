@@ -302,6 +302,8 @@ var appMap = {
             "b6d12a2f9483efeaa4880c92949474be61cd109a" : {appName: "SeneGence_SDK", appOS: "And", sdk: true}, // SeneGence_SDK_Android
             "89347fa159e30a29b54809f6c464b7509d2caa5c" : {appName: "SeneGence_SDK", appOS: "iOS", sdk: true}, // SeneGence_SDK_iOS
             "f1241c08fb759b14405ddf6b8a63dc9083e4b10c" : {appName: "TomFord_SDK", appOS: "iOS", sdk: true}, // TomFord_SDK_iOS
+            "239070f48984a19e8abde56d31016bfc5e9fd96d" : {appName: "Sephora_CN_SDK", appOS: "And", sdk: true}, // Sephora_CN_SDK_Android
+            "d2ad67eacfecc86925686137f0ad4ae3e5a70a02" : {appName: "Sephora_CN_SDK", appOS: "iOS", sdk: true}, // Sephora_CN_SDK_iOS
 };
 
 function getTopicName(header, appkey) {
