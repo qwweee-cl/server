@@ -75,6 +75,7 @@ var appKey = {};
 		"TomFord_SDK_iOS"		: "f1241c08fb759b14405ddf6b8a63dc9083e4b10c",
 		"Sephora_CN_SDK_And"		: "239070f48984a19e8abde56d31016bfc5e9fd96d",
 		"Sephora_CN_SDK_iOS"		: "d2ad67eacfecc86925686137f0ad4ae3e5a70a02",
+		"MAC_CN_SDK_iOS"		: "33e7733dbb3bf2e24e29c4bd0f1f740feafb5f52",
 	};
 }(appKey));
 
