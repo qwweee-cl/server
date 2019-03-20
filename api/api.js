@@ -139,7 +139,8 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
                  'Node_Session_BrandMode_And', 'Node_Session_BrandMode_iOS', 'Node_Event_BrandMode_And', 'Node_Event_BrandMode_iOS',
                  'Node_Session_YMK4B_And', 'Node_Session_YMK4B_iOS', 'Node_Event_YMK4B_And', 'Node_Event_YMK4B_iOS',
                  'Node_Session_YMK4BTrial_And', 'Node_Session_YMK4BTrial_iOS', 'Node_Event_YMK4BTrial_And', 'Node_Event_YMK4BTrial_iOS',
-                 'Node_Session_YMK4BBrand_And', 'Node_Session_YMK4BBrand_iOS', 'Node_Event_YMK4BBrand_And', 'Node_Event_YMK4BBrand_iOS'
+                 'Node_Session_YMK4BBrand_And', 'Node_Session_YMK4BBrand_iOS', 'Node_Event_YMK4BBrand_And', 'Node_Event_YMK4BBrand_iOS',
+                 'Node_Session_AmwayCN_AEC_iOS', 'Node_Event_AmwayCN_AEC_iOS'
 ];
 
 function producerReady() {
@@ -263,6 +264,7 @@ var appMap = {
             "d0713956948af94d4c53e348c2cb6d816a3c2925" : {appName: "YMK4BTrial", appOS: "iOS"}, // YMK4BTrial_iOS
             "43259ebca3c2c882f2ee9e39a679b6e6fd00f552" : {appName: "YMK4BBrand", appOS: "And"}, // YMK4BBrand_Android
             "bf6bad03e0833e6e432a74136a01809bb3b980d4" : {appName: "YMK4BBrand", appOS: "iOS"}, // YMK4BBrand_iOS
+            "fd129a84a9ae650fb18837e6cba7b69c6ec358da" : {appName: "AmwayCN_AEC", appOS: "iOS"}, // AmwayCN_AEC_iOS
             "6993b74968d8ecdaa3b3c633beca800de732381a" : {appName: "YCV", appOS: "And"}, // YouCamVideo_Android
             "251ff0b79d64016f72896891275fed15caa231f8" : {appName: "Aphrodite", appOS: "And", sdk: true}, // Aphrodite_Android
             "c210e235a2dd64d7625b793443de2d7ab2424ae3" : {appName: "Aphrodite", appOS: "iOS", sdk: true}, // Aphrodite_iOS
