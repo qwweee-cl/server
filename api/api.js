@@ -307,6 +307,7 @@ var appMap = {
             "239070f48984a19e8abde56d31016bfc5e9fd96d" : {appName: "Sephora_CN_SDK", appOS: "And", sdk: true}, // Sephora_CN_SDK_Android
             "d2ad67eacfecc86925686137f0ad4ae3e5a70a02" : {appName: "Sephora_CN_SDK", appOS: "iOS", sdk: true}, // Sephora_CN_SDK_iOS
             "33e7733dbb3bf2e24e29c4bd0f1f740feafb5f52" : {appName: "MAC_CN_SDK", appOS: "iOS", sdk: true}, // MAC_CN_SDK_iOS
+            "eaa598f317b5c720e89710804ee34fb106d31d03" : {appName: "Huawei_Makeup_SDK", appOS: "And", sdk: true}, // Huawei_Makeup_SDK_Android
 };
 
 function getTopicName(header, appkey) {
