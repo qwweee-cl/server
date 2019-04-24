@@ -78,6 +78,7 @@ var appKey = {};
 		"MAC_CN_SDK_iOS"		: "33e7733dbb3bf2e24e29c4bd0f1f740feafb5f52",
 		"AmwayCN_AEC_iOS"		: "fd129a84a9ae650fb18837e6cba7b69c6ec358da",
 		"Huawei_Makeup_SDK_And"		: "eaa598f317b5c720e89710804ee34fb106d31d03",
+		"Estee_Lauder_global_SDK_iOS"	: "e430b40c28cdbe74f7bc7f59c3726c99a086d814",
 	};
 }(appKey));
 
