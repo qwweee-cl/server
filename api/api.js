@@ -310,6 +310,7 @@ var appMap = {
             "eaa598f317b5c720e89710804ee34fb106d31d03" : {appName: "Huawei_Makeup_SDK", appOS: "And", sdk: true}, // Huawei_Makeup_SDK_Android
             "e430b40c28cdbe74f7bc7f59c3726c99a086d814" : {appName: "Estee_Lauder_global_SDK", appOS: "iOS", sdk: true}, // Estee_Lauder_global_SDK_iOS
             "13383acd7323d028f28be6bd682dd8f4c8e5996d" : {appName: "Flipkart_India_SDK", appOS: "And", sdk: true}, // Flipkart_India_SDK_Android
+            "a6cd88e0cc40c31632f41571ee3bf7f4234405cc" : {appName: "Chanel_Eyewear_SDK", appOS: "iOS", sdk: true}, // Chanel_Eyewear_SDK_iOS
 };
 
 function getTopicName(header, appkey) {
