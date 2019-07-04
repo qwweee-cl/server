@@ -312,6 +312,7 @@ var appMap = {
             "13383acd7323d028f28be6bd682dd8f4c8e5996d" : {appName: "Flipkart_India_SDK", appOS: "And", sdk: true}, // Flipkart_India_SDK_Android
             "a6cd88e0cc40c31632f41571ee3bf7f4234405cc" : {appName: "Chanel_Eyewear_SDK", appOS: "iOS", sdk: true}, // Chanel_Eyewear_SDK_iOS
             "db1fe5367ff4421d5e65aa0bb52c6a341a7126e8" : {appName: "D_And_G_SDK", appOS: "iOS", sdk: true}, // D&G_SDK_iOS
+            "2b1e7099d6dfff7938348c41cb8d1704e3a677cd" : {appName: "Showroom_SDK", appOS: "iOS", sdk: true}, // Showroom_SDK_iOS
 };
 
 function getTopicName(header, appkey) {

@@ -82,6 +82,7 @@ var appKey = {};
 		"Flipkart_India_SDK_And"	: "13383acd7323d028f28be6bd682dd8f4c8e5996d",
 		"Chanel_Eyewear_SDK_iOS"	: "a6cd88e0cc40c31632f41571ee3bf7f4234405cc",
 		"D_And_G_SDK_iOS"		: "db1fe5367ff4421d5e65aa0bb52c6a341a7126e8",
+		"Showroom_SDK_iOS"		: "2b1e7099d6dfff7938348c41cb8d1704e3a677cd",
 	};
 }(appKey));
 
