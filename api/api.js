@@ -314,6 +314,7 @@ var appMap = {
             "db1fe5367ff4421d5e65aa0bb52c6a341a7126e8" : {appName: "D_And_G_SDK", appOS: "iOS", sdk: true}, // D&G_SDK_iOS
             "2b1e7099d6dfff7938348c41cb8d1704e3a677cd" : {appName: "Showroom_SDK", appOS: "iOS", sdk: true}, // Showroom_SDK_iOS
             "37aab770e0c93593fd06c6bfcf65a6545a022836" : {appName: "China_Mobile_SDK", appOS: "And", sdk: true}, // China_Mobile_SDK_And
+            "52e6f4ca531d973114364772666bdafa3aa5204a" : {appName: "MAC_SDK", appOS: "iOS", sdk: true}, // MAC_SDK_iOS
 };
 
 function getTopicName(header, appkey) {
