@@ -315,6 +315,8 @@ var appMap = {
             "2b1e7099d6dfff7938348c41cb8d1704e3a677cd" : {appName: "Showroom_SDK", appOS: "iOS", sdk: true}, // Showroom_SDK_iOS
             "37aab770e0c93593fd06c6bfcf65a6545a022836" : {appName: "China_Mobile_SDK", appOS: "And", sdk: true}, // China_Mobile_SDK_And
             "52e6f4ca531d973114364772666bdafa3aa5204a" : {appName: "MAC_SDK", appOS: "iOS", sdk: true}, // MAC_SDK_iOS
+            "9e2fc2f29d7ebc17b0be8be21b861c6b267a862a" : {appName: "Sally_Beauty_SDK", appOS: "And", sdk: true}, // Sally_Beauty_SDK_And
+            "965acda917a2d8b780bca163163458186de0c258" : {appName: "Sally_Beauty_SDK", appOS: "iOS", sdk: true}, // Sally_Beauty_SDK_iOS
 };
 
 function getTopicName(header, appkey) {
