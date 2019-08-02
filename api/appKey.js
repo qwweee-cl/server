@@ -87,6 +87,7 @@ var appKey = {};
 		"MAC_SDK_iOS"			: "52e6f4ca531d973114364772666bdafa3aa5204a",
 		"Sally_Beauty_SDK_And"		: "9e2fc2f29d7ebc17b0be8be21b861c6b267a862a",
 		"Sally_Beauty_SDK_iOS"		: "965acda917a2d8b780bca163163458186de0c258",
+		"Tapcart_SDK_iOS"		: "c92608f1d6fe19cdb99545af6ad4051c271655ac",
 	};
 }(appKey));
 

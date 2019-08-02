@@ -317,6 +317,7 @@ var appMap = {
             "52e6f4ca531d973114364772666bdafa3aa5204a" : {appName: "MAC_SDK", appOS: "iOS", sdk: true}, // MAC_SDK_iOS
             "9e2fc2f29d7ebc17b0be8be21b861c6b267a862a" : {appName: "Sally_Beauty_SDK", appOS: "And", sdk: true}, // Sally_Beauty_SDK_And
             "965acda917a2d8b780bca163163458186de0c258" : {appName: "Sally_Beauty_SDK", appOS: "iOS", sdk: true}, // Sally_Beauty_SDK_iOS
+            "c92608f1d6fe19cdb99545af6ad4051c271655ac" : {appName: "Tapcart_SDK", appOS: "iOS", sdk: true}, // Tapcart_SDK_iOS
 };
 
 function getTopicName(header, appkey) {
