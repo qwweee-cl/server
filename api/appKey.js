@@ -88,6 +88,8 @@ var appKey = {};
 		"Sally_Beauty_SDK_And"		: "9e2fc2f29d7ebc17b0be8be21b861c6b267a862a",
 		"Sally_Beauty_SDK_iOS"		: "965acda917a2d8b780bca163163458186de0c258",
 		"Tapcart_SDK_iOS"		: "c92608f1d6fe19cdb99545af6ad4051c271655ac",
+		"Neutrogena_SDK_And"		: "2cfdbb56a214a13014a0b08423c8f39e66d258c0",
+		"Neutrogena_SDK_iOS"		: "944a6288ab6405bdef01d4c4d49d619403b23cab",
 	};
 }(appKey));
 
