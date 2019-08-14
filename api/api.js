@@ -320,6 +320,8 @@ var appMap = {
             "c92608f1d6fe19cdb99545af6ad4051c271655ac" : {appName: "Tapcart_SDK", appOS: "iOS", sdk: true}, // Tapcart_SDK_iOS
             "2cfdbb56a214a13014a0b08423c8f39e66d258c0" : {appName: "Neutrogena_SDK", appOS: "And", sdk: true}, // Neutrogena_SDK_And
             "944a6288ab6405bdef01d4c4d49d619403b23cab" : {appName: "Neutrogena_SDK", appOS: "iOS", sdk: true}, // Neutrogena_SDK_iOS
+            "c247f4b1892676a2d90b5b96be20e924832bcaad" : {appName: "Pinterest_SDK", appOS: "And", sdk: true}, // Pinterest_SDK_And
+            "40ada45b2e57a93eb7dab340352514fbd76a3680" : {appName: "Pinterest_SDK", appOS: "iOS", sdk: true}, // Pinterest_SDK_iOS
 };
 
 function getTopicName(header, appkey) {

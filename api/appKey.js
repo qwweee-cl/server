@@ -90,6 +90,8 @@ var appKey = {};
 		"Tapcart_SDK_iOS"		: "c92608f1d6fe19cdb99545af6ad4051c271655ac",
 		"Neutrogena_SDK_And"		: "2cfdbb56a214a13014a0b08423c8f39e66d258c0",
 		"Neutrogena_SDK_iOS"		: "944a6288ab6405bdef01d4c4d49d619403b23cab",
+		"Pinterest_SDK_And"		: "c247f4b1892676a2d90b5b96be20e924832bcaad",
+		"Pinterest_SDK_iOS"		: "40ada45b2e57a93eb7dab340352514fbd76a3680",
 	};
 }(appKey));
 
