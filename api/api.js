@@ -324,6 +324,7 @@ var appMap = {
             "40ada45b2e57a93eb7dab340352514fbd76a3680" : {appName: "Pinterest_SDK", appOS: "iOS", sdk: true}, // Pinterest_SDK_iOS
             "3b1b6f2de82a7e0cf77fdf642aece5a151303dbb" : {appName: "Jiali_CN_SDK", appOS: "And", sdk: true}, // Jiali_CN_SDK_And
             "52e8e886796e2fd79ad62f5a5512ad471e594c83" : {appName: "Jiali_CN_SDK", appOS: "iOS", sdk: true}, // Jiali_CN_SDK_iOS
+            "99a584e7d0ce0fa9277e614d61c8b814a2d6d909" : {appName: "NordStom_VV_SDK", appOS: "And", sdk: true}, // NordStrom_VV_SDK_And
 };
 
 function getTopicName(header, appkey) {
