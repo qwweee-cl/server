@@ -95,6 +95,8 @@ var appKey = {};
 		"Jiali_CN_SDK_And"		: "3b1b6f2de82a7e0cf77fdf642aece5a151303dbb",
 		"Jiali_CN_SDK_iOS"		: "52e8e886796e2fd79ad62f5a5512ad471e594c83",
 		"NordStrom_VV_SDK_And"		: "99a584e7d0ce0fa9277e614d61c8b814a2d6d909",
+		"FiNC_SDK_And"			: "95b264464cd21e7f084dc169a624114f61681473",
+		"FiNC_SDK_iOS"			: "d6b321e4afb2bdec35c1cb6c4b779d7e52a9b770",
 	};
 }(appKey));
 
