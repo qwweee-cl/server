@@ -97,6 +97,7 @@ var appKey = {};
 		"NordStrom_VV_SDK_And"		: "99a584e7d0ce0fa9277e614d61c8b814a2d6d909",
 		"FiNC_SDK_And"			: "95b264464cd21e7f084dc169a624114f61681473",
 		"FiNC_SDK_iOS"			: "d6b321e4afb2bdec35c1cb6c4b779d7e52a9b770",
+		"TomFord_CN_SDK_iOS"		: "020813e047513d2137ad9727d593712b0f68c3a0",
 	};
 }(appKey));
 
