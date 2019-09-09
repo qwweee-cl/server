@@ -100,6 +100,8 @@ var appKey = {};
 		"TomFord_CN_SDK_iOS"		: "020813e047513d2137ad9727d593712b0f68c3a0",
 		"AmazingLashStudio_SDK_And"	: "aee89108117e13131dd856559ed20f52d8710590",
 		"AmazingLashStudio_SDK_iOS"	: "b6799324da67a2727cc7ceffa3acf4822a091d2f",
+		"NTT_JP_SDK_And"		: "8466d287b0afdfe80df10a0ccfd55efb4b8644f9",
+		"NTT_JP_SDK_iOS"		: "7f2e1083f7f5f7c686679e4a522d6b4f7ebac34f",
 	};
 }(appKey));
 
