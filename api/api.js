@@ -328,6 +328,8 @@ var appMap = {
             "95b264464cd21e7f084dc169a624114f61681473" : {appName: "FiNC_SDK", appOS: "And", sdk: true}, // FiNC_SDK_And
             "d6b321e4afb2bdec35c1cb6c4b779d7e52a9b770" : {appName: "FiNC_SDK", appOS: "iOS", sdk: true}, // FiNC_SDK_iOS
             "020813e047513d2137ad9727d593712b0f68c3a0" : {appName: "TomFord_CN_SDK", appOS: "iOS", sdk: true}, // TomFord_CN_SDK_iOS
+            "aee89108117e13131dd856559ed20f52d8710590" : {appName: "AmazingLashStudio_SDK", appOS: "And", sdk: true}, // AmazingLashStudio_SDK_And
+            "b6799324da67a2727cc7ceffa3acf4822a091d2f" : {appName: "AmazingLashStudio_SDK", appOS: "iOS", sdk: true}, // AmazingLashStudio_SDK_iOS
 };
 
 function getTopicName(header, appkey) {
