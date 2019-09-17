@@ -332,6 +332,7 @@ var appMap = {
             "b6799324da67a2727cc7ceffa3acf4822a091d2f" : {appName: "AmazingLashStudio_SDK", appOS: "iOS", sdk: true}, // AmazingLashStudio_SDK_iOS
             "8466d287b0afdfe80df10a0ccfd55efb4b8644f9" : {appName: "NTT_JP_SDK", appOS: "And", sdk: true}, // NTT_JP_SDK_And
             "7f2e1083f7f5f7c686679e4a522d6b4f7ebac34f" : {appName: "NTT_JP_SDK", appOS: "iOS", sdk: true}, // NTT_JP_SDK_iOS
+            "32e2d24bd53c37f91ce5d33f6a6b40a6320c37f6" : {appName: "Chanel_Eyewear_SDK", appOS: "And", sdk: true}, // Chanel_Eyewear_SDK_And
 };
 
 function getTopicName(header, appkey) {

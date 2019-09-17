@@ -102,6 +102,7 @@ var appKey = {};
 		"AmazingLashStudio_SDK_iOS"	: "b6799324da67a2727cc7ceffa3acf4822a091d2f",
 		"NTT_JP_SDK_And"		: "8466d287b0afdfe80df10a0ccfd55efb4b8644f9",
 		"NTT_JP_SDK_iOS"		: "7f2e1083f7f5f7c686679e4a522d6b4f7ebac34f",
+		"Chanel_Eyewear_SDK_And"	: "32e2d24bd53c37f91ce5d33f6a6b40a6320c37f6",
 	};
 }(appKey));
 
