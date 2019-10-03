@@ -333,6 +333,8 @@ var appMap = {
             "8466d287b0afdfe80df10a0ccfd55efb4b8644f9" : {appName: "NTT_JP_SDK", appOS: "And", sdk: true}, // NTT_JP_SDK_And
             "7f2e1083f7f5f7c686679e4a522d6b4f7ebac34f" : {appName: "NTT_JP_SDK", appOS: "iOS", sdk: true}, // NTT_JP_SDK_iOS
             "32e2d24bd53c37f91ce5d33f6a6b40a6320c37f6" : {appName: "Chanel_Eyewear_SDK", appOS: "And", sdk: true}, // Chanel_Eyewear_SDK_And
+            "b0a8189bdb410616b855a15e5b7a80975da92a96" : {appName: "LG_Electronics_SDK", appOS: "And", sdk: true}, // LG_Electronics_SDK_And
+            "87d479c76d9a6f75db9a9a07a20c5a6f649db4e1" : {appName: "LG_Electronics_SDK", appOS: "iOS", sdk: true}, // LG_Electronics_SDK_iOS
 };
 
 function getTopicName(header, appkey) {

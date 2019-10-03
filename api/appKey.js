@@ -103,6 +103,8 @@ var appKey = {};
 		"NTT_JP_SDK_And"		: "8466d287b0afdfe80df10a0ccfd55efb4b8644f9",
 		"NTT_JP_SDK_iOS"		: "7f2e1083f7f5f7c686679e4a522d6b4f7ebac34f",
 		"Chanel_Eyewear_SDK_And"	: "32e2d24bd53c37f91ce5d33f6a6b40a6320c37f6",
+		"LG_Electronics_SDK_And"	: "b0a8189bdb410616b855a15e5b7a80975da92a96",
+		"LG_Electronics_SDK_iOS"	: "87d479c76d9a6f75db9a9a07a20c5a6f649db4e1",
 	};
 }(appKey));
 
