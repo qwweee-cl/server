@@ -105,6 +105,7 @@ var appKey = {};
 		"Chanel_Eyewear_SDK_And"	: "32e2d24bd53c37f91ce5d33f6a6b40a6320c37f6",
 		"LG_Electronics_SDK_And"	: "b0a8189bdb410616b855a15e5b7a80975da92a96",
 		"LG_Electronics_SDK_iOS"	: "87d479c76d9a6f75db9a9a07a20c5a6f649db4e1",
+		"MAC_RED_SDK_And"		: "488dbc1e7acdf4dd4db283161d9b341c5d4f8ed4",
 	};
 }(appKey));
 
