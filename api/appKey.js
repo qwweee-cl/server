@@ -62,6 +62,7 @@ var appKey = {};
 		"LG_Mobile_APP_And"		: "c193e49bf09900c6c46cdd85ad05737177941a3f",
 		"Amway_CN_makeup_APP_And"	: "6c086f89df896b5286817e871783f803ffc51eae",
 		"Amway_CN_skincare_APP_And"	: "e8c4410fdfa48614b5f625ed70814d9720388aa3",
+		"Amway_CN_makeup_SDK_iOS"	: "f0ed22c36da25717000a38ea568c0da640dbc887",
 		"Target_APP_And"		: "5e954ee93b5c921638fda22870942115b06a9b7f",
 		"Target_APP_iOS"		: "02c5193b372dfab39153d908643ab193fec45671",
 		"Alibaba_APP_And"		: "1af5ddb03103baed28f5493e2da04cada6de295d",
