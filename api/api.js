@@ -339,6 +339,7 @@ var appMap = {
             "488dbc1e7acdf4dd4db283161d9b341c5d4f8ed4" : {appName: "MAC_RED_SDK", appOS: "And", sdk: true}, // MAC_RED_SDK_And
             "f8b4be54ee38cc8ccc39b77ee1065c9d29da8b26" : {appName: "Icon_Skincare_SDK", appOS: "And", sdk: true}, // Icon_Skincare_SDK_And
             "767d5ea611ac01b38f87b87e3a59e0473cd2a019" : {appName: "Icon_Hair_color_SDK", appOS: "And", sdk: true}, // Icon_Hair_color_SDK_And
+            "5554ac343cc1b0f9b48ea881553126cd8320a6de" : {appName: "EL_CareOS_SDK", appOS: "And", sdk: true}, // EL_CareOS_SDK_And
 };
 
 function getTopicName(header, appkey) {

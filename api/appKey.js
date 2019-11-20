@@ -109,6 +109,7 @@ var appKey = {};
 		"MAC_RED_SDK_And"		: "488dbc1e7acdf4dd4db283161d9b341c5d4f8ed4",
 		"Icon_Skincare_SDK_And"		: "f8b4be54ee38cc8ccc39b77ee1065c9d29da8b26",
 		"Icon_Hair_color_SDK_And"	: "767d5ea611ac01b38f87b87e3a59e0473cd2a019",
+		"EL_CareOS_SDK_And"		: "5554ac343cc1b0f9b48ea881553126cd8320a6de",
 	};
 }(appKey));
 
