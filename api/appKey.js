@@ -107,6 +107,8 @@ var appKey = {};
 		"LG_Electronics_SDK_And"	: "b0a8189bdb410616b855a15e5b7a80975da92a96",
 		"LG_Electronics_SDK_iOS"	: "87d479c76d9a6f75db9a9a07a20c5a6f649db4e1",
 		"MAC_RED_SDK_And"		: "488dbc1e7acdf4dd4db283161d9b341c5d4f8ed4",
+		"Icon_Skincare_SDK_And"		: "f8b4be54ee38cc8ccc39b77ee1065c9d29da8b26",
+		"Icon_Hair_color_SDK_And"	: "767d5ea611ac01b38f87b87e3a59e0473cd2a019",
 	};
 }(appKey));
 
