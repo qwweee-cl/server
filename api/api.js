@@ -26,7 +26,9 @@ var http = require('http'),
             apps:require('./parts/mgmt/apps.js')
         }
     },
-    appKey = require('./appKey.js');
+    appKey = require('./appKey.js'),
+    androidAutoAppkey = require('./appkey_config/countly_auto_android_json_code.json'),
+    iOSAutoAppkey = require('./appkey_config/countly_auto_ios_json_code.json');
 
 http.globalAgent.maxSockets = common.config.api.max_sockets || 1024;
 
@@ -341,6 +343,23 @@ var appMap = {
             "767d5ea611ac01b38f87b87e3a59e0473cd2a019" : {appName: "Icon_Hair_color_SDK", appOS: "And", sdk: true}, // Icon_Hair_color_SDK_And
             "5554ac343cc1b0f9b48ea881553126cd8320a6de" : {appName: "EL_CareOS_SDK", appOS: "And", sdk: true}, // EL_CareOS_SDK_And
 };
+
+/// import auto generate android appkey
+
+for (var index in androidAutoAppkey) {
+  var item = androidAutoAppkey[index];
+  appMap[item.appKey] = {appName: item.appName, appOS: item.appOS, sdk: item.sdk};
+}
+
+/// import auto generate ios appkey
+
+for (var index in iOSAutoAppkey) {
+  var item = iOSAutoAppkey[index];
+  appMap[item.appKey] = {appName: item.appName, appOS: item.appOS, sdk: item.sdk};
+}
+
+console.log(appMap);
+
 
 function getTopicName(header, appkey) {
     var topicName = "";
