@@ -358,7 +358,7 @@ for (var index in iOSAutoAppkey) {
   appMap[item.appKey] = {appName: item.appName, appOS: item.appOS, sdk: item.sdk};
 }
 
-console.log(appMap);
+//console.log(appMap);
 
 
 function getTopicName(header, appkey) {
