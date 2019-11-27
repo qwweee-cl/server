@@ -342,6 +342,7 @@ var appMap = {
   "b0a8189bdb410616b855a15e5b7a80975da92a96": {appName: "LG_Electronics_SDK", appOS: "And", sdk: true}, // LG_Electronics_SDK_And
   "87d479c76d9a6f75db9a9a07a20c5a6f649db4e1": {appName: "LG_Electronics_SDK", appOS: "iOS", sdk: true}, // LG_Electronics_SDK_iOS
   "488dbc1e7acdf4dd4db283161d9b341c5d4f8ed4": {appName: "MAC_RED_SDK", appOS: "And", sdk: true}, // MAC_RED_SDK_And
+  "442f04d7d3cf49e3303cb183ccc43ea4e24968af": {appName: "MAC_RED_SDK", appOS: "iOS", sdk: true}, // MAC_RED_SDK_iOS
   "f8b4be54ee38cc8ccc39b77ee1065c9d29da8b26": {appName: "Icon_Skincare_SDK", appOS: "And", sdk: true}, // Icon_Skincare_SDK_And
   "767d5ea611ac01b38f87b87e3a59e0473cd2a019": {appName: "Icon_Hair_color_SDK", appOS: "And", sdk: true}, // Icon_Hair_color_SDK_And
   "5554ac343cc1b0f9b48ea881553126cd8320a6de": {appName: "EL_CareOS_SDK", appOS: "And", sdk: true}, // EL_CareOS_SDK_And
