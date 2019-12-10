@@ -346,6 +346,8 @@ var appMap = {
   "f8b4be54ee38cc8ccc39b77ee1065c9d29da8b26": {appName: "Icon_Skincare_SDK", appOS: "And", sdk: true}, // Icon_Skincare_SDK_And
   "767d5ea611ac01b38f87b87e3a59e0473cd2a019": {appName: "Icon_Hair_color_SDK", appOS: "And", sdk: true}, // Icon_Hair_color_SDK_And
   "5554ac343cc1b0f9b48ea881553126cd8320a6de": {appName: "EL_CareOS_SDK", appOS: "And", sdk: true}, // EL_CareOS_SDK_And
+  "94feb6fef74ff08ac266ad8fa9535e08dac23737": {appName: "AmorePacificHQ_KR_SDK", appOS: "And", sdk: true}, // AmorePacificHQ_KR_SDK_And
+  "4d9619fe88545c3bf235e31fb467d637918e1cb3": {appName: "AmorePacificHQ_KR_SDK", appOS: "iOS", sdk: true}, // AmorePacificHQ_KR_SDK_iOS
 };
 
 /// import auto generate android appkey
