@@ -68,9 +68,9 @@ var failMailList = "hendry_wu@perfectcorp.com,gary_huang@perfectcorp.com";
 var zkList = '172.31.19.126:2181,172.31.27.99:2181,172.31.27.76:2181';  // bootstrap.servers
 
 zkList = '172.31.19.74:2181,172.31.27.99:2181,172.31.22.124:2181';  // bootstrap.servers
-zkList = '172.31.21.47:2181';  // bootstrap.servers
+zkList = '172.31.17.5:2181';  // bootstrap.servers
 var kafkaList = '172.31.19.126:9092,172.31.27.99:9092,172.31.27.76:9092';  // bootstrap.servers
-kafkaList = '172.31.21.47:9092';  // bootstrap.servers
+kafkaList = '172.31.17.5:9092';  // bootstrap.servers
 var client = new Client(zkList);
 
 //var p = argv.p || 0; // default is 0
@@ -113,6 +113,7 @@ const query = 'SELECT device_id, is_for_web_filter FROM bc_trend_ab_user;';
 
 const mysql = require('mysql-libmysqlclient');
 var host = 'cognos-db.czkpdhvixbu3.ap-northeast-1.rds.amazonaws.com';
+host = 'cogons-db-new.czkpdhvixbu3.ap-northeast-1.rds.amazonaws.com';
 var user = 'abtest';
 var password = 'abtest';
 var database = 'ABTest';
@@ -144,6 +145,8 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
                  'Node_Session_YCC_iOS', 'Node_Event_YMC_And', 'Node_Event_YMC_iOS',
                  'Node_Event_YCF_And', 'Node_Event_YCF_iOS', 'Node_Event_YCC_And',
                  'Node_Event_YCC_iOS', 'OEM_session', 'OEM_event', 'CheckSum', 'ABTesting',
+                 'Node_Session_YCS_And', 'Node_Session_YCS_iOS', 'Node_Event_YCS_And', 
+                 'Node_Event_YCS_iOS',
                  'Avro_Event_BCS_And', 'Avro_Event_BCS_iOS', 'Avro_Event_OtherApp', 
                  'Avro_Event_YCN_And', 'Avro_Event_YCN_iOS', 'Avro_Event_YCP_And', 
                  'Avro_Event_YCP_iOS', 'Avro_Event_YMK_And', 'Avro_Event_YMK_iOS',
@@ -156,7 +159,11 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
                  'Avro_Session_YCC_iOS', 'Avro_Event_YMC_And', 'Avro_Event_YMC_iOS',
                  'Avro_Event_YCF_And', 'Avro_Event_YCF_iOS', 'Avro_Event_YCC_And',
                  'Avro_Event_YCC_iOS', 'Avro_OEM_session', 'Avro_OEM_event', 'Avro_CheckSum',
-                 'Avro_ABTesting', 'Avro_OEM_session', 'Avro_OEM_event'];
+                 'Avro_Session_YCS_And', 'Avro_Session_YCS_iOS', 'Avro_Event_YCS_And',
+                 'Avro_Event_YCS_iOS',
+                 'Avro_ABTesting', 'Avro_OEM_session', 'Avro_OEM_event',
+                 'Node_Event_WCM_Web'
+                 ];
 
 function producerReady() {
     var date = new Date();
@@ -164,7 +171,8 @@ function producerReady() {
     isProducerReady = true;
     producer.createTopics(['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherApp', 'Node_Event_YCN_And', 'Node_Event_YCN_iOS', 'Node_Event_YCP_And', 'Node_Event_YCP_iOS', 'Node_Event_YMK_And', 'Node_Event_YMK_iOS',
                  'Node_Session_BCS_And', 'Node_Session_BCS_iOS', 'Node_Session_OtherApp', 'Node_Session_YCN_And', 'Node_Session_YCN_iOS', 'Node_Session_YCP_And', 'Node_Session_YCP_iOS', 'Node_Session_YMK_And', 'Node_Session_YMK_iOS', 'Elly', 'ABC', 'OWL',
-                 'CheckSum', 'ABTesting', 'noKafka', 'Avro_ABC', 'Avro_ABTesting', 'Avro_OEM_session', 'Avro_OEM_event'], false, function (err, data) {
+                 'CheckSum', 'ABTesting', 'noKafka', 'Avro_ABC', 'Avro_ABTesting', 'Avro_OEM_session', 'Avro_OEM_event',
+'Node_Event_WCM_Web'], false, function (err, data) {
         console.log("createTopic: " + data);
         if (err) {
             console.log("ERROR: " + err);
@@ -263,7 +271,10 @@ var appMap = {
 			"093ceb063bc69ffe79af7852a715f95fd91547f2" : {appName: "YCF", appOS: "And"}, // YouCam_Fun_And
 			"9d23f2108e703661545fe60336ab5e4ef120b189" : {appName: "YCF", appOS: "iOS"}, // YouCam_Fun_iOS
 			"82694c09eb10f576b12645cad667dc2c740db1a0" : {appName: "YCC", appOS: "And"}, // YouCam_Collage_And
-			"3aa2b6516f3d9ea559561a8c3bca1fe0b8a96371" : {appName: "YCC", appOS: "iOS"} // YouCam_Collage_iOS
+			"3aa2b6516f3d9ea559561a8c3bca1fe0b8a96371" : {appName: "YCC", appOS: "iOS"}, // YouCam_Collage_iOS
+			"fa9cbde99587e00afcbd7a9c834e78b5185b8065" : {appName: "YCS", appOS: "And"}, // YouCam_Collage_And
+			"9357f63f387a02872cae14f8539b37cc37404727" : {appName: "YCS", appOS: "iOS"}, // YouCam_Collage_iOS
+			"740f5f030fe2b94eeadef71f77606868fc34a3ff" : {appName: "WCM", appOS: "Web"} // WCM_Web
 };
 
 function getTopicName(header, appkey) {
@@ -329,6 +340,7 @@ function sendKafka(data, key, isSession) {
     var topicName = "Elly";
     var topicName = "OWL";
     var topicName = "ABC";
+    var topicName = getNodeTopicName((isSession ? "Session" : "Event"), key);
     var ABTestTopicName = "ABTesting";
     randomCnt = ((++randomCnt)%partitionNum);
     if (cando) {
@@ -1059,10 +1071,12 @@ function validateAppForWriteAPI(params) {
     }
 
     if (params.events) {
+        console.log("#####: events", params);
         insertRawEvent(common.rawCollection['event']+params.qstring.app_key, params);
     }
 
     if (params.qstring.begin_session || params.qstring.end_session || params.qstring.session_duration) {
+        console.log("#####: session", params);
         insertRawSession(common.rawCollection['session']+params.qstring.app_key, params);
 
         // also insert to Perfect if app is YCP or YMK
@@ -2175,6 +2189,8 @@ if (cluster.isMaster) {
 
                 if (params.qstring.events) {
                     try {
+                        //console.log("####:", params.qstring.events);
+                        //console.log("####:", params.qstring.events.length);
                         var jsonData = JSON.parse(params.qstring.events);
                         /*
                         if (jsonData) {
@@ -2194,6 +2210,15 @@ if (cluster.isMaster) {
                         }
                         */
                         params.events = jsonData;
+                        if (params.qstring.app_key == '740f5f030fe2b94eeadef71f77606868fc34a3ff') {
+                            var hostname = req.headers.referer || req.headers.origin || req.headers['x-real-ip'] || req.headers.host || '';
+                            console.log("@@@@@: ", hostname);
+                            console.log("@@@@@: ", params.events);
+                            for (var i = 0 ; i < params.events.length ; i ++) {
+                              params.events[i].segmentation['hostname'] = hostname;
+                              console.log("!!!!!: ", params.events[i].segmentation);
+                            }
+                        }
                     } catch (SyntaxError) {
                         var now = new Date();
                         console.log('Parse events JSON failed'+'=========='+now+'==========');

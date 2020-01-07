@@ -3,22 +3,23 @@ var countlyConfig = {
         //host: "localhost",
 //        host: "172.31.15.158", // dashboard db host
 //        host: "172.31.0.28", // dashboard db host
-        host: "172.31.24.236", // dashboard db host
+        host: "127.0.0.1", // dashboard db host
         //hostbatch: "172.31.11.80", // localhost(mongodb) setting batch host
         //hostbatch: "172.31.0.46", // localhost(mongodb) setting batch host
-        hostshard: "172.31.24.236", // shard host
-        hostbatch: "172.31.24.236", // localhost(mongodb) setting batch host
-        hostbatch1: "172.31.24.236", // YCP raw data db host
-        hostbatch2: "172.31.24.236", // YMK + Others raw data db host
-        oemhost: "172.31.24.236", // Only OEM raw data host
-        db: "countly_OEM",
+        hostshard: "127.0.0.1", // shard host
+        hostbatch: "127.0.0.1", // localhost(mongodb) setting batch host
+        hostbatch1: "127.0.0.1", // YCP raw data db host
+        hostbatch2: "127.0.0.1", // YMK + Others raw data db host
+        oemhost: "127.0.0.1", // Only OEM raw data host
+        //db: "countly_OEM",
+        db: "countly",
         db_raw: "countly_raw0",
         db_batch: "countly_raw1",
         db_ibb: "countly_snow_ibb",
         db_maintain: "maintain_list",
         port: 27017,
         mongos: 27017,
-	newShard: "172.31.24.236", // new shard host
+	newShard: "127.0.0.1", // new shard host
         newMongos: 27017,
         max_batch_pool_size: 1000,
         max_db_pool_size: 1000,
