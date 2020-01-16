@@ -1,5 +1,6 @@
 #!/bin/bash
 . /usr/local/countly/api/maillist.sh
+delDayAgo=6
 logpath="/usr/local/countly/log/dropDatabase/"
 status=0
 string="File Not Exist";
@@ -26,6 +27,7 @@ s3Path="/s3mnt/shard_backup/oem_hourly_data_new/"
 cmds3Path="s3://clcom2-countly/shard_backup/oem_hourly_data_new/"
 
 fullCurDate=$(date -d "-6 days" +%Y%m%d)
+#fullCurDate=$(date -d "-${delDayAgo} days" +%Y%m%d)
 
 if [ -z "$1" ]
 then
@@ -56,14 +58,14 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 
 	echo -e ${s3One1}
 
-	existFile1=`/usr/local/bin/aws s3 ls ${s3One1} | wc -l`
+##	existFile1=`/usr/local/bin/aws s3 ls ${s3One1} | wc -l`
 
 	fileExist=true
 
-	if [ ${existFile1} == "0" ]; then
-		echo "${s3One1} file not exist" >> ${one_time_log}
-		fileExist=false
-	fi
+##	if [ ${existFile1} == "0" ]; then
+##		echo "${s3One1} file not exist" >> ${one_time_log}
+##		fileExist=false
+##	fi
 
 #	if [ ! -f "${s3One1}" ]; then
 #		echo "${s3One1} file not exist" >> ${one_time_log}
@@ -72,30 +74,30 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 	status=1
 	string="File Is Zero";
 
-	duFile1=`/usr/local/bin/aws s3 ls ${s3One1} | awk '{ print $3 }'`
+##	duFile1=`/usr/local/bin/aws s3 ls ${s3One1} | awk '{ print $3 }'`
 
-	if [ -z ${duFile1} ]; then
-		echo "${s3One1} file size is 0" >> ${one_time_log}
-		fileExist=false
-	fi
+##	if [ -z ${duFile1} ]; then
+##		echo "${s3One1} file size is 0" >> ${one_time_log}
+##		fileExist=false
+##	fi
 
 #	if [ ! -s "${s3One1}" ]; then
 #		echo "${s3One1} file size is 0" >> ${one_time_log}
 #		fileExist=false
 #	fi
 
-	echo -e ${fileExist}
+##	echo -e ${fileExist}
 
-	if [ "${fileExist}" = false ]; then
-		echo "Not drop ${fullCurDate} database" >> ${one_time_log}
-		sendExceptionMail
-		continue
+##	if [ "${fileExist}" = false ]; then
+##		echo "Not drop ${fullCurDate} database" >> ${one_time_log}
+##		sendExceptionMail
+##		continue
 #		exit 0
-	fi
+##	fi
 
-	sizeOne1=${duFile1}
+##	sizeOne1=${duFile1}
 
-	echo -e "${s3One1} : ${sizeOne1}" >> ${one_time_log}
+##	echo -e "${s3One1} : ${sizeOne1}" >> ${one_time_log}
 
 	status=2
 	string="Drop DB Exception";

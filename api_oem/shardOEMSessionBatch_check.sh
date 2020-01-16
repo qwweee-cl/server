@@ -386,10 +386,58 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 	getBackupFinished ${oemName}
 
 ## wait for get finished backup data
-#	if [ "${oemName}" == "Tencent_myapp" ]; then
+#	if [ "${oemName}" == "CPA_1" ]; then
 #		dosession=$(($dosession+1))
 #		continue
 #	fi
+#	if [ "${oemName}" == "CPA_2" ]; then
+#		dosession=$(($dosession+1))
+#		continue
+#	fi
+#	if [ "${oemName}" == "CPA_3" ]; then
+#		dosession=$(($dosession+1))
+#		continue
+#	fi
+#	if [ "${oemName}" == "CPA_4" ]; then
+#		dosession=$(($dosession+1))
+#		continue
+#	fi
+#	if [ "${oemName}" == "CPA_5" ]; then
+#		dosession=$(($dosession+1))
+#		continue
+#	fi
+#	if [ "${oemName}" == "CPA_6" ]; then
+#		dosession=$(($dosession+1))
+#		continue
+#	fi
+#	if [ "${oemName}" == "CPA_7" ]; then
+#		dosession=$(($dosession+1))
+#		continue
+#	fi
+#	if [ "${oemName}" == "CPA_8" ]; then
+#		dosession=$(($dosession+1))
+#		continue
+#	fi
+	if [ "${oemName}" == "CPA_9" ]; then
+		dosession=$(($dosession+1))
+		continue
+	fi
+#	if [ "${oemName}" == "CPA_10" ]; then
+#		dosession=$(($dosession+1))
+#		continue
+#	fi
+#	if [ "${oemName}" == "OPPO" ]; then
+#		dosession=$(($dosession+1))
+#		continue
+#	fi
+#	if [ "${oemName}" == "Flyme" ]; then
+#		dosession=$(($dosession+1))
+#		continue
+#	fi
+	if [ "${oemName}" == "VIVO" ]; then
+		dosession=$(($dosession+1))
+		continue
+	fi
 #	if [ "${oemName}" == "WanDouJia" ]; then
 #		dosession=$(($dosession+1))
 #		continue
@@ -592,6 +640,14 @@ if [ ${dosession} == ${totaloems} ]; then
 	next_start_time=$(date -d "$start_date" +%s)
 	next_start_time=$((10#$next_start_time + ((10#$start_round+1) * 10#$interval)))
 	sleep_time=$((10#$next_start_time - 10#$end_time))
+
+
+echo -e "[backup]backup start"
+## call backup function
+#backupDashboard
+## call backup function end
+echo -e "[backup]backup end"
+#exit 0
 
 	#wait for next round
 	if [ $sleep_time -ge 0 ]; then

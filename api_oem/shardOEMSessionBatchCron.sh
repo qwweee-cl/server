@@ -129,7 +129,9 @@ cd ${working_dir}
 ### start backup all oems dashboard data
 echo -e "[backup]backup start"
 ## call backup function
+echo -e "start: $(date)"
 backupDashboard
+echo -e "end: $(date)"
 ## call backup function end
 echo -e "[backup]backup end"
 
@@ -153,6 +155,7 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
   echo -e ${filedate}
   echo -e ${small_date}
   echo -e ${start_round}
+  echo -e "start: $(date)"
   s3OEMFile=${s3Path}${filedate}"_${oemName}_${start_round}.tgz"
   cmds3OEMFile=${cmds3Path}${filedate}"_${oemName}_${start_round}.tgz"
   fileExist=true
@@ -201,6 +204,7 @@ for (( i = 0 ; i < ${#apps[@]} ; i++ )) do
 
 ## send summary mail
 #  sendSummaryMail ${oemName}
+  echo -e "end: $(date)"
 done;
 sendSummaryTotalMail
 if [ -f ${LOCKFILE} ]; then

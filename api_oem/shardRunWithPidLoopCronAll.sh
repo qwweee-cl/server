@@ -29,9 +29,9 @@ echo ${PID} > ${LOCKFILE}
 processDate=$(TZ=America/Denver date -d "-1 day" +%Y%m%d)
 #processDate=$(TZ=America/Denver date -d "-1 day")
 ### backup OEM's raw data
-/usr/local/countly/api_oem/shardBackupOEMRawCron.sh ${processDate} 2>&1 >> /usr/local/countly/log/shardOEMCronBackup.log
+/usr/local/countly/api_oem/shardBackupOEMRawCron.sh ${processDate} 2>&1 >> /usr/local/countly/log/shardOEMCronBackup_$(date +%Y-%m-%d).log
 ### process OEM's session 
-/usr/local/countly/api_oem/shardOEMSessionBatchCron.sh ${processDate} 2>&1 >> /usr/local/countly/log/shardOEMCronSession.log
+#/usr/local/countly/api_oem/shardOEMSessionBatchCron.sh ${processDate} 2>&1 >> /usr/local/countly/log/shardOEMCronSession_$(date +%Y-%m-%d).log
 echo ${processDate}
 if [ -f ${LOCKFILE} ]; then
     rm ${LOCKFILE}
