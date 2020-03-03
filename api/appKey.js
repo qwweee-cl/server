@@ -24,6 +24,7 @@ var appKey = {};
 		"YouCam_Store_And"			: "fa9cbde99587e00afcbd7a9c834e78b5185b8065",
 		"YouCam_Store_iOS"			: "9357f63f387a02872cae14f8539b37cc37404727",
 		"YouCam_Video_And"		: "6993b74968d8ecdaa3b3c633beca800de732381a",
+		"YouCam_Toolkit_And"		: "54e26029b464a4a2d15ccfd237049c94db09ca36",
 		"Amway_And"			: "9f093278d98ad4159a6df2f29d021e6e34649747",
 		"Amway_iOS"			: "1a89a46c0465a15ce57f3709ca01c2c9fb36feb4",
 		"Belcorp_Skincare_And"		: "ab8ada3e1f156663453cee32debe3292fba834ae",
