@@ -16,7 +16,8 @@ function sendExceptionMail() {
 }
 
 function sendSummaryMail() {
-	mail -s "[NewShard OEM ${oemName}] ${fullCurDate} Finish drop database" ${dropMongo} < ${one_time_log}
+#	mail -s "[NewShard OEM ${oemName}] ${fullCurDate} Finish drop database" ${dropMongo} < ${one_time_log}
+  echo "sendSummaryMail";
 }
 
 path="/usr/local/countly/api"
