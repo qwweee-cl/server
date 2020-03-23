@@ -1919,10 +1919,6 @@ function mainfunc() {
         // Set app_user_id that is unique for each user of an application.
         params.app_user_id = common.crypto.createHash('sha1').update(params.app_key + params.qstring.device_id + "").digest('hex');
 
-        if (params.qstring.app_key == '740f5f030fe2b94eeadef71f77606868fc34a3ff') {
-          console.log("@@@@@: ", req.headers);
-        }
-
         if (params.qstring.metrics) {
           try {
             params.qstring.metrics = JSON.parse(params.qstring.metrics);
@@ -1983,7 +1979,7 @@ function mainfunc() {
             params.events = jsonData;
             if (params.qstring.app_key == '740f5f030fe2b94eeadef71f77606868fc34a3ff') {
                 var hostname = req.headers.referer || req.headers.origin || req.headers['x-real-ip'] || req.headers.host || '';
-                console.log("@@@@@: ", hostname);
+                console.log("@@@@@ hostname: ", hostname);
                 for (var i = 0 ; i < params.events.length ; i ++) {
                     params.events[i].segmentation['hostname'] = hostname;
                 }
