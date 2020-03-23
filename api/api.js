@@ -145,7 +145,8 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
   'Node_Session_YMK4B_And', 'Node_Session_YMK4B_iOS', 'Node_Event_YMK4B_And', 'Node_Event_YMK4B_iOS',
   'Node_Session_YMK4BTrial_And', 'Node_Session_YMK4BTrial_iOS', 'Node_Event_YMK4BTrial_And', 'Node_Event_YMK4BTrial_iOS',
   'Node_Session_YMK4BBrand_And', 'Node_Session_YMK4BBrand_iOS', 'Node_Event_YMK4BBrand_And', 'Node_Event_YMK4BBrand_iOS',
-  'Node_Session_AmwayCN_AEC_iOS', 'Node_Event_AmwayCN_AEC_iOS', 'Node_Session_YCT_iOS', 'Node_Event_YCT_iOS'
+  'Node_Session_AmwayCN_AEC_iOS', 'Node_Event_AmwayCN_AEC_iOS', 'Node_Session_YCT_iOS', 'Node_Event_YCT_iOS',
+  'Node_Event_WCM_Web'
 ];
 
 function producerReady() {
@@ -349,6 +350,7 @@ var appMap = {
   "5554ac343cc1b0f9b48ea881553126cd8320a6de": {appName: "EL_CareOS_SDK", appOS: "And", sdk: true}, // EL_CareOS_SDK_And
   "94feb6fef74ff08ac266ad8fa9535e08dac23737": {appName: "AmorePacificHQ_KR_SDK", appOS: "And", sdk: true}, // AmorePacificHQ_KR_SDK_And
   "4d9619fe88545c3bf235e31fb467d637918e1cb3": {appName: "AmorePacificHQ_KR_SDK", appOS: "iOS", sdk: true}, // AmorePacificHQ_KR_SDK_iOS
+  "740f5f030fe2b94eeadef71f77606868fc34a3ff": {appName: "WCM", appOS: "Web"} // WCM_Web
 };
 
 /// import auto generate android appkey

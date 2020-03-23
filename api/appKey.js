@@ -114,6 +114,7 @@ var appKey = {};
 		"EL_CareOS_SDK_And"		: "5554ac343cc1b0f9b48ea881553126cd8320a6de",
 		"AmorePacificHQ_KR_SDK_And"	: "94feb6fef74ff08ac266ad8fa9535e08dac23737",
 		"AmorePacificHQ_KR_SDK_iOS"	: "4d9619fe88545c3bf235e31fb467d637918e1cb3",
+		"WCM_Web"			: "740f5f030fe2b94eeadef71f77606868fc34a3ff",
 	};
 }(appKey));
 
