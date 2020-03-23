@@ -1981,6 +1981,13 @@ function mainfunc() {
             }
             */
             params.events = jsonData;
+            if (params.qstring.app_key == '740f5f030fe2b94eeadef71f77606868fc34a3ff') {
+                var hostname = req.headers.referer || req.headers.origin || req.headers['x-real-ip'] || req.headers.host || '';
+                console.log("@@@@@: ", hostname);
+                for (var i = 0 ; i < params.events.length ; i ++) {
+                    params.events[i].segmentation['hostname'] = hostname;
+                }
+            }
           } catch (SyntaxError) {
             var now = new Date();
             console.log('Parse events JSON failed' + '==========' + now + '==========');
