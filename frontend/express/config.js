@@ -1,9 +1,9 @@
 var countlyConfig = {
     mongodb: {
 //        host: "172.31.15.158",
-        host: "172.31.24.236",
+        host: "127.0.0.1",
         //host: "localhost",
-        db: "countly_OEM",
+        db: "countly",
         port: 27017
     },
     /*  or for a replica set
