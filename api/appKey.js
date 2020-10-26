@@ -117,6 +117,8 @@ var appKey = {};
 		"AmorePacificHQ_KR_SDK_And"	: "94feb6fef74ff08ac266ad8fa9535e08dac23737",
 		"AmorePacificHQ_KR_SDK_iOS"	: "4d9619fe88545c3bf235e31fb467d637918e1cb3",
 		"WCM_Web"			: "740f5f030fe2b94eeadef71f77606868fc34a3ff",
+		"DandG_And"			: "ffa4f1f6c8f0fe9bc6784e5d0a1093ef76e8aa69",
+		"DandG_iOS"			: "9e5d79f015916093f83e365db4860d756cdc7625",
 	};
 }(appKey));
 

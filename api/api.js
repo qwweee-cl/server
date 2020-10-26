@@ -147,6 +147,7 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
   'Node_Session_YMK4B_And', 'Node_Session_YMK4B_iOS', 'Node_Event_YMK4B_And', 'Node_Event_YMK4B_iOS',
   'Node_Session_YMK4BTrial_And', 'Node_Session_YMK4BTrial_iOS', 'Node_Event_YMK4BTrial_And', 'Node_Event_YMK4BTrial_iOS',
   'Node_Session_YMK4BBrand_And', 'Node_Session_YMK4BBrand_iOS', 'Node_Event_YMK4BBrand_And', 'Node_Event_YMK4BBrand_iOS',
+  'Node_Session_DandG_And', 'Node_Session_DandG_iOS', 'Node_Event_DandG_And', 'Node_Event_DandG_iOS',
   'Node_Session_AmwayCN_AEC_iOS', 'Node_Event_AmwayCN_AEC_iOS', 'Node_Session_YCT_iOS', 'Node_Event_YCT_iOS',
   'Node_Event_WCM_Web'
 ];
@@ -277,6 +278,8 @@ var appMap = {
   "ddaba760aee9df94441fd71b2a33428747e40510": {appName: "YCVBeauty", appOS: "And"}, // YouCamVideoBeauty_Android_
   "163d0a7e3466314d812085f7c515c3509f638dfd": {appName: "YCVBeauty", appOS: "iOS"}, // YouCamVideoBeauty_iOS
   "54e26029b464a4a2d15ccfd237049c94db09ca36": {appName: "YCT", appOS: "iOS"}, // YouCamToolkit_iOS
+  "ffa4f1f6c8f0fe9bc6784e5d0a1093ef76e8aa69": {appName: "DandG", appOS: "And"}, // D&G_Android
+  "9e5d79f015916093f83e365db4860d756cdc7625": {appName: "DandG", appOS: "iOS"}, // D&G_iOS
   "251ff0b79d64016f72896891275fed15caa231f8": {appName: "Aphrodite", appOS: "And", sdk: true}, // Aphrodite_Android
   "c210e235a2dd64d7625b793443de2d7ab2424ae3": {appName: "Aphrodite", appOS: "iOS", sdk: true}, // Aphrodite_iOS
   "3c8be6a417c8e010ca308f1764bcb1542ce737b2": {appName: "MaryKay_China", appOS: "And", sdk: true}, // MaryKay_China_Android
