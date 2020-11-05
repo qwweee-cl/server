@@ -266,10 +266,10 @@ var appMap = {
   "9357f63f387a02872cae14f8539b37cc37404727": {appName: "YCS", appOS: "iOS"}, // YouCam_Store_iOS
   "9f093278d98ad4159a6df2f29d021e6e34649747": {appName: "Amway", appOS: "And"}, // Amway_Android
   "1a89a46c0465a15ce57f3709ca01c2c9fb36feb4": {appName: "Amway", appOS: "iOS"}, // Amway_iOS
-  "f3d19fb71368070ae82c297aac2326d068e72ffa": {appName: "YMKCN", appOS: "And"}, // YouCam_MakeUp_CN_And
-  "96a43b9b8bff3cf212e8fcb797158d276a0f4369": {appName: "YMKCN", appOS: "iOS"}, // YouCam_MakeUp_CN_iOS
-  "203c5f37c4a6617cb65791547115f480169674b6": {appName: "YCPCN", appOS: "And"}, // YouCam_Perfect_CN_And
-  "d67447cebd490c3df91a614698dc7782520dfedb": {appName: "YCPCN", appOS: "iOS"}, // YouCam_Perfect_CN_iOS
+  "f3d19fb71368070ae82c297aac2326d068e72ffa": {appName: "YMK_CN", appOS: "And"}, // YouCam_MakeUp_CN_And
+  "96a43b9b8bff3cf212e8fcb797158d276a0f4369": {appName: "YMK_CN", appOS: "iOS"}, // YouCam_MakeUp_CN_iOS
+  "203c5f37c4a6617cb65791547115f480169674b6": {appName: "YCP_CN", appOS: "And"}, // YouCam_Perfect_CN_And
+  "d67447cebd490c3df91a614698dc7782520dfedb": {appName: "YCP_CN", appOS: "iOS"}, // YouCam_Perfect_CN_iOS
   "ab8ada3e1f156663453cee32debe3292fba834ae": {appName: "Belcorp_Skincare", appOS: "And"}, // Belcorp_Skinkcare_Android
   "b9bf6664c33ca7d55ba347f652abe1bc9ef39378": {appName: "BrandMode", appOS: "And"}, // BrandMode_Android
   "12c6646571c9cf9f7ecb00b4af3ca3ecc49635eb": {appName: "BrandMode", appOS: "iOS"}, // BrandMode_iOS
