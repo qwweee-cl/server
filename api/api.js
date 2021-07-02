@@ -977,6 +977,7 @@ function insertRawColl(coll, eventp, params, isSession) {
         eventpOEM.store_name = checkOEM.deal_no;
         sendOEMKafka(eventpOEM, eventpOEM.app_key, isSession);
       }
+      if (0) {
       var oemdb = common.getNewOEMRawDB(eventpOEM.app_key, dealNumber, currDate);
       if (oemdb) {
         oemdb.collection(coll).insert(eventpOEM, function (err, res) {
@@ -994,6 +995,7 @@ function insertRawColl(coll, eventp, params, isSession) {
             console.log(err);
           }
         });
+      }
       }
     }
   } else {
