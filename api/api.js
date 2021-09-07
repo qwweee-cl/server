@@ -363,7 +363,8 @@ var appMap = {
   "5554ac343cc1b0f9b48ea881553126cd8320a6de": {appName: "EL_CareOS_SDK", appOS: "And", sdk: true}, // EL_CareOS_SDK_And
   "94feb6fef74ff08ac266ad8fa9535e08dac23737": {appName: "AmorePacificHQ_KR_SDK", appOS: "And", sdk: true}, // AmorePacificHQ_KR_SDK_And
   "4d9619fe88545c3bf235e31fb467d637918e1cb3": {appName: "AmorePacificHQ_KR_SDK", appOS: "iOS", sdk: true}, // AmorePacificHQ_KR_SDK_iOS
-  "740f5f030fe2b94eeadef71f77606868fc34a3ff": {appName: "WCM", appOS: "Web"} // WCM_Web
+  "740f5f030fe2b94eeadef71f77606868fc34a3ff": {appName: "WCM", appOS: "Web"}, // WCM_Web
+  "2af60c69658af885ad11bf7b4c9c4c1e3b029dc5": {appName: "WCM-Wechat-Mini", appOS: "Web"} // WCM_Web
 };
 
 /// import auto generate android appkey
@@ -1997,6 +1998,13 @@ function mainfunc() {
             if (params.qstring.app_key == '740f5f030fe2b94eeadef71f77606868fc34a3ff') {
                 var hostname = req.headers.referer || req.headers.origin || req.headers['x-real-ip'] || req.headers.host || '';
                 console.log("@@@@@ hostname: ", hostname);
+                for (var i = 0 ; i < params.events.length ; i ++) {
+                    params.events[i].segmentation['hostname'] = hostname;
+                }
+            }
+            if (params.qstring.app_key == '2af60c69658af885ad11bf7b4c9c4c1e3b029dc5') {
+                var hostname = req.headers.referer || req.headers.origin || req.headers['x-real-ip'] || req.headers.host || '';
+                console.log("@@@@@ wechat hostname: ", hostname);
                 for (var i = 0 ; i < params.events.length ; i ++) {
                     params.events[i].segmentation['hostname'] = hostname;
                 }
