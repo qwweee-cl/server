@@ -462,7 +462,7 @@ function sendKafka(data, key, isSession) {
           if (entry.error) {
             console.log("ERROR: " + entry.error);
             nokafkaErrorCount++;
-            nokafkaerrorContext += (JSON.stringify(err) + "\r\n");
+            nokafkaerrorContext += (JSON.stringify(entry.error) + "\r\n");
             if (nokafkaErrorCount && (nokafkaErrorCount % kafkaErrorMaxCount == 0)) {
               console.log("no-Kafka Exception Send Mail");
               var cmd = 'echo "' + nokafkaerrorContext + '" | mail -s "no-Kafka Exception Count ' + nokafkaErrorCount + ' times" ' + failMailList;
@@ -497,7 +497,7 @@ function sendKafka(data, key, isSession) {
                 if (entry.error) {
                   console.log("ERROR: " + entry.error);
                   nokafkaErrorCount++;
-                  nokafkaerrorContext += (JSON.stringify(err) + "\r\n");
+                  nokafkaerrorContext += (JSON.stringify(entry.error) + "\r\n");
                   if (nokafkaErrorCount && (nokafkaErrorCount % kafkaErrorMaxCount == 0)) {
                     console.log("no-Kafka Exception Send Mail");
                     var cmd = 'echo "' + nokafkaerrorContext + '" | mail -s "no-Kafka Exception Count ' + nokafkaErrorCount + ' times" ' + failMailList;
@@ -544,7 +544,7 @@ function sendOthersKafka(data, key, isSession) {
           if (entry.error) {
             console.log("ERROR: " + entry.error);
             nokafkaErrorCount++;
-            nokafkaerrorContext += (JSON.stringify(err) + "\r\n");
+            nokafkaerrorContext += (JSON.stringify(entry.error) + "\r\n");
             if (nokafkaErrorCount && (nokafkaErrorCount % kafkaErrorMaxCount == 0)) {
               console.log("no-Kafka Exception Send Mail");
               var cmd = 'echo "' + nokafkaerrorContext + '" | mail -s "no-Kafka Exception Count ' + nokafkaErrorCount + ' times" ' + failMailList;
@@ -588,7 +588,7 @@ function sendUMAHKafka(data, key, isSession, topicName) {
           if (entry.error) {
             console.log("ERROR: " + entry.error);
             nokafkaErrorCount++;
-            nokafkaerrorContext += (JSON.stringify(err) + "\r\n");
+            nokafkaerrorContext += (JSON.stringify(entry.error) + "\r\n");
             if (nokafkaErrorCount && (nokafkaErrorCount % kafkaErrorMaxCount == 0)) {
               console.log("no-Kafka Exception Send Mail");
               var cmd = 'echo "' + nokafkaerrorContext + '" | mail -s "no-Kafka Exception Count ' + nokafkaErrorCount + ' times" ' + failMailList;
@@ -648,7 +648,7 @@ function sendOEMKafka(data, key, isSession) {
           if (entry.error) {
             console.log("ERROR: " + entry.error);
             nokafkaErrorCount++;
-            nokafkaerrorContext += (JSON.stringify(err) + "\r\n");
+            nokafkaerrorContext += (JSON.stringify(entry.error) + "\r\n");
             if (nokafkaErrorCount && (nokafkaErrorCount % kafkaErrorMaxCount == 0)) {
               console.log("no-Kafka Exception Send Mail");
               var cmd = 'echo "' + nokafkaerrorContext + '" | mail -s "no-Kafka Exception Count ' + nokafkaErrorCount + ' times" ' + failMailList;
