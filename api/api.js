@@ -150,6 +150,7 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
   'Node_Session_DandG_And', 'Node_Session_DandG_iOS', 'Node_Event_DandG_And', 'Node_Event_DandG_iOS',
   'Node_Session_AmwayCN_AEC_iOS', 'Node_Event_AmwayCN_AEC_iOS', 'Node_Session_YCT_iOS', 'Node_Event_YCT_iOS',
   'Node_Event_WCM_Web',
+  'Node_Event_WCM-Wechat-Mini_Web',
   'Node_Event_YCP_CN_And', 'Node_Event_YCP_CN_iOS', 'Node_Event_YMK_CN_And', 'Node_Event_YMK_CN_iOS',
   'Node_Session_YCP_CN_And', 'Node_Session_YCP_CN_iOS', 'Node_Session_YMK_CN_And', 'Node_Session_YMK_CN_iOS',
 ];
