@@ -1739,6 +1739,7 @@ function isB2BSession(appkey) {
 }
 
 function isB2BEvent(eventKey) {
+  var isB2B = false;
   [
   "BrandMode_",
   "ExclusiveMode_",
@@ -1749,10 +1750,12 @@ function isB2BEvent(eventKey) {
 //  "YCP_Session_Subscriber",
 //  "YMK_Session_Subscriber"
   ].forEach(function(v) {
-    if (eventKey.includes(v))
-      return true;
+    if (eventKey.indexOf(v) != -1) {
+      isB2B = true;
+      return;
+    }
   });
-  return false;
+  return isB2B;
 }
 
 function isEU(country) {
