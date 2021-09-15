@@ -1,4 +1,4 @@
-
+var http = require('http'),
   cluster = require('cluster'),
   os = require('os'),
   url = require('url'),
