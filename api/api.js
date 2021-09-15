@@ -569,7 +569,7 @@ function sendEUKafka(data, key, isSession) {
   var messages = JSON.stringify(data);
   if (cando) {
     EUproducer.send([
-      {topic, messages}
+      {topic: topic, messages: messages}
     ], B2BkafkaCB);
   }
 }
@@ -579,7 +579,7 @@ function sendCNKafka(data, key, isSession) {
   var messages = JSON.stringify(data);
   if (cando) {
     CNproducer.send([
-      {topic, messages}
+      {topic: topic, messages: messages}
     ], B2BkafkaCB);
   }
 }
@@ -589,7 +589,7 @@ function sendJPKafka(data, key, isSession) {
   var messages = JSON.stringify(data);
   if (cando) {
     producer.send([
-      {topic, messages}
+      {topic: topic, messages: messages}
     ], B2BkafkaCB);
   }
 }
