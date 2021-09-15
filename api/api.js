@@ -1740,10 +1740,10 @@ function isB2BEvent(eventKey) {
   "ExclusiveMode_",
   "MCSDK_",
   "WebCM_",
-  "YCF_",
-  "YCN_",
-  "YCP_Session_Subscriber",
-  "YMK_Session_Subscriber"
+//  "YCF_",
+//  "YCN_",
+//  "YCP_Session_Subscriber",
+//  "YMK_Session_Subscriber"
   ].forEach(function(v) {
     if (eventKey.includes(v))
       return true;
