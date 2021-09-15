@@ -1727,7 +1727,7 @@ function isB2BSession(appkey) {
     "461299f3d378fc762c56d003e98ae5f02fd52d60"
   ];
 
-  if (b2bAppKey.includes(appkey)) {
+  if (b2bAppKey.indexOf(appkey) != -1) {
     return true;
   }
   
@@ -1759,11 +1759,11 @@ function isB2BEvent(eventKey) {
 }
 
 function isEU(country) {
-  return [ "BE", "BG", "CZ", "DK", "DE", "EE", "IE", "EL", "ES", "FR", "HR", "IT", "CY", "LV", "LT", "LU", "HU", "MT", "NL", "AT", "PL", "PT", "RO", "SI", "SK", "FI", "SE", "GB" ].includes(country);
+  return ([ "BE", "BG", "CZ", "DK", "DE", "EE", "IE", "EL", "ES", "FR", "HR", "IT", "CY", "LV", "LT", "LU", "HU", "MT", "NL", "AT", "PL", "PT", "RO", "SI", "SK", "FI", "SE", "GB" ].indexOf(country) != -1);
 }
 
 function isCN(country) {
-  return ["CN"].includes(country);
+  return (["CN"].indexOf(country) != -1);
 }
 
 function mainfunc() {
