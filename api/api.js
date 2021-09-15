@@ -41,7 +41,8 @@ var Client = kafka.Client;
 
 //var zkList = '172.31.27.186:2181,172.31.27.187:2181,172.31.27.188:2181';  // bootstrap.servers
 //var zkList = '172.31.16.236:2181,172.31.16.237:2181,172.31.16.238:2181,172.31.16.239:2181';  // bootstrap.servers
-var zkList = '172.31.25.82:2181,172.31.30.167:2181,172.31.29.255:2181,172.31.26.160:2181';  // bootstrap.servers
+//var zkList = '172.31.25.82:2181,172.31.30.167:2181,172.31.29.255:2181,172.31.26.160:2181';  // bootstrap.servers
+var zkList = '172.31.7.135:3181';  // bootstrap.servers
 var timeToRetryConnection = 12 * 1000; // 12 seconds
 var reconnectInterval = null;
 var kafkaErrorCount = 0;
@@ -189,7 +190,8 @@ if (CNtest) {
 var nokafkaErrorCount = 0;
 var nokafkaerrorContext = "";
 var isNoKafka = true;
-var kafkaList = '172.31.25.82:9092,172.31.30.167:9092,172.31.29.255:9092,172.31.26.160:9092';  // bootstrap.servers
+//var kafkaList = '172.31.25.82:9092,172.31.30.167:9092,172.31.29.255:9092,172.31.26.160:9092';  // bootstrap.servers
+var kafkaList = '172.31.7.135:9092';  // bootstrap.servers
 
 var noKafka = require('no-kafka');
 var noKafkaProducer = new noKafka.Producer({
