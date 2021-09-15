@@ -595,6 +595,7 @@ function sendJPKafka(data, key, isSession) {
 }
 
 function sendKafka(data, key, isSession) {
+  return;
   var topicName = getNodeTopicName((isSession ? "Session" : "Event"), key);
   randomCnt = ((++randomCnt) % partitionNum);
   var deviceID = data.device_id;
@@ -679,6 +680,7 @@ function sendKafka(data, key, isSession) {
 }
 
 function sendOthersKafka(data, key, isSession) {
+  return;
   var topicName = "CheckSum";
   randomCntOthers = ((++randomCntOthers) % partitionNum);
   if (cando) {
@@ -723,6 +725,7 @@ function sendOthersKafka(data, key, isSession) {
 }
 
 function sendUMAHKafka(data, key, isSession, topicName) {
+  return;
   var topicName = topicName;
   randomCntOthers = ((++randomCntOthers) % partitionNum);
   if (cando) {
@@ -780,6 +783,7 @@ function getOEMTopicName(header, appkey) {
 }
 
 function sendOEMKafka(data, key, isSession) {
+  return;
   var topicName = getOEMTopicName((isSession ? "OEM_session" : "OEM_event"), key);
   if (topicName == "OEM_others") {
     return;
