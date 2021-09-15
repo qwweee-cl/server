@@ -1,4 +1,4 @@
-var http = require('http'),
+
   cluster = require('cluster'),
   os = require('os'),
   url = require('url'),
@@ -550,6 +550,8 @@ function kafkaCB(err, result) {
           console.log(error);
       });
     }
+  } else {
+    console.log("[Origin] send callback" + JSON.stringify(result));
   }
 }
 
