@@ -557,13 +557,33 @@ function kafkaCB(err, result) {
   }
 }
 
-function B2BkafkaCB(err, result) {
+function B2BJPkafkaCB(err, result) {
   if (err) {
     errorContext += (JSON.stringify(err) + "\r\n");
     console.log("ERROR: " + err);
     console.log("result: " + JSON.stringify(result));
   } else {
-    console.log("[B2B] send callback" + JSON.stringify(result));
+    console.log("[JP][B2B] send callback" + JSON.stringify(result));
+  }
+}
+
+function B2BEUkafkaCB(err, result) {
+  if (err) {
+    errorContext += (JSON.stringify(err) + "\r\n");
+    console.log("ERROR: " + err);
+    console.log("result: " + JSON.stringify(result));
+  } else {
+    console.log("[EU][B2B] send callback" + JSON.stringify(result));
+  }
+}
+
+function B2BCNkafkaCB(err, result) {
+  if (err) {
+    errorContext += (JSON.stringify(err) + "\r\n");
+    console.log("ERROR: " + err);
+    console.log("result: " + JSON.stringify(result));
+  } else {
+    console.log("[CN][B2B] send callback" + JSON.stringify(result));
   }
 }
 
@@ -574,7 +594,7 @@ function sendEUKafka(data, key, isSession) {
   if (cando) {
     EUproducer.send([
       {topic: topic, messages: messages}
-    ], B2BkafkaCB);
+    ], B2BEUkafkaCB);
   }
 }
 
@@ -584,7 +604,7 @@ function sendCNKafka(data, key, isSession) {
   if (cando) {
     CNproducer.send([
       {topic: topic, messages: messages}
-    ], B2BkafkaCB);
+    ], B2BCNkafkaCB);
   }
 }
 
@@ -594,7 +614,7 @@ function sendJPKafka(data, key, isSession) {
   if (cando) {
     producer.send([
       {topic: topic, messages: messages}
-    ], B2BkafkaCB);
+    ], B2BJPkafkaCB);
   }
 }
 
