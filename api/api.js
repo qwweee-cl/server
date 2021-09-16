@@ -135,10 +135,10 @@ if (EUtest) {
 
 
 
-var CNtest = false;
+var CNtest = true;
 var CNclient = null;
 var CNproducer = null;
-var EURefreshMetaInterval = null;
+var CNRefreshMetaInterval = null;
 
 function CNproducerReady() {
   var date = new Date();
@@ -1095,6 +1095,8 @@ function insertRawColl(coll, eventp, params, isSession) {
             sendUMAHKafka(eventp, eventp.app_key, isSession, params.topicName);
           }
         }
+        console.log("EU: " + EUtest + ', ' + eventp.country + ", " + isEU(eventp.country));
+        console.log("CN: " + CNtest + ', ' + eventp.country + ", " + isCN(eventp.country));
         if (EUtest && eventp.country && isEU(eventp.country)) {
           if (params.isB2B) {
             sendEUKafka(eventp, eventp.app_key, isSession);
