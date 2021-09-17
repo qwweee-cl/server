@@ -42,6 +42,7 @@ var Client = kafka.Client;
 //var zkList = '172.31.27.186:2181,172.31.27.187:2181,172.31.27.188:2181';  // bootstrap.servers
 //var zkList = '172.31.16.236:2181,172.31.16.237:2181,172.31.16.238:2181,172.31.16.239:2181';  // bootstrap.servers
 var zkList = '172.31.25.82:2181,172.31.30.167:2181,172.31.29.255:2181,172.31.26.160:2181';  // bootstrap.servers
+
 var timeToRetryConnection = 12 * 1000; // 12 seconds
 var reconnectInterval = null;
 var kafkaErrorCount = 0;
@@ -53,9 +54,15 @@ var failMailListAdmin = "gary_huang@perfectcorp.com";
 
 var client = new Client(zkList);
 
+var producerConf = {
+  requireAcks: 1,
+  partitionerType: 2,
+  ackTimeoutMs: 100
+};
 //var p = argv.p || 0; // default is 0
 //var a = argv.a || 0; // no compress
-var producer = new Producer(client, {requireAcks: 1});
+var producer = new Producer(client, producerConf);
+
 var partitionNum = 6;
 var randomCnt = 0;
 var randomCntOEM = 0;
@@ -67,10 +74,124 @@ var cando = false;
 //var isProducerReady = false;
 
 
+var CNproducerConf = {
+  requireAcks: 1,
+  partitionerType: 2,
+  ackTimeoutMs: 30000
+};
+
+var EUtest = true;
+var EUclient = null;
+var EUproducer = null;
+var EURefreshMetaInterval = null;
+
+var B2BTopicList =  ['B2B_Event', 'B2B_Session'];
+
+
+function EUproducerReady() {
+  var date = new Date();
+  console.log("EU ready: " + date.toString());
+  EUproducer.createTopics(B2BTopicList, false, function (err, data) {
+    console.log("EU createTopic: " + data);
+    if (err) {
+      console.log("EU ERROR: " + err);
+    }
+  });
+  if (EURefreshMetaInterval) {
+    clearInterval(EURefreshMetaInterval);
+  }
+  EURefreshMetaInterval = setInterval(function() {
+    EUclient.refreshMetadata(B2BTopicList, function(err) {err && console.log('[EU][' + new Date().toString() + '][Error] kafka refreshMetadata error: ' + err);});
+  }, 30000);
+};
+
+function EUproducerError(err) {
+  var date = new Date();
+  console.log("EU perror: " + date.toString());
+//  EUproducer.close();
+//  EUclient.close();
+  console.log('EU producer error', err);
+};
+
+function EUclientError(err) {
+  var date = new Date();
+  console.log("EU cerror: " + date.toString());
+  console.log('EU client error', err);
+  EUclient.connect();
+};
+
+
+if (EUtest) {
+  var EUzkList = '10.255.161.77:2181,10.255.161.61:2181,10.255.161.132:2181';  // bootstrap.servers
+  EUclient = new Client(EUzkList);
+  EUproducer = new Producer(EUclient, producerConf);
+
+
+  EUproducer.on('ready', EUproducerReady);
+
+  EUproducer.on('error', EUproducerError);
+
+  EUclient.on('error', EUclientError);
+}
+
+
+
+var CNtest = true;
+var CNclient = null;
+var CNproducer = null;
+var CNRefreshMetaInterval = null;
+
+function CNproducerReady() {
+  var date = new Date();
+  console.log("CN ready: " + date.toString());
+  CNproducer.createTopics(B2BTopicList, false, function (err, data) {
+    console.log("CN createTopic: " + data);
+    if (err) {
+      console.log("CN ERROR: " + err);
+    }
+  });
+  if (CNRefreshMetaInterval) {
+    clearInterval(CNRefreshMetaInterval);
+  }
+  CNRefreshMetaInterval = setInterval(function() {
+    CNclient.refreshMetadata(B2BTopicList, function(err) {err && console.log('[CN][' + new Date().toString() + '][Error] kafka refreshMetadata error: ' + err);});
+  }, 30000);
+};
+
+function CNproducerError(err) {
+  var date = new Date();
+  console.log("CN perror: " + date.toString());
+//  CNproducer.close();
+//  CNclient.close();
+  console.log('CN producer error', err);
+};
+
+function CNclientError(err) {
+  var date = new Date();
+  console.log("EU cerror: " + date.toString());
+  console.log('EU client error', err);
+  CNclient.connect();
+};
+
+
+
+if (CNtest) {
+  var CNzkList = '47.95.212.188:2181,47.93.217.214:2181,47.95.219.95:2181';  // bootstrap.servers
+  CNclient = new Client(CNzkList);
+  CNproducer = new Producer(CNclient, CNproducerConf);
+
+  CNproducer.on('ready', CNproducerReady);
+
+  CNproducer.on('error', CNproducerError);
+
+  CNclient.on('error', CNclientError);
+}
+
 var nokafkaErrorCount = 0;
 var nokafkaerrorContext = "";
 var isNoKafka = true;
 var kafkaList = '172.31.25.82:9092,172.31.30.167:9092,172.31.29.255:9092,172.31.26.160:9092';  // bootstrap.servers
+
 
 var noKafka = require('no-kafka');
 var noKafkaProducer = new noKafka.Producer({
@@ -153,7 +274,10 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
   'Node_Event_WCM-Wechat-Mini_Web',
   'Node_Event_YCP_CN_And', 'Node_Event_YCP_CN_iOS', 'Node_Event_YMK_CN_And', 'Node_Event_YMK_CN_iOS',
   'Node_Session_YCP_CN_And', 'Node_Session_YCP_CN_iOS', 'Node_Session_YMK_CN_And', 'Node_Session_YMK_CN_iOS',
+  'B2B_Event', 'B2B_Session',
 ];
+
+var JPRefreshMetaInterval = null;
 
 function producerReady() {
   var date = new Date();
@@ -186,6 +310,14 @@ function producerReady() {
   if (reconnectInterval != null) {
     clearTimeout(reconnectInterval);
     reconnectInterval = null;
+  }
+  {
+    if (JPRefreshMetaInterval) {
+      clearInterval(JPRefreshMetaInterval);
+    }
+    JPRefreshMetaInterval = setInterval(function() {
+      client.refreshMetadata(topicList, function(err) {err && console.log('[Origin][' + new Date().toString() + '][Error] kafka refreshMetadata error: ' + err);});
+    }, 30000);
   }
 };
 
@@ -431,6 +563,69 @@ function kafkaCB(err, result) {
           console.log(error);
       });
     }
+  } else {
+    console.log("[Origin] send callback" + JSON.stringify(result));
+  }
+}
+
+function B2BJPkafkaCB(err, result) {
+  if (err) {
+    errorContext += (JSON.stringify(err) + "\r\n");
+    console.log("ERROR: " + err);
+    console.log("result: " + JSON.stringify(result));
+  } else {
+    console.log("[JP][B2B] send callback" + JSON.stringify(result));
+  }
+}
+
+function B2BEUkafkaCB(err, result) {
+  if (err) {
+    errorContext += (JSON.stringify(err) + "\r\n");
+    console.log("ERROR: " + err);
+    console.log("result: " + JSON.stringify(result));
+  } else {
+    console.log("[EU][B2B] send callback" + JSON.stringify(result));
+  }
+}
+
+function B2BCNkafkaCB(err, result) {
+  if (err) {
+    errorContext += (JSON.stringify(err) + "\r\n");
+    console.log("ERROR: " + err);
+    console.log("result: " + JSON.stringify(result));
+  } else {
+    console.log("[CN][B2B] send callback" + JSON.stringify(result));
+  }
+}
+
+
+function sendEUKafka(data, key, isSession) {
+  var topic = (isSession ? "B2B_Session" : "B2B_Event");
+  var messages = JSON.stringify(data);
+  if (cando) {
+    EUproducer.send([
+      {topic: topic, messages: messages}
+    ], B2BEUkafkaCB);
+  }
+}
+
+function sendCNKafka(data, key, isSession) {
+  var topic = (isSession ? "B2B_Session" : "B2B_Event");
+  var messages = JSON.stringify(data);
+  if (cando) {
+    CNproducer.send([
+      {topic: topic, messages: messages}
+    ], B2BCNkafkaCB);
+  }
+}
+
+function sendJPKafka(data, key, isSession) {
+  var topic = (isSession ? "B2B_Session" : "B2B_Event");
+  var messages = JSON.stringify(data);
+  if (cando) {
+    producer.send([
+      {topic: topic, messages: messages}
+    ], B2BJPkafkaCB);
   }
 }
 
@@ -905,6 +1100,21 @@ function insertRawColl(coll, eventp, params, isSession) {
         {
           if (params.errorHeader) {
             sendUMAHKafka(eventp, eventp.app_key, isSession, params.topicName);
+          }
+        }
+        //console.log("EU: " + EUtest + ', ' + eventp.country + ", " + isEU(eventp.country));
+        //console.log("CN: " + CNtest + ', ' + eventp.country + ", " + isCN(eventp.country));
+        if (EUtest && eventp.country && isEU(eventp.country)) {
+          if (params.isB2B) {
+            sendEUKafka(eventp, eventp.app_key, isSession);
+          }
+        } else if (CNtest && eventp.country && isCN(eventp.country)) {
+          if (params.isB2B) {
+            sendCNKafka(eventp, eventp.app_key, isSession);
+          }
+        } else {
+          if (params.isB2B) {
+            sendJPKafka(eventp, eventp.app_key, isSession);
           }
         }
       }
@@ -1527,6 +1737,64 @@ function updateABTestingTable() {
   */
 }
 
+function isB2BSession(appkey) {
+  var b2bAppKey = [
+    "fb0af88d7f5fb1e26e9da63c4339fe94a097eab1",
+    "93f0d4501694758e34a9fbf9f97e17d0a999ab8a",
+    "ffa4f1f6c8f0fe9bc6784e5d0a1093ef76e8aa69",
+    "9f093278d98ad4159a6df2f29d021e6e34649747",
+    "43259ebca3c2c882f2ee9e39a679b6e6fd00f552",
+    "fd129a84a9ae650fb18837e6cba7b69c6ec358da",
+    "bf6bad03e0833e6e432a74136a01809bb3b980d4",
+    "ab8ada3e1f156663453cee32debe3292fba834ae",
+    "12c6646571c9cf9f7ecb00b4af3ca3ecc49635eb",
+    "740f5f030fe2b94eeadef71f77606868fc34a3ff",
+    "1a89a46c0465a15ce57f3709ca01c2c9fb36feb4",
+    "b9bf6664c33ca7d55ba347f652abe1bc9ef39378",
+    "9e5d79f015916093f83e365db4860d756cdc7625",
+    "d0713956948af94d4c53e348c2cb6d816a3c2925",
+    "461299f3d378fc762c56d003e98ae5f02fd52d60"
+  ];
+
+  if (b2bAppKey.indexOf(appkey) != -1) {
+    return true;
+  }
+  
+  if (appMap[appkey]) {
+    return !!appMap[appkey].sdk;
+  }
+
+  return false;
+}
+
+function isB2BEvent(eventKey) {
+  var isB2B = false;
+  [
+  "BrandMode_",
+  "ExclusiveMode_",
+  "MCSDK_",
+  "WebCM_",
+//  "YCF_",
+//  "YCN_",
+//  "YCP_Session_Subscriber",
+//  "YMK_Session_Subscriber"
+  ].forEach(function(v) {
+    if (eventKey.indexOf(v) != -1) {
+      isB2B = true;
+      return;
+    }
+  });
+  return isB2B;
+}
+
+function isEU(country) {
+  return ([ "BE", "BG", "CZ", "DK", "DE", "EE", "IE", "EL", "ES", "FR", "HR", "IT", "CY", "LV", "LT", "LU", "HU", "MT", "NL", "AT", "PL", "PT", "RO", "SI", "SK", "FI", "SE", "GB" ].indexOf(country) != -1);
+}
+
+function isCN(country) {
+  return (["CN"].indexOf(country) != -1);
+}
+
 function mainfunc() {
 
   if (cluster.isMaster) {
@@ -2010,6 +2278,13 @@ function mainfunc() {
                     params.events[i].segmentation['hostname'] = hostname;
                 }
             }
+
+            for (var i = 0 ; i < params.events.length ; i ++) {
+              if (isB2BEvent(params.events[i].key)) {
+                params.isB2B = true;
+                break;
+              }
+            }
           } catch (SyntaxError) {
             var now = new Date();
             console.log('Parse events JSON failed' + '==========' + now + '==========');
@@ -2017,6 +2292,10 @@ function mainfunc() {
             common.returnMessage(params, 200, 'Success');
             console.log('Send 200 Success');
             return false;
+          }
+        } else {
+          if (isB2BSession(params.qstring.app_key)) {
+            params.isB2B = true;
           }
         }
 
