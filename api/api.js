@@ -148,6 +148,8 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
   'Node_Session_YCP_CN_And', 'Node_Session_YCP_CN_iOS', 'Node_Session_YMK_CN_And', 'Node_Session_YMK_CN_iOS',
 ];
 
+var JPRefreshMetaInterval = null;
+
 function producerReady() {
   var date = new Date();
   console.log("ready: " + date.toString());
@@ -179,6 +181,14 @@ function producerReady() {
   if (reconnectInterval != null) {
     clearTimeout(reconnectInterval);
     reconnectInterval = null;
+  }
+  {
+    if (JPRefreshMetaInterval) {
+      clearInterval(JPRefreshMetaInterval);
+    }
+    JPRefreshMetaInterval = setInterval(function() {
+      client.refreshMetadata(topicList, function(err) {err && console.log('[Origin][' + new Date().toString() + '][Error] kafka refreshMetadata error: ' + err);});
+    }, 30000);
   }
 };
 
@@ -424,6 +434,8 @@ function kafkaCB(err, result) {
           console.log(error);
       });
     }
+  } else {
+    console.log("[Origin] send callback" + JSON.stringify(result));
   }
 }
 
