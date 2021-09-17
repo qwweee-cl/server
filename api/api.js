@@ -417,6 +417,7 @@ function getNodeTopicName(header, appkey) {
 }
 
 function kafkaCB(err, result) {
+  console.log("kafka callback: " + err + ' , ' + result);
   if (err) {
     kafkaErrorCount++;
     errorContext += (JSON.stringify(err) + "\r\n");
@@ -477,6 +478,8 @@ function sendKafka(data, key, isSession) {
                   console.log(error);
               });
             }
+          } else {
+            console.log("[Origin] send callback" + JSON.stringify(entry));
           }
         });
         //console.log(result);
@@ -559,6 +562,8 @@ function sendOthersKafka(data, key, isSession) {
                   console.log(error);
               });
             }
+          } else {
+            console.log("[Others Origin] send callback" + JSON.stringify(entry));
           }
         });
         //console.log(result);
@@ -603,6 +608,8 @@ function sendUMAHKafka(data, key, isSession, topicName) {
                   console.log(error);
               });
             }
+          } else {
+            console.log("[UMAH Origin] send callback" + JSON.stringify(entry));
           }
         });
         //console.log(result);
@@ -663,6 +670,8 @@ function sendOEMKafka(data, key, isSession) {
                   console.log(error);
               });
             }
+          } else {
+            console.log("[OEM Origin] send callback" + JSON.stringify(entry));
           }
         });
         //console.log(result);
@@ -893,7 +902,7 @@ function insertRawColl(coll, eventp, params, isSession) {
     common.returnMessage(params, 200, 'Success');
     return;
   }
-
+  console.log("eeeeeee:" + params.verifiy);
   if (!(eventp.app_key == appKey.key["Perfect_And"] || eventp.app_key == appKey.key["Perfect_iOS"])) {
     //sendKafkaRest(eventp, eventp.app_key, isSession);
     // if (0)
