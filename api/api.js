@@ -39,9 +39,7 @@ var kafka = require('kafka-node');
 var Producer = kafka.Producer;//kafka.HighLevelProducer;//kafka.Producer;
 var Client = kafka.Client;
 
-//var zkList = '172.31.27.186:2181,172.31.27.187:2181,172.31.27.188:2181';  // bootstrap.servers
-//var zkList = '172.31.16.236:2181,172.31.16.237:2181,172.31.16.238:2181,172.31.16.239:2181';  // bootstrap.servers
-var zkList = '172.31.25.82:2181,172.31.30.167:2181,172.31.29.255:2181,172.31.26.160:2181';  // bootstrap.servers
+var zkList = '10.255.161.77:2181,10.255.161.61:2181,10.255.161.132:2181';  // bootstrap.servers
 var timeToRetryConnection = 12 * 1000; // 12 seconds
 var reconnectInterval = null;
 var kafkaErrorCount = 0;
@@ -70,7 +68,7 @@ var cando = false;
 var nokafkaErrorCount = 0;
 var nokafkaerrorContext = "";
 var isNoKafka = true;
-var kafkaList = '172.31.25.82:9092,172.31.30.167:9092,172.31.29.255:9092,172.31.26.160:9092';  // bootstrap.servers
+var kafkaList = '10.255.161.77:9092,10.255.161.61:9092,10.255.161.132:9092';  // bootstrap.servers
 
 var noKafka = require('no-kafka');
 var noKafkaProducer = new noKafka.Producer({
@@ -88,11 +86,6 @@ var bf = require('bloomfilter'),
   checkBloomFilter = true,
   isUpdating = false;
 
-const cassandra = require('cassandra-driver');
-const cassandraOption = {
-  contactPoints: ['172.31.27.165', '172.31.27.166', '172.31.27.167', '172.31.27.168'],
-  keyspace: 'countly_activities'
-};
 const query = 'SELECT device_id, is_for_web_filter FROM bc_trend_ab_user;';
 var ABTestTopicName = 'ABTesting';
 
@@ -101,7 +94,7 @@ var host = 'cogons-db-new.czkpdhvixbu3.ap-northeast-1.rds.amazonaws.com';
 var user = 'abtest';
 var password = 'abtest';
 var database = 'ABTest';
-var enableABTesting = true;
+var enableABTesting = false;
 
 var chunkSize = 100000;
 var countQuery = "SELECT count(*) as total FROM ABTest.bc_trend_ab_user WHERE is_for_web_filter = true;";
