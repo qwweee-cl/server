@@ -1104,11 +1104,13 @@ function insertRawColl(coll, eventp, params, isSession) {
         }
         //console.log("EU: " + EUtest + ', ' + eventp.country + ", " + isEU(eventp.country));
         //console.log("CN: " + CNtest + ', ' + eventp.country + ", " + isCN(eventp.country));
-        if (EUtest && eventp.country && isEU(eventp.country)) {
+        /*if (EUtest && eventp.country && isEU(eventp.country)) {
           if (params.isB2B) {
             sendEUKafka(eventp, eventp.app_key, isSession);
           }
         } else if (CNtest && eventp.country && isCN(eventp.country)) {
+        */
+        if (CNtest && eventp.country && isCN(eventp.country)) {
           if (params.isB2B) {
             sendCNKafka(eventp, eventp.app_key, isSession);
           }
