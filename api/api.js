@@ -598,6 +598,26 @@ function B2BCNkafkaCB(err, result) {
   }
 }
 
+function B2CJPkafkaCB(err, result) {
+  if (err) {
+    errorContext += (JSON.stringify(err) + "\r\n");
+    console.log("ERROR: " + err);
+    console.log("result: " + JSON.stringify(result));
+  } else {
+    console.log("[JP][B2C] send callback" + JSON.stringify(result));
+  }
+}
+
+function B2CCNkafkaCB(err, result) {
+  if (err) {
+    errorContext += (JSON.stringify(err) + "\r\n");
+    console.log("ERROR: " + err);
+    console.log("result: " + JSON.stringify(result));
+  } else {
+    console.log("[CN][B2C] send callback" + JSON.stringify(result));
+  }
+}
+
 
 function sendEUKafka(data, key, isSession) {
   var topic = (isSession ? "B2B_Session" : "B2B_Event");
@@ -626,6 +646,26 @@ function sendJPKafka(data, key, isSession) {
     producer.send([
       {topic: topic, messages: messages}
     ], B2BJPkafkaCB);
+  }
+}
+
+function sendB2CCNKafka(data, key, isSession) {
+  var topic = (isSession ? "B2C_Session" : "B2C_Event");
+  var messages = JSON.stringify(data);
+  if (cando) {
+    CNproducer.send([
+      {topic: topic, messages: messages}
+    ], B2CCNkafkaCB);
+  }
+}
+
+function sendB2CJPKafka(data, key, isSession) {
+  var topic = (isSession ? "B2C_Session" : "B2C_Event");
+  var messages = JSON.stringify(data);
+  if (cando) {
+    producer.send([
+      {topic: topic, messages: messages}
+    ], B2CJPkafkaCB);
   }
 }
 
@@ -1104,19 +1144,24 @@ function insertRawColl(coll, eventp, params, isSession) {
         }
         //console.log("EU: " + EUtest + ', ' + eventp.country + ", " + isEU(eventp.country));
         //console.log("CN: " + CNtest + ', ' + eventp.country + ", " + isCN(eventp.country));
-        /*if (EUtest && eventp.country && isEU(eventp.country)) {
+        if (EUtest && eventp.country && isEU(eventp.country)) {
           if (params.isB2B) {
             sendEUKafka(eventp, eventp.app_key, isSession);
+          } else {
+            sendB2CJPKafka(eventp, eventp.app_key, isSession);
           }
         } else if (CNtest && eventp.country && isCN(eventp.country)) {
-        */
-        if (CNtest && eventp.country && isCN(eventp.country)) {
+        //if (CNtest && eventp.country && isCN(eventp.country)) {
           if (params.isB2B) {
             sendCNKafka(eventp, eventp.app_key, isSession);
+          } else {
+            sendB2CCNKafka(eventp, eventp.app_key, isSession);
           }
         } else {
           if (params.isB2B) {
             sendJPKafka(eventp, eventp.app_key, isSession);
+          } else {
+            sendB2CJPKafka(eventp, eventp.app_key, isSession);
           }
         }
       }
