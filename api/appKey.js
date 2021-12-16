@@ -124,6 +124,8 @@ var appKey = {};
 		"WCM_Wechat_Mini_Web"		: "2af60c69658af885ad11bf7b4c9c4c1e3b029dc5",
 		"DandG_And"			: "ffa4f1f6c8f0fe9bc6784e5d0a1093ef76e8aa69",
 		"DandG_iOS"			: "9e5d79f015916093f83e365db4860d756cdc7625",
+		"VIPShop_And"			: "e5a12e43db397573aaa49f1fa617e9400d2a20ec",
+		"VIPShop_iOS"			: "354c37e25457173befc3400729965daa3aa9f106",
 	};
 }(appKey));
 
