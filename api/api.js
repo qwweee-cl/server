@@ -146,6 +146,8 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
   'Node_Event_WCM-Wechat-Mini_Web',
   'Node_Event_YCP_CN_And', 'Node_Event_YCP_CN_iOS', 'Node_Event_YMK_CN_And', 'Node_Event_YMK_CN_iOS',
   'Node_Session_YCP_CN_And', 'Node_Session_YCP_CN_iOS', 'Node_Session_YMK_CN_And', 'Node_Session_YMK_CN_iOS',
+  'Node_Session_VIPShop_iOS', 'Node_Event_VIPShop_iOS',
+  'Node_Session_VIPShop_And', 'Node_Event_VIPShop_And',
 ];
 
 var JPRefreshMetaInterval = null;
@@ -368,7 +370,9 @@ var appMap = {
   "94feb6fef74ff08ac266ad8fa9535e08dac23737": {appName: "AmorePacificHQ_KR_SDK", appOS: "And", sdk: true}, // AmorePacificHQ_KR_SDK_And
   "4d9619fe88545c3bf235e31fb467d637918e1cb3": {appName: "AmorePacificHQ_KR_SDK", appOS: "iOS", sdk: true}, // AmorePacificHQ_KR_SDK_iOS
   "740f5f030fe2b94eeadef71f77606868fc34a3ff": {appName: "WCM", appOS: "Web"}, // WCM_Web
-  "2af60c69658af885ad11bf7b4c9c4c1e3b029dc5": {appName: "WCM-Wechat-Mini", appOS: "Web"} // WCM_Web
+  "2af60c69658af885ad11bf7b4c9c4c1e3b029dc5": {appName: "WCM-Wechat-Mini", appOS: "Web"}, // WCM_Web
+  "e5a12e43db397573aaa49f1fa617e9400d2a20ec": {appName: "VIPShop", appOS: "And"}, // VIPShop_Android
+  "354c37e25457173befc3400729965daa3aa9f106": {appName: "VIPShop", appOS: "iOS"}  // VIPShop_iOS
 };
 
 /// import auto generate android appkey
