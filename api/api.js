@@ -297,16 +297,46 @@ if (cluster.isMaster) {
     //console.log(oemMaps);
     console.log("@@@@@@@@@@");
 
-    http.Server(function (req, res) {
+    http.Server(clientHttp).listen(common.config.api.port, common.config.api.host || '');
 
+    function clientHttp (req, res) {
+        if (req.method == 'POST') {
+            var body = '';
+            var qs = require('querystring');
+            var post = '';
+            req.on('data', function (data) {
+                body += data;
+                // Too much POST data, kill the connection!
+                // 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB
+                if (body.length > 1e6) {
+                    console.log("too much post data!!");
+                    req.connection.destroy();
+                }
+            });
+            req.on('end', function () {
+                postData = qs.parse(body);
+                console.log("@@@@@@ post data: ", postData);
+                requestHandler(req, res, postData)
+            });
+        } else {
+            requestHandler(req, res);
+        }
+    }
+
+    function requestHandler (req, res, postData) {
         var urlParts = url.parse(req.url, true),
             queryString = urlParts.query,
             paths = urlParts.pathname.split("/"),
             apiPath = "",
             params = {
-                'qstring':queryString,
-                'res':res
+                'qstring': queryString,
+                'res': res
             };
+
+        if (postData) {
+            queryString = postData;
+            params.qstring = postData;
+        }
 
         if (queryString.app_id && queryString.app_id.length != 24) {
             console.log('Invalid parameter "app_id"');
@@ -771,5 +801,5 @@ if (cluster.isMaster) {
             }
         }
 
-    }).listen(common.config.api.port, common.config.api.host || '');
+    }
 }
