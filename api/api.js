@@ -295,6 +295,7 @@ if (cluster.isMaster) {
     var oems = process.env['OEMS'];
     oemMaps = JSON.parse(oems);
     //console.log(oemMaps);
+    console.log("@@@@@@@@@@");
 
     http.Server(function (req, res) {
 
@@ -543,6 +544,12 @@ if (cluster.isMaster) {
                     console.log("Send 200 Success");
                     return false;
                 }
+                if (params.qstring.app_key == '740f5f030fe2b94eeadef71f77606868fc34a3ff') {
+                    console.log("@@@@@: ", req.headers);
+                }
+                if (params.qstring.app_key == '2af60c69658af885ad11bf7b4c9c4c1e3b029dc5') {
+                    console.log("@@@@@ wechat: ", req.headers);
+                }
                 // Set app_user_id that is unique for each user of an application.
                 params.app_user_id = common.crypto.createHash('sha1').update(params.app_key + params.qstring.device_id + "").digest('hex');
 
@@ -585,7 +592,26 @@ if (cluster.isMaster) {
 
                 if (params.qstring.events) {
                     try {
+//                        console.log("####:", params.qstring.events);
                         params.events = JSON.parse(params.qstring.events);
+                        if (params.qstring.app_key == '740f5f030fe2b94eeadef71f77606868fc34a3ff') {
+                            var hostname = req.headers.referer || req.headers.origin || req.headers['x-real-ip'] || req.headers.host || '';
+                            console.log("@@@@@: ", hostname);
+                            console.log("@@@@@: ", params.events);
+                            for (var i = 0 ; i < params.events.length ; i ++) {
+                              params.events[i].segmentation['hostname'] = hostname;
+                              console.log("!!!!!: ", params.events[i].segmentation);
+                            }
+                        }
+                        if (params.qstring.app_key == '2af60c69658af885ad11bf7b4c9c4c1e3b029dc5') {
+                            var hostname = req.headers.referer || req.headers.origin || req.headers['x-real-ip'] || req.headers.host || '';
+                            console.log("@@@@@ wechat: ", hostname);
+                            console.log("@@@@@ wechat: ", params.events);
+                            for (var i = 0 ; i < params.events.length ; i ++) {
+                              params.events[i].segmentation['hostname'] = hostname;
+                              console.log("!!!!! wechat: ", params.events[i].segmentation);
+                            }
+                        }
                     } catch (SyntaxError) {
                         var now = new Date();
                         console.log('Parse events JSON failed'+'=========='+now+'==========');
