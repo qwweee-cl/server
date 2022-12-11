@@ -329,7 +329,7 @@ if (cluster.isMaster) {
         }
     }
 
-    function requestHandler (req, res, postData = null) {
+    function requestHandler (req, res, postData) {
         var urlParts = url.parse(req.url, true),
             queryString = urlParts.query,
             paths = urlParts.pathname.split("/"),
