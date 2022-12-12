@@ -303,7 +303,7 @@ if (cluster.isMaster) {
         if (req.method == 'POST') {
             var body = '';
             var qs = require('querystring');
-            var post = '';
+            var postData = '';
             req.on('data', function (data) {
                 body += data;
                 // Too much POST data, kill the connection!
