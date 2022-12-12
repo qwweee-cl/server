@@ -1636,7 +1636,36 @@ function mainfunc() {
   }
 
   function clientHttp(req, res) {
+    if (req.method == 'POST') {
+      var body = '';
+      var qs = require('querystring');
+      var postData = '';
+      req.on('data', function (data) {
+        body += data;
+        // Too much POST data, kill the connection!
+        // 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB
+        if (body.length > 1e6) {
+          console.log("too much post data!!");
+          req.connection.destroy();
+        }
+      });
+      req.on('end', function () {
+        postData = qs.parse(body);
+        if (postData.metrics) {
+          postData.metrics = decodeURIComponent(postData.metrics);
+        }
+        if (postData.events) {
+          postData.events = decodeURIComponent(postData.events);
+        }
+        console.log("@@@@@@ post data: ", postData);
+        onRequestHandler(req, res, postData)
+      });
+    } else {
+      onRequestHandler(req, res);
+    }
+  }
 
+  function onRequestHandler(req, res, postData) {
     var urlParts = url.parse(req.url, true),
       queryString = urlParts.query,
       paths = urlParts.pathname.split("/"),
@@ -1645,6 +1674,11 @@ function mainfunc() {
         'qstring': queryString,
         'res': res
       };
+
+    if (postData) {
+      queryString = postData;
+      params.qstring = postData;
+    }
 
     if (queryString.app_id && queryString.app_id.length != 24) {
       console.log('Invalid parameter "app_id"');
