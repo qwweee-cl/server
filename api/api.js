@@ -315,6 +315,13 @@ if (cluster.isMaster) {
             });
             req.on('end', function () {
                 postData = qs.parse(body);
+                if (postData.metrics) {
+                    postData.metrics = decodeURIComponent(postData.metrics);
+                }
+                if (postData.events) {
+                    postData.events = decodeURIComponent(postData.events);
+                }
+
                 console.log("@@@@@@ post data: ", postData);
                 requestHandler(req, res, postData)
             });
