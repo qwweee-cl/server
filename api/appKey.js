@@ -126,6 +126,8 @@ var appKey = {};
 		"DandG_iOS"			: "9e5d79f015916093f83e365db4860d756cdc7625",
 		"VIPShop_And"			: "e5a12e43db397573aaa49f1fa617e9400d2a20ec",
 		"VIPShop_iOS"			: "354c37e25457173befc3400729965daa3aa9f106",
+		"YCE_And"			: "ba5843705c96820837eee0859ef765a2b2afa442",
+		"YCE_iOS"			: "c8b97a510070958b199e1a638fd48d924287e3bd",
 	};
 }(appKey));
 
