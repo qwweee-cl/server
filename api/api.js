@@ -150,6 +150,7 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
   'Node_Session_VIPShop_And', 'Node_Event_VIPShop_And',
   'Node_Session_YCE_And', 'Node_Event_YCE_And',
   'Node_Session_YCE_iOS', 'Node_Event_YCE_iOS',
+  'Node_Session_SKP_iOS', 'Node_Event_SKP_iOS',
 ];
 
 var JPRefreshMetaInterval = null;
@@ -376,7 +377,8 @@ var appMap = {
   "e5a12e43db397573aaa49f1fa617e9400d2a20ec": {appName: "VIPShop", appOS: "And"}, // VIPShop_Android
   "354c37e25457173befc3400729965daa3aa9f106": {appName: "VIPShop", appOS: "iOS"},  // VIPShop_iOS
   "ba5843705c96820837eee0859ef765a2b2afa442": {appName: "YCE", appOS: "And"}, // YCE_Android
-  "c8b97a510070958b199e1a638fd48d924287e3bd": {appName: "YCE", appOS: "iOS"}  // YCE_iOS
+  "c8b97a510070958b199e1a638fd48d924287e3bd": {appName: "YCE", appOS: "iOS"},  // YCE_iOS
+  "c42e8393cf422b511fadbaeea539afd3e1f96b77": {appName: "SKP", appOS: "iOS"}  // Skincare_Pro_iOS
 };
 
 /// import auto generate android appkey
