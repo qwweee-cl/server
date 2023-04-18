@@ -29,6 +29,8 @@ var http = require('http'),
   appKey = require('./appKey.js'),
   androidAutoAppkey = require('./appkey_config/countly_auto_android_json_code.json'),
   iOSAutoAppkey = require('./appkey_config/countly_auto_ios_json_code.json');
+  gcpandroidAutoAppkey = require('./appkey_config/countly_gcp_auto_android_json_code.json');
+  gcpiOSAutoAppkey = require('./appkey_config/countly_gcp_auto_ios_json_code.json');
 
 http.globalAgent.maxSockets = common.config.api.max_sockets || 1024;
 
@@ -394,6 +396,21 @@ for (var index in iOSAutoAppkey) {
   var item = iOSAutoAppkey[index];
   appMap[item.appKey] = {appName: item.appName, appOS: item.appOS, sdk: item.sdk};
 }
+
+/// import gcp auto generate android appkey
+
+for (var index in gcpandroidAutoAppkey) {
+  var item = gcpandroidAutoAppkey[index];
+  appMap[item.appKey] = {appName: item.appName, appOS: item.appOS, sdk: item.sdk};
+}
+
+/// import gcp auto generate ios appkey
+
+for (var index in gcpiOSAutoAppkey) {
+  var item = gcpiOSAutoAppkey[index];
+  appMap[item.appKey] = {appName: item.appName, appOS: item.appOS, sdk: item.sdk};
+}
+
 
 //console.log(appMap);
 
