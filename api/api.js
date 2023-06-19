@@ -919,7 +919,7 @@ function insertRawColl(coll, eventp, params, isSession) {
     return;
   }
 
-  common.computeGeoInfo(eventp);
+  common.computeGeoInfo(eventp, common.config.geo.showIP);
   var appkey = eventp.app_key;
   var checkAppKey = jsonQuery(['[key=?]', appkey], {data: appKeyMaps}).value;
   if (!checkAppKey) {

@@ -56,6 +56,9 @@ var countlyConfig = {
         country: "TR",
         timezone: "Europe/Istanbul",
         category: "6"
+    },
+    geo: {
+        showIP: false
     }
 };
 

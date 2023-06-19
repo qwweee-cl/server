@@ -918,7 +918,7 @@ var common = {},
         return oem;
     };
 
-    common.computeGeoInfo = function (params) {
+    common.computeGeoInfo = function (params, showIP) {
         // Location of the user is retrieved using geoip-lite module from her IP address.
         params.country = 'Unknown';
         params.city = 'Unknown';
@@ -943,6 +943,9 @@ var common = {},
                 params.lat = locationData.ll[0];
                 params.lng = locationData.ll[1];
             }
+        }
+        if (!showIP) {
+            params.ip_address = 'Unknown';
         }
     };
 
