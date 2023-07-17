@@ -129,6 +129,9 @@ var appKey = {};
 		"YCE_And"			: "ba5843705c96820837eee0859ef765a2b2afa442",
 		"YCE_iOS"			: "c8b97a510070958b199e1a638fd48d924287e3bd",
 		"SKP_iOS"			: "c42e8393cf422b511fadbaeea539afd3e1f96b77",
+		"Banbuser_WCM_Web"			: "050dff01ce950b5941ffc388e91c7f5e81af15ca",
+		"AIP_iOS"			: "2c6cfc8da4efa77ce25e1cb59a5f1993c6bb9289",
+		"AIP_And"			: "b03433468b299b90331e3d9f6df6905d14ae8587",
 	};
 }(appKey));
 
