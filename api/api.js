@@ -153,6 +153,9 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
   'Node_Session_YCE_And', 'Node_Event_YCE_And',
   'Node_Session_YCE_iOS', 'Node_Event_YCE_iOS',
   'Node_Session_SKP_iOS', 'Node_Event_SKP_iOS',
+  'Node_Session_Banbuser_WCM_Web', 'Node_Event_Banbuser_WCM_Web',
+  'Node_Session_AIP_And', 'Node_Event_AIP_And',
+  'Node_Session_AIP_iOS', 'Node_Event_AIP_iOS',
 ];
 
 var JPRefreshMetaInterval = null;
@@ -380,7 +383,10 @@ var appMap = {
   "354c37e25457173befc3400729965daa3aa9f106": {appName: "VIPShop", appOS: "iOS"},  // VIPShop_iOS
   "ba5843705c96820837eee0859ef765a2b2afa442": {appName: "YCE", appOS: "And"}, // YCE_Android
   "c8b97a510070958b199e1a638fd48d924287e3bd": {appName: "YCE", appOS: "iOS"},  // YCE_iOS
-  "c42e8393cf422b511fadbaeea539afd3e1f96b77": {appName: "SKP", appOS: "iOS"}  // Skincare_Pro_iOS
+  "c42e8393cf422b511fadbaeea539afd3e1f96b77": {appName: "SKP", appOS: "iOS"},  // Skincare_Pro_iOS
+  "050dff01ce950b5941ffc388e91c7f5e81af15ca": {appName: "Banbuser_WCM", appOS: "Web"},  // Banbuser_WCM_Web
+  "2c6cfc8da4efa77ce25e1cb59a5f1993c6bb9289": {appName: "AIP", appOS: "iOS"},  // YouCam AI_Pro_iOS
+  "b03433468b299b90331e3d9f6df6905d14ae8587": {appName: "AIP", appOS: "And"},  // YouCam AI_Pro_Android
 };
 
 /// import auto generate android appkey
