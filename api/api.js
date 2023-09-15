@@ -26,7 +26,7 @@ var http = require('http'),
       apps: require('./parts/mgmt/apps.js')
     }
   },
-  appKey = require('./appKey.js'),
+  //appKey = require('./appKey.js'),
   androidAutoAppkey = require('./appkey_config/countly_auto_android_json_code.json'),
   iOSAutoAppkey = require('./appkey_config/countly_auto_ios_json_code.json');
   gcpandroidAutoAppkey = require('./appkey_config/countly_gcp_auto_android_json_code.json');
@@ -377,7 +377,7 @@ var appMap = {
   "5554ac343cc1b0f9b48ea881553126cd8320a6de": {appName: "EL_CareOS_SDK", appOS: "And", sdk: true}, // EL_CareOS_SDK_And
   "94feb6fef74ff08ac266ad8fa9535e08dac23737": {appName: "AmorePacificHQ_KR_SDK", appOS: "And", sdk: true}, // AmorePacificHQ_KR_SDK_And
   "4d9619fe88545c3bf235e31fb467d637918e1cb3": {appName: "AmorePacificHQ_KR_SDK", appOS: "iOS", sdk: true}, // AmorePacificHQ_KR_SDK_iOS
-  "740f5f030fe2b94eeadef71f77606868fc34a3ff": {appName: "WCM", appOS: "Web"}, // WCM_Web
+  "740f5f030fe2b94eeadef71f77606868fc34a3ff": {appName: "WCM", appOS: "Web"}, // WCM_Web iOS
   "2af60c69658af885ad11bf7b4c9c4c1e3b029dc5": {appName: "WCM-Wechat-Mini", appOS: "Web"}, // WCM_Web
   "e5a12e43db397573aaa49f1fa617e9400d2a20ec": {appName: "VIPShop", appOS: "And"}, // VIPShop_Android
   "354c37e25457173befc3400729965daa3aa9f106": {appName: "VIPShop", appOS: "iOS"},  // VIPShop_iOS
@@ -387,6 +387,11 @@ var appMap = {
   "050dff01ce950b5941ffc388e91c7f5e81af15ca": {appName: "Banbuser_WCM", appOS: "Web"},  // Banbuser_WCM_Web
   "2c6cfc8da4efa77ce25e1cb59a5f1993c6bb9289": {appName: "AIP", appOS: "iOS"},  // YouCam AI_Pro_iOS
   "b03433468b299b90331e3d9f6df6905d14ae8587": {appName: "AIP", appOS: "And"},  // YouCam AI_Pro_Android
+  "a124eb02f50bc96b2463c42bb03e6769fd4f56b5": {appName: "WCM", appOS: "Web"}, // WCM_Web Android
+  "421ce3c2082cf0a47858b59dd99879cbca7783c0": {appName: "WCM", appOS: "Web"}, // WCM_Web Mac
+  "2b1c9ca1af03b13b79df1ae15fe784c4f0632564": {appName: "WCM", appOS: "Web"}, // WCM_Web Linux
+  "7cd8e84d79709e1d0539dfbde04b05bcc942c759": {appName: "WCM", appOS: "Web"}, // WCM_Web Unix
+  "91707974706e94a260de2477ce81c5ef7ff145cf": {appName: "WCM", appOS: "Web"}, // WCM_Web Windows
 };
 
 /// import auto generate android appkey
@@ -936,10 +941,10 @@ function insertRawColl(coll, eventp, params, isSession) {
     return;
   }
   console.log("eeeeeee:" + params.verifiy);
-  if (!(eventp.app_key == appKey.key["Perfect_And"] || eventp.app_key == appKey.key["Perfect_iOS"])) {
+  //if (!(eventp.app_key == appKey.key["Perfect_And"] || eventp.app_key == appKey.key["Perfect_iOS"])) {
     //sendKafkaRest(eventp, eventp.app_key, isSession);
     // if (0)
-    {
+    //{
       if (!params.verifiy) {
         if (params.qstring.header) {
           eventp.header = params.qstring.header;
@@ -955,8 +960,8 @@ function insertRawColl(coll, eventp, params, isSession) {
           }
         }
       }
-    }
-  }
+    //}
+  //}
 
   if (oem) {
     if (0) {
