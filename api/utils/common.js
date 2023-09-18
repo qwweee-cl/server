@@ -8,7 +8,7 @@ var common = {},
     geoip = require('geoip-lite'),
     countlyConfig = require('./../config'),
     print = console.log,
-    mapAppKey = require('./../appKey.js'),
+    // mapAppKey = require('./../appKey.js'),
 	KafkaRest = require('kafka-rest');
 
 (function (common) {
@@ -220,15 +220,16 @@ var common = {},
         var filename = fileHeadName+"_raw_"+(pad2(index)).toString();
         fullName = fullName.replace(/system\.|\.\.|\$/g, "");
 
-        var listApps = [mapAppKey.key["YouCam_Perfect_And"], 
-        mapAppKey.key["YouCam_Perfect_iOS"], mapAppKey.key["Perfect_iOS"]];
-
-        if (-1 != listApps.indexOf(appKey)) {
-            // clad1
-            return common.getDBByNameClad1(fullName, filename);
-        }
-        // clad2
-        return common.getDBByNameClad2(fullName, filename);
+        // var listApps = [mapAppKey.key["YouCam_Perfect_And"],
+        // mapAppKey.key["YouCam_Perfect_iOS"], mapAppKey.key["Perfect_iOS"]];
+        //
+        // if (-1 != listApps.indexOf(appKey)) {
+        //     // clad1
+        //     return common.getDBByNameClad1(fullName, filename);
+        // }
+        // // clad2
+        // return common.getDBByNameClad2(fullName, filename);
+        return common.getDBByNameClad1(fullName, filename);
     };
 
     common.getShardRawDB = function(appKey, inCurrDate) {
@@ -806,15 +807,17 @@ var common = {},
     };
 
     common.getRawDB = function (appKey) {
-        var listAppRaw_1 = [mapAppKey.key["YouCam_Perfect_And"], 
-        mapAppKey.key["YouCam_Perfect_iOS"], mapAppKey.key["Perfect_iOS"]];
-        return (-1 != listAppRaw_1.indexOf(appKey)) ? common.db_raw1 : common.db_raw2;
+        // var listAppRaw_1 = [mapAppKey.key["YouCam_Perfect_And"],
+        // mapAppKey.key["YouCam_Perfect_iOS"], mapAppKey.key["Perfect_iOS"]];
+        // return (-1 != listAppRaw_1.indexOf(appKey)) ? common.db_raw1 : common.db_raw2;
+        return common.db_raw1;
     };
 
     common.getBatchDB = function (appKey) {
-        var listAppBatch_1 = [mapAppKey.key["YouCam_Perfect_And"], 
-        mapAppKey.key["YouCam_Perfect_iOS"], mapAppKey.key["Perfect_iOS"]];
-        return (-1 != listAppBatch_1.indexOf(appKey)) ? common.db_batch1 : common.db_batch2;
+        // var listAppBatch_1 = [mapAppKey.key["YouCam_Perfect_And"],
+        // mapAppKey.key["YouCam_Perfect_iOS"], mapAppKey.key["Perfect_iOS"]];
+        // return (-1 != listAppBatch_1.indexOf(appKey)) ? common.db_batch1 : common.db_batch2;
+        return common.db_batch1;
     };
 
     common.getLocalRawDB = function (appKey) {
