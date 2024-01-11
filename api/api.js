@@ -1,4 +1,5 @@
 var http = require('http'),
+  https = require('https'),
   cluster = require('cluster'),
   os = require('os'),
   url = require('url'),
@@ -33,6 +34,9 @@ var http = require('http'),
   gcpiOSAutoAppkey = require('./appkey_config/countly_gcp_auto_ios_json_code.json');
 
 http.globalAgent.maxSockets = common.config.api.max_sockets || 1024;
+
+var newCountlyDomain = 'web-test.perfectcorp.com';
+var sendToNewCountly = true;
 
 //////////////////////////////////
 var kafakStatus = 0;
@@ -1669,7 +1673,84 @@ function mainfunc() {
     http.Server(clientHttp).listen(common.config.api.port, common.config.api.host || '');
   }
 
-  function clientHttp(req, res) {
+  function sendNewCountlyPost(body, ip) {
+    if (!newCountlyDomain) return;
+    const options = {
+      hostname: newCountlyDomain,
+      port: 443,
+      path: '/i',
+      method: 'post',
+      headers: {
+        'User-Agent': 'countly-proxy',
+        'x-forwarded-for': ip,
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Length': body.length
+      },
+    };
+
+    const req = https.request(options, function (res) {
+      console.log("STATUS: " + res.statusCode);
+      //console.log("HEADERS: " + JSON.stringify(res.headers));
+
+      res.setEncoding('utf8');
+
+      var dataPost = '';
+
+      res.on('data', function (chunk) {
+        return dataPost += chunk;
+      });
+
+      res.on('end', function () {
+        console.log(dataPost);
+      });
+    });
+
+    req.on('error', function (error) {
+      console.error(error);
+    });
+
+    req.write(body);
+    req.end();
+  }
+
+  function sendNewCountlyGet(url, ip) {
+    if (!newCountlyDomain) return;
+    const options = {
+      hostname: newCountlyDomain,
+      port: 443,
+      path: url,
+      method: 'get',
+      headers: {
+        'User-Agent': 'countly-proxy',
+        'x-forwarded-for': ip
+      },
+    };
+
+    const req = https.request(options, function (res) {
+      console.log("STATUS: " + res.statusCode);
+      //console.log("HEADERS: " + JSON.stringify(res.headers));
+
+      res.setEncoding('utf8');
+
+      var dataGet = '';
+
+      res.on('data', function (chunk) {
+        return dataGet += chunk;
+      });
+
+      res.on('end', function () {
+        console.log(dataGet);
+      });
+    });
+
+    req.on('error', function (error) {
+      console.error(error);
+    });
+
+    req.end();
+  }
+
+    function clientHttp(req, res) {
     if (req.method == 'POST') {
       var body = '';
       var qs = require('querystring');
@@ -1692,14 +1773,14 @@ function mainfunc() {
           postData.events = decodeURIComponent(postData.events);
         }
         console.log("@@@@@@ post data: ", postData);
-        onRequestHandler(req, res, postData)
+        onRequestHandler(req, res, postData, body);
       });
     } else {
       onRequestHandler(req, res);
     }
   }
 
-  function onRequestHandler(req, res, postData) {
+  function onRequestHandler(req, res, postData, body) {
     var urlParts = url.parse(req.url, true),
       queryString = urlParts.query,
       paths = urlParts.pathname.split("/"),
@@ -1712,6 +1793,9 @@ function mainfunc() {
     if (postData) {
       queryString = postData;
       params.qstring = postData;
+      sendNewCountlyPost(body, getIpAddress(req));
+    } else {
+      sendNewCountlyGet(req.url, getIpAddress(req));
     }
 
     if (queryString.app_id && queryString.app_id.length != 24) {
