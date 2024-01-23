@@ -1793,9 +1793,17 @@ function mainfunc() {
     if (postData) {
       queryString = postData;
       params.qstring = postData;
-      sendNewCountlyPost(body, getIpAddress(req));
+      try {
+        sendNewCountlyPost(body, getIpAddress(req));
+      } catch (e) {
+        console.log("send to new countly Exception: ", e);
+      }
     } else {
-      sendNewCountlyGet(req.url, getIpAddress(req));
+      try {
+        sendNewCountlyGet(req.url, getIpAddress(req));
+      } catch (e) {
+        console.log("send to new countly Exception: ", e);
+      }
     }
 
     if (queryString.app_id && queryString.app_id.length != 24) {
