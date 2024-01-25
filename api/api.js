@@ -1674,6 +1674,7 @@ function mainfunc() {
   }
 
   function sendNewCountlyPost(body, ip) {
+    if (url && url.includes("ipsentry")) return;
     if (!newCountlyDomain) return;
     const options = {
       hostname: newCountlyDomain,
@@ -1689,7 +1690,10 @@ function mainfunc() {
     };
 
     const req = https.request(options, function (res) {
-      console.log("STATUS: " + res.statusCode);
+      if (res.statusCode != 200) {
+        console.log("STATUS: " + res.statusCode);
+      }
+      //console.log("STATUS: " + res.statusCode);
       //console.log("HEADERS: " + JSON.stringify(res.headers));
 
       res.setEncoding('utf8');
@@ -1701,12 +1705,12 @@ function mainfunc() {
       });
 
       res.on('end', function () {
-        console.log(dataPost);
+        //console.log(dataPost);
       });
     });
 
     req.on('error', function (error) {
-      console.error(error);
+      //console.error(error);
     });
 
     req.write(body);
@@ -1714,6 +1718,7 @@ function mainfunc() {
   }
 
   function sendNewCountlyGet(url, ip) {
+    if (url && url.includes("ipsentry")) return;
     if (!newCountlyDomain) return;
     const options = {
       hostname: newCountlyDomain,
@@ -1727,7 +1732,10 @@ function mainfunc() {
     };
 
     const req = https.request(options, function (res) {
-      console.log("STATUS: " + res.statusCode);
+      if (res.statusCode != 200) {
+        console.log("STATUS: " + res.statusCode);
+      }
+      //console.log("STATUS: " + res.statusCode);
       //console.log("HEADERS: " + JSON.stringify(res.headers));
 
       res.setEncoding('utf8');
@@ -1739,12 +1747,12 @@ function mainfunc() {
       });
 
       res.on('end', function () {
-        console.log(dataGet);
+        //console.log(dataGet);
       });
     });
 
     req.on('error', function (error) {
-      console.error(error);
+      //console.error(error);
     });
 
     req.end();
