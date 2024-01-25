@@ -1674,7 +1674,6 @@ function mainfunc() {
   }
 
   function sendNewCountlyPost(body, ip) {
-    if (url && url.includes("ipsentry")) return;
     if (!newCountlyDomain) return;
     const options = {
       hostname: newCountlyDomain,
@@ -1718,7 +1717,6 @@ function mainfunc() {
   }
 
   function sendNewCountlyGet(url, ip) {
-    if (url && url.includes("ipsentry")) return;
     if (!newCountlyDomain) return;
     const options = {
       hostname: newCountlyDomain,
@@ -1802,13 +1800,17 @@ function mainfunc() {
       queryString = postData;
       params.qstring = postData;
       try {
-        sendNewCountlyPost(body, getIpAddress(req));
+        if (params.qstring.app_key != 'ipsentry') {
+          sendNewCountlyPost(body, getIpAddress(req));
+        }
       } catch (e) {
         console.log("send to new countly Exception: ", e);
       }
     } else {
       try {
-        sendNewCountlyGet(req.url, getIpAddress(req));
+        if (params.qstring.app_key != 'ipsentry') {
+          sendNewCountlyGet(req.url, getIpAddress(req));
+        }
       } catch (e) {
         console.log("send to new countly Exception: ", e);
       }
