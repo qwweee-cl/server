@@ -91,7 +91,7 @@ var bf = require('bloomfilter'),
   BloomFilter = bf.BloomFilter,
   userTableFilter = null,
   tmpuserCount = 0,
-  checkBloomFilter = true,
+  checkBloomFilter = false,
   isUpdating = false;
 
 const cassandra = require('cassandra-driver');
@@ -102,12 +102,12 @@ const cassandraOption = {
 const query = 'SELECT device_id, is_for_web_filter FROM bc_trend_ab_user;';
 var ABTestTopicName = 'ABTesting';
 
-const mysql = require('mysql-libmysqlclient');
+//const mysql = require('mysql-libmysqlclient');
 var host = 'cogons-db-new.czkpdhvixbu3.ap-northeast-1.rds.amazonaws.com';
 var user = 'abtest';
 var password = 'abtest';
 var database = 'ABTest';
-var enableABTesting = true;
+var enableABTesting = false;
 
 var chunkSize = 100000;
 var countQuery = "SELECT count(*) as total FROM ABTest.bc_trend_ab_user WHERE is_for_web_filter = true;";
@@ -1461,6 +1461,7 @@ function updateABTestingTable() {
   isUpdating = true;
   var totalCount = 0;
   var periods = 0;
+/*
   var mysqlClientSync = mysql.createConnectionSync(host, user, password, database);
   var handleCount = mysqlClientSync.querySync(countQuery);
   if (!handleCount) {
@@ -1476,12 +1477,13 @@ function updateABTestingTable() {
   var resultCount = handleCount.fetchAllSync();
   totalCount = resultCount[0].total;
   periods = Math.ceil(totalCount / chunkSize);
-
+*/
   bloomConf = JSON.parse(fs.readFileSync('/usr/local/countly/api/bloomfilter.conf', 'utf8'));
   tmpuserCount = 0;
   var tmpFilter = new BloomFilter(bloomConf.elements, bloomConf.hashfunc);
   var start = new Date();
   console.log('Start update ABTesting User Table: %s', start.toString());
+/*
   for (var i = 0; i < periods; i++) {
     var offset = i * chunkSize;
     var tmpQuery = chunkQuery + ' OFFSET ' + offset;
@@ -1494,13 +1496,14 @@ function updateABTestingTable() {
   }
   console.log('TMP BloomFilter add finished : %d', tmpuserCount);
   GLOBAL.userTableFilter = tmpFilter;
+*/
   var end = new Date();
   var diff = end.getTime() - start.getTime();
   console.log('End update ABTesting User Table: %s', end.toString());
   console.log('Update Time: %d', (diff / 1000));
   console.log('update ABTesting table ==========================' + end + '= length:' + tmpuserCount + '=========================');
   isUpdating = false;
-  mysqlClientSync.closeSync()
+//  mysqlClientSync.closeSync()
   return;
   /*
       if (isUpdating) {
