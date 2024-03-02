@@ -35,6 +35,8 @@ var http = require('http'),
 
 http.globalAgent.maxSockets = common.config.api.max_sockets || 1024;
 
+process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
+
 var newCountlyDomain = 'web-test.perfectcorp.com';
 var sendToNewCountly = true;
 
