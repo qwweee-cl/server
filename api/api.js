@@ -169,6 +169,8 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
   'Node_Session_Banbuser_WCM_Web', 'Node_Event_Banbuser_WCM_Web',
   'Node_Session_AIP_And', 'Node_Event_AIP_And',
   'Node_Session_AIP_iOS', 'Node_Event_AIP_iOS',
+  'Node_Session_Douyin_Web', 'Node_Event_Douyin_Web',
+  'Node_Session_JD_mSDK_Web', 'Node_Event_JD_mSDK_Web',
 ];
 
 function producerReady() {
@@ -395,6 +397,8 @@ var appMap = {
   "2b1c9ca1af03b13b79df1ae15fe784c4f0632564": {appName: "WCM", appOS: "Web"}, // WCM_Web Linux
   "7cd8e84d79709e1d0539dfbde04b05bcc942c759": {appName: "WCM", appOS: "Web"}, // WCM_Web Unix
   "91707974706e94a260de2477ce81c5ef7ff145cf": {appName: "WCM", appOS: "Web"}, // WCM_Web Windows
+  "b7d7c79e6c5d97c32af14cb889917c1971450aea": {appName: "Douyin", appOS: "Web"}, // Douyin_Web
+  "85aeef5e4a1af17bfa53ba9f0eab8672bff8670e": {appName: "JD_mSDK", appOS: "Web"}, // JD_mSDK_Web
 };
 
 /// import auto generate android appkey

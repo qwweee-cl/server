@@ -132,6 +132,8 @@ var appKey = {};
 		"Banbuser_WCM_Web"			: "050dff01ce950b5941ffc388e91c7f5e81af15ca",
 		"AIP_iOS"			: "2c6cfc8da4efa77ce25e1cb59a5f1993c6bb9289",
 		"AIP_And"			: "b03433468b299b90331e3d9f6df6905d14ae8587",
+		"Douyin_Web"			: "b7d7c79e6c5d97c32af14cb889917c1971450aea",
+		"JD_mSDK_Web"			: "85aeef5e4a1af17bfa53ba9f0eab8672bff8670e",
 	};
 }(appKey));
 
