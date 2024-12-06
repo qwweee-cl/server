@@ -134,6 +134,8 @@ var appKey = {};
 		"AIP_And"			: "b03433468b299b90331e3d9f6df6905d14ae8587",
 		"Douyin_Web"			: "b7d7c79e6c5d97c32af14cb889917c1971450aea",
 		"JD_mSDK_Web"			: "85aeef5e4a1af17bfa53ba9f0eab8672bff8670e",
+		"YAT_And"			: "d7059df75dd1faaeefab9185ac34afa2a604a746",
+		"YAT_iOS"			: "93d1ab7d236704939d51f890376007d72f2c719a",
 	};
 }(appKey));
 
