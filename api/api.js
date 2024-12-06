@@ -396,6 +396,8 @@ var appMap = {
   "91707974706e94a260de2477ce81c5ef7ff145cf": {appName: "WCM", appOS: "Web"}, // WCM_Web Windows
   "b7d7c79e6c5d97c32af14cb889917c1971450aea": {appName: "Douyin", appOS: "Web"}, // Douyin_Web
   "85aeef5e4a1af17bfa53ba9f0eab8672bff8670e": {appName: "JD_mSDK", appOS: "Web"}, // JD_mSDK_Web
+  "d7059df75dd1faaeefab9185ac34afa2a604a746": {appName: "YAT", appOS: "And"}, // YouCam AI Chat_Android
+  "93d1ab7d236704939d51f890376007d72f2c719a": {appName: "YAT", appOS: "iOS"},  // YouCam AI Chat_iOS
 };
 
 /// import auto generate android appkey
