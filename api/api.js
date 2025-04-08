@@ -171,6 +171,8 @@ var topicList = ['Node_Event_BCS_And', 'Node_Event_BCS_iOS', 'Node_Event_OtherAp
   'Node_Session_AIP_iOS', 'Node_Event_AIP_iOS',
   'Node_Session_Douyin_Web', 'Node_Event_Douyin_Web',
   'Node_Session_JD_mSDK_Web', 'Node_Event_JD_mSDK_Web',
+  'Node_Session_YAT_And', 'Node_Event_YAT_And',
+  'Node_Session_YAT_iOS', 'Node_Event_YAT_iOS',
 ];
 
 function producerReady() {
